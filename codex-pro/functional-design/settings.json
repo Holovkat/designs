@@ -1,0 +1,33 @@
+{
+  "updates": {
+    "repo": "openai/codex-agentic",
+    "latest_url": null,
+    "upgrade_cmd": null,
+    "disable_check": false
+  },
+  "index": {
+    "overlay": true,
+    "refresh_min_secs": 300,
+    "post_turn_refresh": true,
+    "retrieval_enabled": true,
+    "retrieval_threshold": 0.65,
+    "context_tokens": 800
+  },
+  "acp": {
+    "yolo_with_search": false
+  },
+  "model": {
+    "provider": null,
+    "default": null,
+    "reasoning_effort": null,
+    "reasoning_view": null
+  },
+  "providers": {
+    "oss": {
+      "endpoint": "http://localhost:11434"
+    }
+  },
+  "prompts": {
+    "default": ".codex/.custom-system-prompts"
+  }
+}

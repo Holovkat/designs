@@ -1,0 +1,38 @@
+# Example System Prompts
+
+This directory contains ready-to-use Markdown overlays that demonstrate how Codex Agentic stitches
+custom system prompts into the runtime.
+
+## Folder layout
+
+```
+example-system-prompts/
+├── agentic-default.md      # baseline overlay shipped with the template
+├── agent-codex.md          # sample customization layered on top of the default
+└── README                  # this guide
+```
+
+Each `*.md` file represents a standalone overlay. At launch, Codex Agentic concatenates the files
+located in `.codex/.custom-system-prompts/` (lexicographically) and appends the merged text to the
+upstream base instructions.
+
+## Using the examples
+
+1. Ensure the repository root contains this folder (`openai-codex/example-system-prompts`).
+2. Copy or symlink any subset of the Markdown files into `.codex/.custom-system-prompts/`:
+   ```bash
+   mkdir -p .codex/.custom-system-prompts
+   cp example-system-prompts/agentic-default.md .codex/.custom-system-prompts/
+   cp example-system-prompts/agent-codex.md .codex/.custom-system-prompts/
+   ```
+3. Launch the CLI/TUI (`cargo run --bin codex-agentic` or `./target/debug/codex-agentic`). The
+   `/status` command will list the loaded prompt files.
+4. Modify or duplicate the templates to create bespoke overlays. The loader only reads `*.md` files;
+   other extensions (for example `notes.md.disabled`) are ignored.
+
+## Tips
+
+- Keep overlays focused on project-specific guidance (tooling, style rules, etc.).
+- To disable an overlay temporarily, rename it to end with a non-`.md` suffix (e.g. `.md.disabled`).
+- Commit shared overlays in `example-system-prompts/`; copy only the active subset into
+  `.codex/.custom-system-prompts/` so developers can opt-in locally.
