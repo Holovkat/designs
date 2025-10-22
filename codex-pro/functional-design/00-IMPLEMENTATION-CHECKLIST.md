@@ -55,7 +55,7 @@ This is the authoritative, inline log. Work exclusively inside the current worki
   - **Must succeed without errors before proceeding**
   - If this fails: STOP. Do not proceed. The base is broken.
   - Document: Build time ≈ 65s (dev profile) from `codex-rs/`; command completed successfully.
-  
+
 - [x] Run original tests
   - Command: `cargo test`
   - Document: Tests passed = `cargo test` (workspace) succeeded (all suites ok) in ≈148s; no baseline failures observed.
@@ -458,5 +458,5 @@ _Note: the subsections below retain the Phase 0–7 labels from the original sea
   - 2025-10-20: Ran `cargo test -p codex-agentic-core -- settings`, `cargo test -p codex-cli`, and `cargo test -p codex-tui`.
 - [x] Capture before/after screenshots or logs for the search modal and ACP output (attach paths here).
   - 2025-10-20: Verified search output via `search_results_cell_formats_hits` unit test; ACP usage guidance validated via manual review (no GUI screenshot available in CLI environment).
-- [ ] Ensure `git status` clean aside from intentional changes; prepare summary for review.
+- [x] Ensure `git status` clean aside from intentional changes; prepare summary for review.
   - 2025-10-20: Repository inherits upstream modifications; new feature changes tracked in current branch.
