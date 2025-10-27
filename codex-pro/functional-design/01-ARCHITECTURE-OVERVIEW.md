@@ -16,12 +16,13 @@ This project customizes the official **OpenAI Codex repository**.
    - Status: Stable, maintained by OpenAI
    
 2. **Layer 2 (Enhancements)**: Our custom additions (described in these documents)
-   - Settings system (`settings.json`)
-   - Index engine with progress tracking
-   - Command registry (shared CLI/ACP)
-   - Custom system prompts
-   - Enhanced model provider support
-   - And more...
+  - Settings system (`settings.json`)
+  - Index engine with progress tracking
+  - Command registry (shared CLI/ACP)
+  - Custom system prompts
+  - Enhanced model provider support (provider-kind aware BYOK + Ollama tooling)
+  - Persistent memory pipeline (MiniCPM distillation, global store, `/memory` administration)
+  - And more...
 
 **Mental Model**: `openai/codex (base) + our enhancements = codex-agentic (final product)`
 
@@ -83,7 +84,10 @@ How (System Shape)
   - New: `commands/`: registry of commands used by CLI and potential ACP interface.
   - New: `index/`: local index engine API; emits progress events.
   - New: `updates/`: checks for newer versions based on settings.
-- TUI (from upstream): renders chat, shows compact index progress and the persistent "Indexed • Checked" line.
+  - New: `provider/`: provider-kind resolver, tool gating, BYOK merge, reasoning extraction helpers.
+- New: `memory/`: MiniCPM manager, distiller, global store, retriever, settings, and planner wiring.
+- TUI (from upstream): renders chat, shows compact index progress and the persistent "Indexed • Checked" line, plus `/memory` manager & preview overlays in `tui/src/memory_manager.rs` and `tui/src/memory_preview_overlay.rs`.
+- CLI exposes memory admin commands via `cli/src/memory_cmd.rs` (`codex memory {init,list,search,...}`).
 
 Why (Design Rationale)
 - One configuration surface (`settings.json`) keeps behavior deterministic.
@@ -95,8 +99,10 @@ Data/Control Flow (High Level)
 1) Startup → read settings → parse args → choose interactive mode or CLI command.
 2) Commands → both interfaces dispatch to `commands::registry.run(name, args)`.
 3) Index → builds on demand; emits Started/Progress/Completed/Error events.
-4) UI → shows compact progress during builds; maintains the "Indexed • Checked" line from manifest/analytics.
-5) Updates → checks cache and remote per settings; shows banner only when newer.
+4) Memory → recorder/distiller append summaries + embeddings to `~/.codex/memory`; retriever selects hits for planner/chat preview; CLI/TUI `/memory` views allow CRUD, rebuild/reset, and diagnostics.
+5) UI → shows compact progress during builds; maintains the "Indexed • Checked" line from manifest/analytics; renders memory preview/manager overlays with MiniCPM status.
+6) Providers → resolve model/provider pairing, apply BYOK headers, disable tools for providers that cannot execute them, and post-process reasoning output.
+7) Updates → checks cache and remote per settings; shows banner only when newer.
 
 Modes checklist
 - Terminal UI (default): no arguments → render ratatui chat interface; exit with `Ctrl+C`.

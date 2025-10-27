@@ -24,7 +24,8 @@ You are **NOT building from scratch**. You are **customizing an existing project
 │  ├─ Index engine (semantic search)             │
 │  ├─ Command registry (shared CLI/MCP)          │
 │  ├─ Custom prompts                             │
-│  ├─ Enhanced model providers (Ollama)          │
+│  ├─ Enhanced model providers (BYOK/Ollama)     │
+│  ├─ Persistent memory store + `/memory` UI     │
 │  └─ Update checking                            │
 │                                                 │
 │           =  (EQUALS)                           │
@@ -122,11 +123,12 @@ Follow these documents **in exact order**:
 3. **Phase 2**: Configuration (`03-SETTINGS-AND-CONFIG.md`, `04-SYSTEM-PROMPT-INJECTION-BUILD.md`)
 4. **Phase 3**: Command Surface (`05-COMMANDS-REGISTRY-CLI-ACP.md`, `06-ARGUMENT-PARSING.md`)
 5. **Phase 4**: Index & UI (`07-INDEX-ENGINE-INTEGRATION-DIRECT.md`, `08-TUI-INDEX-STATUS-INTEGRATED.md`)
-6. **Phase 5**: Models & Updates (`09-MODEL-PROVIDERS-AND-SELECTION.md`, `10-UPDATES-BANNER-SETTINGS.md`, `11-ACP-MODE-BEHAVIOR.md`)
+6. **Phase 5**: Models & Updates (`09-MODEL-PROVIDERS-AND-SELECTION.md`, `10-UPDATES-BANNER-SETTINGS.md`, `11-ACP-MODE-BEHAVIOR.md`, `23-MEMORY-MANAGER-IMPLEMENTATION.md`)
    - ACP guidance now documents persisted BYOK overrides, GLM minimal-prompt handling, and the duplicate-response fix for stdio.
-   - BYOK enhancements (see `16-CUSTOM-PROVIDERS-BYOK.md`): auto-normalise base URLs, infer Chat vs. Responses protocols, render custom providers in `/model`, and keep CLI/TUI/ACP selections in sync.
+   - BYOK enhancements (see `16-CUSTOM-PROVIDERS-BYOK.md`): provider-kind dropdown, manual model refresh + cached-model viewer, reasoning controls per provider, and shared tool gating across CLI/TUI/ACP.
    - Removing a BYOK entry falls back to the built-in OpenAI provider and resets the default model when no override is set.
-   - Zhipu Coding Plan endpoints (`https://open.bigmodel.cn/api/coding/paas/v4`) omit `/models`; seed a `default_model` or cached model list manually so `/model` and ACP can list GLM variants despite the 404 health check.
+   - Zhipu Coding Plan endpoints (`https://open.bigmodel.cn/api/coding/paas/v4`) omit `/models`; refresh caches manually and seed `default_model` entries so `/model` and ACP can list GLM variants despite the 404 health check.
+    - New Memory Manager doc captures MiniCPM setup, global store wiring, `/memory` UI flows, and CLI admin commands.
 7. **Phase 6**: Release & Tests (`12-RELEASE-MAC-ONLY.md`, `13-TESTING-AND-VERIFICATION.md`)
 
 **Each phase has gates** - do not proceed until current phase gates pass.
