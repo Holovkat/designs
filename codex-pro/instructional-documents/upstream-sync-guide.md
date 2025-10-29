@@ -17,6 +17,17 @@ The general workflow for an upgrade is:
 2.  **Attempt to Compile**: Run `cargo check --workspace` or `cargo build`. This will immediately reveal all compile-time breakages caused by API changes.
 3.  **Fix and Test**: Methodically fix the breakages by focusing on the key areas listed below. Test each area as you go.
 
+### Lesson Learned: Track Every Upstream Commit
+- Before step 1, generate the upstream commit list for the release window and paste it into the upgrade plan as a checkbox ledger (example: `git log --oneline --reverse --since="2025-10-17" rust-v0.47.0..c7e4e6d0`).
+- Apply commits in chronological order onto the downstream branch, checking off each entry with notes.
+- Agree on a cadence for build/test checkpoints (e.g. after every 10 commits or any large feature commit) and record results before advancing.
+
+### Lesson Learned: Align Versioning and Generated Assets Early
+- As soon as the roll-forward lands, set `workspace.package.version` (and any packaged CLI/SDK manifests) to the upstream release number. This keeps the CLI status banner, telemetry headers, and downstream tooling consistent.
+- Replace hard-coded `"0.0.0"` / `"0.0.0-dev"` placeholders in tests and telemetry with `env!("CARGO_PKG_VERSION")` so future bumps require zero code edits.
+- Regenerate any OpenAPI/TypeScript bindings (`app-server-protocol/bindings`, MCP types) immediately after the version bump and stage them in the same commit to avoid drift.
+- Capture these adjustments in the execution log so future agents know they happened before validation began.
+
 ## Key Areas to Monitor for Breaking Changes
 
 When upgrading, the following four areas are the most likely sources of conflicts and breakages.

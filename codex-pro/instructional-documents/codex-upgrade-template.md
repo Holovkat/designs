@@ -65,3 +65,13 @@ Only once the checklist is complete should the implementation phase begin on bra
 ## 6. Post-Upgrade Reminder
 After the upgrade is complete and validated, backfill any lessons learned into this template or related instructional documents (e.g., `upstream-sync-guide.md`) so future releases benefit from the experience.
 
+### Lesson Learned: Chronological Roll-Forward with Commit Tracking
+- Always merge upstream tags **onto the downstream `codex-agentic` main** chronologically; do not import files piecemeal.
+- Before merging, generate the upstream commit log for the window (e.g. `git log --oneline --reverse --since="2025-10-17" rust-v0.47.0..c7e4e6d0`) and paste it into the upgrade plan as a checklist. Track progress commit-by-commit.
+- Define a validation cadence (e.g., build/test every 10 commits or after large changes) and enforce it.
+- Document this process in the upgrade plan so the next agent can resume from the last checked commit.
+
+### Lesson Learned: Cascade Version Updates After Planning
+- As soon as the roll-forward lands, bump the workspace and packaged CLI/SDK versions to the upstream release (e.g. `0.50.0`), and regenerate any derived artefacts (TypeScript bindings, npm lockfiles) in the same change.
+- Remove hard-coded version literals in tests/telemetry in favour of `env!("CARGO_PKG_VERSION")` so future upgrades only require a single workspace version bump.
+- Note the version alignment step in the execution log and checklist to prevent regressions such as outdated status banners or telemetry headers.
