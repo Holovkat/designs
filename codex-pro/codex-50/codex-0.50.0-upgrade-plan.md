@@ -39,6 +39,7 @@ Log updates to this section as the planning branch evolves.
 - Record the results of each cadence run, along with the commit range it validates, under the Phase 5 execution log in this plan.
 
 ### Phase 5 Execution Log
+- **2025-10-29:** Attempted full-suite validation (`cargo test --all-features`) to close out regression tracking. Run aborted on stakeholder request; deferred to UAT. No additional source changes made during the attempt.
 - **2025-10-29:** Reconciled downstream changes across core/exec/mcp/tui/feedback/docs/workflows against the upstream 0.50.0 tree. Verified version alignment (`0.50.0`) across Rust crates and packaged CLIs, refreshed generated bindings (`app-server-protocol/bindings/GetAccountResponse.ts`), and confirmed targeted build checks (`cargo build -p codex-cli --bin codex-agentic`) continue to pass.
 - **2025-10-28:** Applied upstream commits `c03e31ec` → `c81e1477` (10 commits; `50f53e70` and `6915ba21` already landed in macicodex main prior to the roll-forward). Resolved downstream rate-limit timestamp API changes in follow-up commit `58c1795d4`. Validation result: `cargo check -p codex-tui` ✅.
 - **2025-10-28:** Cherry-picked `d6a9e385` (VS Code rust-analyzer target dir alignment). No validation required.
