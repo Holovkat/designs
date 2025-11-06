@@ -41,7 +41,7 @@
    - Ollama providers call `/api/tags` (auto-trimming `/v1`).
    - Success caches model names and timestamp; failures return inline error but keep saved settings.
 5. `/model` modal groups providers by category (OpenAI defaults, Ollama, Custom) and shows the cached models. “View cached models” opens a modal with default model, cached list, last refresh time, and a refresh shortcut.
-6. Switching providers/models triggers resolver updates, re-runs tool gating, and persists defaults when requested. Removing an active provider falls back to OpenAI.
+6. Switching providers/models triggers resolver updates, re-runs tool gating, keeps the active conversation on the new provider via `OverrideTurnContext`, and persists defaults when requested. Removing an active provider falls back to OpenAI.
 
 ### Data Model
 ```jsonc
@@ -128,11 +128,13 @@
   - Refresh models for each provider kind and validate cached model modal.
   - Switch models via `/model`, confirm tool gating + reasoning formatting, then persist defaults.
   - Remove active provider and confirm fallback to OpenAI.
+  - Switch from an OpenAI preset to a BYOK provider mid-session and send a follow-up prompt to confirm the new provider responds without requiring `/new`.
 
 ### Provider-specific Notes
 - **Ollama**: Refresh hits `<base-url>/api/tags` after normalising `/v1`. Tooling is always disabled; reasoning `<think>` blocks are post-processed when enabled.
 - **Anthropic**: Provide `anthropic-version` header and optional thinking budgets. Budgets populate `reasoning_controls.extra` and inform request payloads.
 - **Zhipu / Coding Plan**: `/models` returns 404; retain cached models or seed defaults manually, then refresh to verify headers.
+- **Z.AI / Chat Completions**: Stored BYOK API keys are now forwarded with Chat Completions requests, so set credentials via `/BYOK` while keeping static headers like `tenant` in `extra_headers`.
 
 ### Follow-up Considerations
 - CLI parity for `models refresh`.

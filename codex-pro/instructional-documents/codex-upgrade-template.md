@@ -30,6 +30,8 @@ Before any implementation work:
   `git fetch --depth=1 https://github.com/openai/codex.git rust-vX.Y.Z`
 - **Record comparison snapshot:**  
   Use `git diff --stat FETCH_HEAD` plus targeted diffs per subsystem (`core`, `exec`, `mcp`, `tui`, `feedback`, workflows, docs). Summarize findings in a table within the upgrade plan.
+- **Build release-phased commit checklist:**  
+  Capture `git log --oneline --reverse` output for each upstream version bump since the last alignment. Organize the checklist in the upgrade plan by release window (e.g., `rust-v0.50.0 → rust-v0.51.0`), listing every commit chronologically inside its section so agents can tick progress per release.
 - **Update design steps:**  
   Note tooling needs, branch strategy (`codex-XY-alignment`), and the order of subsystem integration.
 - **Update development prompt:**  
@@ -63,11 +65,16 @@ Only once the checklist is complete should the implementation phase begin on bra
 ---
 
 ## 6. Post-Upgrade Reminder
-After the upgrade is complete and validated, backfill any lessons learned into this template or related instructional documents (e.g., `upstream-sync-guide.md`) so future releases benefit from the experience.
+After the upgrade is complete and validated, backfill any lessons learned into this template or related instructional documents (e.g., `/Users/tonyholovka/workspace/codex-pro/designs/codex-pro/instructional-documents/upstream-sync-guide.md`) so future releases benefit from the experience.
+
+### Lint Expectations for Custom Code
+- Whenever downstream customisations require silencing a Clippy lint (for example, deliberate `map(|info| info.clone())` clones to preserve provider metadata), use `#[expect(lint_name, reason = "...")]` instead of broad `#[allow]`.
+- Keep the reason focused on the downstream behaviour being preserved so future agents know why the lint must remain active.
+- If an upgrade removes the pattern that originally triggered the lint, the `#[expect]` will surface as a compile error—treat that as a reminder to delete or rewrite the workaround.
 
 ### Lesson Learned: Chronological Roll-Forward with Commit Tracking
 - Always merge upstream tags **onto the downstream `codex-agentic` main** chronologically; do not import files piecemeal.
-- Before merging, generate the upstream commit log for the window (e.g. `git log --oneline --reverse --since="2025-10-17" rust-v0.47.0..c7e4e6d0`) and paste it into the upgrade plan as a checklist. Track progress commit-by-commit.
+- Before merging, generate the upstream commit log for the window (e.g. `git log --oneline --reverse --since="2025-10-17" rust-v0.47.0..c7e4e6d0`) and paste it into the upgrade plan as a checklist **grouped by upstream release bump** (e.g., `rust-v0.50.0 → rust-v0.51.0`). Track progress commit-by-commit inside each release section.
 - Define a validation cadence (e.g., build/test every 10 commits or after large changes) and enforce it.
 - Document this process in the upgrade plan so the next agent can resume from the last checked commit.
 

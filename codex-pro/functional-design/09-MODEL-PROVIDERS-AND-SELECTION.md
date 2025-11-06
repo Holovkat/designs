@@ -53,6 +53,8 @@ How
 3) CLI behavior
 - `models list` prints cached models for the configured provider; `--oss` remains a convenience flag that temporarily forces the Ollama provider.
 - The launcher reads `settings.json` to determine default provider/model when not overridden and respects provider-level tool gating. Model caches are updated via the BYOK modal or a future CLI parity command (out-of-scope here).
+- Chat-mode BYOK providers reuse stored API keys when dispatching requests, keeping `/BYOK` as the single place credentials are managed (extra headers remain additive).
+- CLI overrides forward both `model` and `provider_id` through `OverrideTurnContext`, so follow-up turns reuse the newly selected provider without re-launching Codex.
 
 4) TUI behavior
 - Provide a model selector menu that queries cached models per provider, exposes a “Refresh models” action, and presents a “View cached models” modal that lists the provider’s default, cached entries, and refresh help text.
@@ -60,7 +62,7 @@ How
   - Update model: set active model for the session.
   - Persist selection: write the chosen model into `settings.json.model.default`.
 - Ensure the displayed model/provider reflect the current session settings.
-- Switching to an Ollama or custom BYOK model from the modal automatically flips the provider, re-runs tool gating, and prompts users to refresh models manually—no `/model --oss` or manual provider edit required mid-session.
+- Switching to an Ollama or custom BYOK model from the modal automatically flips the provider, re-runs tool gating, and prompts users to refresh models manually—no `/model --oss`, manual provider edit, or `/new` restart required mid-session.
 
 Why
 - Keeps model choice clear and consistent across CLI and TUI.
@@ -75,6 +77,7 @@ Verification
 - Starting `codex-agentic --model qwq:latest` sets the active model for that session and disables tool calls (Ollama provider).
 - In the TUI, changing the model updates the session; choosing "persist" writes the new default to `settings.json`. The “View cached models” action shows last refresh time and default fallback.
 - Selecting an Ollama model from the modal (without `--oss`) switches the provider, clears incompatible tools, and reprompts users to refresh if no cached models exist.
+- Switching models mid-conversation now updates the active provider in-place; send a follow-up prompt without `/new` to confirm the new model answers in the existing thread.
 
 Provider Resolver (final)
 - file_path: `codex-rs/codex-agentic-core/src/provider/mod.rs`

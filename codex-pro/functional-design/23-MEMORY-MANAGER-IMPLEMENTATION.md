@@ -93,6 +93,14 @@ Manual confirmation:
 - Launch TUI (`cargo run -p codex-cli --bin codex-agentic`) and run `/memory`; verify list, semantic search, confidence slider, modal flows, download status line.
 - Trigger planner retrieval (send a user turn with memory matches) and confirm preview overlay renders with accept/skip controls.
 
+## 2025-11-06 Performance Hardening
+
+- **Lazy embedder initialisation** — `MemoryRuntime::load` and the distiller now populate the FastEmbed encoder via a `OnceCell`. If `/memory` is disabled (the default on Codex Pro), the embedder never loads. When enabled, the encoder initialises on the first summarisation or retrieval request inside a background blocking task so startup no longer pegs every core.
+- **Retriever behaviour** — The CLI/TUI retrieval path tolerates the warm-up window by returning empty hits until the embedder is available. Subsequent queries reuse the shared encoder without reinitialising it.
+- **HNSW reuse** — `GlobalMemoryStore::open` inspects the on-disk `.hnsw.graph/.data` files and only rebuilds the graph if the manifest changed or the index is missing. Clean launches now skip the full rebuild while manual mutations (`create`, `update`, `delete`, `reset`) still trigger index regeneration.
+- **Operational tip** — If developers need to force a rebuild after manual file edits, run `codex memory rebuild` (which still calls `store.rebuild()` explicitly). Otherwise the system will reuse the existing index automatically.
+- **Validation** — Confirm the lazy path with `/memory` disabled (`cargo run -p codex-cli --bin codex-agentic`) and ensure CPU usage stays near idle during startup; when enabling `/memory`, expect the first retrieval or summarisation to incur a one-off initialisation cost.
+
 ## Learnings & Recommendations
 
 - Reuse planning infrastructure (Enhancement 21) to inject preview events; keep UI/state in sync by storing hits per turn.

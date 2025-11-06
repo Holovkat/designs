@@ -131,6 +131,11 @@ Follow these documents **in exact order**:
     - New Memory Manager doc captures MiniCPM setup, global store wiring, `/memory` UI flows, and CLI admin commands.
 7. **Phase 6**: Release & Tests (`12-RELEASE-MAC-ONLY.md`, `13-TESTING-AND-VERIFICATION.md`)
 
+### Lint & Annotation Expectations
+- If you need to silence a Clippy lint for downstream behaviour (e.g., intentional clones to preserve provider metadata), prefer `#[expect(lint_name, reason = "...")]` over wide `#[allow]`. This way future upgrades fail fast if the workaround is no longer required.
+- Keep the `reason` focused on the customisation (e.g., “downstream provider fallback requires clone”). Avoid generic messages.
+- Only use `#[allow]` when disabling a lint across an entire module is unavoidable (should be rare); document the rationale in the design notes if you do.
+
 **Each phase has gates** - do not proceed until current phase gates pass.
 
 ---
