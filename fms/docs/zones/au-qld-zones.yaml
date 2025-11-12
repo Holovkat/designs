@@ -1,0 +1,48 @@
+# Initial operational zones for Australia (Queensland focus)
+# Geometry is sourced separately (ABS ASGS GeoJSON/Shapefiles). This file captures
+# names, codes, hierarchy, and metadata to seed the catalog.
+
+tenant_code: "example-tenant"  # replace at import time
+crs: EPSG:4326
+zones:
+  - name: "Queensland"
+    code: "AU-QLD"            # ISO 3166-2
+    level: "state"
+    centroid: [-20.9176, 142.7028] # approx; for display only
+    attributes:
+      country: "AU"
+      notes: "State-level container; geometry to be imported from ASGS."
+    children:
+      - name: "Brisbane"
+        code: "AU-QLD-BNE"   # uses city/airport mnemonic for readability
+        level: "region"
+        centroid: [-27.4698, 153.0251]
+        attributes:
+          notes: "Aggregate of Brisbane metro SA4s; exact polygon TBD."
+      - name: "MacKay"        # UI-preferred spelling per client
+        code: "AU-QLD-MKY"   # canonical code remains stable
+        level: "region"
+        centroid: [-21.1411, 149.1860]
+        attributes:
+          notes: "Region around MacKay (Mackay LGA); exact polygon TBD."
+      - name: "Townsville"
+        code: "AU-QLD-TSV"
+        level: "region"
+        centroid: [-19.2589, 146.8169]
+        attributes:
+          notes: "Region around Townsville; exact polygon TBD."
+
+adjacency:
+  # Add pairs when polygons are loaded; examples only
+  # - ["AU-QLD-MKY", "AU-QLD-TSV"]
+  # - ["AU-QLD-BNE", "AU-QLD-MKY"]
+
+geometry_source:
+  provider: "ABS ASGS"
+  suggested_levels:
+    - "SA4"
+    - "SA3"
+  notes: |
+    Choose the ASGS level that best matches operational coverage. For Brisbane,
+    an aggregate of SA4s (East/North/South/West/Inner City) is typical.
+    Cross-border regions can also be modeled by aggregating polygons from multiple states.

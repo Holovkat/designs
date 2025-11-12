@@ -1,0 +1,14 @@
+# Catalog of defined workflows
+
+workflows:
+  - id: delivery-core
+    name: Core Delivery Lifecycle
+    owner: operations
+    version: 0.1.0
+    status: draft
+    file: delivery-core.md
+    summary: >-
+      End-to-end delivery workflow from scheduling to proof of delivery,
+      including failure and cancellation paths.
+    tags: [delivery, lifecycle, state-machine]
+

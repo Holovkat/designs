@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.fms.local/pod/artifact.captured.v1.json",
+  "title": "POD Artifact Captured v1",
+  "type": "object",
+  "allOf": [{"$ref": "_common.json"}],
+  "properties": {
+    "event": {
+      "type": "object",
+      "properties": {
+        "taskId": {"type": "string"},
+        "artifactType": {"type": "string", "enum": ["photo","signature","scan"]},
+        "uri": {"type": "string"},
+        "sha256": {"type": "string"}
+      },
+      "required": ["taskId", "artifactType", "uri", "sha256"]
+    }
+  },
+  "required": ["eventId", "specVersion", "occurredAt", "tenantId", "producer", "event"],
+  "additionalProperties": false
+}

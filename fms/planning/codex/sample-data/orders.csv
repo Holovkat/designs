@@ -1,0 +1,4 @@
+order_id,external_id,priority,address,lat,lon,window_start,window_end,weight_kg,volume_m3,service_seconds
+O-1001,ERP-123,high,101 Main St,37.7749,-122.4194,2025-11-10T08:00:00Z,2025-11-10T10:00:00Z,120,0.8,300
+O-1002,ERP-124,medium,500 Pine St,37.7920,-122.4035,2025-11-10T09:00:00Z,2025-11-10T12:00:00Z,80,0.6,240
+O-1003,ERP-125,low,200 Market St,37.7936,-122.3966,2025-11-10T11:00:00Z,2025-11-10T14:00:00Z,60,0.4,180

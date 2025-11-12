@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.fms.local/routing/route.optimized.v1.json",
+  "title": "Route Optimized v1",
+  "type": "object",
+  "allOf": [{"$ref": "_common.json"}],
+  "properties": {
+    "event": {
+      "type": "object",
+      "properties": {
+        "routeId": {"type": "string"},
+        "objective": {"type": "string", "enum": ["distance", "time", "cost"]},
+        "totalDistanceKm": {"type": "number"},
+        "totalDurationSec": {"type": "number"},
+        "stops": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sequence": {"type": "integer"},
+              "taskId": {"type": "string"},
+              "eta": {"type": "string", "format": "date-time"}
+            },
+            "required": ["sequence", "taskId"]
+          }
+        }
+      },
+      "required": ["routeId", "objective", "stops"]
+    }
+  },
+  "required": ["eventId", "specVersion", "occurredAt", "tenantId", "producer", "event"],
+  "additionalProperties": false
+}

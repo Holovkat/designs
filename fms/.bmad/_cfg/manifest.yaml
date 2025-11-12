@@ -1,0 +1,20 @@
+installation:
+  version: 6.0.0-alpha.8
+  installDate: '2025-11-10T09:38:29.015Z'
+  lastUpdated: '2025-11-10T09:38:29.015Z'
+modules:
+  - core
+  - bmb
+  - bmm
+  - cis
+ides:
+  - claude-code
+  - codex
+  - cursor
+  - opencode
+  - cline
+  - crush
+  - gemini
+  - kilo
+  - qwen
+  - roo

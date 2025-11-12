@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.fms.local/delivery/status.updated.v1.json",
+  "title": "Delivery Status Updated v1",
+  "type": "object",
+  "allOf": [{"$ref": "_common.json"}],
+  "properties": {
+    "event": {
+      "type": "object",
+      "properties": {
+        "taskId": {"type": "string"},
+        "status": {
+          "type": "string",
+          "enum": ["Pending","Scheduled","InTransit","Arrived","Delivered","Exception"]
+        },
+        "subtype": {"type": "string"},
+        "reason": {"type": "string"}
+      },
+      "required": ["taskId", "status"]
+    }
+  },
+  "required": ["eventId", "specVersion", "occurredAt", "tenantId", "producer", "event"],
+  "additionalProperties": false
+}

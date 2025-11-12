@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.fms.local/ingestion/order.ingested.v1.json",
+  "title": "Order Ingested v1",
+  "type": "object",
+  "allOf": [{"$ref": "_common.json"}],
+  "properties": {
+    "event": {
+      "type": "object",
+      "properties": {
+        "orderId": {"type": "string"},
+        "externalId": {"type": "string"},
+        "sourceSystem": {"type": "string"},
+        "priority": {"type": "string", "enum": ["high", "medium", "low"]},
+        "customer": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "address": {"type": "string"},
+            "lat": {"type": "number"},
+            "lon": {"type": "number"},
+            "contact": {"type": "string"}
+          },
+          "required": ["address"]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sku": {"type": "string"},
+              "qty": {"type": "number", "minimum": 0},
+              "weightKg": {"type": "number", "minimum": 0},
+              "volumeM3": {"type": "number", "minimum": 0}
+            },
+            "required": ["sku", "qty"]
+          },
+          "minItems": 1
+        },
+        "deliveryWindow": {
+          "type": "object",
+          "properties": {
+            "start": {"type": "string", "format": "date-time"},
+            "end": {"type": "string", "format": "date-time"}
+          },
+          "required": ["start", "end"]
+        }
+      },
+      "required": ["orderId", "priority", "customer", "items", "deliveryWindow"]
+    }
+  },
+  "required": ["eventId", "specVersion", "occurredAt", "tenantId", "producer", "event"],
+  "additionalProperties": false
+}

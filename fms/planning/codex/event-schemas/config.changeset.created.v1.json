@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.fms.local/config/changeset.created.v1.json",
+  "title": "Config Change Set Created v1",
+  "type": "object",
+  "allOf": [{"$ref": "_common.json"}],
+  "properties": {
+    "event": {
+      "type": "object",
+      "properties": {
+        "changeSetId": {"type": "string"},
+        "title": {"type": "string"},
+        "createdBy": {"type": "string"},
+        "scheduledFor": {"type": "string", "format": "date-time"}
+      },
+      "required": ["changeSetId", "title", "createdBy"]
+    }
+  },
+  "required": ["eventId", "specVersion", "occurredAt", "tenantId", "producer", "event"],
+  "additionalProperties": false
+}

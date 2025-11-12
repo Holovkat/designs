@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.fms.local/integration/flow.failed.v1.json",
+  "title": "Integration Flow Failed v1",
+  "type": "object",
+  "allOf": [{"$ref": "_common.json"}],
+  "properties": {
+    "event": {
+      "type": "object",
+      "properties": {
+        "flowName": {"type": "string"},
+        "flowVersion": {"type": "string"},
+        "externalSystem": {"type": "string"},
+        "operation": {"type": "string"},
+        "errorClass": {"type": "string"},
+        "errorMessage": {"type": "string"},
+        "retryable": {"type": "boolean"}
+      },
+      "required": ["flowName","externalSystem","operation","errorClass","retryable"]
+    }
+  },
+  "required": ["eventId","specVersion","occurredAt","tenantId","producer","event"],
+  "additionalProperties": false
+}

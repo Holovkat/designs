@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/fms/order-ingest.schema.json",
+  "title": "ERP Order Ingestion Batch",
+  "type": "object",
+  "properties": {
+    "batch_id": {"type": "string"},
+    "orders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "external_order_id": {"type": "string", "minLength": 1},
+          "planning_status": {"type": "string", "enum": ["forecast","provisional","firm"]},
+          "auto_firm": {"type": "boolean"},
+          "firm_by_at": {"type": "string", "format": "date-time"},
+          "not_before_at": {"type": "string", "format": "date-time"},
+          "scenario_id": {"type": "string"},
+          "plan_version": {"type": "integer", "minimum": 0},
+          "account": {
+            "type": "object",
+            "properties": {
+              "code": {"type": "string"},
+              "name": {"type": "string"}
+            },
+            "required": ["code"],
+            "additionalProperties": false
+          },
+          "order_type": {"type": "string", "enum": ["Standard","HighValue","DG","TemperatureControlled","Oversized","Express","Return"]},
+          "priority": {"type": "string", "enum": ["High","Medium","Low"]},
+          "order_value_aud": {"type": "number", "minimum": 0},
+          "pickup": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "type": "object",
+                "properties": {
+                  "line1": {"type": "string"},
+                  "line2": {"type": "string"},
+                  "city": {"type": "string"},
+                  "state": {"type": "string"},
+                  "postcode": {"type": "string"},
+                  "country": {"type": "string"}
+                },
+                "required": ["line1","city","state","postcode","country"],
+                "additionalProperties": false
+              },
+              "lat": {"type": "number"},
+              "lon": {"type": "number"},
+              "window_start": {"type": "string", "format": "date-time"},
+              "window_end": {"type": "string", "format": "date-time"},
+              "warehouse_id": {"type": "string"}
+            },
+            "required": ["address"],
+            "additionalProperties": false
+          },
+          "dropoff": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "type": "object",
+                "properties": {
+                  "line1": {"type": "string"},
+                  "line2": {"type": "string"},
+                  "city": {"type": "string"},
+                  "state": {"type": "string"},
+                  "postcode": {"type": "string"},
+                  "country": {"type": "string"}
+                },
+                "required": ["line1","city","state","postcode","country"],
+                "additionalProperties": false
+              },
+              "lat": {"type": "number"},
+              "lon": {"type": "number"},
+              "window_start": {"type": "string", "format": "date-time"},
+              "window_end": {"type": "string", "format": "date-time"}
+            },
+            "required": ["address"],
+            "additionalProperties": false
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "line_id": {"type": "string"},
+                "gtin": {"type": "string"},
+                "sku": {"type": "string"},
+                "desc": {"type": "string"},
+                "qty": {"type": "number", "minimum": 0},
+                "weight_kg": {"type": "number", "minimum": 0},
+                "volume_m3": {"type": "number", "minimum": 0}
+              },
+              "required": ["line_id","qty"],
+              "oneOf": [
+                {"required": ["gtin"]},
+                {"required": ["sku"]}
+              ],
+              "additionalProperties": false
+            }
+          },
+          "constraints": {
+            "type": "object",
+            "properties": {
+              "dg_class": {"type": ["string","null"]},
+              "UN_number": {"type": ["string","null"]},
+              "packing_group": {"type": ["string","null"]},
+              "temp_min": {"type": ["number","null"]},
+              "temp_max": {"type": ["number","null"]}
+            },
+            "additionalProperties": false
+          },
+          "notes": {"type": "string"},
+          "metadata": {"type": "object"}
+        },
+        "required": ["external_order_id","account","order_type","priority","pickup","dropoff","items"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["orders"],
+  "additionalProperties": false
+}

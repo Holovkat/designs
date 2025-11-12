@@ -1,0 +1,163 @@
+version: '3.9'
+
+name: fms-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    profiles: [core]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fms}
+      POSTGRES_DB: ${POSTGRES_DB:-fms}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    profiles: [core]
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  n8n:
+    image: n8nio/n8n:1.75.0
+    profiles: [core]
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    environment:
+      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-dev_key_change_me}
+      # Queue mode
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: 6379
+      # DB
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB:-fms}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER:-fms}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:-fms}
+      # Security
+      N8N_DISABLE_PRODUCTION_MAIN_PROCESS: 'true'
+      N8N_SECURE_COOKIE: 'false'
+      # Webhook URLs
+      WEBHOOK_URL: ${WEBHOOK_URL:-http://localhost:5678/}
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  n8n-worker:
+    image: n8nio/n8n:1.75.0
+    profiles: [core]
+    restart: unless-stopped
+    depends_on:
+      - n8n
+    environment:
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-dev_key_change_me}
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: 6379
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB:-fms}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER:-fms}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:-fms}
+    command: n8n worker --concurrency=${N8N_WORKER_CONCURRENCY:-5}
+
+  redpanda:
+    image: redpandadata/redpanda:v24.2.13
+    profiles: [events]
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=1G
+      - --reserve-memory=0M
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+      - --pandaproxy-addr=0.0.0.0:8082
+      - --advertise-pandaproxy-addr=redpanda:8082
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092
+      - --rpc-addr=0.0.0.0:33145
+      - --advertise-rpc-addr=redpanda:33145
+    ports:
+      - "9092:9092"
+      - "8082:8082"
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster info -X brokers=redpanda:9092 >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    profiles: [events]
+    ports:
+      - "${KAFKA_UI_PORT:-8080}:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: redpanda:9092
+      KAFKA_CLUSTERS_0_READONLY: 'false'
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+  localstack:
+    image: localstack/localstack:3
+    profiles: [aux]
+    environment:
+      SERVICES: s3
+      DEBUG: '0'
+      LOCALSTACK_AUTH_TOKEN: ${LOCALSTACK_AUTH_TOKEN:-}
+    ports:
+      - "${LOCALSTACK_PORT:-4566}:4566"
+    volumes:
+      - "./localstack:/var/lib/localstack"
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    profiles: [aux]
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # UI
+
+  osrm:
+    image: ghcr.io/project-osrm/osrm-backend:latest
+    profiles: [routing]
+    command: ["osrm-routed", "--algorithm", "mld", "/data/map.osrm"]
+    ports:
+      - "${OSRM_PORT:-5000}:5000"
+    volumes:
+      - osrmdata:/data
+    # Note: Prepare data volume with a small extract when needed.
+
+volumes:
+  pgdata:
+  n8n_data:
+  osrmdata:
+
