@@ -1,0 +1,1165 @@
+[
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "market-research.md",
+      "current-state.md",
+      "business-brief.md"
+    ],
+    "instruction": "As the Analyst agent, perform market research and competitor analysis for the RAG system. Identify three existing products or platforms offering similar dual-output (file + Base64) RAG workflows, compare their features, pricing, and differentiation, and produce a project brief document in markdown.",
+    "expected_output": "## Project Brief\n### Market Overview\n...\n### Competitor Comparison\n| Product | Dual-Output Support | Pricing | Key Weakness |\n...\n### Opportunity & Recommendation\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "business-brief.md",
+      "current-state.md",
+      "market-research.md"
+    ],
+    "instruction": "Conduct user interviews to gather requirements and pain points for the RAG system. Summarize findings and desired features in a project brief in markdown, including user personas and key insights.",
+    "expected_output": "## Project Brief\n### User Personas\n...\n### Key Pain Points\n...\n### Desired Features\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "user-feedback.md",
+      "current-state.md",
+      "market-research.md"
+    ],
+    "instruction": "Analyze usage data from existing workflow systems to identify performance bottlenecks relevant to the RAG solution. Provide a report with recommendations for improvement.",
+    "expected_output": "## Usage Analysis Report\n### Data Summary\n...\n### Performance Bottlenecks\n...\n### Recommendations\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "business-brief.md",
+      "current-state.md",
+      "market-research.md"
+    ],
+    "instruction": "Research best practices for embedding metadata into Supabase vector stores for document retrieval. Provide an analysis document outlining recommended approaches and trade-offs.",
+    "expected_output": "## Metadata Embedding Analysis\n### Best Practices\n...\n### Recommended Approaches\n...\n### Trade-offs\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "user-feedback.md",
+      "market-research.md",
+      "current-state.md"
+    ],
+    "instruction": "Assess regulatory compliance considerations, such as data privacy and export control, for storing and retrieving user documents in Supabase. Provide a compliance analysis report.",
+    "expected_output": "## Compliance Analysis\n### Data Privacy Considerations\n...\n### Export Control Considerations\n...\n### Recommendations\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "user-feedback.md",
+      "business-brief.md",
+      "current-state.md"
+    ],
+    "instruction": "Identify and evaluate open-source libraries for file conversion (PDF to text, Excel to CSV) to integrate into the RAG system. Provide a vendor evaluation summary.",
+    "expected_output": "## Library Evaluation Summary\n### Candidate Libraries\n...\n### Evaluation Criteria\n...\n### Recommendations\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "business-brief.md",
+      "user-feedback.md",
+      "market-research.md"
+    ],
+    "instruction": "Conduct a risk assessment on the dual-output API that returns both file and Base64 encoded content. Evaluate potential security vulnerabilities and propose mitigation strategies.",
+    "expected_output": "## Risk Assessment\n### Potential Vulnerabilities\n...\n### Impact Analysis\n...\n### Mitigation Strategies\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "current-state.md",
+      "market-research.md",
+      "user-feedback.md"
+    ],
+    "instruction": "Study adoption of n8n in workflow automation across industries to identify potential improvements for integration with the RAG system. Provide insights and recommendations in a report.",
+    "expected_output": "## n8n Adoption Study\n### Industry Use Cases\n...\n### Integration Opportunities\n...\n### Recommendations\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "user-feedback.md",
+      "current-state.md",
+      "business-brief.md"
+    ],
+    "instruction": "Analyze competitor pricing models for RAG services and propose a pricing strategy for our system that includes dual-output features.",
+    "expected_output": "## Pricing Strategy Report\n### Competitor Pricing Models\n...\n### Pricing Recommendations\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "business-brief.md",
+      "market-research.md",
+      "current-state.md"
+    ],
+    "instruction": "Collect and interpret metrics on user engagement with the gamified component of the RAG system. Provide recommendations for improving user retention and engagement.",
+    "expected_output": "## Gamification Engagement Analysis\n### Engagement Metrics\n...\n### User Feedback\n...\n### Improvement Recommendations\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "prd.md", "user-feedback.md"],
+    "instruction": "Develop a product requirements document (PRD) based on the analyst's project brief and user research. The PRD should outline features, user stories, acceptance criteria, and priorities for the RAG system.",
+    "expected_output": "## Product Requirements Document\n### Features\n...\n### User Stories\n...\n### Acceptance Criteria\n...\n### Priority Matrix\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "user-feedback.md", "project-brief.md"],
+    "instruction": "Define the minimum viable product (MVP) scope for the RAG system, justifying which features to include and which to defer. Produce a document summarizing the MVP plan.",
+    "expected_output": "## MVP Definition\n### Included Features\n...\n### Deferred Features\n...\n### Rationale\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["user-feedback.md", "prd.md", "project-brief.md"],
+    "instruction": "Create a feature backlog for the next two sprints based on stakeholder feedback and business priorities. Present the backlog with estimated effort and priority.",
+    "expected_output": "## Sprint Backlog\n### Sprint 1\n- Story 1: ... (Effort)\n...\n### Sprint 2\n- Story 1: ... (Effort)\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "analyst-brief.md",
+      "market-research.md",
+      "user-feedback.md"
+    ],
+    "instruction": "Outline success metrics (KPIs) for the initial launch and post-launch evaluation of the RAG system, including user adoption, performance, and user satisfaction.",
+    "expected_output": "## Success Metrics\n### Adoption Metrics\n...\n### Performance Metrics\n...\n### User Satisfaction\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "analyst-brief.md",
+      "market-research.md",
+      "project-brief.md"
+    ],
+    "instruction": "Create a release plan with timeline, milestones, and dependencies for launching the RAG system. Include risk mitigation strategies for potential delays.",
+    "expected_output": "## Release Plan\n### Timeline\n...\n### Milestones\n...\n### Dependencies\n...\n### Risk Mitigation\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "market-research.md", "prd.md"],
+    "instruction": "Prioritize features using the MoSCoW method (Must have, Should have, Could have, Won't have). Produce a ranked backlog with justification for each ranking.",
+    "expected_output": "## Feature Prioritization\n### Must Have\n...\n### Should Have\n...\n### Could Have\n...\n### Won't Have\n...\n### Justification\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "user-feedback.md",
+      "analyst-brief.md",
+      "market-research.md"
+    ],
+    "instruction": "Update the PRD to include gamified user engagement features, ensuring alignment with overall product goals. Describe how these features contribute to user retention.",
+    "expected_output": "## Updated PRD\n### Gamification Features\n...\n### Impact on User Retention\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "market-research.md", "analyst-brief.md"],
+    "instruction": "Define API endpoints and feature requirements to support dual output (file + Base64) and communicate these needs to the architect and developer teams.",
+    "expected_output": "## Dual Output Requirements\n### API Endpoints\n...\n### Feature Descriptions\n...\n### Communication Notes\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "user-feedback.md",
+      "project-brief.md",
+      "market-research.md"
+    ],
+    "instruction": "Collaborate with the UX designer to ensure that the product requirements align with user experience designs. Document any changes needed in the PRD.",
+    "expected_output": "## UX Alignment Report\n### Design Adjustments\n...\n### Updated Requirements\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "prd.md", "user-feedback.md"],
+    "instruction": "Draft the go-to-market strategy for the RAG system, including launch activities, marketing channels, and user onboarding plans.",
+    "expected_output": "## Go-to-Market Strategy\n### Launch Activities\n...\n### Marketing Channels\n...\n### User Onboarding\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "analyst-brief.md", "project-brief.md"],
+    "instruction": "Design a modular system architecture for the RAG system that supports multiple file types (PDF, CSV, Excel, Google Docs), Supabase vector storage, session handling for document ownership, dual output (file + Base64), viewport configuration, and Docker deployment. Provide diagrams, data flows, API endpoints, and trade-off analysis in the architecture document.",
+    "expected_output": "## Architecture Document\n### High-Level Overview\n...\n### Component Diagram\n...\n### Data Flow\n...\n### API Endpoints\n...\n### Trade-off Analysis\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "prd.md", "arch.md"],
+    "instruction": "Define the database schema for storing vectors, metadata, session information, and gamification data in Supabase. Provide ER diagrams and justification for key design decisions.",
+    "expected_output": "## Database Schema Design\n### ER Diagrams\n...\n### Table Definitions\n...\n### Design Justification\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["analyst-brief.md", "arch.md", "project-brief.md"],
+    "instruction": "Draft an API gateway design for the RAG system, detailing endpoint routes, authentication mechanisms, rate limiting, and integration with internal services. Include a sequence diagram.",
+    "expected_output": "## API Gateway Design\n### Endpoint Routes\n...\n### Authentication & Authorization\n...\n### Rate Limiting\n...\n### Sequence Diagram\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "prd.md", "previous-arch.md"],
+    "instruction": "Create a deployment architecture supporting scalability and high availability using Docker containers and orchestration tools. Include network topology and resilience considerations.",
+    "expected_output": "## Deployment Architecture\n### Container Orchestration\n...\n### Network Topology\n...\n### High Availability Strategies\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["analyst-brief.md", "previous-arch.md", "arch.md"],
+    "instruction": "Develop detailed data flow diagrams for file ingestion and retrieval, showing how data moves through the system from upload to embedding, storage, and retrieval.",
+    "expected_output": "## Data Flow Diagrams\n### Ingestion Flow\n...\n### Retrieval Flow\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "arch.md", "analyst-brief.md"],
+    "instruction": "Assess trade-offs between using a microservices architecture versus a monolithic approach for the RAG system. Recommend the best approach and justify your recommendation.",
+    "expected_output": "## Architecture Trade-off Analysis\n### Microservices vs Monolith\n...\n### Recommended Approach\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["previous-arch.md", "project-brief.md", "arch.md"],
+    "instruction": "Design a security architecture addressing data encryption at rest and in transit, access control, and secure API communication for the RAG system.",
+    "expected_output": "## Security Architecture\n### Encryption Strategies\n...\n### Access Control\n...\n### Secure API Communication\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["previous-arch.md", "prd.md", "analyst-brief.md"],
+    "instruction": "Design integration points with external services such as Google Drive and n8n connectors. Outline how authentication and data transfer occur, including error handling mechanisms.",
+    "expected_output": "## Integration Design\n### External Service Interfaces\n...\n### Authentication Flow\n...\n### Error Handling\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["analyst-brief.md", "prd.md", "previous-arch.md"],
+    "instruction": "Propose a caching layer strategy to improve retrieval performance in the RAG system. Specify cache invalidation rules and expected performance gains.",
+    "expected_output": "## Caching Strategy\n### Cache Layer Design\n...\n### Invalidation Rules\n...\n### Performance Analysis\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["previous-arch.md", "prd.md", "arch.md"],
+    "instruction": "Define a failover and disaster recovery architecture for the system, including backup strategies, recovery point objectives (RPO), and recovery time objectives (RTO).",
+    "expected_output": "## Disaster Recovery Plan\n### Failover Architecture\n...\n### Backup Strategies\n...\n### RPO & RTO\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "arch.md", "release-plan.md"],
+    "instruction": "Develop a sprint plan for the RAG project, outlining sprint goals, tasks, and timelines for each specialized agent (Analyst, PM, Architect, Developer, etc.).",
+    "expected_output": "## Sprint Plan\n### Sprint Goals\n...\n### Tasks by Role\n...\n### Timeline\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["release-plan.md", "arch.md", "prd.md"],
+    "instruction": "Facilitate the daily stand-up schedule and create notes summarizing discussions, blockers, and action items for each role.",
+    "expected_output": "## Stand-up Notes\n### Date\n...\n### Participants\n...\n### Blockers & Action Items\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "prd.md", "release-plan.md"],
+    "instruction": "Create a retrospective plan to evaluate the previous sprint, including agenda, feedback collection methods, and improvement actions.",
+    "expected_output": "## Retrospective Plan\n### Agenda\n...\n### Feedback Methods\n...\n### Action Items\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "sprint-backlog.md", "arch.md"],
+    "instruction": "Ensure tasks are evenly distributed across the team and update the Kanban board accordingly. Document the updated board status.",
+    "expected_output": "## Kanban Board Update\n### Column Summary\n...\n### Task Distribution\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "prd.md", "project-brief.md"],
+    "instruction": "Identify and resolve impediments to progress within the team. Document impediments and the steps taken to remove them.",
+    "expected_output": "## Impediment Log\n### Identified Impediments\n...\n### Resolution Steps\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "project-brief.md", "release-plan.md"],
+    "instruction": "Measure team velocity and adjust future sprint planning accordingly. Provide a report on velocity trends and recommendations.",
+    "expected_output": "## Velocity Report\n### Sprint Velocity Data\n...\n### Analysis\n...\n### Recommendations\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "release-plan.md", "prd.md"],
+    "instruction": "Coordinate communication between cross-functional teams (development, UX, QA) to ensure alignment and remove misunderstandings.",
+    "expected_output": "## Communication Report\n### Coordination Activities\n...\n### Outcomes\n...\n### Follow-ups\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "arch.md", "release-plan.md"],
+    "instruction": "Document lessons learned and process improvements identified during the sprint. Provide a summary of continuous improvement opportunities.",
+    "expected_output": "## Lessons Learned\n### What Went Well\n...\n### What Could Be Improved\n...\n### Action Plan\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "release-plan.md", "arch.md"],
+    "instruction": "Organize sprint demos to showcase progress to stakeholders and collect feedback. Document feedback and action items.",
+    "expected_output": "## Sprint Demo Summary\n### Highlights\n...\n### Stakeholder Feedback\n...\n### Action Items\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "release-plan.md", "sprint-backlog.md"],
+    "instruction": "Coach the team on following BMAD-METHOD processes and ensure adherence to the framework. Provide a coaching report outlining actions taken.",
+    "expected_output": "## Coaching Report\n### BMAD-METHOD Principles Reviewed\n...\n### Observations\n...\n### Recommendations\n..."
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["deployment-spec.md", "arch.md", "api-spec.md"],
+    "instruction": "Implement a Node.js module that ingests PDF files from Google Drive, converts them to text, extracts embeddings, stores vectors in Supabase, and returns both the processed file and a Base64 encoded version. Include code, Dockerfile, README, and Base64 output.",
+    "expected_output": "```javascript\n// ingest_pdf.js ...\n```\nDockerfile ...\nREADME.md ...\n(Base64: ... )"
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["story.md", "api-spec.md", "arch.md"],
+    "instruction": "Write a Python script to handle Excel file ingestion: convert to CSV, extract embeddings, store vectors in Supabase, and return dual outputs. Provide the code file, Dockerfile, Base64 encoded code, and README.",
+    "expected_output": "```python\n# ingest_excel.py ...\n```\nDockerfile ...\nREADME.md ...\n(Base64: ... )"
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["api-spec.md", "arch.md", "deployment-spec.md"],
+    "instruction": "Develop an n8n workflow that orchestrates document ingestion and retrieval across the RAG system. Provide the workflow JSON, documentation, and a Base64 encoded version.",
+    "expected_output": "Workflow JSON ...\nDocumentation ...\n(Base64: ... )"
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["deployment-spec.md", "arch.md", "prd.md"],
+    "instruction": "Implement an API endpoint to handle retrieval requests: accept user queries, query the Supabase vector store, and return top results along with dual outputs. Include code, API spec, and tests.",
+    "expected_output": "```javascript\n// retrieve_endpoint.js ...\n```\nAPI Spec ...\nTest Cases ..."
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["api-spec.md", "arch.md", "prd.md"],
+    "instruction": "Create a session handler module to assign document ownership and maintain session metadata. Provide code, Dockerfile, README, and Base64 encoded code.",
+    "expected_output": "```javascript\n// session_handler.js ...\n```\nDockerfile ...\nREADME.md ...\n(Base64: ... )"
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["story.md", "prd.md", "deployment-spec.md"],
+    "instruction": "Refactor existing code to separate concerns into microservices for ingestion, retrieval, gamification, and session handling. Provide updated code and service definitions.",
+    "expected_output": "Updated microservices code ...\nService Definitions ..."
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["api-spec.md", "deployment-spec.md", "arch.md"],
+    "instruction": "Implement caching using Redis to store top retrieval results and reduce query latency. Provide the caching module code, configuration, and integration details.",
+    "expected_output": "Caching module code ...\nConfiguration ...\nIntegration Guide ..."
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["deployment-spec.md", "story.md", "api-spec.md"],
+    "instruction": "Write comprehensive error handling and logging for all modules in the RAG system. Provide code, configuration, and documentation.",
+    "expected_output": "Error handling code ...\nLogging Configuration ...\nDocumentation ..."
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["api-spec.md", "story.md", "prd.md"],
+    "instruction": "Develop functions to handle Base64 encoding and decoding for files and text. Include code and unit tests.",
+    "expected_output": "```javascript\n// base64_utils.js ...\n```\nUnit Tests ..."
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["story.md", "api-spec.md", "deployment-spec.md"],
+    "instruction": "Implement integration tests for each API endpoint in the RAG system. Provide test scripts and coverage reports.",
+    "expected_output": "Integration test scripts ...\nCoverage Reports ..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["security-spec.md", "story.md", "prd.md"],
+    "instruction": "Write a comprehensive test plan covering all modules of the RAG system: ingestion, retrieval, API endpoints, session handling, and gamification. Include objectives, scope, and test strategy.",
+    "expected_output": "## Test Plan\n### Objectives\n...\n### Scope\n...\n### Test Strategy\n..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["story.md", "arch.md", "test-plan.md"],
+    "instruction": "Develop unit tests for file conversion modules (PDF to text, Excel to CSV). Provide test cases and expected results.",
+    "expected_output": "Unit test cases ...\nExpected Results ..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["story.md", "prd.md", "security-spec.md"],
+    "instruction": "Create a performance test to measure retrieval latency under various loads. Document the test setup, execution steps, and performance metrics.",
+    "expected_output": "## Performance Test Plan\n### Test Setup\n...\n### Execution Steps\n...\n### Metrics\n..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["security-spec.md", "story.md", "arch.md"],
+    "instruction": "Design a load testing strategy for concurrent users interacting with the RAG system. Include the tool selection, scenarios, and evaluation criteria.",
+    "expected_output": "## Load Testing Strategy\n### Tool Selection\n...\n### Test Scenarios\n...\n### Evaluation Criteria\n..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["security-spec.md", "prd.md", "test-plan.md"],
+    "instruction": "Develop test cases for security features, including authentication and authorization for API endpoints. Provide test scripts and expected outcomes.",
+    "expected_output": "Security test scripts ...\nExpected Outcomes ..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["test-plan.md", "story.md", "prd.md"],
+    "instruction": "Write integration tests for n8n workflows to ensure orchestrated tasks behave as expected. Provide test scenarios and results.",
+    "expected_output": "n8n integration test scenarios ...\nResults ..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["test-plan.md", "security-spec.md", "story.md"],
+    "instruction": "Create acceptance testing criteria aligned with the PRD, including user-facing features and technical requirements. Provide acceptance test cases.",
+    "expected_output": "## Acceptance Test Cases\n..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "story.md", "security-spec.md"],
+    "instruction": "Develop an automated regression testing pipeline for the RAG system. Outline the framework, continuous integration setup, and reporting.",
+    "expected_output": "## Regression Testing Pipeline\n### Framework\n...\n### CI Setup\n...\n### Reporting\n..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["story.md", "security-spec.md", "test-plan.md"],
+    "instruction": "Design a test suite to ensure the integrity of Base64 encoding and decoding functions. Provide test scripts and coverage details.",
+    "expected_output": "Base64 test scripts ...\nCoverage Details ..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["story.md", "security-spec.md", "test-plan.md"],
+    "instruction": "Create metrics collection for test coverage and bug tracking. Provide templates and guidelines for reporting.",
+    "expected_output": "Test coverage metrics template ...\nBug tracking guidelines ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "user-feedback.md",
+      "analyst-brief.md",
+      "ux-guide.md"
+    ],
+    "instruction": "Design the user interface flow for document upload and retrieval, focusing on ease of use and clarity. Provide wireframes and annotations.",
+    "expected_output": "Wireframes ...\nAnnotations ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["user-feedback.md", "prd.md", "ux-guide.md"],
+    "instruction": "Create high-fidelity prototypes for the RAG system, including screens for upload, retrieval, settings, and gamification elements.",
+    "expected_output": "Prototypes (links or images) ...\nDesign notes ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["user-feedback.md", "ux-guide.md", "prd.md"],
+    "instruction": "Design the gamified interface to encourage user engagement. Include scoring indicators, progress bars, and reward notifications.",
+    "expected_output": "Gamification UI mockups ...\nSpecifications ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["analyst-brief.md", "ux-guide.md", "prd.md"],
+    "instruction": "Develop a style guide with color palette, typography, and iconography for the RAG system.",
+    "expected_output": "Style Guide ...\nColor Palette ...\nTypography ...\nIconography ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "user-feedback.md", "analyst-brief.md"],
+    "instruction": "Design error messages and status notifications that are user-friendly and informative. Provide design examples and guidelines.",
+    "expected_output": "Error message designs ...\nStatus notification examples ...\nGuidelines ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["ux-guide.md", "user-feedback.md", "prd.md"],
+    "instruction": "Plan a responsive design for both desktop and mobile environments. Provide layout variations and breakpoints.",
+    "expected_output": "Responsive design layouts ...\nBreakpoints ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["user-feedback.md", "ux-guide.md", "prd.md"],
+    "instruction": "Conduct usability tests on early prototypes and incorporate user feedback into improved designs. Summarize findings and design adjustments.",
+    "expected_output": "## Usability Test Report\n### Findings\n...\n### Design Adjustments\n..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "analyst-brief.md", "ux-guide.md"],
+    "instruction": "Collaborate with developers to ensure that UI designs are implementable. Provide a developer handoff package with specifications and assets.",
+    "expected_output": "Developer handoff package ...\nAsset files ...\nSpecifications ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "user-feedback.md",
+      "analyst-brief.md",
+      "ux-guide.md"
+    ],
+    "instruction": "Design the settings page for API configuration, allowing users to manage API keys, endpoints, and preferences. Provide mockups and interaction flows.",
+    "expected_output": "Settings page mockups ...\nInteraction flows ..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["ux-guide.md", "analyst-brief.md", "prd.md"],
+    "instruction": "Create a diagram of the user journey across the system from onboarding to advanced usage. Highlight key touchpoints and emotions.",
+    "expected_output": "User journey diagram ...\nTouchpoints analysis ...\nEmotional journey ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "user-guide.md", "arch.md"],
+    "instruction": "Write comprehensive documentation for all API endpoints in the RAG system, including request/response examples, authentication details, and error codes.",
+    "expected_output": "API documentation ...\nRequest/Response examples ...\nError codes ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["test-plan.md", "prd.md", "arch.md"],
+    "instruction": "Create an onboarding guide for new developers joining the RAG project. Include project overview, setup instructions, and workflow orientation.",
+    "expected_output": "Developer onboarding guide ...\nSetup instructions ...\nWorkflow overview ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "arch.md", "user-guide.md"],
+    "instruction": "Document the n8n workflow configuration, detailing each node, its purpose, and expected inputs/outputs.",
+    "expected_output": "n8n workflow documentation ...\nNode descriptions ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["user-guide.md", "test-plan.md", "prd.md"],
+    "instruction": "Write a help guide for end users describing how to upload documents, retrieve results, and understand the dual outputs. Include troubleshooting tips.",
+    "expected_output": "User help guide ...\nTroubleshooting tips ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "api-spec.md", "prd.md"],
+    "instruction": "Create release notes for the latest version of the RAG system, highlighting new features, bug fixes, and known issues.",
+    "expected_output": "Release notes ...\nNew features ...\nBug fixes ...\nKnown issues ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["api-spec.md", "user-guide.md", "test-plan.md"],
+    "instruction": "Document the testing plan and summarize coverage results for stakeholders. Provide charts or tables showing coverage percentages.",
+    "expected_output": "Testing plan documentation ...\nCoverage summary ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["api-spec.md", "test-plan.md", "arch.md"],
+    "instruction": "Draft an architecture overview for non-technical stakeholders, simplifying complex concepts into clear narratives and visuals.",
+    "expected_output": "Architecture overview document ...\nSimplified diagrams ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "test-plan.md", "user-guide.md"],
+    "instruction": "Write a user manual for the gamified interface, explaining how points, badges, and leaderboards work. Include screenshots or illustrations.",
+    "expected_output": "Gamification user manual ...\nScreenshots ...\nIllustrations ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["user-guide.md", "arch.md", "prd.md"],
+    "instruction": "Create diagrams illustrating system components, data flows, and integrations. Provide both high-level and detailed views.",
+    "expected_output": "System diagrams ...\nHigh-level view ...\nDetailed view ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["user-guide.md", "api-spec.md", "test-plan.md"],
+    "instruction": "Maintain a glossary of key terms used throughout the project documentation, ensuring consistency and clarity.",
+    "expected_output": "Project glossary ...\nTerm definitions ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "prd.md", "analyst-brief.md"],
+    "instruction": "Design the gamification strategy for the RAG system to encourage daily document uploads. Define goals, rewards, and user feedback mechanisms.",
+    "expected_output": "Gamification strategy document ...\nGoals ...\nRewards ...\nFeedback mechanisms ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "game-design.md",
+      "analyst-brief.md",
+      "gamification-report.md"
+    ],
+    "instruction": "Create a scoring system for user actions such as uploads, retrievals, and engagement. Define how points are earned and spent.",
+    "expected_output": "Scoring system specification ...\nPoint allocation ...\nPoint redemption ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "gamification-report.md", "prd.md"],
+    "instruction": "Design achievement badges and reward tiers for user milestones. Provide descriptions and criteria for unlocking each badge.",
+    "expected_output": "Badge descriptions ...\nReward tiers ...\nUnlock criteria ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "prd.md", "gamification-report.md"],
+    "instruction": "Outline narrative elements or themes to make the gamified experience engaging and cohesive. Provide story arcs or themes.",
+    "expected_output": "Narrative elements ...\nThemes ...\nStory arcs ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "game-design.md",
+      "gamification-report.md",
+      "analyst-brief.md"
+    ],
+    "instruction": "Design user progression through levels based on engagement and achievements. Define level thresholds and rewards.",
+    "expected_output": "Level progression plan ...\nThresholds ...\nRewards ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "prd.md", "gamification-report.md"],
+    "instruction": "Develop challenge and challenge-of-the-day concepts to keep users motivated. Provide challenge descriptions and reward structures.",
+    "expected_output": "Challenge descriptions ...\nDaily challenge plan ...\nReward structure ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["gamification-report.md", "game-design.md", "prd.md"],
+    "instruction": "Design a scoreboard interface to display user progress, including rankings and personal achievements. Describe UI layout and data displayed.",
+    "expected_output": "Scoreboard interface design ...\nUI layout ...\nData elements ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "gamification-report.md", "prd.md"],
+    "instruction": "Define rules for awarding points and unlocking features to prevent exploitation. Describe anti-cheat measures.",
+    "expected_output": "Point awarding rules ...\nUnlock criteria ...\nAnti-cheat measures ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["analyst-brief.md", "game-design.md", "prd.md"],
+    "instruction": "Collaborate with the UX designer to integrate game elements seamlessly into the main UI. Provide integration guidelines.",
+    "expected_output": "Integration guidelines ...\nMockups ...\nCollaboration notes ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "analyst-brief.md", "game-design.md"],
+    "instruction": "Plan A/B tests for gamification features to evaluate their impact on user engagement. Outline test variants, metrics, and evaluation methods.",
+    "expected_output": "A/B test plan ...\nVariants ...\nMetrics ...\nEvaluation methods ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "game-api-spec.md", "arch.md"],
+    "instruction": "Implement the backend for the scoring system, including database interactions and point calculation logic. Provide code, database schema, and unit tests.",
+    "expected_output": "Scoring backend code ...\nDatabase schema ...\nUnit tests ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "game-design.md", "prd.md"],
+    "instruction": "Create the badge system and integrate it with user profiles. Provide code, API endpoints, and documentation.",
+    "expected_output": "Badge system code ...\nAPI endpoints ...\nDocumentation ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "arch.md", "game-api-spec.md"],
+    "instruction": "Develop leaderboard functionality showing top users based on points and achievements. Provide code, API, and UI integration guidelines.",
+    "expected_output": "Leaderboard code ...\nAPI details ...\nUI integration guide ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "game-api-spec.md", "arch.md"],
+    "instruction": "Implement the frontend UI for the gamified interface, including progress bars, badges, and leaderboards. Provide code and component documentation.",
+    "expected_output": "Gamified UI code ...\nComponent documentation ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "prd.md", "game-api-spec.md"],
+    "instruction": "Integrate gamification features with the session handler to track user sessions and progress. Provide integration code and documentation.",
+    "expected_output": "Integration code ...\nDocumentation ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-api-spec.md", "game-design.md", "arch.md"],
+    "instruction": "Create functions to calculate daily goals and track user progress towards those goals. Provide code and test cases.",
+    "expected_output": "Daily goals functions code ...\nTest cases ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-api-spec.md", "arch.md", "prd.md"],
+    "instruction": "Write code to handle awarding points and unlocking badges when users complete tasks. Provide code and integration tests.",
+    "expected_output": "Awarding points code ...\nIntegration tests ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "prd.md", "game-design.md"],
+    "instruction": "Develop API endpoints for game features such as retrieving user scores, updating progress, and claiming rewards. Provide code, API spec, and tests.",
+    "expected_output": "Game API code ...\nAPI spec ...\nTests ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "prd.md", "game-api-spec.md"],
+    "instruction": "Write tests for gamified modules to ensure correct functionality and data integrity. Provide test scripts and coverage reports.",
+    "expected_output": "Gamified module tests ...\nCoverage reports ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "prd.md", "game-api-spec.md"],
+    "instruction": "Optimize the performance of gamification functions, ensuring minimal latency and efficient database queries. Provide profiling results and optimization strategies.",
+    "expected_output": "Performance optimization report ...\nProfiling results ...\nOptimized code snippets ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["gamification-report.md", "game-design.md", "prd.md"],
+    "instruction": "Design the architecture for the gamified module integrated with the RAG system, including components, data flows, and service boundaries. Provide diagrams and descriptions.",
+    "expected_output": "## Gamification Architecture\n### Components\n...\n### Data Flows\n...\n### Service Boundaries\n..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["gamification-report.md", "game-design.md", "prd.md"],
+    "instruction": "Define the database schema for storing gamification data (points, badges, challenges, leaderboards) in Supabase. Provide diagrams and table definitions.",
+    "expected_output": "## Gamification Database Schema\n### ER Diagrams\n...\n### Table Definitions\n..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "prd.md", "gamification-report.md"],
+    "instruction": "Outline data flow between the gamification backend and the main RAG system, including API calls and event triggers. Provide sequence diagrams.",
+    "expected_output": "Data flow description ...\nSequence diagrams ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "game-design.md", "prd.md"],
+    "instruction": "Ensure scalability of gamification services by proposing infrastructure and design patterns for growth. Provide scalability recommendations.",
+    "expected_output": "Scalability recommendations ...\nInfrastructure design ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "game-design.md", "arch.md"],
+    "instruction": "Design integration with user authentication and session management for secure gamification operations. Provide flow diagrams and security considerations.",
+    "expected_output": "Integration diagrams ...\nSecurity considerations ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["gamification-report.md", "prd.md", "game-design.md"],
+    "instruction": "Plan API interfaces for gamification operations, including endpoints for point updates, badge retrieval, and leaderboard queries. Provide a comprehensive API specification.",
+    "expected_output": "Gamification API specification ...\nEndpoint definitions ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "gamification-report.md", "prd.md"],
+    "instruction": "Define security requirements for gamification data, ensuring protection against tampering and unauthorized access. Provide security architecture.",
+    "expected_output": "Gamification security architecture ...\nThreat model ...\nMitigation strategies ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "prd.md", "arch.md"],
+    "instruction": "Develop service boundaries and microservices for game features such as challenges, scoring, and rewards. Provide a service decomposition diagram.",
+    "expected_output": "Service decomposition diagram ...\nComponent descriptions ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["gamification-report.md", "prd.md", "arch.md"],
+    "instruction": "Design fallback mechanisms to handle gamification service outages, ensuring core RAG functionality remains unaffected. Provide failover strategies.",
+    "expected_output": "Failover strategies ...\nFallback design ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": [
+      "arch.md",
+      "game-design.md",
+      "gamification-report.md"
+    ],
+    "instruction": "Create a deployment strategy for the gamification module, detailing container configurations, CI/CD pipeline, and monitoring.",
+    "expected_output": "Gamification deployment strategy ...\nContainer configs ...\nCI/CD pipeline ...\nMonitoring setup ..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "arch.md", "prd.md"],
+    "instruction": "Oversee the entire BMAD workflow for the RAG project, ensuring all specialized agents follow the framework and processes. Provide a report summarizing adherence and issues.",
+    "expected_output": "## BMAD Workflow Oversight Report\n### Adherence Summary\n...\n### Identified Issues\n...\n### Recommendations\n..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "test-plan.md", "game-design.md"],
+    "instruction": "Coordinate inter-agent communication and document handoffs. Document the communication plan and the handoff protocol.",
+    "expected_output": "## Communication & Handoff Protocol\n### Communication Plan\n...\n### Handoff Steps\n..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "project-brief.md", "prd.md"],
+    "instruction": "Maintain the BMAD process documentation and update guidelines based on lessons learned from the project. Provide updated process documents.",
+    "expected_output": "Updated BMAD process documentation ...\nGuidelines ..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["test-plan.md", "project-brief.md", "arch.md"],
+    "instruction": "Monitor project progress across all roles and adjust tasks or resource allocation as needed. Provide a progress report and recommended adjustments.",
+    "expected_output": "## Project Progress Report\n### Current Status\n...\n### Resource Allocation\n...\n### Recommended Adjustments\n..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["project-brief.md", "test-plan.md", "arch.md"],
+    "instruction": "Conduct training sessions for new team members on BMAD methodology, including role responsibilities, document artifacts, and workflows. Provide training materials and attendance logs.",
+    "expected_output": "Training materials ...\nAttendance logs ...\nSession summary ..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["arch.md", "game-design.md", "project-brief.md"],
+    "instruction": "Evaluate the effectiveness of the BMAD process within the project and implement improvements where necessary. Provide an evaluation report with metrics and action plans.",
+    "expected_output": "## BMAD Process Evaluation\n### Evaluation Metrics\n...\n### Findings\n...\n### Improvement Plan\n..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["test-plan.md", "arch.md", "prd.md"],
+    "instruction": "Ensure compliance with deadlines and quality standards across all roles. Provide a compliance checklist and tracking report.",
+    "expected_output": "Compliance checklist ...\nTracking report ..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["game-design.md", "prd.md", "process-doc.md"],
+    "instruction": "Facilitate resolution of conflicts or overlapping responsibilities among agents. Document conflict resolution processes and outcomes.",
+    "expected_output": "Conflict resolution log ...\nOutcomes ...\nLessons learned ..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["process-doc.md", "arch.md", "game-design.md"],
+    "instruction": "Compile final deliverables from all agents into a release package. Provide a release checklist and summary of contents.",
+    "expected_output": "Release package summary ...\nContents list ...\nChecklist ..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "RAG workflow (n8n + Supabase + Google Drive + dual output + Docker + viewport config)",
+    "context_documents": ["prd.md", "game-design.md", "project-brief.md"],
+    "instruction": "Prepare a project status report for stakeholders summarizing progress, risks, and next steps. Provide charts or tables to illustrate status.",
+    "expected_output": "## Project Status Report\n### Progress Summary\n...\n### Risks\n...\n### Next Steps\n..."
+  },
+  {
+    "role": "Analyst",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": ["system-overview.md", "functional-requirements.md"],
+    "instruction": "Perform market research and competitive analysis for fleet management systems similar to our FMS, which supports up to 500 vehicles and 10,000 daily deliveries and provides real-time visibility, automated scheduling and routing, and integration with existing order/production systems. Summarize market leaders, feature comparisons, and differentiators in a project brief.",
+    "expected_output": "## FMS Market Analysis\n### Competitor Comparison\n...\n### Feature Comparison\n...\n### Differentiators\n..."
+  },
+  {
+    "role": "Product Manager",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": [
+      "system-overview.md",
+      "functional-requirements.md",
+      "scheduling-spec.md"
+    ],
+    "instruction": "Create a Product Requirements Document (PRD) for the FMS capturing functional requirements: automated order ingestion from ERP systems, manual order ingestion via CSV/JSON upload, delivery scheduling based on priority, vehicle capacity and driver availability, dynamic route optimisation using external map APIs, real-time tracking with GPS and telematics, live dashboard with KPI widgets, alerts panel and role-based views. Include user stories and acceptance criteria.",
+    "expected_output": "## Product Requirements Document\n### Functional Requirements\n...\n### User Stories\n...\n### Acceptance Criteria\n..."
+  },
+  {
+    "role": "Architect",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": [
+      "system-overview.md",
+      "architecture-overview.md",
+      "non-functional-requirements.md"
+    ],
+    "instruction": "Design the system architecture for the FMS including modules for: integration service that ingests orders via webhooks or file upload, scheduling service with Gantt view and conflict detection, route optimisation engine using graph-based algorithms and external map APIs, mobile app with turn-by-turn navigation and offline support, real-time tracking and telematics ingestion, and live dashboard with real-time map, KPI widgets and alerts. Ensure scalability to 500 vehicles and 10,000 deliveries, RBAC with audit logging, 99.9% uptime with failover, and API response times under 2 seconds for 95% of calls.",
+    "expected_output": "## FMS Architecture Document\n### System Components\n...\n### Data Flow Diagrams\n...\n### Scalability & Reliability\n...\n### Security & RBAC\n..."
+  },
+  {
+    "role": "Scrum Master",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": ["product-backlog.md", "sprint-plan-template.md"],
+    "instruction": "Develop a sprint plan for implementing FMS features, including tasks for integration ingestion (automatic and manual), scheduling module, route optimisation engine, real-time tracking and dashboard. Allocate tasks to specialised agents and ensure the backlog reflects acceptance criteria such as scheduling tasks within 5 minutes of order ingestion and reoptimisation within 2 minutes.",
+    "expected_output": "## Sprint Plan\n### Sprint Goals\n...\n### Task Assignments\n...\n### Timeline\n..."
+  },
+  {
+    "role": "Developer",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": [
+      "integration-spec.md",
+      "scheduling-spec.md",
+      "route-optimisation-spec.md"
+    ],
+    "instruction": "Implement the order ingestion APIs that poll ERP systems every few minutes and accept manual CSV uploads. Validate data completeness (order ID, customer details, items, priority, delivery window), generate unique delivery task IDs, and log ingestion events. Then implement scheduling API endpoints that create delivery schedules based on priority, vehicle capacity, and driver availability, integrating with the route optimisation service and real-time tracking module.",
+    "expected_output": "Order ingestion API code ...\nScheduling API code ...\nDocumentation ...\nTest cases ..."
+  },
+  {
+    "role": "Test Architect",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": [
+      "test-plan-template.md",
+      "functional-requirements.md",
+      "non-functional-requirements.md"
+    ],
+    "instruction": "Write a comprehensive test plan for the FMS covering integration ingestion (data validation, polling/webhook timing), scheduling algorithms (conflict detection, Gantt chart accuracy), route optimisation (multi-stop routes, external API integration), real-time tracking (GPS frequency, geofence alerts), live dashboard performance (support for 100 concurrent users), and non-functional requirements (system response time <2 seconds for 95% of API calls, 99.9% uptime). Include performance and load testing scenarios.",
+    "expected_output": "## FMS Test Plan\n### Test Objectives\n...\n### Functional Test Cases\n...\n### Performance & Load Tests\n...\n### Acceptance Criteria\n..."
+  },
+  {
+    "role": "UX Designer",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": [
+      "dashboard-design.md",
+      "mobile-app-design.md",
+      "accessibility-guidelines.md"
+    ],
+    "instruction": "Design user interface screens for the FMS: a dispatcher dashboard with an interactive map showing GPS positions of all active vehicles color-coded by status, KPI widgets displaying metrics such as active vehicles, on-time delivery rate, total distance traveled, and pending tasks; alerts panel for traffic delays and vehicle breakdowns; Gantt chart for delivery scheduling with manual adjustments; and role-based dashboards. Also design driver mobile app screens with turn-by-turn navigation, voice guidance, real-time status updates, and proof-of-delivery scanning. Ensure responsive design and compliance with WCAG 2.1 AA.",
+    "expected_output": "Dashboard wireframes ...\nMobile app mockups ...\nStyle guide ...\nAccessibility compliance notes ..."
+  },
+  {
+    "role": "Technical Writer",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": [
+      "api-spec.md",
+      "user-guide-template.md",
+      "release-notes.md"
+    ],
+    "instruction": "Write documentation for the FMS APIs, including order ingestion, scheduling, route optimisation, real-time tracking, and dashboard endpoints. Provide request and response examples, authentication details, and error codes. Create user guides for dispatchers, fleet managers, drivers, and warehouse operators explaining how to use features like scheduling, navigation, proof-of-delivery scanning, and KPI dashboards. Document non-functional requirements and acceptance criteria.",
+    "expected_output": "API documentation ...\nUser guides ...\nNon-functional requirements summary ...\nGlossary ..."
+  },
+  {
+    "role": "Game Designer",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": [
+      "gamification-strategy.md",
+      "driver-performance-metrics.md"
+    ],
+    "instruction": "Propose a gamification strategy for the driver mobile app to encourage adherence to schedules and safe driving. Define goals, a scoring system awarding points for on-time deliveries, route adherence, and safe driving metrics, reward tiers such as badges or leaderboards, and feedback mechanisms. Outline how gamification can improve driver engagement and fleet efficiency.",
+    "expected_output": "Gamification strategy document ...\nScoring system ...\nReward tiers ...\nEngagement rationale ..."
+  },
+  {
+    "role": "Game Developer",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": ["gamification-spec.md", "mobile-app-codebase.md"],
+    "instruction": "Implement the gamification module for the FMS mobile app: a backend service that records points for each driver based on on-time deliveries and safe driving metrics, a badge and achievement system, leaderboards accessible to drivers, and APIs to retrieve and update scores. Integrate the module with the driver mobile app and the FMS backend.",
+    "expected_output": "Gamification backend code ...\nBadge system code ...\nAPI endpoints ...\nUnit tests ..."
+  },
+  {
+    "role": "Game Architect",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": ["gamification-architecture.md", "security-spec.md"],
+    "instruction": "Design the architecture for the gamification module integrated with the FMS. Define the data storage schema for points, badges, challenges, and leaderboards, service boundaries between the gamification service and the main FMS, integration points with the driver tracking and scheduling modules, and security measures to prevent tampering. Ensure the module scales with increasing numbers of drivers and deliveries.",
+    "expected_output": "Gamification architecture document ...\nData schema ...\nIntegration design ...\nSecurity considerations ..."
+  },
+  {
+    "role": "BMad Master",
+    "track": "BMad Method Track",
+    "domain": "Fleet Management System (FMS) for warehouse delivery operations",
+    "context_documents": [
+      "project-overview.md",
+      "process-guidelines.md",
+      "status-reports.md"
+    ],
+    "instruction": "Oversee the FMS project using the BMAD methodology. Coordinate inter-agent communication and document handoffs, ensure adherence to FMS functional and non-functional requirements, monitor project progress, resolve conflicts, compile final deliverables, and prepare project status reports summarising progress, risks, and next steps.",
+    "expected_output": "BMAD oversight report ...\nCommunication plan ...\nProject status summary ...\nRecommendations ..."
+  }
+]
