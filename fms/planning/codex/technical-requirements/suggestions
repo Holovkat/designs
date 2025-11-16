@@ -1,4 +1,0 @@
-  - Add wireframes or a quick Figma-style description for the Settings UI screens.
-  - Stub Convex function shapes for config read/write, effective-value calculation, and change-
-    set flows.
-  - Provide sample migration/registry-driven form-generation code.
