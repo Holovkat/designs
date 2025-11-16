@@ -30,3 +30,7 @@ Create a reusable bridge layer that lets our z.ai GLM CodePlan + GPT‑5 Codex i
 7. **Docs**
    - [ ] Keep `features/glm-codeplan-gpt5-support-tfd.md` aligned with bridge plan.
    - [ ] Update README/addendum once bridge is ready.
+8. **Enhancement 13 – BYOK Custom Provider Management**
+   - [ ] Add `/BYOK` command docs and UX flow for listing/editing custom providers.
+   - [ ] Describe persistence, cached model refresh, and provider delete behavior in docs.
+   - [ ] Document telemetry + connectivity hints for the BYOK tooling.

@@ -7,6 +7,7 @@
 - Generated bundles land in `dist/` after `npm run build`; do not edit files there directly.
 - Bridge-specific hooks (e.g., loading `@holovkat/qwen-custom-bridge` from `scripts/start.js`) must stay documented under `features/*.md` **and** summarized in this AGENTS file whenever they are added or modified, so upstream syncs know where to re-apply them.
 - `scripts/start.js` now attempts to dynamically import `@holovkat/qwen-custom-bridge` during boot so the bridge can register providers/commands before the CLI launches. Preserve this hook when syncing upstream changes.
+- `features/13-BYOK-PROVIDER-MANAGEMENT.md` captures the new `/BYOK` management flows (list/detail/edit) required for Enhancement 13. Keep this doc synchronized with future UI/bridge updates so the upstream workflow descriptions stay accurate.
 
 ## Build, Test, and Development Commands
 - `npm run build` — builds every workspace, copies vendor assets, and verifies bundle metadata (required before launching the CLI).
