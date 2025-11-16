@@ -32,6 +32,7 @@ CLAUDE.md
 .claude/
 
 # caches
+.fastembed_cache/
 .cache/
 .turbo/
 .parcel-cache/
