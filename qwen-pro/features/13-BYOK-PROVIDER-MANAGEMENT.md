@@ -55,3 +55,6 @@ Provide a dedicated `/BYOK` command surface that keeps custom OpenAI-compatible 
 ## Testing & Migration
 - Add Vitest fixtures that simulate selecting a provider, running “Refresh models”, and editing properties; stub network calls using MSW or similar.
 - Document the steps to import/export BYOK entries across machines (e.g., copying `~/.qwen/custom/providers.json`).
+
+## Additional Commands
+- `/models_byok` — lists cached models for the currently selected BYOK provider so users can quickly switch the CLI’s default when refreshing or when the provider becomes available across machines. This command reads from the cached model store created by `/BYOK` and shows the default selection, provider tags, and a short help line (“Use `/model <name>` to switch”). Include integration tests covering navigation from `/BYOK` to `/models_byok`.
