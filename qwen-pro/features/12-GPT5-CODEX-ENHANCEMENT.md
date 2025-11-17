@@ -10,6 +10,7 @@ Expose GPT‑5 Codex (and GPT‑5.1 variants) as first-class providers in Qwen C
      - Token limit overrides (input 2M, output 8K default).
      - Reasoning payload support using OpenAI Responses API (`reasoning: { effort }`).
    - Adds telemetry tags `providerId=openai-gpt5` and `reasoningEffort`.
+    - Implementation now lives under `bridges/qwen-custom/src/providers/gpt5Provider.ts`, registers via the bridge registry, and the CLI/parser wires `--reasoning-effort` + `generationConfig.reasoningEffort` (`packages/cli/src/config/config.ts`, `packages/cli/src/config/settingsSchema.ts`, `packages/core/src/core/contentGenerator.ts`).
 
 2. **Config & Defaults**
    - Settings overlay adds:

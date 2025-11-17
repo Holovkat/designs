@@ -17,8 +17,8 @@ Create a reusable bridge layer that lets our z.ai GLM CodePlan + GPT‑5 Codex i
    - [x] Injected via bridge entrypoint that hooks into Qwen Code at runtime (e.g., dynamic import inside `scripts/start.js`).
    - Follow **Enhancement 11 doc** (`features/11-ZAI-GLM-ENHANCEMENT.md`) for full scope.
 4. **Enhancement 12 – GPT‑5 Codex Integration**
-   - [ ] Adds normalization + token-limit overrides through bridge middleware (monkey patches only through exported setter hooks).
-   - [ ] Provides helper for reasoning effort defaults mirroring Codex CLI.
+   - [x] Adds normalization + token-limit overrides through bridge middleware (monkey patches only through exported setter hooks).
+   - [x] Provides helper for reasoning effort defaults mirroring Codex CLI.
    - Follow **Enhancement 12 doc** (`features/12-GPT5-CODEX-ENHANCEMENT.md`) for detailed steps.
 5. **Config Surface (Shared)**
    - [ ] Documents new `.qwen/settings.json` keys under `features/03-SETTINGS-AND-CONFIG.md`.
