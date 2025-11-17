@@ -56,5 +56,10 @@ Provide a dedicated `/BYOK` command surface that keeps custom OpenAI-compatible 
 - Add Vitest fixtures that simulate selecting a provider, running “Refresh models”, and editing properties; stub network calls using MSW or similar.
 - Document the steps to import/export BYOK entries across machines (e.g., copying `~/.qwen/custom/providers.json`).
 
-## Additional Commands
+-## Additional Commands
 - `/models_byok` — lists cached models for the currently selected BYOK provider so users can quickly switch the CLI’s default when refreshing or when the provider becomes available across machines. This command reads from the cached model store created by `/BYOK` and shows the default selection, provider tags, and a short help line (“Use `/model <name>` to switch”). Include integration tests covering navigation from `/BYOK` to `/models_byok`.
+- `/byok add <id> <baseUrl> [kind] [defaultModel]` — adds a new provider entry into `~/.qwen/settings.json`. Additional metadata (display name, cached models) can be set via `/byok edit`.
+- `/byok edit <id> <field> <value>` — updates editable fields (`displayName`, `kind`, `baseUrl`, `defaultModel`, `apiKey`). `apiKey` writes also set the “API key stored” flag so the list screen shows the status.
+- `/byok refresh <id>` — uses the provider’s stored API key + base URL to query OpenAI’s `/models` list (GPT-5-style providers only) and populate `cachedModels`, emitting success/error info into the CLI history.
+- `/byok delete <id>` — removes a provider entry + stored metadata from the settings file.
+- `/BYOK provider <id>` — shows details for a single provider (kind, endpoint, cached model count, and API key status) and lists available actions (edit, refresh, view models, delete, back).
