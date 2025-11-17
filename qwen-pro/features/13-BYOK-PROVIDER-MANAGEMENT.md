@@ -63,3 +63,26 @@ Provide a dedicated `/BYOK` command surface that keeps custom OpenAI-compatible 
 - `/byok refresh <id>` — uses the provider’s stored API key + base URL to query OpenAI’s `/models` list (GPT-5-style providers only) and populate `cachedModels`, emitting success/error info into the CLI history.
 - `/byok delete <id>` — removes a provider entry + stored metadata from the settings file.
 - `/BYOK provider <id>` — shows details for a single provider (kind, endpoint, cached model count, and API key status) and lists available actions (edit, refresh, view models, delete, back).
+
+### Sample providers
+Drop the following under `customProviders` in `~/.qwen/settings.json` so `/BYOK` has entries to show:
+```jsonc
+"customProviders": {
+  "ollama-local": {
+    "displayName": "Ollama (localhost)",
+    "kind": "Ollama",
+    "baseUrl": "http://localhost:11434",
+    "defaultModel": "qwen2.5vl",
+    "cachedModels": ["qwen2.5vl", "qwen2.5vl-mini"],
+    "apiKeyStored": true
+  },
+  "zai": {
+    "displayName": "z.ai GLM",
+    "kind": "OpenAI Responses",
+    "baseUrl": "https://api.z.ai/api/coding/paas/v4",
+    "defaultModel": "glm-4.6-codeplan",
+    "cachedModels": ["glm-4.6-codeplan", "glm-4.5-codeplan"],
+    "apiKeyStored": false
+  }
+}
+```
