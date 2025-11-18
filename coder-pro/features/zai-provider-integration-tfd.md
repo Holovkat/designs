@@ -2,9 +2,9 @@
 
 ## Document Metadata
 - **Project Name**: coder-pro – z.ai Provider Integration
-- **PRD Reference**: Internal request “GLM (z.ai) provider parity with codex-pro” (2025-11-17)
-- **Version**: 0.1.0
-- **Last Updated**: 2025-11-17
+- **PRD Reference**: Internal request "GLM (z.ai) provider parity with codex-pro" (2025-11-17)
+- **Version**: 0.2.0
+- **Last Updated**: 2025-11-19
 - **Author**: Codex (GPT-5)
 - **Target Completion**: 2025-12-01
 
@@ -180,7 +180,7 @@ API keys remain in `security.auth.providers.<id>.apiKey`; ProviderStore mirrors 
 
 ## 8. API Integration
 - Endpoint: `GET {baseUrl}/models` (OpenAI schema). For z.ai the base URL is `https://api.z.ai/api/coding/paas/v4`; `/models` path appended by ProviderModelService.
-- Auth: Bearer token header (`Authorization: Bearer sk-…`). Extra headers (e.g., `tenant: 83005`) merged in order: defaults → provider extra headers → codex-pro style overrides.
+- Auth: Bearer token header (`Authorization: Bearer sk-…`). For z.ai providers, the tenant header is automatically extracted from the API key format `tenantId.secretKey` and injected as `tenant: {tenantId}`. Additional extra headers are merged in order: defaults → provider extra headers → codex-pro style overrides.
 - Response parsing: expect `{ data: [{ id: string }, …] }`; deduplicate & sort lexicographically.
 - Timeouts: reuse `DEFAULT_TIMEOUT` and `DEFAULT_MAX_RETRIES` from `openaiContentGenerator/constants`.
 
@@ -258,7 +258,6 @@ API keys remain in `security.auth.providers.<id>.apiKey`; ProviderStore mirrors 
         "name": "z.ai",
         "baseUrl": "https://api.z.ai/api/coding/paas/v4",
         "defaultModel": "glm-4.6",
-        "extraHeaders": { "tenant": "83005" },
         "cachedModels": ["glm-4.5", "glm-4.6"],
         "lastModelRefresh": "2025-11-17T08:00:00Z"
       }
@@ -276,7 +275,33 @@ API keys remain in `security.auth.providers.<id>.apiKey`; ProviderStore mirrors 
 }
 ```
 
-### 16.2 Reference Implementation Notes
+**Note**: The `tenant` header is no longer required in `extraHeaders` for z.ai providers. The tenant ID is automatically extracted from the API key format `tenantId.secretKey` (e.g., `a1b2c3d4e5.f6g7h8i9j0` → tenant: `a1b2c3d4e5`).
+
+### 16.2 Tenant ID Auto-Extraction Implementation
+For z.ai providers, the tenant ID is automatically extracted from the API key format at runtime:
+
+**API Key Format**: `tenantId.secretKey` (e.g., `a1b2c3d4e5.f6g7h8i9j0`)
+
+**Extraction Logic** (implemented in `AppContainer.tsx`):
+```typescript
+// For z.ai providers, extract tenant from API key
+const contentGeneratorConfig = config.getContentGeneratorConfig();
+if (provider?.baseUrl?.includes('api.z.ai') && contentGeneratorConfig.apiKey) {
+  const tenantId = contentGeneratorConfig.apiKey.split('.')[0];
+  extraHeaders = {
+    ...extraHeaders,
+    tenant: tenantId,
+  };
+}
+```
+
+**Benefits**:
+- No manual tenant configuration required
+- Automatic tenant extraction from API key
+- Reduced configuration complexity for users
+- Eliminates potential tenant ID mismatches
+
+### 16.3 Reference Implementation Notes
 - Codex-pro BYOK reference: `codex-rs/tui/src/app.rs#3836-4832`, `codex-agentic-core/src/provider/mod.rs#313-520`, `core/src/config/mod.rs#78-138`.
 - Model caching mirror: `fetch_custom_provider_models` in codex-pro for `/models` endpoint behavior.
 

@@ -1,6 +1,6 @@
-# Graphite-Style Git Workflow System Prompt
+# Generic GitHub Alignment System Prompt
 
-You follow a stacking workflow for Git/GitHub:
+You need to align the remote repository with changes. Follow this Graphite-style stacking workflow.
 
 ## Core Principles
 - **Stack PRs**: Create chains of small, focused PRs where each builds on the previous
@@ -55,6 +55,7 @@ git checkout feature/part-2 && git rebase main && git push --force-with-lease
 - Mark dependent PRs as draft until parent is approved
 
 ## PR Description Template
+
 ```
 ## Part X of Y: [Title]
 
@@ -87,3 +88,32 @@ git checkout feature/part-2 && git rebase main && git push --force-with-lease
 - [ ] No breaking changes without proper migration
 - [ ] Performance is acceptable
 ```
+
+## Usage Instructions
+
+### For New Features
+1. **Replace placeholders** in the template above with specific details
+2. **Update branch names** to match your feature (`feature/1-your-feature`)
+3. **Fill in PR descriptions** with actual implementation details
+4. **Use the commands** provided for creating and syncing your stack
+
+### For Documentation Updates
+1. **Reference specific files** that were modified
+2. **Describe the user impact** of the changes
+3. **Include any breaking changes** with migration instructions
+4. **Add testing strategy** for the specific changes
+
+### Customization Examples
+The template can be adapted for:
+- **API Changes**: New endpoints, modified request/response formats
+- **UI Changes**: New components, modified workflows
+- **Configuration**: New settings, environment variables
+- **Performance**: Optimizations, caching improvements
+- **Bug Fixes**: Issue resolutions with regression prevention
+
+## Key Points to Remember
+- Always use `--force-with-lease` when pushing
+- Keep PR descriptions focused and under 30 min review time
+- Include stack context in dependent PRs
+- Mark dependent PRs as draft until parent is approved
+- Update PR base branches on GitHub after parent merges
