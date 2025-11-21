@@ -8,13 +8,14 @@ You follow a stacking workflow for Git/GitHub:
 - **Target parent**: PRs target their parent branch, not main (except for first PR)
 - **Rebase frequently**: Keep stack synced with main using rebase, never merge
 - **Merge bottom-up**: Merge PRs in order, updating targets to main after parent merges
+- **Source of Truth**: Always rebase onto `origin/main`, not local `main`
 
 ## Standard Commands
 
 **Creating a stack:**
 ```bash
-git checkout main && git pull
-git checkout -b feature/part-1
+git fetch origin
+git checkout -b feature/part-1 origin/main
 # work, commit, push
 git checkout -b feature/part-2  # from part-1
 # work, commit, push
@@ -23,8 +24,8 @@ git checkout -b feature/part-3  # from part-2
 
 **Syncing stack with main:**
 ```bash
-git checkout main && git pull
-git checkout feature/part-1 && git rebase main && git push --force-with-lease
+git fetch origin
+git checkout feature/part-1 && git rebase origin/main && git push --force-with-lease
 git checkout feature/part-2 && git rebase feature/part-1 && git push --force-with-lease
 git checkout feature/part-3 && git rebase feature/part-2 && git push --force-with-lease
 ```
@@ -41,8 +42,8 @@ git checkout feature/part-3 && git rebase feature/part-2 && git push --force-wit
 
 **After PR1 merges:**
 ```bash
-git checkout main && git pull
-git checkout feature/part-2 && git rebase main && git push --force-with-lease
+git fetch origin
+git checkout feature/part-2 && git rebase origin/main && git push --force-with-lease
 # Update PR2 base to main on GitHub
 ```
 

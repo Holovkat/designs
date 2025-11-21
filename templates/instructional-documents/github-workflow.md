@@ -38,9 +38,8 @@ main ← PR1 ← PR2 ← PR3 (chain of small PRs)
 git clone <repository-url>
 cd <repository-name>
 
-# Ensure main is up to date
-git checkout main
-git pull origin main
+# Fetch latest changes
+git fetch origin
 ```
 
 ### 2. Configure Git for Better Stacking
@@ -62,12 +61,9 @@ git config --global alias.update-branch '!git fetch origin && git rebase origin/
 ### Step 1: Create Your First Branch
 
 ```bash
-# Start from main
-git checkout main
-git pull origin main
-
-# Create first branch
-git checkout -b feature/part-1-setup
+# Start from remote main
+git fetch origin
+git checkout -b feature/part-1-setup origin/main
 ```
 
 Make your changes and commit:
@@ -132,16 +128,15 @@ git log --oneline --graph --all
 
 ### Syncing with Main
 
-When main is updated, rebase your entire stack:
+When `origin/main` is updated, rebase your entire stack:
 
 ```bash
-# Update main
-git checkout main
-git pull origin main
+# Update knowledge of remote
+git fetch origin
 
 # Rebase first branch
 git checkout feature/part-1-setup
-git rebase main
+git rebase origin/main
 git push --force-with-lease
 
 # Rebase second branch onto first
@@ -188,8 +183,9 @@ Merge PRs from bottom to top:
 1. Merge `feature/part-1-setup` → `main`
 2. Update PR2 to target `main`:
    ```bash
+   git fetch origin
    git checkout feature/part-2-implementation
-   git rebase main
+   git rebase origin/main
    git push --force-with-lease
    ```
    Change the base branch on GitHub PR to `main`
@@ -202,12 +198,11 @@ If your team uses squash merging:
 
 ```bash
 # After PR1 is merged
-git checkout main
-git pull origin main
+git fetch origin
 
 # Rebase PR2 onto updated main
 git checkout feature/part-2-implementation
-git rebase main
+git rebase origin/main
 # Resolve conflicts if any
 git push --force-with-lease
 
@@ -353,13 +348,12 @@ Create `sync-stack.sh`:
 #!/bin/bash
 # Syncs entire stack with main
 
-git checkout main
-git pull origin main
+git fetch origin
 
 for BRANCH in "$@"; do
     echo "Syncing $BRANCH..."
     git checkout "$BRANCH"
-    git rebase main
+    git rebase origin/main
     git push --force-with-lease
 done
 ```
@@ -397,11 +391,10 @@ If you accidentally create circular dependencies:
 
 ```bash
 # Reset to main
-git checkout main
-git pull origin main
+git fetch origin
 
 # Recreate branches in correct order
-git checkout -b feature/part-1-fixed
+git checkout -b feature/part-1-fixed origin/main
 git cherry-pick <commit-hash>
 ```
 
