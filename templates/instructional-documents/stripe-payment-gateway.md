@@ -210,3 +210,258 @@ app.post('/webhook',
   }
 );
 ```
+
+---
+
+## Convex Integration (Lessons Learned)
+
+This section documents specific learnings from integrating Stripe with a Convex backend (self-hosted).
+
+### Installation
+
+```bash
+npm install stripe @stripe/stripe-js
+```
+
+### Key Differences from Express
+
+1. **Use HTTP Actions, not regular functions**
+   - Stripe webhooks need HTTP endpoints
+   - Convex HTTP actions handle raw requests
+
+2. **API Version Matching**
+   - Check the installed SDK version's expected API version
+   - Use `apiVersion: "2025-11-17.clover"` (or current version in types)
+
+### Webhook Signature Verification - CRITICAL
+
+**Use `constructEventAsync` NOT `constructEvent`**
+
+Convex uses SubtleCrypto which only supports async operations:
+
+```typescript
+// ❌ WRONG - Will fail with "SubtleCryptoProvider cannot be used in synchronous context"
+event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+
+// ✅ CORRECT - Use async version
+event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
+```
+
+### Self-Hosted Convex Webhook Setup
+
+When running Convex locally (self-hosted), webhooks require special handling:
+
+1. **HTTP routes are on a different port**
+   - Convex functions: `localhost:3210`
+   - HTTP routes: `localhost:3211`
+
+2. **Use Stripe CLI for local testing**
+   ```bash
+   stripe listen --forward-to http://localhost:3211/stripe-webhook
+   ```
+
+3. **Webhook secret handling**
+   - Copy the `whsec_...` from Stripe CLI output
+   - Set in Convex: `npx convex env set STRIPE_WEBHOOK_SECRET "whsec_xxxxx"`
+   - **No trailing whitespace!** Error message will say "contains whitespace"
+
+### Payment Method Types
+
+Stripe Checkout may create different payment method types:
+
+```typescript
+// Payment method type could be "card" or "link" (Stripe Link)
+if (pm.type === "card" && pm.card) {
+  // Traditional card - has brand, last4, exp_month, exp_year
+  return {
+    brand: pm.card.brand,
+    last4: pm.card.last4,
+    expMonth: pm.card.exp_month,
+    expYear: pm.card.exp_year,
+  };
+} else if (pm.type === "link") {
+  // Stripe Link - accelerated checkout, no card details
+  return {
+    brand: "link",
+    last4: "Link",
+    description: "One-click checkout",
+  };
+}
+```
+
+### Payment Methods May Not Be Listed on Customer
+
+After checkout, the payment method might be:
+1. Attached to the customer (listed in `paymentMethods.list`)
+2. OR only on the subscription's `default_payment_method`
+
+**Always check both locations:**
+
+```typescript
+// Get payment methods from customer
+const paymentMethods = await stripe.paymentMethods.list({
+  customer: customerId,
+  type: "card",
+});
+
+// Also check subscription's default payment method
+if (subscriptionId) {
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const subPmId = subscription.default_payment_method;
+  
+  if (subPmId) {
+    const existsInList = paymentMethods.data.some(pm => pm.id === subPmId);
+    if (!existsInList) {
+      // Fetch and add to list
+      const subPm = await stripe.paymentMethods.retrieve(subPmId);
+      paymentMethods.data.push(subPm);
+    }
+  }
+}
+```
+
+### Stripe SDK Property Names
+
+The Stripe Node SDK uses **snake_case** for properties, regardless of API version:
+
+```typescript
+// ✅ Correct - snake_case
+subscription.current_period_start
+subscription.current_period_end
+subscription.cancel_at_period_end
+invoice.amount_paid
+invoice.hosted_invoice_url
+
+// ❌ Wrong - camelCase doesn't exist
+subscription.currentPeriodStart  // TypeScript error
+```
+
+### Type Assertions for Missing Properties
+
+Some properties may not be in TypeScript types but exist at runtime:
+
+```typescript
+// If types don't include a property you know exists
+const subscription = await stripe.subscriptions.retrieve(id) as Stripe.Subscription & {
+  current_period_start: number;
+  current_period_end: number;
+};
+```
+
+### Checkout Session Metadata
+
+Pass custom data through checkout using metadata:
+
+```typescript
+const session = await stripe.checkout.sessions.create({
+  // ... other options
+  metadata: {
+    organisationId: orgId,
+    planId: "pro",
+    billingCycle: "monthly",
+  },
+  subscription_data: {
+    metadata: {
+      // Also on subscription for webhook access
+      organisationId: orgId,
+    },
+    trial_period_days: 30,
+  },
+});
+```
+
+Access in webhook:
+```typescript
+case "checkout.session.completed":
+  const session = event.data.object;
+  const orgId = session.metadata?.organisationId;
+```
+
+### Invoice Subscription ID
+
+Accessing subscription from invoice requires type assertion:
+
+```typescript
+// invoice.subscription might not be typed correctly
+const subscriptionId = (invoice as any).subscription as string;
+```
+
+### Error Handling Pattern
+
+```typescript
+export const someStripeAction = action({
+  args: { /* ... */ },
+  handler: async (ctx, args) => {
+    try {
+      const result = await stripe.someMethod(args);
+      return { success: true, data: result };
+    } catch (error: any) {
+      // Stripe errors have a 'code' property
+      if (error.code === "invoice_upcoming_none") {
+        return { success: true, data: null }; // Expected case
+      }
+      console.error("Stripe error:", error.message);
+      throw new Error(`Stripe error: ${error.message}`);
+    }
+  },
+});
+```
+
+### Convex HTTP Action Structure
+
+```typescript
+// convex/http.ts
+import { httpRouter } from "convex/server";
+import { httpAction } from "./_generated/server";
+import Stripe from "stripe";
+
+const http = httpRouter();
+
+http.route({
+  path: "/stripe-webhook",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: "2025-11-17.clover",
+    });
+
+    const signature = request.headers.get("stripe-signature");
+    const body = await request.text();
+
+    let event: Stripe.Event;
+    try {
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature!,
+        process.env.STRIPE_WEBHOOK_SECRET!
+      );
+    } catch (err: any) {
+      return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    }
+
+    // Handle events...
+    switch (event.type) {
+      case "checkout.session.completed":
+        await ctx.runMutation(internal.webhooks.handleCheckout, { /* ... */ });
+        break;
+    }
+
+    return new Response(JSON.stringify({ received: true }), { status: 200 });
+  }),
+});
+
+export default http;
+```
+
+### Summary Checklist
+
+- [ ] Install `stripe` and `@stripe/stripe-js`
+- [ ] Use correct API version matching SDK types
+- [ ] Use `constructEventAsync` for webhook verification
+- [ ] Set webhook secret without trailing whitespace
+- [ ] Handle multiple payment method types (card, link)
+- [ ] Check both customer and subscription for payment methods
+- [ ] Use snake_case for Stripe SDK properties
+- [ ] Pass metadata through checkout for webhook access
+- [ ] Use HTTP port 3211 for local Convex webhooks
+- [ ] Set up Stripe CLI for local testing

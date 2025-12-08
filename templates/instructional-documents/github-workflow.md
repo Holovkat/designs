@@ -1,8 +1,19 @@
 # GitHub Workflow Guide
 
+> ## ⚠️ MANDATORY REQUIREMENTS
+>
+> | Rule           | Requirement                                              |
+> | -------------- | -------------------------------------------------------- |
+> | **Merge Type** | **ALWAYS use squash merge** — no exceptions              |
+> | **Rebasing**   | **MUST rebase regularly** — keep stack in sync with main |
+> | **PR Size**    | Small, focused — ONE logical change per PR               |
+> | **Tooling**    | Use `gh pr merge --squash --delete-branch`               |
+>
+> **Violation of these rules is not acceptable. All PRs that do not follow this workflow will be rejected.**
+
 ## Overview
 
-Introduces a **stacking workflow** that allows you to create chains of dependent pull requests (PRs). This guide shows how to replicate this workflow using GitHub and Git commands.
+This project **MUST ALWAYS** use the **Graphite stacking workflow** — a method that allows you to create chains of dependent pull requests (PRs). This guide shows how to replicate this workflow using GitHub and Git commands.
 
 ## Core Concepts
 
@@ -18,11 +29,13 @@ Stacking means building multiple small, focused PRs on top of each other, where 
 ### Traditional vs. Stacking Workflow
 
 **Traditional:**
+
 ```
 main ← feature-branch (one large PR)
 ```
 
 **Stacking:**
+
 ```
 main ← PR1 ← PR2 ← PR3 (chain of small PRs)
 ```
@@ -126,30 +139,6 @@ git branch -vv
 git log --oneline --graph --all
 ```
 
-### Syncing with Main
-
-When `origin/main` is updated, rebase your entire stack:
-
-```bash
-# Update knowledge of remote
-git fetch origin
-
-# Rebase first branch
-git checkout feature/part-1-setup
-git rebase origin/main
-git push --force-with-lease
-
-# Rebase second branch onto first
-git checkout feature/part-2-implementation
-git rebase feature/part-1-setup
-git push --force-with-lease
-
-# Rebase third branch onto second
-git checkout feature/part-3-tests
-git rebase feature/part-2-implementation
-git push --force-with-lease
-```
-
 ### Making Changes to a Middle Branch
 
 If you need to update `feature/part-1-setup` after creating the stack:
@@ -174,39 +163,122 @@ git push --force-with-lease
 
 ---
 
-## Merging Your Stack
+## Merging Your Stack (Squash Merge - Required)
 
-### Option 1: Merge in Order (Recommended)
+**CRITICAL:** All merges MUST use **squash merge**. This is mandatory, not optional. Squash merging:
 
-Merge PRs from bottom to top:
+- Creates a single atomic commit per PR
+- Prevents intermediate broken states during merge
+- Keeps the running dev server stable (no transient errors)
+- Results in cleaner git history on main
 
-1. Merge `feature/part-1-setup` → `main`
-2. Update PR2 to target `main`:
-   ```bash
-   git fetch origin
-   git checkout feature/part-2-implementation
-   git rebase origin/main
-   git push --force-with-lease
-   ```
-   Change the base branch on GitHub PR to `main`
-3. Merge `feature/part-2-implementation` → `main`
-4. Repeat for remaining branches
-
-### Option 2: Squash Merge Strategy
-
-If your team uses squash merging:
+### Using GitHub CLI (Recommended)
 
 ```bash
-# After PR1 is merged
+# Squash merge via GitHub CLI - simplest method
+gh pr merge <PR_NUMBER> --squash --delete-branch
+
+# Then pull the changes locally
+git checkout main
+git pull origin main
+```
+
+### Manual Worktree Method (Alternative)
+
+If you need more control over the merge process:
+
+#### Step 1: Create Merge Worktree
+
+```bash
+# Create a dedicated worktree for merge operations (one-time setup)
+git worktree add ../fms-glm-merge main
+
+# Navigate to the merge worktree
+cd ../fms-glm-merge
+```
+
+#### Step 2: Perform the Squash Merge
+
+```bash
+# Ensure you're on latest main
+git fetch origin
+git checkout main
+git pull origin main
+
+# Squash merge - all commits become one atomic commit
+git merge --squash origin/feature/part-1-setup
+git commit -m "feat: description of feature (#PR_NUMBER)"
+```
+
+#### Step 3: Verify Before Pushing (Required)
+
+**All checks MUST pass before pushing to origin/main:**
+
+```bash
+# Install dependencies (if needed after merge)
+npm install
+
+# Run linting
+npm run lint
+
+# Run type checking (if applicable)
+npm run typecheck  # or: npx tsc --noEmit
+
+# Run build to ensure no build errors
+npm run build
+```
+
+**If ANY step fails:**
+
+```bash
+# Abort the merge and investigate
+git reset --hard origin/main
+
+# Return to main workspace to fix issues
+cd ../fms-glm
+```
+
+Do NOT push to origin/main until all checks pass.
+
+#### Step 4: Push to Remote Main
+
+**Only after ALL verification passes:**
+
+```bash
+# Push the verified merge to origin/main
+git push origin main
+```
+
+### Updating Remaining Stack
+
+After successful push, update remaining branches in your main workspace:
+
+```bash
+# Return to main working directory
+cd ../fms-glm
+
+# Fetch the updated main
 git fetch origin
 
-# Rebase PR2 onto updated main
+# Rebase the next branch onto updated main
 git checkout feature/part-2-implementation
 git rebase origin/main
-# Resolve conflicts if any
 git push --force-with-lease
 
-# Update PR target to main on GitHub
+# Change the PR base branch to main on GitHub
+gh pr edit <pr-number> --base main
+```
+
+Repeat Steps 2-5 for each subsequent PR in the stack.
+
+### Worktree Cleanup
+
+```bash
+# Remove the worktree when done with merge operations
+git worktree remove ../fms-glm-merge
+
+# Or list worktrees to see what exists
+git worktree list
 ```
 
 ---
@@ -235,13 +307,16 @@ Include in each PR description:
 ## Part X of Y: [Feature Name]
 
 ### This PR
+
 - What this specific PR does
 
 ### Stack Context
+
 - Previous: #123 (Database schema)
 - Next: #125 (Frontend integration)
 
 ### Testing
+
 - How to test this change
 ```
 
@@ -407,7 +482,9 @@ The Graphite-style workflow on GitHub:
 1. **Create stacked branches** - each branch builds on the previous
 2. **Open PRs targeting parent branch** - not main
 3. **Rebase frequently** - keep stack in sync with main
-4. **Merge bottom-up** - merge PRs in order
+4. **Squash merge bottom-up** - use `gh pr merge --squash` for atomic commits
 5. **Update targets** - change PR base to main after parent merges
+
+**Why squash merge?** Each PR becomes a single atomic commit on main. This prevents intermediate broken states when merging (no transient errors in running dev servers) and keeps git history clean.
 
 This workflow enables faster iteration and better code review while maintaining a clean git history.
