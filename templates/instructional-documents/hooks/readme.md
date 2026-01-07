@@ -1,72 +1,79 @@
-# Factory Droid CLI - Pre-Commit Workflow Hooks
+# Factory Droid CLI - Development Workflow Hooks
 
-Automated commit workflow that runs lint, build, code review, and push to main.
+Automated hooks for commit workflow, incremental linting, build verification, and code review.
 
-## What it does
+## Hook Types
 
-When you ask Droid to commit (e.g., `git commit -m "feat: add feature"`), the hooks automatically:
+### 1. Commit Hooks (Original)
+When you ask Droid to commit, these hooks automatically:
+- **Lint** - Runs linting on staged files
+- **Build** - Builds the project  
+- **Code Review** - Reviews changes using AI model
+- **Push** - Pushes to `main` after successful commit
 
-1. **Lint** - Runs linting on staged files (auto-detects: ESLint, Ruff, Clippy, golangci-lint)
-2. **Build** - Builds the project (auto-detects: npm, cargo, go, make)
-3. **Code Review** - Reviews changes using `custom:gemini-3-pro-high-[Antigravity]-3`
-4. **Push** - Pushes to `main` after successful commit
+### 2. Agent-Aware Hooks (NEW)
+These hooks trigger **during** agent coding sessions, not just at commit time:
+
+| Hook | Trigger | Purpose |
+|------|---------|---------|
+| `post-edit-lint.sh` | After Edit/Create/MultiEdit | Incremental lint on modified files |
+| `batch-lint-check.sh` | Every 5 file edits | Batch lint all recently modified files |
+| `pre-completion-build.sh` | Before "done" signals | Full build verification |
+| `sanity-check.sh` | Manual or end-session | Verify app loads without errors |
+| `code-review-checkpoint.sh` | Manual or end-session | Second droid reviews the changes |
+
+## Why Agent-Aware Hooks?
+
+Without these hooks, agents often claim "task complete" without verifying:
+- The code compiles/builds
+- Lint passes
+- The application actually loads
+
+These hooks catch issues **during** development, not just at commit time.
 
 ## Installation
 
-### 1. Copy hooks to your project
+### Option A: Commit Hooks Only (Original)
 
 ```bash
-# Create the hooks directory in your project
 mkdir -p .factory/hooks
+cp pre-commit-workflow.sh post-commit-push.sh .factory/hooks/
+chmod +x .factory/hooks/*.sh
 
-# Copy the hook scriptsanti
-cp hooks/pre-commit-workflow.sh .factory/hooks/
-cp hooks/post-commit-push.sh .factory/hooks/
-
-# Make them executable
-chmod +x .factory/hooks/pre-commit-workflow.sh
-chmod +x .factory/hooks/post-commit-push.sh
+# Use settings.json for config
 ```
 
-### 2. Add to your Factory settings
-
-You can add these hooks at either level:
-- **Project level**: `.factory/settings.json` (shared with team)
-- **User level**: `~/.factory/settings.json` (personal)
-
-Merge the contents of `settings.json` into your chosen settings file:
+### Option B: Agent-Aware Hooks (Recommended)
 
 ```bash
-# For project-level (recommended for team sharing)
-cat settings.json >> .factory/settings.json
+mkdir -p .factory/hooks
+cp post-edit-lint.sh sanity-check.sh code-review-checkpoint.sh .factory/hooks/
+cp pre-commit-workflow.sh post-commit-push.sh .factory/hooks/
+chmod +x .factory/hooks/*.sh
 
-# OR for user-level
-cat settings.json >> ~/.factory/settings.json
+# Use settings-agent-aware.json for config
 ```
 
-Or use the interactive `/hooks` command in Droid:
+### 2. Add to Factory settings
 
-```
-/hooks
-→ Select PreToolUse
-→ Add matcher: Bash
-→ Add hook: "$FACTORY_PROJECT_DIR"/.factory/hooks/pre-commit-workflow.sh
-→ Save to Project settings
-
-/hooks
-→ Select PostToolUse
-→ Add matcher: Bash
-→ Add hook: "$FACTORY_PROJECT_DIR"/.factory/hooks/post-commit-push.sh
-→ Save to Project settings
-```
-
-### 3. Verify installation
+Copy the appropriate settings file:
 
 ```bash
-# Check your hooks configuration
-cat ~/.factory/settings.json | jq '.hooks'
-# or
-cat .factory/settings.json | jq '.hooks'
+# For commit-only hooks
+cp settings.json .factory/settings.json
+
+# OR for agent-aware hooks (recommended)
+cp settings-agent-aware.json .factory/settings.json
+```
+
+### 3. Available Commands (with agent-aware hooks)
+
+After installing agent-aware hooks, these commands become available:
+
+```bash
+/sanity-check     # Verify app loads without errors
+/code-review      # Get second droid opinion on changes  
+/end-session      # Run sanity check + code review before ending
 ```
 
 ## Configuration
@@ -112,9 +119,13 @@ Or temporarily disable hooks in settings:
 
 | File | Purpose |
 |------|---------|
-| `settings.json` | Hooks configuration to merge into Factory settings |
-| `hooks/pre-commit-workflow.sh` | Runs lint, build, and code review before commit |
-| `hooks/post-commit-push.sh` | Pushes to main after successful commit |
+| `settings.json` | Commit-only hooks configuration |
+| `settings-agent-aware.json` | Full agent-aware hooks configuration |
+| `pre-commit-workflow.sh` | Runs lint, build, and code review before commit |
+| `post-commit-push.sh` | Pushes to main after successful commit |
+| `post-edit-lint.sh` | Incremental lint after file edits |
+| `sanity-check.sh` | Verify app loads without errors |
+| `code-review-checkpoint.sh` | Second droid reviews changes |
 
 ## Requirements
 

@@ -1,27 +1,59 @@
-# Session Workflow Commands - Installation Guide
+# Session Workflow - Installation Guide
 
-This package provides slash commands for managing coding sessions with Factory Droid.
+This package provides slash commands and agent-aware hooks for managing coding sessions with Factory Droid.
 
-## Commands Included
+## What's Included
+
+### Commands
 
 | Command | Description |
 |---------|-------------|
 | `/start-session <branch>` | Create a new branch and begin coding |
 | `/next-phase` | Continue implementing the next phase from the project checklist |
-| `/end-session` | Close out session with review, docs update, and push |
+| `/end-session` | Close out session with compliance review, docs update, and push |
+| `/compliance-review` | Verify implementation meets spec requirements (standalone) |
+| `/kingmode` | Activate "King Mode" for deep, multi-dimensional analysis |
+| `/sanity-check` | Verify app loads without errors |
+| `/code-review` | Get a second droid opinion on recent changes |
+
+### Agent-Aware Hooks
+
+| Hook | Trigger | Purpose |
+|------|---------|---------|
+| `post-edit-lint.sh` | After Edit/Create/MultiEdit | Incremental lint on modified files |
+| `sanity-check.sh` | Manual or end-session | Verify app loads without errors |
+| `code-review-checkpoint.sh` | Manual or end-session | Second droid reviews changes |
+| `pre-commit-workflow.sh` | Before git commit | Lint, build, code review |
+| `post-commit-push.sh` | After git commit | Push to main |
 
 ## Prerequisites
 
 - Factory Droid CLI installed
 - Git repository initialized
 - Project uses `pnpm` (or modify commands for `npm`/`yarn`)
+- `jq` for JSON processing: `brew install jq`
 
-## Installation
+## Quick Install (One-liner)
 
-### Step 1: Create the commands directory
+Run this from your project root (adjust TEMPLATE_DIR path):
 
 ```bash
-mkdir -p .factory/commands
+TEMPLATE_DIR=~/workspace/designs/templates/instructional-documents && \
+mkdir -p .factory/{commands,hooks} features changelog && \
+cp "$TEMPLATE_DIR"/commands/*.{sh,md} .factory/commands/ 2>/dev/null || true && \
+cp "$TEMPLATE_DIR"/hooks/*.sh .factory/hooks/ && \
+cp "$TEMPLATE_DIR"/hooks/settings-agent-aware.json .factory/settings.json && \
+chmod +x .factory/commands/*.sh .factory/hooks/*.sh && \
+echo "# Session Log\n\nDevelopment session history.\n\n---\n\n## Sessions\n" > changelog/SESSION-LOG.md && \
+echo "Installed! Run /commands in droid to verify."
+```
+
+## Manual Installation
+
+### Step 1: Create directories
+
+```bash
+mkdir -p .factory/commands .factory/hooks features changelog
 ```
 
 ### Step 2: Copy the command files
@@ -30,21 +62,39 @@ mkdir -p .factory/commands
 # From this template directory, copy to your project:
 cp start-session.sh /path/to/your/project/.factory/commands/
 cp next-phase.md /path/to/your/project/.factory/commands/
-cp end-session.md /path/to/your/project/.factory/commands/
+cp end-session.md /path/to/your/project/.factory/commands/  
+cp kingmode.md /path/to/your/project/.factory/commands/
 ```
 
 Or manually create each file in `.factory/commands/`:
 - `start-session.sh` - Executable bash script
 - `next-phase.md` - Markdown command
-- `end-session.md` - Markdown command
+- `end-session.md` - Markdown command (includes compliance gate)
+- `compliance-review.md` - Markdown command (standalone compliance check)
+- `kingmode.md` - Markdown command
 
-### Step 3: Make the shell script executable
+### Step 3: Copy the hooks
+
+```bash
+# From the hooks template directory:
+cp /path/to/templates/instructional-documents/hooks/*.sh .factory/hooks/
+```
+
+### Step 4: Configure Factory settings
+
+```bash
+# Copy the agent-aware hooks settings
+cp /path/to/templates/instructional-documents/hooks/settings-agent-aware.json .factory/settings.json
+```
+
+### Step 5: Make scripts executable
 
 ```bash
 chmod +x .factory/commands/start-session.sh
+chmod +x .factory/hooks/*.sh
 ```
 
-### Step 4: Create supporting files
+### Step 6: Create supporting files
 
 #### Implementation Checklist
 
@@ -92,7 +142,7 @@ Development session history with completed work and changes.
 <!-- New sessions are added below this line -->
 ```
 
-### Step 5: Verify installation
+### Step 7: Verify installation
 
 In your project directory, run droid and type:
 
@@ -104,6 +154,13 @@ You should see:
 - `/start-session` - Create new branch for coding session
 - `/next-phase` - Continue implementing next phase
 - `/end-session` - Close out session with review
+- `/sanity-check` - Verify app loads without errors
+- `/code-review` - Get second droid opinion on changes
+
+To verify hooks are active:
+```bash
+cat .factory/settings.json | jq '.hooks'
+```
 
 ## Directory Structure
 
@@ -112,10 +169,18 @@ After installation, your project should have:
 ```
 your-project/
 ├── .factory/
-│   └── commands/
-│       ├── start-session.sh    # Creates branch
-│       ├── next-phase.md       # Continues implementation
-│       └── end-session.md      # Closes session
+│   ├── commands/
+│   │   ├── start-session.sh    # Creates branch
+│   │   ├── next-phase.md       # Continues implementation
+│   │   ├── end-session.md      # Closes session
+│   │   └── kingmode.md         # Deep analysis mode
+│   ├── hooks/
+│   │   ├── post-edit-lint.sh   # Lint after file edits
+│   │   ├── sanity-check.sh     # Verify app loads
+│   │   ├── code-review-checkpoint.sh  # Second opinion
+│   │   ├── pre-commit-workflow.sh     # Pre-commit checks
+│   │   └── post-commit-push.sh        # Auto push
+│   └── settings.json           # Hooks configuration
 ├── features/
 │   ├── 00-IMPLEMENTATION-CHECKLIST.md
 │   └── BACKLOG.md
@@ -195,6 +260,23 @@ The agent will:
 5. Update session log
 6. Update AGENTS.md if needed
 7. Rebase, commit, and push
+
+### Activating King Mode
+
+```
+/kingmode
+```
+
+The agent will:
+1. Activate "King Mode" for deep, multi-dimensional analysis
+2. Provide detailed reasoning chain and edge case analysis
+
+### Deactivating King Mode
+
+```
+/kingmode off
+```
+
 
 ## Troubleshooting
 

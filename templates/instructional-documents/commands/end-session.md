@@ -1,8 +1,10 @@
 ---
-description: Close out the current coding session with review, docs update, and push
+description: Close out the current coding session with compliance review, docs update, and push
 ---
 
 You are closing out the current development session. **YOU MUST complete ALL steps below. Do not skip any step.**
+
+**IMPORTANT**: This workflow includes a MANDATORY compliance review gate. The session cannot complete until the implementation meets all specification requirements or the user explicitly waives compliance.
 
 ---
 
@@ -19,7 +21,88 @@ If any errors occur, fix them before proceeding to Step 2.
 
 ---
 
-## Step 2: Code Review
+## Step 2: Compliance Review (MANDATORY GATE)
+
+**ACTION REQUIRED:** Run the compliance review to verify implementation meets spec requirements.
+
+### 2.1 Identify Current Phase
+
+1. Read `features/00-IMPLEMENTATION-CHECKLIST.md`
+2. Identify the current sprint/phase being worked on
+3. Find the corresponding shard document (e.g., `features/phase-2-menus.md`)
+
+### 2.2 Extract and Verify Requirements
+
+1. Read the phase shard document completely
+2. Extract ALL acceptance criteria and deliverables
+3. Verify EACH requirement:
+   - Check file/component existence
+   - Verify props interfaces match spec
+   - Confirm required functionality is implemented
+   - Run type check: `pnpm tsc --noEmit`
+   - Run sanity check: verify app loads without errors
+
+### 2.3 Generate Compliance Report
+
+Create a compliance report:
+
+```markdown
+## Compliance Report: Phase [X] - [Name]
+
+**Total Requirements**: [N]
+**Passed**: [N] ✅ | **Failed**: [N] ❌
+
+### Results
+| Requirement | Status | Notes |
+|-------------|--------|-------|
+| [Requirement] | ✅/❌ | [Details] |
+
+**Overall Status**: PASS/FAIL
+```
+
+### 2.4 Handle Compliance Result
+
+**If ALL requirements PASS:**
+- Log: "✅ Compliance verified - proceeding with session close"
+- Continue to Step 3
+
+**If ANY requirements FAIL:**
+
+**DO NOT PROCEED.** Ask the user:
+
+> "❌ Compliance review found [N] unmet requirements:
+> 1. [Failed requirement 1]
+> 2. [Failed requirement 2]
+>
+> Options:
+> 1. **Fix and retry** - Analyze gaps with /kingmode, create remediation shards, implement fixes, re-verify
+> 2. **Waive compliance** - Proceed despite gaps (adds to BACKLOG with 'Compliance Gap' tag)
+> 3. **Review details** - Discuss each failure before deciding
+>
+> Reply 1, 2, or 3."
+
+**If user chooses FIX (option 1):**
+1. Run `/kingmode` to analyze gaps deeply
+2. Create remediation shard if needed: `features/phase-X-remediation.md`
+3. Update implementation checklist with remediation tasks
+4. Get user approval on remediation plan
+5. Implement fixes
+6. **LOOP BACK to Step 2.2** - Re-run compliance review
+7. Repeat until PASS or user waives
+
+**If user chooses WAIVE (option 2):**
+1. Add failed items to `features/BACKLOG.md` with "Compliance Gap" tag
+2. Log waiver in session log
+3. Continue to Step 3
+
+**If user chooses REVIEW (option 3):**
+1. Present detailed compliance report
+2. Discuss each failure
+3. Re-ask options 1 or 2
+
+---
+
+## Step 3: Code Review
 
 **ACTION REQUIRED:** Use the built-in `/review` command:
 
@@ -41,11 +124,11 @@ If `/review` is not available, manually review with `git diff` for:
 
 ---
 
-## Step 3: Update Implementation Checklist & Handle Incomplete Items
+## Step 4: Update Implementation Checklist & Handle Incomplete Items
 
 **ACTION REQUIRED - THIS IS MANDATORY:**
 
-### 3.1 Mark Completed Tasks
+### 4.1 Mark Completed Tasks
 
 1. Read `features/00-IMPLEMENTATION-CHECKLIST.md`
 2. Identify which tasks were completed during this session
@@ -57,7 +140,7 @@ OLD: - [ ] TipTap integration with StarterKit
 NEW: - [x] TipTap integration with StarterKit
 ```
 
-### 3.2 Check for Incomplete Sprint Items
+### 4.2 Check for Incomplete Sprint Items
 
 After marking completed items, check if there are **remaining incomplete items** (`- [ ]`) in the current sprint.
 
@@ -72,7 +155,7 @@ After marking completed items, check if there are **remaining incomplete items**
 >
 > Reply '1' to backlog items, or '2' to continue implementing."
 
-### 3.3 If user chooses BACKLOG (option 1):
+### 4.3 If user chooses BACKLOG (option 1):
 
 1. Read `features/BACKLOG.md`
 2. **Use the Edit tool** to add the incomplete items to the backlog
@@ -99,9 +182,9 @@ Add this format for each item:
    ```
    **Backlogged Items**: See `features/BACKLOG.md` for deferred tasks
    ```
-5. Continue to Step 4
+5. Continue to Step 5
 
-### 3.4 If user chooses CONTINUE IMPLEMENTATION (option 2):
+### 4.4 If user chooses CONTINUE IMPLEMENTATION (option 2):
 
 **STOP the end-session workflow.** Inform the user:
 
@@ -112,15 +195,15 @@ Add this format for each item:
 
 **Do not proceed further. Exit the end-session workflow.**
 
-### 3.5 If ALL sprint items are complete:
+### 4.5 If ALL sprint items are complete:
 
-No action needed. Proceed to Step 4.
+No action needed. Proceed to Step 5.
 
-**Do not proceed to Step 4 until the checklist has been updated and any incomplete items have been handled.**
+**Do not proceed to Step 5 until the checklist has been updated and any incomplete items have been handled.**
 
 ---
 
-## Step 4: Update Session Log
+## Step 5: Update Session Log
 
 **ACTION REQUIRED - THIS IS MANDATORY:**
 
@@ -148,11 +231,11 @@ Add this format (fill in the actual values):
 - [What remains to be done, or "Sprint complete"]
 ```
 
-**Do not proceed to Step 5 until the session log has been updated.**
+**Do not proceed to Step 6 until the session log has been updated.**
 
 ---
 
-## Step 5: Update AGENTS.md (if applicable)
+## Step 6: Update AGENTS.md (if applicable)
 
 **ACTION REQUIRED if any of these are true:**
 - New components or patterns were added
@@ -168,18 +251,18 @@ If no updates needed, explicitly state: "No AGENTS.md updates required for this 
 
 ---
 
-## Step 6: Git Operations
+## Step 7: Git Operations
 
 **ACTION REQUIRED:** Execute these commands in order:
 
-### 6.1 Check for remote
+### 7.1 Check for remote
 
 First, check if origin remote exists:
 ```bash
 git remote -v
 ```
 
-### 6.2 If origin EXISTS, fetch and rebase:
+### 7.2 If origin EXISTS, fetch and rebase:
 
 ```bash
 git fetch origin master || git fetch origin main
@@ -188,32 +271,32 @@ git rebase origin/master || git rebase origin/main
 
 If rebase conflicts occur, resolve them before continuing.
 
-### 6.3 If NO origin remote:
+### 7.3 If NO origin remote:
 
 Skip fetch/rebase steps. Inform the user:
 > "No origin remote configured. Skipping fetch/rebase. To add a remote later: `git remote add origin <repo-url>`"
 
-### 6.4 Stage all changes:
+### 7.4 Stage all changes:
 
 ```bash
 git add .
 ```
 
-### 6.5 Check if there are changes to commit:
+### 7.5 Check if there are changes to commit:
 
 ```bash
 git status --porcelain
 ```
 
-If no output (nothing to commit), skip to Step 7.
+If no output (nothing to commit), skip to Step 8.
 
-### 6.6 Commit with descriptive message:
+### 7.6 Commit with descriptive message:
 
 ```bash
 git commit -m "feat(sprint-X): [description of completed work]"
 ```
 
-### 6.7 Push to origin (only if remote exists):
+### 7.7 Push to origin (only if remote exists):
 
 If origin remote exists:
 ```bash
@@ -230,15 +313,21 @@ If no origin remote, inform the user:
 
 ---
 
-## Step 7: Summary
+## Step 8: Summary
 
 **ACTION REQUIRED:** Provide a summary that includes:
 
-1. **Completed work**: List what was accomplished
-2. **Checklist items marked**: Confirm which items were checked off
-3. **Files updated**: Confirm checklist and session log were edited
-4. **Issues resolved**: Any code review findings that were fixed
-5. **Next steps**: What should be done in the next session
+1. **Compliance status**: PASSED or WAIVED (with reason)
+2. **Completed work**: List what was accomplished
+3. **Checklist items marked**: Confirm which items were checked off
+4. **Files updated**: Confirm checklist and session log were edited
+5. **Issues resolved**: Any code review findings that were fixed
+6. **Remediation rounds**: How many fix/retry loops were needed (if any)
+7. **Next steps**: What should be done in the next session
+
+---
+
+**Session is now ready for UAT (User Acceptance Testing) if compliance passed.**
 
 ---
 
