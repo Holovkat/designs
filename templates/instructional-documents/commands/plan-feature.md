@@ -286,23 +286,99 @@ ls features/*.md 2>/dev/null | grep -E '^features/[0-9]+-' | sort -n | tail -1
 3. **Code patterns to follow** - Reference existing files: "Follow the pattern in `src/components/atoms/Input/Input.tsx`"
 4. **Step-by-step instructions** - Break complex tasks into numbered sub-steps
 5. **Expected output** - What should exist when the task is done
-6. **How to verify** - How to test/confirm the task is complete
+6. **TDD test specification** - What tests to write BEFORE implementing (see below)
+7. **How to verify** - How to confirm the task is complete
 
-**BAD (vague):**
+---
+
+### TEST-DRIVEN DEVELOPMENT (TDD) REQUIREMENTS
+
+**Every component/function task MUST include a test specification:**
+
+```
+**Test Specification:**
+- **Inputs**: [exact input types and example values]
+- **Expected Outputs**: [exact return types and example values]
+- **Exceptions/Edge Cases**:
+  - When [condition]: expect [behavior/error]
+  - When [condition]: expect [behavior/error]
+- **Test File**: `[exact/path/to/Component.test.tsx]`
+```
+
+**TDD Workflow for Each Task:**
+1. Write the test FIRST (it will fail - red)
+2. Implement the minimum code to pass the test (green)
+3. Refactor while keeping tests passing (refactor)
+
+**Exception Handling Requirements:**
+- List ALL error conditions that could occur
+- Specify the exact error type/message for each
+- Define how the UI should respond to each error
+- Include error boundary behavior if applicable
+
+---
+
+### PATTERN CONSISTENCY REQUIREMENTS
+
+**Before creating ANY new component/utility/hook:**
+
+1. **Search for existing patterns** in the codebase:
+   ```bash
+   # Find similar components
+   ls src/components/**/*.tsx
+   # Find existing hooks
+   ls src/hooks/*.ts
+   # Find utility patterns
+   ls src/utils/*.ts
+   ```
+
+2. **If a pattern exists:** Reference it explicitly in the task
+   - "Follow the exact structure of `src/components/atoms/Input/Input.tsx`"
+   - "Use the error handling pattern from `src/hooks/useApi.ts`"
+   - "Apply the validation approach from `src/utils/validation.ts`"
+
+3. **If NO pattern exists:** Create the pattern FIRST as a separate task
+   - Task 1: "Establish [pattern type] pattern in `src/[location]`"
+   - Task 2+: "Implement [feature] following the pattern from Task 1"
+
+4. **Document new patterns** in AGENTS.md or a patterns doc for future reference
+
+**CRITICAL:** Never create one-off solutions. Every implementation should either follow an existing pattern or establish a new pattern that will be reused.
+
+---
+
+**BAD (vague, no tests, no patterns):**
 ```
 - [ ] Create user authentication
 ```
 
-**GOOD (task-level):**
+**GOOD (task-level with TDD and patterns):**
 ```
 - [ ] Create login form component at `src/components/organisms/LoginForm/LoginForm.tsx`
-  - Props: `{ onSubmit: (credentials: LoginCredentials) => void, isLoading?: boolean, error?: string }`
-  - Include email input (required, validate email format)
-  - Include password input (required, min 8 chars)
-  - Include submit button (disabled when loading)
-  - Display error message when `error` prop is provided
-  - Follow pattern in `src/components/organisms/RegisterForm/RegisterForm.tsx`
-  - Test: Form renders, validates inputs, calls onSubmit with credentials
+  - **Pattern**: Follow `src/components/organisms/RegisterForm/RegisterForm.tsx`
+  - **Props Interface**:
+    ```typescript
+    interface LoginFormProps {
+      onSubmit: (credentials: LoginCredentials) => Promise<void>;
+      isLoading?: boolean;
+      error?: string;
+    }
+    ```
+  - **Behavior**:
+    - Email input (required, validate email format)
+    - Password input (required, min 8 chars)
+    - Submit button (disabled when loading or invalid)
+    - Display error message when `error` prop is provided
+  - **Test Specification** (`src/components/organisms/LoginForm/LoginForm.test.tsx`):
+    - Inputs: `{ onSubmit: mockFn, isLoading: false, error: undefined }`
+    - Expected: Form renders with email, password fields and submit button
+    - Test: Submit with valid credentials calls onSubmit with `{ email, password }`
+    - Test: Submit with invalid email shows validation error, does NOT call onSubmit
+    - Test: Submit with short password shows validation error
+    - Test: When `isLoading=true`, submit button is disabled
+    - Test: When `error` provided, error message is displayed
+    - Exception: Empty form submission shows "All fields required" error
+  - **Verify**: All tests pass, form works in Storybook/browser
 ```
 
 **TASK GRANULARITY RULE:** If a task takes more than 30 minutes to understand or could be interpreted multiple ways, break it down further.

@@ -317,33 +317,102 @@ ls features/*.md 2>/dev/null | grep -E '^features/[0-9]+-' | sort -n | tail -1
 2. **Current (buggy) code** - Show what's there now
 3. **Fixed code** - Show exactly what it should become
 4. **Why this fixes it** - Brief explanation of the fix logic
-5. **How to verify** - Specific steps to test the fix works
+5. **TDD test specification** - Tests that MUST pass after the fix (see below)
+6. **How to verify** - Specific steps to test the fix works
 
-**BAD (vague):**
+---
+
+### TEST-DRIVEN DEVELOPMENT (TDD) FOR BUG FIXES
+
+**Every bug fix MUST include a regression test specification:**
+
+```
+**Test Specification:**
+- **Test File**: `[exact/path/to/file.test.ts]`
+- **Test Case**: "should [expected behavior] when [condition]"
+- **Setup**: [required test setup/mocks]
+- **Input**: [exact input that triggered the bug]
+- **Expected Output**: [what should happen after the fix]
+- **Edge Cases to Test**:
+  - [Related scenario 1]
+  - [Related scenario 2]
+```
+
+**TDD Workflow for Bug Fixes:**
+1. Write a test that REPRODUCES the bug (it will fail - proves bug exists)
+2. Implement the fix
+3. Verify the test now passes (proves fix works)
+4. Add edge case tests to prevent similar bugs
+
+**Exception Handling in Bug Fixes:**
+- Identify what exception/error handling was missing
+- Specify the exact error type and message
+- Define graceful fallback behavior
+- Ensure error is logged appropriately
+- Define user-facing error message if applicable
+
+---
+
+### PATTERN CONSISTENCY FOR BUG FIXES
+
+**Before implementing a fix:**
+
+1. **Check if this bug indicates a missing pattern:**
+   - Is this a one-off mistake or a systemic issue?
+   - Are there similar bugs waiting to happen elsewhere?
+
+2. **If the bug reveals a pattern gap:**
+   - Task 1: "Establish [error handling/validation/etc.] pattern"
+   - Task 2: "Fix current bug using new pattern"
+   - Task 3: "Apply pattern to similar code locations"
+
+3. **If a pattern exists but wasn't followed:**
+   - Reference the correct pattern in the fix
+   - Note why it wasn't followed (for process improvement)
+
+**CRITICAL:** A bug fix should not just fix the symptom—it should prevent the same class of bug from occurring again.
+
+---
+
+**BAD (vague, no tests):**
 ```
 - [ ] Fix the login timeout issue
 ```
 
-**GOOD (task-level):**
+**GOOD (task-level with TDD and patterns):**
 ```
 - [ ] Fix session timeout not resetting on activity in `src/utils/auth.ts`
-  - Location: `src/utils/auth.ts`, function `checkSession()` at lines 45-52
-  - Current (buggy): 
+  - **Location**: `src/utils/auth.ts`, function `checkSession()` at lines 45-52
+  - **Pattern**: Follow session handling pattern from `src/utils/sessionManager.ts`
+  - **Current (buggy)**: 
     ```typescript
     const isExpired = Date.now() > session.expiresAt;
     ```
-  - Fixed:
+  - **Fixed**:
     ```typescript
     const isExpired = Date.now() > session.expiresAt;
     if (!isExpired) {
       session.expiresAt = Date.now() + SESSION_TIMEOUT;
+      sessionStorage.setItem('session', JSON.stringify(session));
     }
     ```
-  - Why: Session expiry was checked but never extended on valid activity
-  - Verify: Login, wait 5 min with activity, confirm session stays active
+  - **Why**: Session expiry was checked but never extended on valid activity
+  - **Test Specification** (`src/utils/auth.test.ts`):
+    - Test: "should extend session expiry when activity occurs before timeout"
+      - Setup: Create session expiring in 10 minutes
+      - Input: Call `checkSession()` while session is valid
+      - Expected: `session.expiresAt` is extended by SESSION_TIMEOUT
+    - Test: "should NOT extend session after expiry"
+      - Setup: Create expired session
+      - Input: Call `checkSession()`
+      - Expected: Session remains expired, returns false
+    - Edge Case: "should handle missing session gracefully"
+      - Input: `checkSession()` with no session in storage
+      - Expected: Returns false, no error thrown
+  - **Verify**: All tests pass, login, wait 5 min with activity, confirm session stays active
 ```
 
-**TASK GRANULARITY RULE:** If a fix involves multiple files, create a separate task for each file with its own verification step.
+**TASK GRANULARITY RULE:** If a fix involves multiple files, create a separate task for each file with its own verification step and test specification.
 
 ### 7.3 Create the Shard Document
 
