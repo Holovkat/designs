@@ -313,7 +313,91 @@ If no origin remote, inform the user:
 
 ---
 
-## Step 8: Summary
+## Step 8: Close GitHub Issues (If Applicable)
+
+**ACTION REQUIRED:** Check if the completed sprint has linked GitHub issues that should be closed.
+
+### 8.1 Check for GitHub References
+
+Review the sprint section in `features/00-IMPLEMENTATION-CHECKLIST.md` for GitHub references:
+
+Look for lines like:
+```
+**GitHub**: Issue #42
+**GitHub**: PR #15
+```
+
+Or task items like:
+```
+- [x] Close GitHub issue #42
+```
+
+### 8.2 Verify Sprint Completion
+
+**Only close GitHub issues if:**
+- ALL tasks in the sprint are marked complete (`- [x]`)
+- Compliance review PASSED (not waived)
+- Code has been committed and pushed
+
+### 8.3 Close the GitHub Issue
+
+**If a GitHub issue is linked and sprint is complete:**
+
+```bash
+# Check gh CLI is available
+gh --version
+
+# Close the issue with a completion comment
+gh issue close [NUMBER] --comment "## Completed
+
+This issue has been implemented and merged.
+
+**Sprint**: Sprint [N] - [Name]
+**Branch**: \`[branch-name]\`
+**Commit**: [commit-hash]
+
+**Completed Tasks**:
+- [x] [Task 1]
+- [x] [Task 2]
+- [x] [Task 3]
+
+_Closed via /end-session on [DATE]_"
+```
+
+**For PRs that should be merged:**
+
+> "This sprint includes PR #[number]. The PR should be merged via GitHub's merge process.
+>
+> Would you like me to merge it now? (Reply 'yes' to merge, 'no' to skip)"
+
+If yes:
+```bash
+gh pr merge [NUMBER] --squash --delete-branch
+```
+
+### 8.4 Confirm Closure
+
+> "Closed GitHub issue #[number] with completion comment."
+
+Or if no GitHub references:
+
+> "No GitHub issues linked to this sprint. Skipping GitHub closure."
+
+### 8.5 Handle Partial Completion
+
+**If sprint has GitHub reference but tasks are incomplete:**
+
+> "Sprint has linked GitHub issue #[number], but not all tasks are complete. The issue will remain open.
+>
+> Incomplete tasks:
+> - [ ] [Task 1]
+> - [ ] [Task 2]
+>
+> The issue will be closed when all tasks are complete in a future session."
+
+---
+
+## Step 9: Summary
 
 **ACTION REQUIRED:** Provide a summary that includes:
 
@@ -323,7 +407,8 @@ If no origin remote, inform the user:
 4. **Files updated**: Confirm checklist and session log were edited
 5. **Issues resolved**: Any code review findings that were fixed
 6. **Remediation rounds**: How many fix/retry loops were needed (if any)
-7. **Next steps**: What should be done in the next session
+7. **GitHub status**: Issue/PR closed, or "No linked GitHub issues", or "Issue remains open (incomplete)"
+8. **Next steps**: What should be done in the next session
 
 ---
 

@@ -8,6 +8,9 @@ This package provides slash commands and agent-aware hooks for managing coding s
 
 | Command | Description |
 |---------|-------------|
+| `/plan-feature` | Interactive planning session to scope and document a new feature |
+| `/plan-bugfix` | Interactive planning session to scope and document a bug fix |
+| `/plan-github` | Import GitHub issues/PRs and convert them into implementation specs |
 | `/start-session <branch>` | Create a new branch and begin coding |
 | `/next-phase` | Continue implementing the next phase from the project checklist |
 | `/end-session` | Close out session with compliance review, docs update, and push |
@@ -33,20 +36,78 @@ This package provides slash commands and agent-aware hooks for managing coding s
 - Project uses `pnpm` (or modify commands for `npm`/`yarn`)
 - `jq` for JSON processing: `brew install jq`
 
-## Quick Install (One-liner)
+## Quick Install
 
-Run this from your project root (adjust TEMPLATE_DIR path):
+### New Project (Full Install)
+
+Use the global `/install-workflows` command to set up everything:
 
 ```bash
-TEMPLATE_DIR=~/workspace/designs/templates/instructional-documents && \
-mkdir -p .factory/{commands,hooks} features changelog && \
-cp "$TEMPLATE_DIR"/commands/*.{sh,md} .factory/commands/ 2>/dev/null || true && \
-cp "$TEMPLATE_DIR"/hooks/*.sh .factory/hooks/ && \
-cp "$TEMPLATE_DIR"/hooks/settings-agent-aware.json .factory/settings.json && \
-chmod +x .factory/commands/*.sh .factory/hooks/*.sh && \
-echo "# Session Log\n\nDevelopment session history.\n\n---\n\n## Sessions\n" > changelog/SESSION-LOG.md && \
-echo "Installed! Run /commands in droid to verify."
+# In droid, from your project root:
+/install-workflows
 ```
+
+This installs:
+- Commands + Hooks + Settings
+- Design templates (`designs/templates/`)
+- Supporting files (`features/`, `changelog/`)
+
+### Existing Project (Refresh Only)
+
+Use `/install-session-workflows` to refresh commands/hooks without overwriting templates:
+
+```bash
+# In droid, from your project root:
+/install-session-workflows
+```
+
+This updates commands and hooks but leaves your `designs/templates/` untouched.
+
+### Installer Options
+
+```bash
+# Full install with templates (new projects)
+/install-workflows
+
+# Refresh commands/hooks only (existing projects)
+/install-session-workflows
+
+# Refresh including templates
+/install-session-workflows --with-templates
+
+# Only refresh commands
+/install-session-workflows --commands-only
+
+# Only refresh hooks
+/install-session-workflows --hooks-only
+
+# Skip settings.json (keep existing)
+/install-session-workflows --no-settings
+
+# Preview what would be copied
+/install-session-workflows --dry-run
+```
+
+### What Gets Installed
+
+| Location | `/install-workflows` | `/install-session-workflows` |
+|----------|---------------------|------------------------------|
+| `.factory/commands/` | Yes | Yes |
+| `.factory/hooks/` | Yes | Yes |
+| `.factory/settings.json` | Yes | Yes |
+| `features/` | Yes (if missing) | Yes (if missing) |
+| `changelog/` | Yes (if missing) | Yes (if missing) |
+| `designs/templates/` | **Yes** | No (use `--with-templates`) |
+
+### Refreshing After Template Updates
+
+When the template files are updated, refresh your project:
+
+```bash
+/install-session-workflows
+```
+
+This safely updates commands and hooks without overwriting any customized templates.
 
 ## Manual Installation
 
@@ -67,6 +128,9 @@ cp kingmode.md /path/to/your/project/.factory/commands/
 ```
 
 Or manually create each file in `.factory/commands/`:
+- `plan-feature.md` - Markdown command (interactive feature planning)
+- `plan-bugfix.md` - Markdown command (interactive bugfix planning)
+- `plan-github.md` - Markdown command (GitHub issue/PR import)
 - `start-session.sh` - Executable bash script
 - `next-phase.md` - Markdown command
 - `end-session.md` - Markdown command (includes compliance gate)
@@ -170,6 +234,9 @@ After installation, your project should have:
 your-project/
 ├── .factory/
 │   ├── commands/
+│   │   ├── plan-feature.md     # Interactive feature planning
+│   │   ├── plan-bugfix.md      # Interactive bugfix planning
+│   │   ├── plan-github.md      # GitHub issue/PR import
 │   │   ├── start-session.sh    # Creates branch
 │   │   ├── next-phase.md       # Continues implementation
 │   │   ├── end-session.md      # Closes session
@@ -226,7 +293,52 @@ pnpm build
 
 ## Usage
 
-### Starting a new feature
+### Planning a new feature
+
+```
+/plan-feature
+```
+
+The agent will:
+1. Gather context (review docs, git history, codebase)
+2. Interview you one question at a time about the feature
+3. Trigger `/kingmode` analysis if needed
+4. Generate a numbered shard document in `features/`
+5. Update the implementation checklist with new sprint/tasks
+
+### Planning a bug fix
+
+```
+/plan-bugfix
+```
+
+The agent will:
+1. Gather context and review recent changes
+2. Interview you about the bug symptoms and behavior
+3. Investigate the codebase to identify root cause
+4. Generate a bugfix shard with analysis and fix plan
+5. Update the implementation checklist
+
+### Importing from GitHub
+
+```
+/plan-github
+```
+
+Or with a specific issue:
+```
+/plan-github #42
+```
+
+The agent will:
+1. Fetch issue/PR details from GitHub (title, body, labels, comments)
+2. Present the content and clarify any missing details
+3. Determine if it's a bug, feature, or chore
+4. Generate a shard document with GitHub context preserved
+5. Update the implementation checklist
+6. Post implementation plan comment to the GitHub issue (mandatory)
+
+### Starting implementation
 
 ```
 /start-session feature/my-new-feature
@@ -260,6 +372,7 @@ The agent will:
 5. Update session log
 6. Update AGENTS.md if needed
 7. Rebase, commit, and push
+8. Close linked GitHub issues (if sprint complete)
 
 ### Activating King Mode
 
