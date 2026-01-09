@@ -33,19 +33,40 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Get the directory where this script lives (template source)
+# Get the directory where this script lives
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEMPLATE_COMMANDS="$SCRIPT_DIR/commands"
-TEMPLATE_HOOKS="$SCRIPT_DIR/hooks"
+
+# Determine if running from template source or from a project's .factory/commands
+# Template source has commands/ and hooks/ subdirectories
+# Project copy is inside .factory/commands/ with hooks/ as sibling
+if [[ -d "$SCRIPT_DIR/commands" ]] && [[ -d "$SCRIPT_DIR/hooks" ]]; then
+    # Running from template source (e.g., ~/workspace/designs/templates/instructional-documents/)
+    TEMPLATE_COMMANDS="$SCRIPT_DIR/commands"
+    TEMPLATE_HOOKS="$SCRIPT_DIR/hooks"
+    TEMPLATE_DOCS="$SCRIPT_DIR"
+elif [[ "$(basename "$SCRIPT_DIR")" == "commands" ]] && [[ -d "$SCRIPT_DIR/../hooks" ]]; then
+    # Running from project's .factory/commands/ - source from central template
+    CENTRAL_TEMPLATE="$HOME/workspace/designs/templates/instructional-documents"
+    if [[ -d "$CENTRAL_TEMPLATE/commands" ]]; then
+        TEMPLATE_COMMANDS="$CENTRAL_TEMPLATE/commands"
+        TEMPLATE_HOOKS="$CENTRAL_TEMPLATE/hooks"
+        TEMPLATE_DOCS="$CENTRAL_TEMPLATE"
+    else
+        echo -e "${RED}Error: Cannot find template source at $CENTRAL_TEMPLATE${NC}"
+        echo "Please ensure the templates repository is at ~/workspace/designs/"
+        exit 1
+    fi
+else
+    echo -e "${RED}Error: Cannot determine template source location${NC}"
+    echo "Run from either the template directory or a project with .factory/commands/"
+    exit 1
+fi
 
 # Target is current working directory
 PROJECT_DIR="$(pwd)"
 TARGET_FACTORY="$PROJECT_DIR/.factory"
 TARGET_COMMANDS="$TARGET_FACTORY/commands"
 TARGET_HOOKS="$TARGET_FACTORY/hooks"
-
-# Additional paths
-TEMPLATE_DOCS="$SCRIPT_DIR"
 TARGET_DESIGNS="$PROJECT_DIR/designs/templates"
 
 # Options
