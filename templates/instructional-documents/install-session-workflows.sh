@@ -178,6 +178,18 @@ if $INSTALL_COMMANDS; then
         fi
     done
     
+    # Copy this installer script itself so /install-session-workflows works locally
+    SELF_SCRIPT="$SCRIPT_DIR/install-session-workflows.sh"
+    if [[ -f "$SELF_SCRIPT" ]]; then
+        if $DRY_RUN; then
+            echo -e "  Would copy: ${GREEN}install-session-workflows.sh${NC} (self)"
+        else
+            cp "$SELF_SCRIPT" "$TARGET_COMMANDS/"
+            echo -e "  Copied: ${GREEN}install-session-workflows.sh${NC} (self)"
+        fi
+        ((COMMANDS_COPIED++)) || true
+    fi
+    
     # Make shell scripts executable
     if ! $DRY_RUN; then
         chmod +x "$TARGET_COMMANDS"/*.sh 2>/dev/null || true
