@@ -307,7 +307,45 @@ ls features/*.md 2>/dev/null | grep -E '^features/[0-9]+-' | sort -n | tail -1
 **Naming convention:** `[NN]-bugfix-[short-description].md`
 - Example: `05-bugfix-login-timeout.md`, `06-bugfix-cart-calculation.md`
 
-### 7.2 Create the Shard Document
+### 7.2 CRITICAL: Writing Task-Level Fix Specifications
+
+**Imagine giving this shard to a junior developer.** They should be able to complete each fix task without asking questions or making assumptions.
+
+**EVERY FIX TASK MUST INCLUDE:**
+
+1. **Exact file path and line numbers** - "In `src/utils/auth.ts` at line 45-52"
+2. **Current (buggy) code** - Show what's there now
+3. **Fixed code** - Show exactly what it should become
+4. **Why this fixes it** - Brief explanation of the fix logic
+5. **How to verify** - Specific steps to test the fix works
+
+**BAD (vague):**
+```
+- [ ] Fix the login timeout issue
+```
+
+**GOOD (task-level):**
+```
+- [ ] Fix session timeout not resetting on activity in `src/utils/auth.ts`
+  - Location: `src/utils/auth.ts`, function `checkSession()` at lines 45-52
+  - Current (buggy): 
+    ```typescript
+    const isExpired = Date.now() > session.expiresAt;
+    ```
+  - Fixed:
+    ```typescript
+    const isExpired = Date.now() > session.expiresAt;
+    if (!isExpired) {
+      session.expiresAt = Date.now() + SESSION_TIMEOUT;
+    }
+    ```
+  - Why: Session expiry was checked but never extended on valid activity
+  - Verify: Login, wait 5 min with activity, confirm session stays active
+```
+
+**TASK GRANULARITY RULE:** If a fix involves multiple files, create a separate task for each file with its own verification step.
+
+### 7.3 Create the Shard Document
 
 **Use the Create tool** to create `features/[NN]-bugfix-[description].md`:
 
@@ -426,22 +464,47 @@ Ensure fix doesn't break other things:
 
 ## 5. Implementation Checklist
 
+**IMPORTANT:** Each task must be specific enough for a junior developer to complete without asking questions.
+
 ### Phase 1: Verify & Fix
-- [ ] Reproduce the bug locally
-- [ ] Implement the fix in `[file1]`
-- [ ] Implement the fix in `[file2]` (if applicable)
-- [ ] Verify bug is resolved
+- [ ] **Reproduce bug locally**
+  - Follow reproduction steps from Section 1.3
+  - Confirm exact error/behavior matches bug report
+  - Screenshot or log the bug state before fixing
+
+- [ ] **Fix in `[exact/file/path.ts]`** at lines [X-Y]
+  - Current code: [show buggy code snippet]
+  - Change to: [show fixed code snippet]
+  - Why: [brief explanation]
+  - Verify: [how to check this specific change works]
+
+- [ ] **Fix in `[exact/file/path2.ts]`** (if applicable)
+  - [Same format as above]
 
 ### Phase 2: Test & Validate
-- [ ] Run reproduction steps - confirm fix
-- [ ] Run regression tests
-- [ ] Test edge cases
-- [ ] Run lint and type check
+- [ ] **Verify fix resolves original bug**
+  - Run exact reproduction steps from Section 1.3
+  - Confirm expected behavior now occurs
+  - Document: [what you should see]
+
+- [ ] **Regression testing**
+  - Test: [specific related feature 1] still works
+  - Test: [specific related feature 2] still works
+  - Run: `pnpm test` - all tests pass
+
+- [ ] **Edge case testing**
+  - Test: [specific edge case 1]
+  - Test: [specific edge case 2]
+
+- [ ] **Quality checks**
+  - Run: `pnpm lint` - no errors
+  - Run: `pnpm tsc --noEmit` - no type errors
+  - Run: `pnpm build` - builds successfully
 
 ### Phase 3: Complete
-- [ ] Code review
-- [ ] Update any affected documentation
-- [ ] Commit with descriptive message
+- [ ] **Code review** - PR reviewed and approved
+- [ ] **Documentation** - Update [specific doc] if behavior changed
+- [ ] **Commit** with message: `fix([scope]): [description]`
 
 ---
 

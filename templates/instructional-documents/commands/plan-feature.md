@@ -275,7 +275,39 @@ ls features/*.md 2>/dev/null | grep -E '^features/[0-9]+-' | sort -n | tail -1
 **Naming convention:** `[NN]-[feature-name].md`
 - Example: `03-user-authentication.md`, `04-dashboard-widgets.md`
 
-### 7.2 Create the Shard Document
+### 7.2 CRITICAL: Writing Task-Level Shards
+
+**Imagine giving this shard to a junior developer.** They should be able to complete each task without asking questions or making assumptions.
+
+**EVERY TASK MUST INCLUDE:**
+
+1. **Specific file paths** - Not "create a component", but "create `src/components/atoms/Button/Button.tsx`"
+2. **Exact props/interfaces** - Show the TypeScript interface they need to implement
+3. **Code patterns to follow** - Reference existing files: "Follow the pattern in `src/components/atoms/Input/Input.tsx`"
+4. **Step-by-step instructions** - Break complex tasks into numbered sub-steps
+5. **Expected output** - What should exist when the task is done
+6. **How to verify** - How to test/confirm the task is complete
+
+**BAD (vague):**
+```
+- [ ] Create user authentication
+```
+
+**GOOD (task-level):**
+```
+- [ ] Create login form component at `src/components/organisms/LoginForm/LoginForm.tsx`
+  - Props: `{ onSubmit: (credentials: LoginCredentials) => void, isLoading?: boolean, error?: string }`
+  - Include email input (required, validate email format)
+  - Include password input (required, min 8 chars)
+  - Include submit button (disabled when loading)
+  - Display error message when `error` prop is provided
+  - Follow pattern in `src/components/organisms/RegisterForm/RegisterForm.tsx`
+  - Test: Form renders, validates inputs, calls onSubmit with credentials
+```
+
+**TASK GRANULARITY RULE:** If a task takes more than 30 minutes to understand or could be interpreted multiple ways, break it down further.
+
+### 7.3 Create the Shard Document
 
 **Use the Create tool** to create `features/[NN]-[feature-name].md`:
 
@@ -347,32 +379,54 @@ As a [user type], I want to [action], so that [benefit].
 
 ## 4. Implementation Phases
 
-### Phase 1: [Foundation/Setup]
-**Deliverables:**
-- [ ] [Deliverable 1]
-- [ ] [Deliverable 2]
+**IMPORTANT:** Each task below must be specific enough for a junior developer to complete without asking questions.
 
-**Acceptance Criteria:**
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+### Phase 1: [Foundation/Setup]
+**Tasks:**
+- [ ] **[Task name]** at `[exact/file/path.tsx]`
+  - [Specific requirement 1]
+  - [Specific requirement 2]
+  - Pattern: Follow `[existing/file/to/reference.tsx]`
+  - Verify: [How to confirm this task is done]
+
+- [ ] **[Task name]** at `[exact/file/path.tsx]`
+  - [Specific requirement 1]
+  - [Specific requirement 2]
+  - Verify: [How to confirm this task is done]
+
+**Phase Acceptance Criteria:**
+- [ ] [Specific, testable criterion]
+- [ ] [Specific, testable criterion]
 
 ### Phase 2: [Core Implementation]
-**Deliverables:**
-- [ ] [Deliverable 1]
-- [ ] [Deliverable 2]
+**Tasks:**
+- [ ] **[Task name]** at `[exact/file/path.tsx]`
+  - Props/Interface: `{ prop1: Type, prop2: Type }`
+  - [Specific behavior 1]
+  - [Specific behavior 2]
+  - [Specific behavior 3]
+  - Pattern: Follow `[existing/file/to/reference.tsx]`
+  - Verify: [How to confirm this task is done]
 
-**Acceptance Criteria:**
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+- [ ] **[Task name]** at `[exact/file/path.tsx]`
+  - [Specific requirement with exact values/types]
+  - Verify: [How to confirm this task is done]
+
+**Phase Acceptance Criteria:**
+- [ ] [Specific, testable criterion]
+- [ ] [Specific, testable criterion]
 
 ### Phase 3: [Integration/Polish]
-**Deliverables:**
-- [ ] [Deliverable 1]
-- [ ] [Deliverable 2]
+**Tasks:**
+- [ ] **[Task name]**
+  - [Step 1: specific action]
+  - [Step 2: specific action]
+  - [Step 3: specific action]
+  - Verify: [How to confirm this task is done]
 
-**Acceptance Criteria:**
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+**Phase Acceptance Criteria:**
+- [ ] [Specific, testable criterion]
+- [ ] [Specific, testable criterion]
 
 ---
 
