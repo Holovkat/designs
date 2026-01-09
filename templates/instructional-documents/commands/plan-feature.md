@@ -8,6 +8,26 @@ You are conducting an **interactive planning session** to scope a new feature. T
 1. **ONE QUESTION AT A TIME** - Never ask multiple questions in a single response
 2. **WAIT FOR ANSWERS** - Do not proceed until the user responds
 3. **INTERVIEW MODE** - This is a conversation, not a checklist dump
+4. **COMPLETE ALL MANDATORY STEPS** - You MUST complete Steps 1-4 (interview), then Steps 6-10 (artifacts). Do NOT stop after the interview.
+
+---
+
+## MANDATORY WORKFLOW OVERVIEW
+
+| Step | Description | Required? |
+|------|-------------|-----------|
+| 1 | Context Gathering | **MANDATORY** |
+| 2 | Initiate Interview | **MANDATORY** |
+| 3 | Interview Questions | **MANDATORY** |
+| 4 | Confirm Understanding | **MANDATORY** |
+| 5 | Deep Analysis (kingmode) | OPTIONAL - only if complex |
+| 6 | Determine Sprint Placement | **MANDATORY** |
+| 7 | Generate Shard Document | **MANDATORY** |
+| 8 | Update Implementation Checklist | **MANDATORY** |
+| 9 | Update Project Documentation | OPTIONAL - if needed |
+| 10 | Planning Summary | **MANDATORY** |
+
+**DO NOT STOP after Step 4.** After user confirms understanding, you MUST proceed to create the shard document (Step 7) and update the checklist (Step 8).
 
 ---
 
@@ -159,9 +179,13 @@ Ask this to conclude:
 
 **Wait for user confirmation before proceeding.**
 
+**IMPORTANT: Once user confirms (or after any corrections), you MUST proceed to Step 6 to create artifacts. Do NOT stop here.**
+
 ---
 
-## Step 5: Deep Analysis (Optional)
+## Step 5: Deep Analysis (OPTIONAL)
+
+**This step is OPTIONAL.** Only trigger if the feature is complex (3+ components, integrations, or architectural decisions).
 
 **If the feature is complex (3+ components, integrations, or architectural decisions), trigger deep analysis:**
 
@@ -193,9 +217,9 @@ Analyze this planned feature for implementation:
 
 ---
 
-## Step 6: Determine Sprint Placement
+## Step 6: Determine Sprint Placement (MANDATORY)
 
-**ACTION REQUIRED:** Check current implementation state and decide placement.
+**ACTION REQUIRED - THIS STEP IS MANDATORY.** Check current implementation state and decide placement.
 
 ### 6.1 Read Current Checklist
 
@@ -236,9 +260,9 @@ Proceed with creating a new sprint at the end.
 
 ---
 
-## Step 7: Generate Shard Document
+## Step 7: Generate Shard Document (MANDATORY)
 
-**ACTION REQUIRED:** Create the technical specification shard.
+**ACTION REQUIRED - THIS STEP IS MANDATORY.** You MUST create the technical specification shard document. Do NOT skip this step.
 
 ### 7.1 Determine Shard Number and Filename
 
@@ -403,9 +427,9 @@ Questions to resolve during implementation:
 
 ---
 
-## Step 8: Update Implementation Checklist
+## Step 8: Update Implementation Checklist (MANDATORY)
 
-**ACTION REQUIRED:** Add the new sprint/tasks to the checklist.
+**ACTION REQUIRED - THIS STEP IS MANDATORY.** You MUST update the implementation checklist with the new sprint and tasks. Do NOT skip this step.
 
 ### 8.1 Read Current Checklist
 
@@ -461,9 +485,9 @@ If the feature introduces:
 
 ---
 
-## Step 10: Planning Summary
+## Step 10: Planning Summary (MANDATORY)
 
-**ACTION REQUIRED:** Present the final summary to the user.
+**ACTION REQUIRED - THIS STEP IS MANDATORY.** Present the final summary confirming what was created.
 
 ```markdown
 ## ✅ Feature Planning Complete
@@ -539,4 +563,10 @@ Then create both the checklist and shard.
 
 ---
 
-**BEGIN NOW: Start with Step 1 - Context Gathering (silently), then proceed to Step 2 - Initiate Interview.**
+**BEGIN NOW:** 
+1. Start with Step 1 - Context Gathering (silently)
+2. Proceed to Steps 2-4 - Interview the user
+3. **THEN YOU MUST** proceed to Steps 6-8 to create the shard document and update the checklist
+4. Finally, present the summary in Step 10
+
+**The planning session is NOT complete until the shard document exists and the checklist is updated.**

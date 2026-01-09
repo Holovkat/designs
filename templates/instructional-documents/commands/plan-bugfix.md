@@ -9,6 +9,25 @@ You are conducting an **interactive planning session** to scope a bug fix. This 
 2. **WAIT FOR ANSWERS** - Do not proceed until the user responds
 3. **INTERVIEW MODE** - This is a conversation, not a checklist dump
 4. **FOCUS ON ROOT CAUSE** - Bug fixes require understanding the cause, not just symptoms
+5. **COMPLETE ALL MANDATORY STEPS** - You MUST complete the interview, investigation, AND artifact creation. Do NOT stop after analysis.
+
+---
+
+## MANDATORY WORKFLOW OVERVIEW
+
+| Step | Description | Required? |
+|------|-------------|-----------|
+| 1 | Context Gathering | **MANDATORY** |
+| 2 | Initiate Interview | **MANDATORY** |
+| 3 | Interview Questions | **MANDATORY** |
+| 4 | Root Cause Investigation | **MANDATORY** |
+| 5 | Present Findings | **MANDATORY** |
+| 6 | Determine Fix Placement | **MANDATORY** |
+| 7 | Generate Bugfix Shard | **MANDATORY** |
+| 8 | Update Implementation Checklist | **MANDATORY** |
+| 9 | Planning Summary | **MANDATORY** |
+
+**DO NOT STOP after Step 5.** After presenting findings, you MUST proceed to create the shard document (Step 7) and update the checklist (Step 8).
 
 ---
 
@@ -192,6 +211,8 @@ Form a hypothesis about:
 
 **Wait for user confirmation.**
 
+**IMPORTANT: Once user confirms (or after any corrections), you MUST proceed to Step 6 to create artifacts. Do NOT stop here.**
+
 ### 5.1 If User Disagrees or Has More Info
 
 > "Thanks for that clarification. Let me re-investigate with this new information..."
@@ -233,9 +254,9 @@ Debug this issue:
 
 ---
 
-## Step 6: Determine Fix Placement
+## Step 6: Determine Fix Placement (MANDATORY)
 
-**ACTION REQUIRED:** Decide how to track this fix.
+**ACTION REQUIRED - THIS STEP IS MANDATORY.** Decide how to track this fix.
 
 ### 6.1 Read Current Checklist
 
@@ -273,9 +294,9 @@ Create a new bugfix sprint.
 
 ---
 
-## Step 7: Generate Bugfix Shard Document
+## Step 7: Generate Bugfix Shard Document (MANDATORY)
 
-**ACTION REQUIRED:** Create the bug fix specification.
+**ACTION REQUIRED - THIS STEP IS MANDATORY.** You MUST create the bug fix specification document. Do NOT skip this step.
 
 ### 7.1 Determine Shard Number and Filename
 
@@ -458,9 +479,9 @@ If the fix causes issues:
 
 ---
 
-## Step 8: Update Implementation Checklist
+## Step 8: Update Implementation Checklist (MANDATORY)
 
-**ACTION REQUIRED:** Add the bugfix to the checklist.
+**ACTION REQUIRED - THIS STEP IS MANDATORY.** You MUST update the implementation checklist. Do NOT skip this step.
 
 ### 8.1 Read Current Checklist
 
@@ -501,9 +522,9 @@ Read the file again to confirm changes.
 
 ---
 
-## Step 9: Planning Summary
+## Step 9: Planning Summary (MANDATORY)
 
-**ACTION REQUIRED:** Present the final summary to the user.
+**ACTION REQUIRED - THIS STEP IS MANDATORY.** Present the final summary confirming what was created.
 
 ```markdown
 ## ✅ Bugfix Planning Complete
@@ -597,4 +618,12 @@ Then create both the checklist and shard.
 
 ---
 
-**BEGIN NOW: Start with Step 1 - Context Gathering (silently), then proceed to Step 2 - Initiate Interview.**
+**BEGIN NOW:** 
+1. Start with Step 1 - Context Gathering (silently)
+2. Proceed to Steps 2-3 - Interview the user about the bug
+3. Execute Step 4 - Investigate root cause
+4. Present findings in Step 5
+5. **THEN YOU MUST** proceed to Steps 6-8 to create the shard document and update the checklist
+6. Finally, present the summary in Step 9
+
+**The planning session is NOT complete until the shard document exists and the checklist is updated.**
