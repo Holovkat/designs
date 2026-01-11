@@ -6,28 +6,29 @@ This package provides slash commands and agent-aware hooks for managing coding s
 
 ### Commands
 
-| Command | Description |
-|---------|-------------|
-| `/plan-feature` | Interactive planning session to scope and document a new feature |
-| `/plan-bugfix` | Interactive planning session to scope and document a bug fix |
-| `/plan-github` | Import GitHub issues/PRs and convert them into implementation specs |
-| `/start-session <branch>` | Create a new branch and begin coding |
-| `/next-phase` | Continue implementing the next phase from the project checklist |
-| `/end-session` | Close out session with compliance review, docs update, and push |
-| `/compliance-review` | Verify implementation meets spec requirements (standalone) |
-| `/kingmode` | Activate "King Mode" for deep, multi-dimensional analysis |
-| `/sanity-check` | Verify app loads without errors |
-| `/code-review` | Get a second droid opinion on recent changes |
+| Command                   | Description                                                                |
+| ------------------------- | -------------------------------------------------------------------------- |
+| `/plan-feature`           | Interactive planning session to scope and document a new feature           |
+| `/plan-bugfix`            | Interactive planning session to scope and document a bug fix               |
+| `/plan-github`            | Import GitHub issues/PRs and convert them into implementation specs        |
+| `/start-session <branch>` | Create a new branch and begin coding                                       |
+| `/next-phase`             | Continue implementing the next phase from the project checklist            |
+| `/end-session`            | Close out session with compliance review, docs update, and push            |
+| `/uat`                    | Run User Acceptance Testing with guided test scenarios and rework tracking |
+| `/compliance-review`      | Verify implementation meets spec requirements (standalone)                 |
+| `/kingmode`               | Activate "King Mode" for deep, multi-dimensional analysis                  |
+| `/sanity-check`           | Verify app loads without errors                                            |
+| `/code-review`            | Get a second droid opinion on recent changes                               |
 
 ### Agent-Aware Hooks
 
-| Hook | Trigger | Purpose |
-|------|---------|---------|
-| `post-edit-lint.sh` | After Edit/Create/MultiEdit | Incremental lint on modified files |
-| `sanity-check.sh` | Manual or end-session | Verify app loads without errors |
-| `code-review-checkpoint.sh` | Manual or end-session | Second droid reviews changes |
-| `pre-commit-workflow.sh` | Before git commit | Lint, build, code review |
-| `post-commit-push.sh` | After git commit | Push to main |
+| Hook                        | Trigger                     | Purpose                            |
+| --------------------------- | --------------------------- | ---------------------------------- |
+| `post-edit-lint.sh`         | After Edit/Create/MultiEdit | Incremental lint on modified files |
+| `sanity-check.sh`           | Manual or end-session       | Verify app loads without errors    |
+| `code-review-checkpoint.sh` | Manual or end-session       | Second droid reviews changes       |
+| `pre-commit-workflow.sh`    | Before git commit           | Lint, build, code review           |
+| `post-commit-push.sh`       | After git commit            | Push to main                       |
 
 ## Prerequisites
 
@@ -48,6 +49,7 @@ Use the global `/install-workflows` command to set up everything:
 ```
 
 This installs:
+
 - Commands + Hooks + Settings
 - Design templates (`designs/templates/`)
 - Supporting files (`features/`, `changelog/`)
@@ -90,14 +92,14 @@ This updates commands and hooks but leaves your `designs/templates/` untouched.
 
 ### What Gets Installed
 
-| Location | `/install-workflows` | `/install-session-workflows` |
-|----------|---------------------|------------------------------|
-| `.factory/commands/` | Yes | Yes |
-| `.factory/hooks/` | Yes | Yes |
-| `.factory/settings.json` | Yes | Yes |
-| `features/` | Yes (if missing) | Yes (if missing) |
-| `changelog/` | Yes (if missing) | Yes (if missing) |
-| `designs/templates/` | **Yes** | No (use `--with-templates`) |
+| Location                 | `/install-workflows` | `/install-session-workflows` |
+| ------------------------ | -------------------- | ---------------------------- |
+| `.factory/commands/`     | Yes                  | Yes                          |
+| `.factory/hooks/`        | Yes                  | Yes                          |
+| `.factory/settings.json` | Yes                  | Yes                          |
+| `features/`              | Yes (if missing)     | Yes (if missing)             |
+| `changelog/`             | Yes (if missing)     | Yes (if missing)             |
+| `designs/templates/`     | **Yes**              | No (use `--with-templates`)  |
 
 ### Refreshing After Template Updates
 
@@ -123,17 +125,19 @@ mkdir -p .factory/commands .factory/hooks features changelog
 # From this template directory, copy to your project:
 cp start-session.sh /path/to/your/project/.factory/commands/
 cp next-phase.md /path/to/your/project/.factory/commands/
-cp end-session.md /path/to/your/project/.factory/commands/  
+cp end-session.md /path/to/your/project/.factory/commands/
 cp kingmode.md /path/to/your/project/.factory/commands/
 ```
 
 Or manually create each file in `.factory/commands/`:
+
 - `plan-feature.md` - Markdown command (interactive feature planning)
 - `plan-bugfix.md` - Markdown command (interactive bugfix planning)
 - `plan-github.md` - Markdown command (GitHub issue/PR import)
 - `start-session.sh` - Executable bash script
 - `next-phase.md` - Markdown command
 - `end-session.md` - Markdown command (includes compliance gate)
+- `uat.md` - Markdown command (user acceptance testing with rework tracking)
 - `compliance-review.md` - Markdown command (standalone compliance check)
 - `kingmode.md` - Markdown command
 
@@ -168,16 +172,20 @@ Create `features/00-IMPLEMENTATION-CHECKLIST.md` with your project phases:
 # Implementation Checklist
 
 ## Sprint 1: [Name]
+
 **Goal**: [Description]
 
 ### Epic: [Name]
+
 - [ ] Task 1
 - [ ] Task 2
 
 ## Sprint 2: [Name]
+
 **Goal**: [Description]
 
 ### Epic: [Name]
+
 - [ ] Task 1
 - [ ] Task 2
 ```
@@ -215,6 +223,7 @@ In your project directory, run droid and type:
 ```
 
 You should see:
+
 - `/start-session` - Create new branch for coding session
 - `/next-phase` - Continue implementing next phase
 - `/end-session` - Close out session with review
@@ -222,6 +231,7 @@ You should see:
 - `/code-review` - Get second droid opinion on changes
 
 To verify hooks are active:
+
 ```bash
 cat .factory/settings.json | jq '.hooks'
 ```
@@ -240,6 +250,7 @@ your-project/
 │   │   ├── start-session.sh    # Creates branch
 │   │   ├── next-phase.md       # Continues implementation
 │   │   ├── end-session.md      # Closes session
+│   │   ├── uat.md              # User acceptance testing
 │   │   └── kingmode.md         # Deep analysis mode
 │   ├── hooks/
 │   │   ├── post-edit-lint.sh   # Lint after file edits
@@ -263,10 +274,12 @@ Edit `end-session.md` Step 1 to use your package manager:
 
 ```markdown
 # For npm:
+
 npm run lint
 npm run build
 
 # For yarn:
+
 yarn lint
 yarn build
 ```
@@ -300,6 +313,7 @@ pnpm build
 ```
 
 The agent will:
+
 1. Gather context (review docs, git history, codebase)
 2. Interview you one question at a time about the feature
 3. Trigger `/kingmode` analysis if needed
@@ -313,6 +327,7 @@ The agent will:
 ```
 
 The agent will:
+
 1. Gather context and review recent changes
 2. Interview you about the bug symptoms and behavior
 3. Investigate the codebase to identify root cause
@@ -326,11 +341,13 @@ The agent will:
 ```
 
 Or with a specific issue:
+
 ```
 /plan-github #42
 ```
 
 The agent will:
+
 1. Fetch issue/PR details from GitHub (title, body, labels, comments)
 2. Present the content and clarify any missing details
 3. Determine if it's a bug, feature, or chore
@@ -351,6 +368,7 @@ The agent will:
 ```
 
 The agent will:
+
 1. Check for uncommitted changes (offers to run end-session first)
 2. Read the implementation checklist
 3. Find the next incomplete sprint
@@ -365,6 +383,7 @@ The agent will:
 ```
 
 The agent will:
+
 1. Run lint and build
 2. Perform code review with `/review`
 3. Update implementation checklist (mark completed items)
@@ -374,6 +393,22 @@ The agent will:
 7. Rebase, commit, and push
 8. Close linked GitHub issues (if sprint complete)
 
+### Running User Acceptance Testing
+
+```
+/uat
+```
+
+The agent will:
+
+1. Identify the current sprint and its changes
+2. Analyze git history and shard documents for acceptance criteria
+3. Generate comprehensive test scenarios
+4. Walk you through each test one at a time, awaiting approval
+5. Log any failures to `features/UAT/[sprint-name]-rework.UAT.md`
+6. Update implementation checklist with UAT status and rework items
+7. Direct you to `/next-phase`, `/plan-feature`, or `/plan-bugfix` for rework
+
 ### Activating King Mode
 
 ```
@@ -381,6 +416,7 @@ The agent will:
 ```
 
 The agent will:
+
 1. Activate "King Mode" for deep, multi-dimensional analysis
 2. Provide detailed reasoning chain and edge case analysis
 
@@ -389,7 +425,6 @@ The agent will:
 ```
 /kingmode off
 ```
-
 
 ## Troubleshooting
 
@@ -415,4 +450,4 @@ git remote add origin <your-repo-url>
 
 ---
 
-*Template version: January 2026*
+_Template version: January 2026_
