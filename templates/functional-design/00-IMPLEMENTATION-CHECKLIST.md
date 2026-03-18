@@ -1,44 +1,44 @@
 # 00 - Implementation Checklist
 
-This document tracks the implementation status of the project's epics and features, organized into sprints. It should be updated as new design documents are created.
+This document tracks the live implementation status for the `designs` repository.
 
-## Sprint 1: [Sprint Goal, e.g., Foundational Setup & User Onboarding]
+The archived template baseline is preserved in [00-TEMPLATE-IMPLEMENTATION-CHECKLIST.md](./00-TEMPLATE-IMPLEMENTATION-CHECKLIST.md).
 
-### Epic: Core Infrastructure
+## Sprint 1: Codex Global Planning Agent Pack
 
-- **Phase/Feature: Architecture & Foundational Setup**
-  - [ ] **Architecture Overview:** Documented as per [01-ARCHITECTURE-OVERVIEW.md](./01-ARCHITECTURE-OVERVIEW.md).
-  - [ ] **Folder Layout:** Defined as per [02-FOLDER-LAYOUT.md](./02-FOLDER-LAYOUT.md).
-  - [ ] **Settings & Config:** Implemented as per [03-SETTINGS-AND-CONFIG.md](./03-SETTINGS-AND-CONFIG.md).
-  - [ ] **Web UI Setup:** Implemented as per [04-WEB-UI-SETUP.md](./04-WEB-UI-SETUP.md).
-  - [ ] **Database Setup:** Implemented as per [05-DATABASE-SETUP.md](./05-DATABASE-SETUP.md).
-  - [ ] **Authentication Setup:** Implemented as per [06-AUTHENTICATION-SETUP.md](./06-AUTHENTICATION-SETUP.md).
-  - [ ] **API Integration Strategy:** Defined as per [07-API-INTEGRATION.md](./07-API-INTEGRATION.md).
-  - [ ] **Infrastructure & Containerization:** Set up as per [08-INFRASTRUCTURE-SETUP.md](./08-INFRASTRUCTURE-SETUP.md).
-  - [ ] **Version Control:** Set up as per [09-VERSION-CONTROL-STRATEGY.md](./09-VERSION-CONTROL-STRATEGY.md).
-  - [ ] **CI/CD Pipeline:** Set up as per [10-CI-CD-PIPELINE.md](./10-CI-CD-PIPELINE.md).
+### Epic: [#1 Codex Global Planning Agent Pack](https://github.com/Holovkat/designs/issues/1)
 
-### Epic: User Onboarding (Example)
+- **Phase: [#2 Planning MVP - Global Codex Agent Pack](https://github.com/Holovkat/designs/issues/2)**
+  - **Contract Gate:** Freeze role boundaries, write permissions, status vocabulary, and response payloads before any parallel specialist implementation begins.
+  - **Shared Status Format:** Every delegated specialist response must include `task_id`, `owner`, `status`, `deps`, `blockers`, `next`, `eta`, and `evidence`.
+  - **Living Spec Rule:** Keep constraints, non-goals, and lessons learned current in the issue hierarchy and checklist so new delegated tasks do not reconstruct context from scratch.
+  - [ ] [#3](https://github.com/Holovkat/designs/issues/3) Define planning-agent contract and communication protocol
+  - [ ] [#4](https://github.com/Holovkat/designs/issues/4) Create `blueprint_orchestrator` global agent
+  - [ ] [#5](https://github.com/Holovkat/designs/issues/5) Create `req-analyst` and `ux-analyst` planning agents
+  - [ ] [#6](https://github.com/Holovkat/designs/issues/6) Create `scenario-analyst` and `tech-analyst` planning agents
+  - [ ] [#7](https://github.com/Holovkat/designs/issues/7) Create `prd-writer` planning agent
+  - [ ] [#8](https://github.com/Holovkat/designs/issues/8) Validate planning command orchestration coverage
+    - [ ] [#9](https://github.com/Holovkat/designs/issues/9) Validate `/plan-feature` orchestration path first as the canary integration path
+    - [ ] [#10](https://github.com/Holovkat/designs/issues/10) Validate `/plan-bugfix` orchestration path
+    - [ ] [#11](https://github.com/Holovkat/designs/issues/11) Validate `/plan-github` orchestration path
 
-- **Phase/Feature: User Registration**
-  - [ ] **Design:** Completed as per `[11-FEATURE-USER-REGISTRATION.md]`. (Note: Create a new design doc for each feature).
-  - [ ] **Implementation:**
-    - [ ] API endpoints implemented.
-    - [ ] UI components built.
-  - [ ] **Verification:**
-    - [ ] Unit tests written and passing.
-    - [ ] Integration tests written and passing.
+## Local Validation Notes
 
-- **Phase/Feature: User Login**
-  - [ ] **Design:** Completed as per `[12-FEATURE-USER-LOGIN.md]`.
-  - [ ] **Implementation:**
-    - [ ] API endpoints implemented.
-    - [ ] UI components built.
-  - [ ] **Verification:**
-    - [ ] Unit tests written and passing.
-    - [ ] Integration tests written and passing.
+- The orchestrator should ask whether to use `quick-fix` or `full-planning`
+  before choosing a delegation depth.
 
-## Post-Release Tasks
+## Exit Gates
 
-- [ ] **Testing & Verification:** Completed as per [98-TESTING-AND-VERIFICATION.md](./98-TESTING-AND-VERIFICATION.md).
-- [ ] **Deployment:** Completed as per [99-DEPLOYMENT-STRATEGY.md](./99-DEPLOYMENT-STRATEGY.md).
+- [ ] Planning compliance remains `>=95/100` before any checklist sign-off
+- [ ] The frozen contract from [#3](https://github.com/Holovkat/designs/issues/3) is in place before any parallel specialist work begins
+- [ ] Global `~/.codex/agents` planning pack is installed
+- [ ] `blueprint_orchestrator` remains planning-only
+- [ ] Specialist coordination uses the fixed payload `task_id`, `owner`, `status`, `deps`, `blockers`, `next`, `eta`, and `evidence`
+- [ ] Constraints, non-goals, and lessons learned stay current in the living spec before new delegated work begins
+- [ ] Built-in Codex activity shows specialist delegation
+- [ ] The orchestrator asks how it should operate before delegating, so `quick-fix` and `full-planning` are both available
+- [ ] Integration validates `/plan-feature` first, then `/plan-bugfix`, then `/plan-github`
+- [ ] Lessons from each validated command path are fed into the next path instead of being relearned blindly
+- [ ] Any stalled integration pass is split into narrower follow-up work instead of broadening the parent task
+- [ ] Completion does not depend on retrieval MCPs or web research; those are later efficiency optimizations, not v1 requirements
+- [ ] Planning handoff stops at issues plus checklist; implementation begins only on an explicit user command

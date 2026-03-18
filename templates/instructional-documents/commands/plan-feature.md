@@ -1,14 +1,52 @@
 ---
-description: Interactive planning session to scope and document a new feature
+description: Interactive planning session to scope and document a new feature. Creates GitHub issues as source of truth.
 ---
 
-You are conducting an **interactive planning session** to scope a new feature. This process will interview the user, analyze the codebase, and produce implementable specifications.
+You are conducting an **interactive planning session** to scope a new feature. This process will interview the user, analyze the codebase, and produce GitHub issues containing all specification content. The local implementation checklist references issue numbers and serves as the final sign-off authority.
 
 **CRITICAL RULES:**
 1. **ONE QUESTION AT A TIME** - Never ask multiple questions in a single response
 2. **WAIT FOR ANSWERS** - Do not proceed until the user responds
 3. **INTERVIEW MODE** - This is a conversation, not a checklist dump
-4. **COMPLETE ALL MANDATORY STEPS** - You MUST complete Steps 1-4 (interview), then Steps 6-10 (artifacts). Do NOT stop after the interview.
+4. **GITHUB IS THE SHARD** - Issue bodies contain all spec content (no local shard .md files)
+5. **CHECKLIST IS FINAL AUTHORITY** - Local checklist is the last sign-off on completion
+6. **COMPLETE ALL MANDATORY STEPS** - You MUST complete Steps 1-4 (interview), then Steps 6-10 (GitHub issues + checklist). Do NOT stop after the interview.
+7. **CONCISE BY REFERENCE** - Link to existing docs (design, UX, patterns), NEVER duplicate their content in issue bodies
+8. **ATOMIC TASKS** - Each task must be completable by a single agent in one session (1-3 files, one deliverable)
+
+## Planning Pack Ownership
+
+This command is owned by the global `blueprint_orchestrator` planning agent
+defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md).
+
+- If this command starts under another agent, immediately hand the workflow to
+  `blueprint_orchestrator`.
+- `blueprint_orchestrator` must ask whether the user wants a `quick-fix` pass or
+  the full planning flow before it commits to specialist delegation.
+- `blueprint_orchestrator` may delegate conditionally to `req-analyst`,
+  `ux-analyst`, `scenario-analyst`, `tech-analyst`, and `prd-writer`.
+- Every delegation must start from the latest condensed shared brief and require
+  the fixed payload described in the planning-agent contract.
+- Specialists are read-only. Only `blueprint_orchestrator` may publish planning
+  issues or update the checklist.
+- When specialist work is needed, delegate through Codex subagents instead of
+  emulating specialist analysis inline so built-in activity reflects the run.
+
+## Documentation Reference Strategy
+
+Issue bodies MUST start with a **Reference Index** linking to relevant project docs.
+Do NOT copy design standards, patterns, or UX specs into issues. Link to them.
+
+Check `docs/design/`, `docs/ux-specifications/`, `docs/user-guide/`, and per-module `AGENTS.md` files for existing standards. If a needed standard doesn't exist, flag it as a "Standards Gap" in the epic -- the implementing agent must create the doc before implementing.
+
+## Atomic Task Sizing
+
+Tasks must be small enough for a single agent to complete independently:
+- **1-3 files, single concern** = good task size
+- **4+ files or mixed FE/BE** = split into separate tasks
+- **New component + hook + API** = 3 separate tasks
+- Each task has ONE clear deliverable, its own acceptance criteria, and explicit dependencies
+- Task bodies are concise: what, where, link to pattern doc, acceptance criteria. No long prose.
 
 ---
 
@@ -20,14 +58,15 @@ You are conducting an **interactive planning session** to scope a new feature. T
 | 2 | Initiate Interview | **MANDATORY** |
 | 3 | Interview Questions | **MANDATORY** |
 | 4 | Confirm Understanding | **MANDATORY** |
-| 5 | Deep Analysis (kingmode) | OPTIONAL - only if complex |
+| 5 | Workflow Impact, Diagrams & Screen Capture | **MANDATORY** |
+| 5b | Deep Analysis (kingmode) | OPTIONAL - only if complex |
 | 6 | Determine Sprint Placement | **MANDATORY** |
-| 7 | Generate Shard Document | **MANDATORY** |
-| 8 | Update Implementation Checklist | **MANDATORY** |
-| 9 | Update Project Documentation | OPTIONAL - if needed |
+| 7 | Create GitHub Epic Issue | **MANDATORY** |
+| 8 | Create Task and Sub-task Issues | **MANDATORY** |
+| 9 | Update Implementation Checklist | **MANDATORY** |
 | 10 | Planning Summary | **MANDATORY** |
 
-**DO NOT STOP after Step 4.** After user confirms understanding, you MUST proceed to create the shard document (Step 7) and update the checklist (Step 8).
+**DO NOT STOP after Step 4.** After user confirms understanding, you MUST proceed to Step 5 (workflow impact analysis, diagrams, screen capture), then create GitHub issues (Steps 7-8) and update the checklist (Step 9).
 
 ---
 
@@ -40,7 +79,6 @@ You are conducting an **interactive planning session** to scope a new feature. T
 Read these files if they exist (do not report errors if missing):
 
 ```bash
-# Core documentation
 cat AGENTS.md 2>/dev/null || cat .factory/AGENTS.md 2>/dev/null
 cat CLAUDE.md 2>/dev/null
 cat README.md 2>/dev/null
@@ -49,15 +87,12 @@ cat README.md 2>/dev/null
 ### 1.2 Check Implementation Status
 
 ```bash
-# Current implementation state
 cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null
-ls features/*.md 2>/dev/null
 ```
 
 ### 1.3 Review Recent Git Activity
 
 ```bash
-# Recent changes and current state
 git log --oneline -15
 git status
 git branch --show-current
@@ -66,13 +101,32 @@ git branch --show-current
 ### 1.4 Identify Tech Stack
 
 ```bash
-# Determine project type and dependencies
 cat package.json 2>/dev/null | head -50
 cat pyproject.toml 2>/dev/null | head -30
 ls -la src/ 2>/dev/null || ls -la app/ 2>/dev/null || ls -la lib/ 2>/dev/null
 ```
 
+### 1.5 Verify GitHub Access
+
+```bash
+gh auth status 2>/dev/null
+gh repo view --json name,owner,url 2>/dev/null || echo "NO_GITHUB_REPO"
+gh label list --limit 100 2>/dev/null
+```
+
+**If gh not authenticated:**
+> "GitHub CLI is not authenticated. Run `gh auth login` first, then re-run `/plan-feature`."
+
 **Store this context internally. Do not output it to the user yet.**
+
+### 1.6 Refresh Shared Brief
+
+Before asking the next question or launching a specialist:
+
+- Update the condensed shared brief with the current command, scope,
+  constraints, non-goals, references, and lessons learned.
+- Reuse the shared brief for every specialist delegation instead of rebuilding
+  project context from scratch.
 
 ---
 
@@ -94,7 +148,7 @@ ls -la src/ 2>/dev/null || ls -la app/ 2>/dev/null || ls -la lib/ 2>/dev/null
 >
 > Let me ask some clarifying questions to fully scope this out.
 >
-> **[First clarifying question based on what's unclear or missing from their prompt]**"
+> **Before I start, do you want a quick-fix pass or the full planning flow?**"
 
 ---
 
@@ -122,7 +176,6 @@ Ask these (one at a time, as needed):
 
 1. "Why is this feature needed now? What's driving this?"
 2. "Who is the primary user of this feature?"
-3. "What happens if we don't build this?"
 
 ### 3.3 HOW - Technical Scope
 
@@ -131,21 +184,32 @@ Ask these (one at a time, as needed):
 1. "Do you have preferences for how this should be implemented technically?"
 2. "Are there any technical constraints I should know about? (APIs, libraries, patterns)"
 3. "Should this follow any existing patterns in the codebase?"
-4. "Are there any third-party integrations required?"
 
-### 3.4 SCOPE - MVP Definition
+### 3.4 WORKFLOW IMPACTS (MANDATORY)
+
+Ask these (one at a time, as needed):
+
+1. "What existing workflows feed INTO this feature? (upstream -- e.g., what triggers it, where does data come from)"
+2. "What workflows does this feature feed INTO? (downstream -- e.g., what consumes its output, what happens next)"
+3. "Are there any workflows that run in parallel or could be affected indirectly?"
+
+### 3.5 SCOPE - MVP Definition
 
 Ask these (one at a time, as needed):
 
 1. "What's the minimum version of this feature that would be useful? (MVP)"
 2. "What could we defer to a future iteration?"
-3. "Are there any hard requirements vs nice-to-haves?"
 
-### 3.5 ACCEPTANCE - Success Criteria
+### 3.6 ACCEPTANCE - Success Criteria
 
 Ask this to conclude:
 
 1. "How will we know this feature is complete? What would you test?"
+
+### 3.7 SCREEN CONTEXT (if UI feature)
+
+- "Is there an existing screen or page this modifies or extends?"
+- If yes: use web automation (browser tools) to capture a screenshot of the current state for reference
 
 ---
 
@@ -170,7 +234,6 @@ Ask this to conclude:
 >
 > **Deferred/Future:**
 > - [Nice-to-have 1]
-> - [Nice-to-have 2]
 >
 > **Technical Notes:**
 > - [Any constraints or preferences mentioned]
@@ -179,47 +242,124 @@ Ask this to conclude:
 
 **Wait for user confirmation before proceeding.**
 
-**IMPORTANT: Once user confirms (or after any corrections), you MUST proceed to Step 6 to create artifacts. Do NOT stop here.**
+**IMPORTANT: Once user confirms, you MUST proceed to Step 5 (workflow impact & diagrams). Do NOT stop here.**
 
 ---
 
-## Step 5: Deep Analysis (OPTIONAL)
+## Step 5: Workflow Impact Analysis, Diagrams & Screen Capture (MANDATORY)
 
-**This step is OPTIONAL.** Only trigger if the feature is complex (3+ components, integrations, or architectural decisions).
+This step produces visual documentation that gets embedded in the GitHub epic issue body.
 
-**If the feature is complex (3+ components, integrations, or architectural decisions), trigger deep analysis:**
+### 5.1 Upstream/Downstream Workflow Impact Analysis
+
+Identify ALL workflows that interact with this feature:
+
+```bash
+# Search for related workflows, components, and data flows
+rg -l "[related-keyword]" src/ convex/
+rg "import.*from.*[related-module]" src/ --type ts -l
+```
+
+Document:
+- **Upstream Workflows** -- what feeds data or triggers into this feature
+- **Downstream Workflows** -- what consumes this feature's output
+- **Parallel/Indirect Impacts** -- shared state, resources, side effects
+
+### 5.2 Mermaid Diagrams (MANDATORY)
+
+Generate Mermaid diagrams appropriate to the feature. Include at minimum ONE of these in the epic body:
+
+**Workflow/process features -- Flowchart:**
+```mermaid
+flowchart TD
+    A[Upstream: ...] --> B[This Feature]
+    B --> C[Downstream: ...]
+    D[Parallel: ...] -.-> B
+```
+
+**Data flow features -- Sequence Diagram:**
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant FE as Frontend
+    participant API as Backend
+    participant DB as Database
+    U->>FE: Action
+    FE->>API: Call
+    API->>DB: Write
+    DB-->>FE: Result
+```
+
+**State management -- State Diagram:**
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Submitted
+    Submitted --> Approved
+    Submitted --> Rejected
+    Rejected --> Draft
+```
+
+**Component hierarchy:**
+```mermaid
+graph TD
+    Page --> Layout
+    Layout --> Sidebar
+    Layout --> MainContent
+```
+
+**Schema/data -- ER Diagram:**
+```mermaid
+erDiagram
+    TABLE1 ||--o{ TABLE2 : has
+```
+
+Use MULTIPLE diagram types if the feature spans data flow, UI, and state transitions.
+
+### 5.3 Screen Capture / UI Reference (if UI feature)
+
+**If modifying an existing screen:**
+1. Use web automation (browser tools) to navigate to the page and take a screenshot
+2. Embed in the epic issue body or upload to GitHub
+
+**If a new screen with no existing page:**
+1. Create an ASCII wireframe of the proposed layout:
+
+```
++--------------------------------------------------+
+|  Header Bar                         [Actions v]   |
++----------+---------------------------------------+
+|          |                                        |
+| Sidebar  |  Main Content Area                     |
+|          |                                        |
+| - Nav 1  |  +----------------------------------+  |
+| - Nav 2  |  |  Data Table / Card Grid           |  |
+| - Nav 3  |  |  Row 1  [col1] [col2] [col3]    |  |
+|          |  +----------------------------------+  |
+|          |                                        |
+|          |  +----------------------------------+  |
+|          |  |  Inspector / Detail Panel          |  |
+|          |  +----------------------------------+  |
++----------+---------------------------------------+
+|  Status Bar                                       |
++--------------------------------------------------+
+```
+
+**For complex UI changes**, capture BOTH current state (screenshot) and proposed state (ASCII wireframe).
+
+---
+
+## Step 5b: Deep Analysis (OPTIONAL)
+
+Only trigger if the feature is complex (3+ components, integrations, or architectural decisions):
 
 > "This feature has some complexity. Let me do a deeper analysis before creating the spec..."
 
-**Activate `/kingmode` analysis:**
-
-```markdown
-/kingmode
-
-Analyze this planned feature for implementation:
-
-## Feature Summary
-[Insert summary from Step 4]
-
-## Analysis Required:
-1. What existing code/components can be reused?
-2. What new components/modules need to be created?
-3. What are the technical risks or challenges?
-4. How should this be broken into implementable phases?
-5. What are the dependencies between phases?
-6. Are there any architectural decisions to make?
-
-## Codebase Context:
-[Insert relevant findings from Step 1]
-```
-
-**If the feature is simple (1-2 components, straightforward), skip to Step 6.**
+**Activate `/kingmode` analysis.** If the feature is simple, skip to Step 6.
 
 ---
 
 ## Step 6: Determine Sprint Placement (MANDATORY)
-
-**ACTION REQUIRED - THIS STEP IS MANDATORY.** Check current implementation state and decide placement.
 
 ### 6.1 Read Current Checklist
 
@@ -227,476 +367,378 @@ Analyze this planned feature for implementation:
 cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null
 ```
 
-### 6.2 Analyze Checklist State
+### 6.2 Analyze State
 
-Check for:
-- Existing incomplete sprints (`- [ ]` items)
-- Completed sprints (`- [x]` items)
-- Backlogged items
+Check for existing incomplete sprints (`- [ ]` items) and determine next sprint number.
 
-### 6.3 Determine Next Sprint Number
+### 6.3 Handle Existing Incomplete Sprints
 
-Find the highest existing sprint number and increment by 1 for the new sprint.
-
-### 6.4 Handle Existing Incomplete Sprints
-
-**If there ARE incomplete sprints, ask the user:**
+**If there ARE incomplete sprints:**
 
 > "I see there are incomplete items in existing sprints:
 >
 > **[Sprint X: Name]**
-> - [ ] [Incomplete item 1]
-> - [ ] [Incomplete item 2]
+> - [ ] #[issue] - [Incomplete item 1]
 >
 > For this new feature, would you like to:
-> 1. **Create a new sprint** - Add as Sprint [N+1] at the end
-> 2. **Add to existing sprint** - Incorporate into [Sprint X]
+> 1. **Create a new sprint** - Add as Sprint [N+1]
+> 2. **Add to existing sprint** - Incorporate into Sprint X
 >
 > Reply 1 or 2."
 
-**If NO incomplete sprints (all complete or checklist empty):**
-
-Proceed with creating a new sprint at the end.
-
 ---
 
-## Step 7: Generate Shard Document (MANDATORY)
+## Step 7: Create GitHub Epic Issue (MANDATORY)
 
-**ACTION REQUIRED - THIS STEP IS MANDATORY.** You MUST create the technical specification shard document. Do NOT skip this step.
+**ACTION REQUIRED:** Create the epic issue in GitHub. The epic body IS the specification.
 
-### 7.1 Determine Shard Number and Filename
-
-Use the next available number based on existing shards:
+### 7.1 Ensure Required Labels Exist
 
 ```bash
-ls features/*.md 2>/dev/null | grep -E '^features/[0-9]+-' | sort -n | tail -1
+gh label create "epic" --description "Epic-level feature issue" --color "7057ff" --force 2>/dev/null
+gh label create "phase" --description "Phase/sprint-level issue" --color "0e8a16" --force 2>/dev/null
+gh label create "task" --description "Implementable task issue" --color "1d76db" --force 2>/dev/null
+gh label create "sub-task" --description "Sub-task of a task" --color "c5def5" --force 2>/dev/null
 ```
 
-**Naming convention:** `[NN]-[feature-name].md`
-- Example: `03-user-authentication.md`, `04-dashboard-widgets.md`
+### 7.2 Create the Epic
 
-### 7.2 CRITICAL: Writing Task-Level Shards
+The epic body contains the full technical specification. This replaces the local shard file:
 
-**Imagine giving this shard to a junior developer.** They should be able to complete each task without asking questions or making assumptions.
+```bash
+gh issue create \
+  --title "Epic: [Feature Name]" \
+  --label "epic,sprint-[N]" \
+  --body "## [Feature Name] - Technical Specification
 
-**EVERY TASK MUST INCLUDE:**
-
-1. **Specific file paths** - Not "create a component", but "create `src/components/atoms/Button/Button.tsx`"
-2. **Exact props/interfaces** - Show the TypeScript interface they need to implement
-3. **Code patterns to follow** - Reference existing files: "Follow the pattern in `src/components/atoms/Input/Input.tsx`"
-4. **Step-by-step instructions** - Break complex tasks into numbered sub-steps
-5. **Expected output** - What should exist when the task is done
-6. **TDD test specification** - What tests to write BEFORE implementing (see below)
-7. **How to verify** - How to confirm the task is complete
+**Sprint**: Sprint [N] | **Created**: [DATE] | **Priority**: [High/Medium/Low]
 
 ---
 
-### TEST-DRIVEN DEVELOPMENT (TDD) REQUIREMENTS
+### Reference Index
+- **Design System**: [DESIGN_ANALYSIS.md](docs/design/DESIGN_ANALYSIS.md)
+- **UI Patterns**: [UI-PATTERNS.md](docs/design/UI-PATTERNS.md)
+- **[Relevant Pattern]**: [docs/design/[PATTERN].md](docs/design/[PATTERN].md)
 
-**Every component/function task MUST include a test specification:**
+> Agents: read linked docs for design standards. Do not duplicate their content here.
 
-```
-**Test Specification:**
-- **Inputs**: [exact input types and example values]
-- **Expected Outputs**: [exact return types and example values]
-- **Exceptions/Edge Cases**:
-  - When [condition]: expect [behavior/error]
-  - When [condition]: expect [behavior/error]
-- **Test File**: `[exact/path/to/Component.test.tsx]`
-```
-
-**TDD Workflow for Each Task:**
-1. Write the test FIRST (it will fail - red)
-2. Implement the minimum code to pass the test (green)
-3. Refactor while keeping tests passing (refactor)
-
-**Exception Handling Requirements:**
-- List ALL error conditions that could occur
-- Specify the exact error type/message for each
-- Define how the UI should respond to each error
-- Include error boundary behavior if applicable
-
----
-
-### PATTERN CONSISTENCY REQUIREMENTS
-
-**Before creating ANY new component/utility/hook:**
-
-1. **Search for existing patterns** in the codebase:
-   ```bash
-   # Find similar components
-   ls src/components/**/*.tsx
-   # Find existing hooks
-   ls src/hooks/*.ts
-   # Find utility patterns
-   ls src/utils/*.ts
-   ```
-
-2. **If a pattern exists:** Reference it explicitly in the task
-   - "Follow the exact structure of `src/components/atoms/Input/Input.tsx`"
-   - "Use the error handling pattern from `src/hooks/useApi.ts`"
-   - "Apply the validation approach from `src/utils/validation.ts`"
-
-3. **If NO pattern exists:** Create the pattern FIRST as a separate task
-   - Task 1: "Establish [pattern type] pattern in `src/[location]`"
-   - Task 2+: "Implement [feature] following the pattern from Task 1"
-
-4. **Document new patterns** in AGENTS.md or a patterns doc for future reference
-
-**CRITICAL:** Never create one-off solutions. Every implementation should either follow an existing pattern or establish a new pattern that will be reused.
-
----
-
-**BAD (vague, no tests, no patterns):**
-```
-- [ ] Create user authentication
-```
-
-**GOOD (task-level with TDD and patterns):**
-```
-- [ ] Create login form component at `src/components/organisms/LoginForm/LoginForm.tsx`
-  - **Pattern**: Follow `src/components/organisms/RegisterForm/RegisterForm.tsx`
-  - **Props Interface**:
-    ```typescript
-    interface LoginFormProps {
-      onSubmit: (credentials: LoginCredentials) => Promise<void>;
-      isLoading?: boolean;
-      error?: string;
-    }
-    ```
-  - **Behavior**:
-    - Email input (required, validate email format)
-    - Password input (required, min 8 chars)
-    - Submit button (disabled when loading or invalid)
-    - Display error message when `error` prop is provided
-  - **Test Specification** (`src/components/organisms/LoginForm/LoginForm.test.tsx`):
-    - Inputs: `{ onSubmit: mockFn, isLoading: false, error: undefined }`
-    - Expected: Form renders with email, password fields and submit button
-    - Test: Submit with valid credentials calls onSubmit with `{ email, password }`
-    - Test: Submit with invalid email shows validation error, does NOT call onSubmit
-    - Test: Submit with short password shows validation error
-    - Test: When `isLoading=true`, submit button is disabled
-    - Test: When `error` provided, error message is displayed
-    - Exception: Empty form submission shows "All fields required" error
-  - **Verify**: All tests pass, form works in Storybook/browser
-```
-
-**TASK GRANULARITY RULE:** If a task takes more than 30 minutes to understand or could be interpreted multiple ways, break it down further.
-
-### 7.3 Create the Shard Document
-
-**Use the Create tool** to create `features/[NN]-[feature-name].md`:
-
-```markdown
-# [Feature Name] - Technical Specification
-
-## Document Metadata
-- **Feature**: [Feature Name]
-- **Sprint**: Sprint [N] - [Sprint Name]
-- **Created**: [TODAY'S DATE]
-- **Status**: Planning Complete
-- **Priority**: [High/Medium/Low based on user input]
+### Standards Gap
+[If feature needs a pattern that doesn't exist, list it. Agent must create the standard doc first.]
 
 ---
 
 ## 1. Overview
 
-### 1.1 Problem Statement
-[What problem this feature solves - from interview]
-
-### 1.2 Solution Summary
-[High-level description of the solution]
-
-### 1.3 User Story
-As a [user type], I want to [action], so that [benefit].
+**Problem**: [1-2 sentences]
+**Solution**: [1-2 sentences]
+**User Story**: As a [user type], I want to [action], so that [benefit].
 
 ---
 
 ## 2. User Journey
 
-### 2.1 Primary Flow
-1. [Step 1 - User action]
-2. [Step 2 - System response]
-3. [Step 3 - User action]
-4. [Continue as needed...]
+1. [Step 1]
+2. [Step 2]
 
-### 2.2 Alternative Flows
-- [Alternative path 1]
-- [Alternative path 2]
-
-### 2.3 Error Flows
-- [Error scenario 1 and handling]
-- [Error scenario 2 and handling]
+**Error flows**: [Brief or 'None']
 
 ---
 
-## 3. Technical Requirements
+## 3. Workflow Impact
 
-### 3.1 Components to Create
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| [ComponentName] | [atom/molecule/organism/page] | `src/components/...` | [Brief description] |
+| Direction | Workflow | Impact |
+|-----------|----------|--------|
+| Upstream | [What feeds in] | [How] |
+| Downstream | [What consumes] | [How] |
 
-### 3.2 Components to Modify
-| Component | Location | Changes Required |
-|-----------|----------|------------------|
-| [ComponentName] | `src/components/...` | [What changes] |
-
-### 3.3 Data/State Requirements
-- **New State**: [What state needs to be added]
-- **API Endpoints**: [What APIs are needed]
-- **Data Models**: [What types/interfaces]
-
-### 3.4 Dependencies
-- **Internal**: [Existing components/features this depends on]
-- **External**: [Third-party libraries needed]
+\`\`\`mermaid
+flowchart TD
+    A[Upstream] --> B[This Feature]
+    B --> C[Downstream]
+\`\`\`
 
 ---
 
-## 4. Implementation Phases
+## 4. Technical Requirements
 
-**IMPORTANT:** Each task below must be specific enough for a junior developer to complete without asking questions.
+| Component | Type | Location |
+|-----------|------|----------|
+| [Name] | [type] | \`src/...\` |
 
-### Phase 1: [Foundation/Setup]
-**Tasks:**
-- [ ] **[Task name]** at `[exact/file/path.tsx]`
-  - [Specific requirement 1]
-  - [Specific requirement 2]
-  - Pattern: Follow `[existing/file/to/reference.tsx]`
-  - Verify: [How to confirm this task is done]
+**Data/State**: [Brief] | **Dependencies**: [Brief]
 
-- [ ] **[Task name]** at `[exact/file/path.tsx]`
-  - [Specific requirement 1]
-  - [Specific requirement 2]
-  - Verify: [How to confirm this task is done]
-
-**Phase Acceptance Criteria:**
-- [ ] [Specific, testable criterion]
-- [ ] [Specific, testable criterion]
-
-### Phase 2: [Core Implementation]
-**Tasks:**
-- [ ] **[Task name]** at `[exact/file/path.tsx]`
-  - Props/Interface: `{ prop1: Type, prop2: Type }`
-  - [Specific behavior 1]
-  - [Specific behavior 2]
-  - [Specific behavior 3]
-  - Pattern: Follow `[existing/file/to/reference.tsx]`
-  - Verify: [How to confirm this task is done]
-
-- [ ] **[Task name]** at `[exact/file/path.tsx]`
-  - [Specific requirement with exact values/types]
-  - Verify: [How to confirm this task is done]
-
-**Phase Acceptance Criteria:**
-- [ ] [Specific, testable criterion]
-- [ ] [Specific, testable criterion]
-
-### Phase 3: [Integration/Polish]
-**Tasks:**
-- [ ] **[Task name]**
-  - [Step 1: specific action]
-  - [Step 2: specific action]
-  - [Step 3: specific action]
-  - Verify: [How to confirm this task is done]
-
-**Phase Acceptance Criteria:**
-- [ ] [Specific, testable criterion]
-- [ ] [Specific, testable criterion]
+\`\`\`mermaid
+sequenceDiagram
+    participant U as User
+    participant FE as Frontend
+    participant API as Backend
+    U->>FE: Action
+    FE->>API: Call
+    API-->>FE: Result
+\`\`\`
 
 ---
 
-## 5. Acceptance Criteria (Overall)
+## 5. UI Reference
 
-### 5.1 Functional Requirements
-- [ ] [Requirement 1]
-- [ ] [Requirement 2]
-- [ ] [Requirement 3]
-
-### 5.2 Non-Functional Requirements
-- [ ] Performance: [Specific metric if applicable]
-- [ ] Accessibility: [WCAG requirements]
-- [ ] Responsiveness: [Breakpoint requirements]
-
-### 5.3 Definition of Done
-- [ ] All functional requirements pass
-- [ ] Code review completed
-- [ ] No TypeScript errors
-- [ ] No lint errors
-- [ ] Build succeeds
-- [ ] Basic tests written
+[Screenshot or ASCII wireframe]
 
 ---
 
-## 6. Out of Scope (Deferred)
+## 6. Task Breakdown
 
-Items explicitly deferred to future iterations:
-- [Deferred item 1]
-- [Deferred item 2]
+### Phase 1: [Name]
+- [ ] #PENDING - [Task 1]
+- [ ] #PENDING - [Task 2]
 
----
-
-## 7. Open Questions
-
-Questions to resolve during implementation:
-- [ ] [Question 1]
-- [ ] [Question 2]
+### Phase 2: [Name]
+- [ ] #PENDING - [Task 3]
+- [ ] #PENDING - [Task 4]
 
 ---
 
-## 8. References
+## 7. Acceptance Criteria
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
 
-- **Related Shards**: [Links to related feature docs]
-- **Design References**: [Links to designs if any]
-- **External Docs**: [Links to API docs, libraries, etc.]
+## 8. Out of Scope
+- [Deferred items]
 
 ---
 
-*Generated by /plan-feature on [TODAY'S DATE]*
+*Generated by /plan-feature on [DATE]*
+"
 ```
 
+**Capture the epic issue number.**
+
 ---
 
-## Step 8: Update Implementation Checklist (MANDATORY)
+## Step 8: Create Task and Sub-task Issues (MANDATORY)
 
-**ACTION REQUIRED - THIS STEP IS MANDATORY.** You MUST update the implementation checklist with the new sprint and tasks. Do NOT skip this step.
+### 8.1 Issue Hierarchy
 
-### 8.1 Read Current Checklist
+```
+Epic Issue (#E)           -- label: epic
+  ├── Task Issue (#T1)    -- label: task
+  │     ├── Sub-task (#S1) -- label: sub-task
+  │     └── Sub-task (#S2) -- label: sub-task
+  ├── Task Issue (#T2)
+  └── Task Issue (#T3)
+```
+
+### 8.2 Task Issue Quality Standard
+
+**Each task must be atomic**: completable by a single agent in one session (1-3 files, one deliverable).
+Keep bodies concise -- link to docs for standards, don't duplicate. Include:
+
+- Reference Index (2-3 relevant doc links)
+- What to build (2-3 sentences)
+- Exact file paths
+- Acceptance criteria (checkboxes)
+- Dependencies on other tasks (if any)
+- Acceptance criteria
+- Verification steps
+
+### 8.3 Create Task Issues
+
+For each task:
 
 ```bash
-cat features/00-IMPLEMENTATION-CHECKLIST.md
+gh issue create \
+  --title "[Sprint N] Task: [Task Name]" \
+  --label "task,sprint-[N]" \
+  --body "## Task: [Task Name]
+
+**Epic**: #[EPIC] | **Sprint**: Sprint [N] | **Depends on**: [#TASK or 'None']
+
+### Reference Index
+- **Pattern**: [docs/design/[RELEVANT-PATTERN].md](docs/design/[RELEVANT-PATTERN].md)
+- **Follow**: \`src/components/[existing]/[Component].tsx\`
+- **AGENTS.md**: [src/components/AGENTS.md](src/components/AGENTS.md)
+
+> Agent: read linked docs for design standards and coding patterns before implementing.
+
+### What
+[2-3 sentences: what to build/modify and why]
+
+### Files
+- \`src/[path]/[File].tsx\` - [Create/Modify: brief]
+- \`src/[path]/[File].ts\` - [Create/Modify: brief]
+
+### Interface (if new)
+\`\`\`typescript
+interface [Props] { /* key props only */ }
+\`\`\`
+
+### Acceptance Criteria
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+
+### Tests
+- \`[path/to/test]\` -- [test case 1], [test case 2]
+
+### Sub-tasks
+- [ ] #PENDING - [Sub-task if needed]
+
+---
+*Part of Epic #[EPIC]*
+"
 ```
 
-### 8.2 Edit the Checklist
+### 8.4 Create Sub-task Issues (3rd level, if needed)
 
-**Use the Edit tool** to append the new sprint at the appropriate location:
+```bash
+gh issue create \
+  --title "[Sprint N] Sub-task: [Sub-task Name]" \
+  --label "sub-task,sprint-[N]" \
+  --body "## Sub-task: [Sub-task Name]
+
+**Task**: #[TASK] | **Epic**: #[EPIC]
+
+### What
+[1-2 sentences]
+
+### File
+\`[exact/file/path]\`
+
+### Done When
+- [ ] [Verification criterion]
+
+---
+*Part of #[TASK]*
+"
+```
+
+### 8.5 Update Parent Issue Checklists
+
+After all issues are created, update epic and task bodies to replace `#PENDING` with actual issue numbers:
+
+```bash
+gh issue edit [EPIC] --body "[updated body with real issue numbers]"
+gh issue edit [TASK] --body "[updated body with real sub-task numbers]"
+```
+
+---
+
+## Step 9: Update Implementation Checklist (MANDATORY)
+
+The local checklist references GitHub issue numbers and is the final sign-off authority.
+
+### 9.1 Ensure directory exists
+
+```bash
+mkdir -p features
+```
+
+### 9.2 Edit the checklist
+
+Add to `features/00-IMPLEMENTATION-CHECKLIST.md`:
 
 ```markdown
 ---
 
 ## Sprint [N]: [Feature Name]
-**Goal**: [One-line goal from interview]
-**Shard**: [`[NN]-[feature-name].md`](./[NN]-[feature-name].md)
+**Goal**: [One-line goal]
+**Epic**: #[EPIC_NUMBER]
 
-### Epic: [Main Epic Name]
-- [ ] [Task 1 from Phase 1]
-- [ ] [Task 2 from Phase 1]
-- [ ] [Task 3 from Phase 2]
-- [ ] [Task 4 from Phase 2]
-- [ ] [Task 5 from Phase 3]
+### Phase 1: [Phase Name]
+- [ ] #[TASK_1] - [Task 1 name]
+- [ ] #[TASK_2] - [Task 2 name]
 
-### Epic: [Secondary Epic if applicable]
-- [ ] [Task 1]
-- [ ] [Task 2]
+### Phase 2: [Phase Name]
+- [ ] #[TASK_3] - [Task 3 name]
+- [ ] #[TASK_4] - [Task 4 name]
 ```
 
-### 8.3 Verify the Edit
+**If checklist doesn't exist**, create it:
 
-Read the file again to confirm the changes were applied correctly.
+```markdown
+# Implementation Checklist
+
+Track implementation progress. Each item references a GitHub issue.
+Check off items here as the final sign-off that work is complete.
 
 ---
 
-## Step 9: Update Project Documentation (If Needed)
+## Sprint 1: [Feature Name]
+**Goal**: [Goal]
+**Epic**: #[EPIC_NUMBER]
 
-**Check if AGENTS.md or README.md need updates:**
+### Phase 1: [Phase Name]
+- [ ] #[TASK_1] - [Task 1 name]
+```
 
-If the feature introduces:
-- New major components or patterns
-- New directories or file conventions
-- New commands or workflows
+### 9.3 Verify the edit
 
-**Ask the user:**
-
-> "This feature introduces [new pattern/component/etc]. Should I update:
-> - [ ] AGENTS.md - Add to JIT index
-> - [ ] README.md - Update feature list
->
-> Reply with which to update, or 'skip' to proceed without updates."
+Read the file to confirm changes applied correctly.
 
 ---
 
 ## Step 10: Planning Summary (MANDATORY)
 
-**ACTION REQUIRED - THIS STEP IS MANDATORY.** Present the final summary confirming what was created.
-
 ```markdown
-## ✅ Feature Planning Complete
+## Feature Planning Complete
 
-### Documents Created
-- **Shard**: `features/[NN]-[feature-name].md`
-- **Checklist Updated**: `features/00-IMPLEMENTATION-CHECKLIST.md`
+### GitHub Issues Created
+- **Epic**: #[EPIC] - [Feature Name]
+- **Tasks**: [X] task issues
+- **Sub-tasks**: [Y] sub-task issues
 
-### Sprint Overview
-**Sprint [N]: [Feature Name]**
-- **Tasks**: [X] tasks across [Y] phases
-- **Estimated Complexity**: [Simple/Medium/Complex]
+### Issue Numbers
+| Issue | Type | Title |
+|-------|------|-------|
+| #[E] | Epic | [Feature Name] |
+| #[T1] | Task | [Task 1] |
+| #[T2] | Task | [Task 2] |
+| #[S1] | Sub-task | [Sub-task 1] |
 
-### Implementation Tasks
-1. [ ] [Task 1]
-2. [ ] [Task 2]
-3. [ ] [Task 3]
-... [etc]
+### Checklist Updated
+- `features/00-IMPLEMENTATION-CHECKLIST.md` - Sprint [N] added with issue references
 
 ### Next Steps
-To begin implementation, run:
+To begin implementation:
 ```
 /start-session feature/[feature-name]
 ```
 
-Or continue with existing work:
+Or continue existing work:
 ```
 /next-phase
 ```
-
-### Files to Reference During Implementation
-- `features/[NN]-[feature-name].md` - Full technical spec
-- `features/00-IMPLEMENTATION-CHECKLIST.md` - Task tracking
 ```
 
 ---
 
 ## Handling Edge Cases
 
-### If user wants to cancel mid-interview:
+### User cancels mid-interview
+> "Planning cancelled. No issues created. Run `/plan-feature` again when ready."
 
-> "No problem. Planning session cancelled. No documents were created.
->
-> Run `/plan-feature` again when you're ready."
+### gh not authenticated
+> "GitHub CLI not authenticated. Run `gh auth login` first."
 
-### If checklist doesn't exist:
+### No GitHub repo
+> "This directory isn't connected to a GitHub repository. Run `gh repo view` to verify."
 
-Create it with the new sprint as Sprint 1:
+### Checklist doesn't exist
+Create it with new sprint as Sprint 1.
 
-```markdown
-# Implementation Checklist
-
-Track implementation progress across all sprints.
-
----
-
-## Sprint 1: [Feature Name]
-**Goal**: [Goal]
-**Shard**: [`01-[feature-name].md`](./01-[feature-name].md)
-
-### Epic: [Epic Name]
-- [ ] [Task 1]
-- [ ] [Task 2]
-```
-
-### If features/ directory doesn't exist:
-
+### Features directory doesn't exist
 ```bash
 mkdir -p features
 ```
 
-Then create both the checklist and shard.
+### Labels don't exist
+Created automatically in Step 7.1.
 
 ---
 
-**BEGIN NOW:** 
+**BEGIN NOW:**
 1. Start with Step 1 - Context Gathering (silently)
 2. Proceed to Steps 2-4 - Interview the user
-3. **THEN YOU MUST** proceed to Steps 6-8 to create the shard document and update the checklist
-4. Finally, present the summary in Step 10
+3. **THEN YOU MUST** proceed to Steps 7-8 to create GitHub issues
+4. Update the checklist in Step 9
+5. Present the summary in Step 10
 
-**The planning session is NOT complete until the shard document exists and the checklist is updated.**
+**The planning session is NOT complete until GitHub issues exist and the checklist references them.**

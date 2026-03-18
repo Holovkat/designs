@@ -1,19 +1,42 @@
 ---
-description: Interactive planning session to scope and document a bug fix
+description: Interactive bugfix planning that creates GitHub issues for bug and fix tasks
 ---
 
-You are conducting an **interactive planning session** to scope a bug fix. This process will interview the user, analyze the codebase, and produce a focused remediation specification.
+You are conducting an **interactive bug investigation** to analyze a bug and produce a fix specification. All content is created as GitHub issues. The local implementation checklist references issue numbers and serves as the final sign-off authority.
 
 **CRITICAL RULES:**
 1. **ONE QUESTION AT A TIME** - Never ask multiple questions in a single response
-2. **WAIT FOR ANSWERS** - Do not proceed until the user responds
-3. **INTERVIEW MODE** - This is a conversation, not a checklist dump
-4. **FOCUS ON ROOT CAUSE** - Bug fixes require understanding the cause, not just symptoms
-5. **COMPLETE ALL MANDATORY STEPS** - You MUST complete the interview, investigation, AND artifact creation. Do NOT stop after analysis.
+2. **WAIT FOR ANSWERS** - Do not proceed until user responds
+3. **FOCUS ON ROOT CAUSE** - Understand cause, not just symptoms
+4. **GITHUB IS THE SOURCE** - Bug spec and fix tasks live in GitHub issues
+5. **CHECKLIST IS FINAL AUTHORITY** - Local checklist is the last sign-off
+6. **COMPLETE ALL STEPS** - MUST create GitHub issues and update checklist
+7. **CONCISE BY REFERENCE** - Link to `docs/design/`, `docs/ux-specifications/`, and `AGENTS.md` files. Never duplicate standards in issues.
+8. **ATOMIC TASKS** - Each fix task completable by a single agent (1-3 files, one deliverable). Split cross-domain fixes (FE/BE) into separate tasks.
+
+## Planning Pack Ownership
+
+This command is owned by the global `blueprint_orchestrator` planning agent
+defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md).
+
+- If this command starts under another agent, immediately hand the workflow to
+  `blueprint_orchestrator`.
+- `blueprint_orchestrator` must ask whether the user wants a `quick-fix` pass or
+  the full planning flow before it commits to specialist delegation.
+- Use `tech-analyst` and `scenario-analyst` as the default specialist pair when
+  root cause, fix sequencing, and regression coverage need deeper analysis.
+- Pull in `ux-analyst` only when the bug changes user-visible workflow or
+  operator experience.
+- Use `prd-writer` only after the bug scope and task split are stable enough to
+  draft issue-ready content.
+- Specialists are read-only. Only `blueprint_orchestrator` may publish planning
+  artifacts or update the checklist.
+- When specialist work is required, delegate through Codex subagents so built-in
+  activity shows the orchestration path.
 
 ---
 
-## MANDATORY WORKFLOW OVERVIEW
+## WORKFLOW
 
 | Step | Description | Required? |
 |------|-------------|-----------|
@@ -21,741 +44,119 @@ You are conducting an **interactive planning session** to scope a bug fix. This 
 | 2 | Initiate Interview | **MANDATORY** |
 | 3 | Interview Questions | **MANDATORY** |
 | 4 | Root Cause Investigation | **MANDATORY** |
-| 5 | Present Findings | **MANDATORY** |
+| 5 | Present Findings with Diagrams & Screen Evidence | **MANDATORY** |
 | 6 | Determine Fix Placement | **MANDATORY** |
-| 7 | Generate Bugfix Shard | **MANDATORY** |
-| 8 | Update Implementation Checklist | **MANDATORY** |
-| 9 | Planning Summary | **MANDATORY** |
-
-**DO NOT STOP after Step 5.** After presenting findings, you MUST proceed to create the shard document (Step 7) and update the checklist (Step 8).
+| 7 | Create GitHub Bug Issue | **MANDATORY** |
+| 8 | Create Fix Task Issues | **MANDATORY** |
+| 9 | Update Implementation Checklist | **MANDATORY** |
+| 10 | Planning Summary | **MANDATORY** |
 
 ---
 
-## Step 1: Context Gathering
-
-**ACTION REQUIRED:** Before engaging the user, silently gather context about the project.
-
-### 1.1 Review Project Documentation
-
-Read these files if they exist (do not report errors if missing):
+## Step 1: Context Gathering (Silent)
 
 ```bash
-# Core documentation
 cat AGENTS.md 2>/dev/null || cat .factory/AGENTS.md 2>/dev/null
-cat CLAUDE.md 2>/dev/null
-cat README.md 2>/dev/null
-```
-
-### 1.2 Check Implementation Status
-
-```bash
-# Current implementation state
 cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null
-cat features/BACKLOG.md 2>/dev/null
-ls features/*.md 2>/dev/null
-```
-
-### 1.3 Review Recent Git Activity
-
-```bash
-# Recent changes - bugs often introduced recently
 git log --oneline -20
 git log --oneline --since="7 days ago"
-git status
-git branch --show-current
+gh auth status 2>/dev/null
+gh repo view --json name,owner,url 2>/dev/null
 ```
 
-### 1.4 Identify Tech Stack
+### 1.5 Refresh Shared Brief
 
-```bash
-# Determine project type and dependencies
-cat package.json 2>/dev/null | head -50
-ls -la src/ 2>/dev/null || ls -la app/ 2>/dev/null || ls -la lib/ 2>/dev/null
-```
+Before launching a specialist or proposing the fix structure:
 
-**Store this context internally. Do not output it to the user yet.**
+- Update the condensed shared brief with the current bug symptoms, scope,
+  constraints, non-goals, related files, and lessons learned.
+- Reuse the shared brief for every specialist delegation instead of having each
+  specialist reconstruct the bug context from scratch.
 
----
+## Step 2-3: Interview
 
-## Step 2: Initiate Interview
+Ask ONE at a time about symptoms, expected behavior, reproduction steps, impact, and suspicions.
 
-**ACTION REQUIRED:** Begin the interview. If the user provided an initial prompt, acknowledge it and start clarifying. If not, ask the opening question.
+Before the deeper bug questions, ask:
 
-### 2.1 Opening (if no initial prompt provided)
-
-> "Let's document this bug fix properly. I'll ask you some questions one at a time to understand the issue.
->
-> **What bug or issue are you experiencing?**
->
-> Describe what's happening - error messages, unexpected behavior, etc."
-
-### 2.2 Opening (if initial prompt WAS provided)
-
-> "I see you're dealing with: [summarize their bug description in 1-2 sentences]
->
-> Let me ask some clarifying questions to fully understand this issue.
->
-> **[First clarifying question based on what's unclear or missing]**"
-
----
-
-## Step 3: Interview Questions
-
-**INTERVIEW PROTOCOL:**
-- Ask ONE question, wait for response
-- Acknowledge their answer briefly before the next question
-- Adapt questions based on their responses
-- Skip questions that have already been answered
-- Build toward root cause identification
-
-### 3.1 SYMPTOM - What's Happening
-
-Ask these (one at a time, as needed):
-
-1. "What exactly is the incorrect behavior? What do you see?"
-2. "What error messages appear (if any)? Console errors, UI errors, etc."
-3. "Can you reproduce this consistently, or is it intermittent?"
-4. "What are the exact steps to reproduce the bug?"
-
-### 3.2 EXPECTED - What Should Happen
-
-Ask these (one at a time, as needed):
-
-1. "What is the expected/correct behavior?"
-2. "Was this working before? If so, when did it stop working?"
-
-### 3.3 CONTEXT - Environment & Conditions
-
-Ask these (one at a time, as needed):
-
-1. "Does this happen in all environments (dev, staging, prod) or specific ones?"
-2. "Does it affect all users or specific conditions (browser, device, user role)?"
-3. "Are there any recent changes that might be related? (deployments, config changes)"
-
-### 3.4 IMPACT - Severity Assessment
-
-Ask these (one at a time, as needed):
-
-1. "How severe is this? (Blocks all users / Affects some users / Minor annoyance)"
-2. "Is there a workaround users can use in the meantime?"
-
-### 3.5 SUSPICIONS - User Insights
-
-Ask this if the user seems technical:
-
-1. "Do you have any suspicions about what might be causing this?"
-
----
+> "Do you want a quick-fix pass or the full planning flow?"
 
 ## Step 4: Root Cause Investigation
 
-**ACTION REQUIRED:** Based on the interview, investigate the codebase.
+Search codebase, read suspected files, form hypothesis.
 
-### 4.1 Inform the User
+## Step 5: Present Findings with Diagrams & Screen Evidence
 
-> "Let me investigate the codebase to identify the likely root cause..."
+### 5.1 If UI bug: use web automation (browser tools) to capture a screenshot of the buggy state
 
-### 4.2 Search for Related Code
+### 5.2 Generate Mermaid diagnostic diagram showing the bug's cause-and-effect:
 
-Based on the bug description, search for relevant files:
-
-```bash
-# Search for related components/functions mentioned
-rg "[keyword from bug]" --type [ts/tsx/js/py] -l
-rg "[error message text]" -l
+```mermaid
+flowchart TD
+    A[Trigger] --> B[Component]
+    B --> C{Bug Location}
+    C -->|Broken Path| D[Incorrect Behavior]
+    C -->|Expected Path| E[Correct Behavior]
+    style C fill:#f66
 ```
 
-### 4.3 Check Recent Changes to Related Files
+For data flow bugs, use a sequence diagram showing where the flow breaks.
+For state bugs, use a state diagram showing the invalid transition.
 
+### 5.3 Present root cause, mechanism, proposed fix, files to modify, confidence level, the diagnostic diagram, and any captured screenshots. Wait for confirmation.
+
+## Step 7: Create GitHub Bug Issue
+
+**Multi-task bug (becomes epic):**
 ```bash
-# If specific files are implicated
-git log --oneline -10 -- [suspected-file-path]
-git diff HEAD~10 -- [suspected-file-path]
+gh label create "epic" --color "7057ff" --force 2>/dev/null
+gh label create "bug" --color "d73a4a" --force 2>/dev/null
+gh label create "task" --color "1d76db" --force 2>/dev/null
+
+gh issue create \
+  --title "Bug: [Description]" \
+  --label "bug,epic,sprint-[N]" \
+  --body "[concise bug spec with: Reference Index (relevant doc links), diagnostic Mermaid diagram, screenshot evidence, task checklist using #PENDING. Do NOT duplicate design standards -- link to docs/design/ files.]"
 ```
 
-### 4.4 Review Suspected Code
+**Simple single-task bug:**
+```bash
+gh issue create \
+  --title "Bug: [Description]" \
+  --label "bug,task,sprint-[N]" \
+  --body "[bug spec with fix details]"
+```
 
-Read the files most likely to contain the bug.
+## Step 8: Create Fix Task Issues
 
-### 4.5 Identify Root Cause
+Each task is atomic (1-3 files, one deliverable) and includes: Reference Index (doc links), what to fix (2-3 sentences), file path, acceptance criteria.
 
-Form a hypothesis about:
-- **What** is broken (specific code/logic)
-- **Why** it's broken (logic error, missing check, race condition, etc.)
-- **Where** the fix should be applied
+```bash
+gh issue create \
+  --title "[Sprint N] Task: Fix [aspect]" \
+  --label "task,sprint-[N]" \
+  --body "[concise fix spec: Reference Index, What, File, Acceptance Criteria. Link to pattern docs.]"
+```
 
----
+Update parent bug issue checklist with real issue numbers.
 
-## Step 5: Present Findings
-
-**ACTION REQUIRED:** Share your analysis with the user.
-
-> "Based on my investigation:
->
-> **Likely Root Cause:**
-> [Explain what you found - be specific about files and code]
->
-> **Why This Causes the Bug:**
-> [Explain the mechanism - why does this code produce the symptom]
->
-> **Proposed Fix:**
-> [High-level description of the fix approach]
->
-> **Files to Modify:**
-> - `[file1.ts]` - [what change]
-> - `[file2.ts]` - [what change]
->
-> **Confidence Level:** [High/Medium/Low]
->
-> **Does this analysis seem correct? Should I proceed with creating the fix specification?**"
-
-**Wait for user confirmation.**
-
-**IMPORTANT: Once user confirms (or after any corrections), you MUST proceed to Step 6 to create artifacts. Do NOT stop here.**
-
-### 5.1 If User Disagrees or Has More Info
-
-> "Thanks for that clarification. Let me re-investigate with this new information..."
-
-Return to Step 4 with the new context.
-
-### 5.2 If Root Cause is Unclear
-
-> "I couldn't definitively identify the root cause. Let me do a deeper analysis..."
-
-**Trigger `/kingmode` for complex bugs:**
+## Step 9: Update Implementation Checklist
 
 ```markdown
-/kingmode
-
-Debug this issue:
-
-## Bug Summary
-[Symptom description]
-
-## Reproduction Steps
-[Steps from interview]
-
-## Expected vs Actual
-- Expected: [what should happen]
-- Actual: [what happens]
-
-## Investigation So Far
-[What you've checked]
-
-## Questions to Answer:
-1. What code paths are involved in this flow?
-2. Where could the logic be failing?
-3. What edge cases might not be handled?
-4. Are there race conditions or timing issues?
-5. Could this be a state management issue?
-6. Are there any recent changes that correlate?
-```
-
----
-
-## Step 6: Determine Fix Placement (MANDATORY)
-
-**ACTION REQUIRED - THIS STEP IS MANDATORY.** Decide how to track this fix.
-
-### 6.1 Read Current Checklist
-
-```bash
-cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null
-```
-
-### 6.2 Assess Fix Scope
-
-**Simple Fix (1-2 files, clear solution):**
-- Can be added to existing sprint if one is in progress
-- Or create a small "Bugfix" sprint
-
-**Complex Fix (multiple files, architectural implications):**
-- Should be its own sprint with proper phases
-
-### 6.3 Handle Existing Sprints
-
-**If there's an active sprint with incomplete items, ask:**
-
-> "There's an active sprint in progress:
->
-> **[Sprint X: Name]**
-> - [ ] [Incomplete item 1]
->
-> For this bug fix, would you like to:
-> 1. **Add to current sprint** - Include as a task in Sprint [X]
-> 2. **Create bugfix sprint** - Add as a separate Sprint [N+1]: Bugfix
->
-> Reply 1 or 2."
-
-**If no active sprint:**
-
-Create a new bugfix sprint.
-
----
-
-## Step 7: Generate Bugfix Shard Document (MANDATORY)
-
-**ACTION REQUIRED - THIS STEP IS MANDATORY.** You MUST create the bug fix specification document. Do NOT skip this step.
-
-### 7.1 Determine Shard Number and Filename
-
-```bash
-ls features/*.md 2>/dev/null | grep -E '^features/[0-9]+-' | sort -n | tail -1
-```
-
-**Naming convention:** `[NN]-bugfix-[short-description].md`
-- Example: `05-bugfix-login-timeout.md`, `06-bugfix-cart-calculation.md`
-
-### 7.2 CRITICAL: Writing Task-Level Fix Specifications
-
-**Imagine giving this shard to a junior developer.** They should be able to complete each fix task without asking questions or making assumptions.
-
-**EVERY FIX TASK MUST INCLUDE:**
-
-1. **Exact file path and line numbers** - "In `src/utils/auth.ts` at line 45-52"
-2. **Current (buggy) code** - Show what's there now
-3. **Fixed code** - Show exactly what it should become
-4. **Why this fixes it** - Brief explanation of the fix logic
-5. **TDD test specification** - Tests that MUST pass after the fix (see below)
-6. **How to verify** - Specific steps to test the fix works
-
----
-
-### TEST-DRIVEN DEVELOPMENT (TDD) FOR BUG FIXES
-
-**Every bug fix MUST include a regression test specification:**
-
-```
-**Test Specification:**
-- **Test File**: `[exact/path/to/file.test.ts]`
-- **Test Case**: "should [expected behavior] when [condition]"
-- **Setup**: [required test setup/mocks]
-- **Input**: [exact input that triggered the bug]
-- **Expected Output**: [what should happen after the fix]
-- **Edge Cases to Test**:
-  - [Related scenario 1]
-  - [Related scenario 2]
-```
-
-**TDD Workflow for Bug Fixes:**
-1. Write a test that REPRODUCES the bug (it will fail - proves bug exists)
-2. Implement the fix
-3. Verify the test now passes (proves fix works)
-4. Add edge case tests to prevent similar bugs
-
-**Exception Handling in Bug Fixes:**
-- Identify what exception/error handling was missing
-- Specify the exact error type and message
-- Define graceful fallback behavior
-- Ensure error is logged appropriately
-- Define user-facing error message if applicable
-
----
-
-### PATTERN CONSISTENCY FOR BUG FIXES
-
-**Before implementing a fix:**
-
-1. **Check if this bug indicates a missing pattern:**
-   - Is this a one-off mistake or a systemic issue?
-   - Are there similar bugs waiting to happen elsewhere?
-
-2. **If the bug reveals a pattern gap:**
-   - Task 1: "Establish [error handling/validation/etc.] pattern"
-   - Task 2: "Fix current bug using new pattern"
-   - Task 3: "Apply pattern to similar code locations"
-
-3. **If a pattern exists but wasn't followed:**
-   - Reference the correct pattern in the fix
-   - Note why it wasn't followed (for process improvement)
-
-**CRITICAL:** A bug fix should not just fix the symptom—it should prevent the same class of bug from occurring again.
-
----
-
-**BAD (vague, no tests):**
-```
-- [ ] Fix the login timeout issue
-```
-
-**GOOD (task-level with TDD and patterns):**
-```
-- [ ] Fix session timeout not resetting on activity in `src/utils/auth.ts`
-  - **Location**: `src/utils/auth.ts`, function `checkSession()` at lines 45-52
-  - **Pattern**: Follow session handling pattern from `src/utils/sessionManager.ts`
-  - **Current (buggy)**: 
-    ```typescript
-    const isExpired = Date.now() > session.expiresAt;
-    ```
-  - **Fixed**:
-    ```typescript
-    const isExpired = Date.now() > session.expiresAt;
-    if (!isExpired) {
-      session.expiresAt = Date.now() + SESSION_TIMEOUT;
-      sessionStorage.setItem('session', JSON.stringify(session));
-    }
-    ```
-  - **Why**: Session expiry was checked but never extended on valid activity
-  - **Test Specification** (`src/utils/auth.test.ts`):
-    - Test: "should extend session expiry when activity occurs before timeout"
-      - Setup: Create session expiring in 10 minutes
-      - Input: Call `checkSession()` while session is valid
-      - Expected: `session.expiresAt` is extended by SESSION_TIMEOUT
-    - Test: "should NOT extend session after expiry"
-      - Setup: Create expired session
-      - Input: Call `checkSession()`
-      - Expected: Session remains expired, returns false
-    - Edge Case: "should handle missing session gracefully"
-      - Input: `checkSession()` with no session in storage
-      - Expected: Returns false, no error thrown
-  - **Verify**: All tests pass, login, wait 5 min with activity, confirm session stays active
-```
-
-**TASK GRANULARITY RULE:** If a fix involves multiple files, create a separate task for each file with its own verification step and test specification.
-
-### 7.3 Create the Shard Document
-
-**Use the Create tool** to create `features/[NN]-bugfix-[description].md`:
-
-```markdown
-# Bugfix: [Short Description] - Specification
-
-## Document Metadata
-- **Bug ID**: BUG-[generated or provided]
-- **Sprint**: Sprint [N] - Bugfix: [Description]
-- **Created**: [TODAY'S DATE]
-- **Status**: Planning Complete
-- **Severity**: [Critical/High/Medium/Low]
-- **Priority**: [P0/P1/P2/P3]
-
----
-
-## 1. Bug Summary
-
-### 1.1 Symptom
-[What the user experiences - the visible problem]
-
-### 1.2 Expected Behavior
-[What should happen instead]
-
-### 1.3 Reproduction Steps
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-4. [Observe: bug manifests]
-
-### 1.4 Environment
-- **Browsers Affected**: [All / Chrome / Firefox / etc.]
-- **Environments**: [Dev / Staging / Prod]
-- **User Conditions**: [All users / Specific role / Specific state]
-
-### 1.5 Severity Assessment
-- **User Impact**: [Description of impact]
-- **Workaround Available**: [Yes/No - describe if yes]
-- **Users Affected**: [All / Subset / Edge case]
-
----
-
-## 2. Root Cause Analysis
-
-### 2.1 Root Cause
-[Clear explanation of what's causing the bug]
-
-### 2.2 Affected Code
-| File | Line(s) | Issue |
-|------|---------|-------|
-| `[file-path]` | [~line numbers] | [What's wrong] |
-
-### 2.3 Why This Causes the Bug
-[Technical explanation of how the code defect produces the symptom]
-
-### 2.4 When This Was Introduced
-- **Likely Commit**: [commit hash if identified]
-- **Approximate Date**: [when it started]
-- **Related Change**: [what change might have caused it]
-
----
-
-## 3. Proposed Fix
-
-### 3.1 Fix Strategy
-[High-level approach to fixing the bug]
-
-### 3.2 Code Changes Required
-
-#### File: `[path/to/file1.ts]`
-**Current (Buggy):**
-```typescript
-// Describe or show the problematic code
-```
-
-**Fixed:**
-```typescript
-// Describe or show the corrected code
-```
-
-**Rationale:** [Why this change fixes the issue]
-
-#### File: `[path/to/file2.ts]` (if applicable)
-[Repeat pattern above]
-
-### 3.3 Additional Changes
-- [ ] [Any other changes needed - tests, types, etc.]
-
----
-
-## 4. Testing Requirements
-
-### 4.1 Reproduction Test
-Before fixing, confirm the bug:
-- [ ] Follow reproduction steps
-- [ ] Observe expected bug behavior
-- [ ] Document exact error/symptom
-
-### 4.2 Fix Verification
-After fixing:
-- [ ] Follow same reproduction steps
-- [ ] Confirm bug no longer occurs
-- [ ] Verify expected behavior works
-
-### 4.3 Regression Testing
-Ensure fix doesn't break other things:
-- [ ] [Related feature 1] still works
-- [ ] [Related feature 2] still works
-- [ ] Run existing test suite: `pnpm test`
-
-### 4.4 Edge Cases to Test
-- [ ] [Edge case 1]
-- [ ] [Edge case 2]
-
----
-
-## 5. Implementation Checklist
-
-**IMPORTANT:** Each task must be specific enough for a junior developer to complete without asking questions.
-
-### Phase 1: Verify & Fix
-- [ ] **Reproduce bug locally**
-  - Follow reproduction steps from Section 1.3
-  - Confirm exact error/behavior matches bug report
-  - Screenshot or log the bug state before fixing
-
-- [ ] **Fix in `[exact/file/path.ts]`** at lines [X-Y]
-  - Current code: [show buggy code snippet]
-  - Change to: [show fixed code snippet]
-  - Why: [brief explanation]
-  - Verify: [how to check this specific change works]
-
-- [ ] **Fix in `[exact/file/path2.ts]`** (if applicable)
-  - [Same format as above]
-
-### Phase 2: Test & Validate
-- [ ] **Verify fix resolves original bug**
-  - Run exact reproduction steps from Section 1.3
-  - Confirm expected behavior now occurs
-  - Document: [what you should see]
-
-- [ ] **Regression testing**
-  - Test: [specific related feature 1] still works
-  - Test: [specific related feature 2] still works
-  - Run: `pnpm test` - all tests pass
-
-- [ ] **Edge case testing**
-  - Test: [specific edge case 1]
-  - Test: [specific edge case 2]
-
-- [ ] **Quality checks**
-  - Run: `pnpm lint` - no errors
-  - Run: `pnpm tsc --noEmit` - no type errors
-  - Run: `pnpm build` - builds successfully
-
-### Phase 3: Complete
-- [ ] **Code review** - PR reviewed and approved
-- [ ] **Documentation** - Update [specific doc] if behavior changed
-- [ ] **Commit** with message: `fix([scope]): [description]`
-
----
-
-## 6. Acceptance Criteria
-
-- [ ] Bug no longer reproducible via documented steps
-- [ ] Expected behavior works correctly
-- [ ] No regression in related features
-- [ ] All tests pass
-- [ ] No new lint/type errors
-- [ ] Build succeeds
-
----
-
-## 7. Rollback Plan
-
-If the fix causes issues:
-
-1. **Revert Commit**: `git revert [commit-hash]`
-2. **Notify**: [Who to notify]
-3. **Workaround**: [Temporary workaround for users]
-
----
-
-## 8. References
-
-- **Error Logs**: [Link or paste relevant logs]
-- **Related Issues**: [Links to related bugs/tickets]
-- **Related Code**: [Links to relevant source files]
-
----
-
-*Generated by /plan-bugfix on [TODAY'S DATE]*
-```
-
----
-
-## Step 8: Update Implementation Checklist (MANDATORY)
-
-**ACTION REQUIRED - THIS STEP IS MANDATORY.** You MUST update the implementation checklist. Do NOT skip this step.
-
-### 8.1 Read Current Checklist
-
-```bash
-cat features/00-IMPLEMENTATION-CHECKLIST.md
-```
-
-### 8.2 Edit the Checklist
-
-**Use the Edit tool** to add the bugfix sprint/tasks:
-
-**If adding as new sprint:**
-```markdown
----
-
-## Sprint [N]: Bugfix - [Short Description]
-**Goal**: Fix [bug description]
-**Shard**: [`[NN]-bugfix-[description].md`](./[NN]-bugfix-[description].md)
-**Severity**: [Critical/High/Medium/Low]
+## Sprint [N]: Bugfix - [Description]
+**Goal**: Fix [bug]
+**Epic**: #[BUG_NUMBER]
+**Severity**: [Level]
 
 ### Bugfix Tasks
-- [ ] Reproduce and verify bug
-- [ ] Implement fix in [file(s)]
-- [ ] Test fix resolves issue
-- [ ] Regression testing
-- [ ] Code review and merge
+- [ ] #[TASK_1] - [Fix description]
+- [ ] #[TASK_2] - [Regression test]
 ```
 
-**If adding to existing sprint:**
-```markdown
-### Bugfix: [Short Description]
-- [ ] Fix: [Bug description] - See [`[NN]-bugfix-[description].md`](./[NN]-bugfix-[description].md)
-```
+## Step 10: Planning Summary
 
-### 8.3 Verify the Edit
-
-Read the file again to confirm changes.
+Report all created issues, checklist update, and next steps.
 
 ---
 
-## Step 9: Planning Summary (MANDATORY)
-
-**ACTION REQUIRED - THIS STEP IS MANDATORY.** Present the final summary confirming what was created.
-
-```markdown
-## ✅ Bugfix Planning Complete
-
-### Bug Summary
-- **Issue**: [One-line description]
-- **Severity**: [Critical/High/Medium/Low]
-- **Root Cause**: [Brief root cause]
-
-### Documents Created
-- **Shard**: `features/[NN]-bugfix-[description].md`
-- **Checklist Updated**: `features/00-IMPLEMENTATION-CHECKLIST.md`
-
-### Fix Overview
-**Files to Modify:**
-1. `[file1.ts]` - [change summary]
-2. `[file2.ts]` - [change summary]
-
-**Estimated Complexity**: [Simple/Medium/Complex]
-
-### Implementation Tasks
-1. [ ] Reproduce bug locally
-2. [ ] Implement fix
-3. [ ] Verify fix works
-4. [ ] Regression testing
-5. [ ] Code review
-
-### Next Steps
-To begin the fix, run:
-```
-/start-session bugfix/[short-description]
-```
-
-Or if continuing existing work:
-```
-/next-phase
-```
-
-### Files to Reference
-- `features/[NN]-bugfix-[description].md` - Full bug analysis and fix spec
-- `features/00-IMPLEMENTATION-CHECKLIST.md` - Task tracking
-```
-
----
-
-## Handling Edge Cases
-
-### If user wants to cancel mid-interview:
-
-> "No problem. Planning session cancelled. No documents were created.
->
-> Run `/plan-bugfix` again when you're ready."
-
-### If bug can't be reproduced:
-
-> "I couldn't reproduce this bug with the information provided. Let's gather more details:
->
-> **Can you provide any of the following?**
-> - Console logs or error stack traces
-> - Screenshots or screen recording
-> - Specific data/state that triggers the bug
-> - Browser developer tools output"
-
-### If root cause truly can't be determined:
-
-Create a shard with "Investigation Required" status and tasks for deeper debugging:
-
-```markdown
-## 3. Investigation Required
-
-Root cause not yet identified. The following investigation is needed:
-
-### Investigation Tasks
-- [ ] Add logging to [suspected area]
-- [ ] Review [related system] behavior
-- [ ] Test with different [conditions]
-- [ ] Check [external dependency] status
-```
-
-### If checklist doesn't exist:
-
-Create it with the bugfix as Sprint 1.
-
-### If features/ directory doesn't exist:
-
-```bash
-mkdir -p features
-```
-
-Then create both the checklist and shard.
-
----
-
-**BEGIN NOW:** 
-1. Start with Step 1 - Context Gathering (silently)
-2. Proceed to Steps 2-3 - Interview the user about the bug
-3. Execute Step 4 - Investigate root cause
-4. Present findings in Step 5
-5. **THEN YOU MUST** proceed to Steps 6-8 to create the shard document and update the checklist
-6. Finally, present the summary in Step 9
-
-**The planning session is NOT complete until the shard document exists and the checklist is updated.**
+**BEGIN NOW:** Interview, investigate, create GitHub issues, update checklist.
