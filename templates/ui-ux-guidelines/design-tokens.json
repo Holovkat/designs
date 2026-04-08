@@ -1,0 +1,457 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "name": "FMS-GLM Design System",
+  "version": "1.0.0",
+  "description": "Fleet Management System design tokens - warm cream/orange 'Solar Dusk' theme with minimalist borderless design philosophy from Notional",
+  "metadata": {
+    "framework": "Next.js 16 + React 19",
+    "styling": "Tailwind CSS v4",
+    "components": "shadcn/ui (new-york style)",
+    "icons": "Lucide React",
+    "colorSpace": "OKLCH",
+    "designPhilosophy": "Minimalist, borderless, progressive disclosure",
+    "influences": ["Notional", "Notion", "Linear"]
+  },
+  "designPrinciples": {
+    "borderlessFirst": {
+      "description": "Default to no borders; use subtle backgrounds for separation",
+      "pattern": "bg-card hover:shadow-md transition-shadow"
+    },
+    "progressiveDisclosure": {
+      "description": "Show controls on hover, hide when not needed",
+      "pattern": "opacity-0 group-hover:opacity-100 transition-opacity"
+    },
+    "opacityHierarchy": {
+      "description": "Use opacity for visual hierarchy",
+      "subtle": "opacity-30",
+      "hover": "hover:opacity-100",
+      "muted": "opacity-60"
+    },
+    "subtleElevation": {
+      "description": "Prefer backdrop blur over heavy shadows",
+      "pattern": "bg-card/90 backdrop-blur-sm shadow-lg"
+    },
+    "watermarkBranding": {
+      "description": "Ultra-light, non-intrusive brand presence",
+      "pattern": "text-[2rem] font-extralight opacity-20 pointer-events-none select-none"
+    },
+    "verticalEllipsisActions": {
+      "description": "All edit/delete actions hidden behind vertical ellipsis menu on hover",
+      "triggerClass": "absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity",
+      "parentClass": "relative group"
+    },
+    "inlineCreation": {
+      "description": "Add new buttons as ghost elements within lists, not toolbar buttons",
+      "ghostCard": "w-full p-4 border border-dashed border-border rounded-lg opacity-40 hover:opacity-100 hover:border-primary hover:bg-card transition-all",
+      "ghostCardContent": "flex items-center gap-2 text-muted-foreground group-hover:text-primary"
+    },
+    "clickToInspect": {
+      "description": "Clicking list items opens slide-out inspector panel",
+      "selectionRing": "ring-2 ring-primary shadow-md",
+      "inspectorWidth": "xl"
+    },
+    "inspectorPanel": {
+      "description": "Slide-out detail panel with header, tabbed content, and conditional footer",
+      "structure": ["header (title + close)", "tabs (scrollable content)", "footer (only when dirty)"],
+      "headerClass": "flex items-center justify-between p-4 border-b shrink-0",
+      "footerClass": "flex items-center justify-end gap-2 p-4 border-t shrink-0"
+    }
+  },
+  "colors": {
+    "light": {
+      "background": {
+        "value": "oklch(0.9851 0.0009 67.8123)",
+        "description": "Page background - warm cream"
+      },
+      "foreground": {
+        "value": "oklch(0.2710 0.0045 67.6361)",
+        "description": "Primary text - dark warm grey"
+      },
+      "card": {
+        "value": "oklch(1.0000 0 0)",
+        "description": "Card surfaces - pure white"
+      },
+      "cardForeground": {
+        "value": "oklch(0.2710 0.0045 67.6361)"
+      },
+      "popover": {
+        "value": "oklch(1.0000 0 0)"
+      },
+      "popoverForeground": {
+        "value": "oklch(0.2710 0.0045 67.6361)"
+      },
+      "primary": {
+        "value": "oklch(0.6905 0.1939 42.4793)",
+        "description": "Burnt orange accent - buttons, links, active states"
+      },
+      "primaryForeground": {
+        "value": "oklch(1.0000 0 0)"
+      },
+      "secondary": {
+        "value": "oklch(0.9550 0.0026 67.7915)"
+      },
+      "secondaryForeground": {
+        "value": "oklch(0.3247 0.0114 67.4066)"
+      },
+      "muted": {
+        "value": "oklch(0.9548 0.0021 67.7976)",
+        "description": "Subtle backgrounds, disabled states"
+      },
+      "mutedForeground": {
+        "value": "oklch(0.5580 0.0113 67.5941)",
+        "description": "Secondary text, placeholders"
+      },
+      "accent": {
+        "value": "oklch(0.9682 0.0165 48.5478)"
+      },
+      "accentForeground": {
+        "value": "oklch(0.6181 0.1926 39.7984)"
+      },
+      "destructive": {
+        "value": "oklch(0.6356 0.2082 25.3782)",
+        "description": "Error states, delete actions"
+      },
+      "destructiveForeground": {
+        "value": "oklch(1.0000 0 0)"
+      },
+      "border": {
+        "value": "oklch(0.9247 0.0044 67.7694)"
+      },
+      "input": {
+        "value": "oklch(0.9247 0.0044 67.7694)"
+      },
+      "ring": {
+        "value": "oklch(0.6905 0.1939 42.4793)"
+      }
+    },
+    "dark": {
+      "background": {
+        "value": "oklch(0.2165 0.0032 67.6587)",
+        "description": "Page background - warm dark grey"
+      },
+      "foreground": {
+        "value": "oklch(0.9625 0.0022 67.7968)",
+        "description": "Primary text - cream"
+      },
+      "card": {
+        "value": "oklch(0.2387 0.0037 67.6481)"
+      },
+      "cardForeground": {
+        "value": "oklch(0.9625 0.0022 67.7968)"
+      },
+      "popover": {
+        "value": "oklch(0.2387 0.0037 67.6481)"
+      },
+      "popoverForeground": {
+        "value": "oklch(0.9625 0.0022 67.7968)"
+      },
+      "primary": {
+        "value": "oklch(0.6905 0.1939 42.4793)",
+        "description": "Burnt orange accent - consistent across modes"
+      },
+      "primaryForeground": {
+        "value": "oklch(1.0000 0 0)"
+      },
+      "secondary": {
+        "value": "oklch(0.3023 0.0053 67.6272)"
+      },
+      "secondaryForeground": {
+        "value": "oklch(0.9625 0.0022 67.7968)"
+      },
+      "muted": {
+        "value": "oklch(0.3023 0.0053 67.6272)"
+      },
+      "mutedForeground": {
+        "value": "oklch(0.7267 0.0082 67.6969)"
+      },
+      "accent": {
+        "value": "oklch(0.6905 0.1939 42.4793)"
+      },
+      "accentForeground": {
+        "value": "oklch(1.0000 0 0)"
+      },
+      "destructive": {
+        "value": "oklch(0.6356 0.2082 25.3782)"
+      },
+      "destructiveForeground": {
+        "value": "oklch(1.0000 0 0)"
+      },
+      "border": {
+        "value": "oklch(0.3228 0.0057 67.6223)"
+      },
+      "input": {
+        "value": "oklch(0.3228 0.0057 67.6223)"
+      },
+      "ring": {
+        "value": "oklch(0.6905 0.1939 42.4793)"
+      }
+    },
+    "sidebar": {
+      "light": {
+        "background": { "value": "oklch(0.2710 0.0045 67.6361)", "description": "Inverted - dark in light mode" },
+        "foreground": { "value": "oklch(0.9851 0.0009 67.8123)" },
+        "primary": { "value": "oklch(0.6905 0.1939 42.4793)" },
+        "primaryForeground": { "value": "oklch(1.0000 0 0)" },
+        "accent": { "value": "oklch(0.3726 0.0069 67.6130)" },
+        "accentForeground": { "value": "oklch(0.9851 0.0009 67.8123)" },
+        "border": { "value": "oklch(0.3228 0.0057 67.6223)" },
+        "ring": { "value": "oklch(0.6905 0.1939 42.4793)" }
+      },
+      "dark": {
+        "background": { "value": "oklch(0.1938 0.0026 67.6723)", "description": "Darker than page background" },
+        "foreground": { "value": "oklch(0.9247 0.0044 67.7694)" },
+        "primary": { "value": "oklch(0.6905 0.1939 42.4793)" },
+        "primaryForeground": { "value": "oklch(1.0000 0 0)" },
+        "accent": { "value": "oklch(0.2710 0.0045 67.6361)" },
+        "accentForeground": { "value": "oklch(0.9625 0.0022 67.7968)" },
+        "border": { "value": "oklch(0.2710 0.0045 67.6361)" },
+        "ring": { "value": "oklch(0.6905 0.1939 42.4793)" }
+      }
+    },
+    "chart": {
+      "light": {
+        "1": { "value": "oklch(0.6905 0.1939 42.4793)", "description": "Burnt orange" },
+        "2": { "value": "oklch(0.7551 0.1703 63.5973)", "description": "Warm yellow" },
+        "3": { "value": "oklch(0.3752 0.0394 256.8467)", "description": "Deep blue" },
+        "4": { "value": "oklch(0.6748 0.1539 159.5199)", "description": "Teal" },
+        "5": { "value": "oklch(0.8432 0.1722 84.7344)", "description": "Bright yellow" }
+      },
+      "dark": {
+        "1": { "value": "oklch(0.6905 0.1939 42.4793)", "description": "Burnt orange" },
+        "2": { "value": "oklch(0.7551 0.1703 63.5973)", "description": "Warm yellow" },
+        "3": { "value": "oklch(0.6748 0.1539 159.5199)", "description": "Teal" },
+        "4": { "value": "oklch(0.4902 0.0546 256.8523)", "description": "Blue" },
+        "5": { "value": "oklch(0.8432 0.1722 84.7344)", "description": "Bright yellow" }
+      }
+    },
+    "semantic": {
+      "success": { "value": "#22C55E", "description": "Success states" },
+      "warning": { "value": "#F59E0B", "description": "Warning states" },
+      "error": { "value": "#EF4444", "description": "Error states" },
+      "info": { "value": "#3B82F6", "description": "Info states" }
+    },
+    "priority": {
+      "critical": { "value": "oklch(0.6356 0.2082 25.3782)", "border": "border-l-4 border-l-destructive" },
+      "high": { "value": "#F59E0B", "border": "border-l-4 border-l-warning" },
+      "normal": { "value": "oklch(0.6905 0.1939 42.4793)", "border": "border-l-4 border-l-primary" },
+      "low": { "value": "#6B7280", "border": "border-l-4 border-l-muted-foreground" }
+    },
+    "status": {
+      "draft": { "color": "text-muted-foreground" },
+      "pending": { "color": "text-warning" },
+      "approved": { "color": "text-success" },
+      "created": { "color": "text-primary" },
+      "assigned": { "color": "text-accent-foreground" },
+      "scheduled": { "color": "text-primary" },
+      "in_progress": { "color": "text-primary" },
+      "changes_requested": { "color": "text-warning" },
+      "ok": { "color": "text-success" },
+      "due_soon": { "color": "text-warning" },
+      "overdue": { "color": "text-destructive" }
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "sans": {
+        "value": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        "description": "Primary font for body text"
+      },
+      "mono": {
+        "value": "JetBrains Mono, Menlo, Monaco, Consolas, monospace",
+        "description": "Monospace for code, IDs, order numbers"
+      },
+      "serif": {
+        "value": "Georgia, serif",
+        "description": "Serif for special use cases"
+      }
+    },
+    "fontSizes": {
+      "xs": { "value": "12px", "lineHeight": "16px", "usage": "Labels, badges, metadata" },
+      "sm": { "value": "14px", "lineHeight": "20px", "usage": "Body text, descriptions" },
+      "base": { "value": "16px", "lineHeight": "24px", "usage": "Standard body" },
+      "lg": { "value": "18px", "lineHeight": "28px", "usage": "Section headings" },
+      "xl": { "value": "20px", "lineHeight": "28px", "usage": "Page headings" },
+      "2xl": { "value": "24px", "lineHeight": "32px", "usage": "Major headings" },
+      "3xl": { "value": "30px", "lineHeight": "36px", "usage": "Hero text" }
+    },
+    "fontWeights": {
+      "normal": { "value": 400, "usage": "Body text" },
+      "medium": { "value": 500, "usage": "Emphasis, labels" },
+      "semibold": { "value": 600, "usage": "Headings, titles" },
+      "bold": { "value": 700, "usage": "Strong emphasis" }
+    },
+    "letterSpacing": {
+      "tighter": { "value": "-0.06em" },
+      "tight": { "value": "-0.035em" },
+      "normal": { "value": "-0.01em", "description": "Default - slightly tighter for modern look" },
+      "wide": { "value": "0.015em" },
+      "wider": { "value": "0.04em" },
+      "widest": { "value": "0.09em" }
+    }
+  },
+  "spacing": {
+    "base": { "value": "0.25rem", "description": "4px base unit" },
+    "0": { "value": "0px" },
+    "0.5": { "value": "2px", "usage": "Micro spacing" },
+    "1": { "value": "4px", "usage": "Icon gaps" },
+    "1.5": { "value": "6px" },
+    "2": { "value": "8px", "usage": "Tight padding" },
+    "2.5": { "value": "10px" },
+    "3": { "value": "12px", "usage": "Standard gap" },
+    "3.5": { "value": "14px" },
+    "4": { "value": "16px", "usage": "Standard padding" },
+    "5": { "value": "20px" },
+    "6": { "value": "24px", "usage": "Section padding" },
+    "7": { "value": "28px" },
+    "8": { "value": "32px", "usage": "Large spacing" },
+    "9": { "value": "36px" },
+    "10": { "value": "40px" },
+    "12": { "value": "48px" },
+    "14": { "value": "56px" },
+    "16": { "value": "64px" }
+  },
+  "borderRadius": {
+    "base": { "value": "0.5rem", "description": "8px base radius" },
+    "none": { "value": "0px" },
+    "sm": { "value": "4px", "usage": "Small elements, badges", "calc": "calc(var(--radius) - 4px)" },
+    "md": { "value": "6px", "usage": "Buttons, inputs", "calc": "calc(var(--radius) - 2px)" },
+    "lg": { "value": "8px", "usage": "Cards, dialogs", "calc": "var(--radius)" },
+    "xl": { "value": "12px", "usage": "Large containers", "calc": "calc(var(--radius) + 4px)" },
+    "2xl": { "value": "16px" },
+    "full": { "value": "9999px", "usage": "Avatars, pills" }
+  },
+  "shadows": {
+    "light": {
+      "2xs": { "value": "0px 4px 10px 0px hsl(30 5% 10% / 0.03)" },
+      "xs": { "value": "0px 4px 10px 0px hsl(30 5% 10% / 0.03)" },
+      "sm": { "value": "0px 4px 10px 0px hsl(30 5% 10% / 0.05), 0px 1px 2px -1px hsl(30 5% 10% / 0.05)" },
+      "DEFAULT": { "value": "0px 4px 10px 0px hsl(30 5% 10% / 0.05), 0px 1px 2px -1px hsl(30 5% 10% / 0.05)" },
+      "md": { "value": "0px 4px 10px 0px hsl(30 5% 10% / 0.05), 0px 2px 4px -1px hsl(30 5% 10% / 0.05)" },
+      "lg": { "value": "0px 4px 10px 0px hsl(30 5% 10% / 0.05), 0px 4px 6px -1px hsl(30 5% 10% / 0.05)" },
+      "xl": { "value": "0px 4px 10px 0px hsl(30 5% 10% / 0.05), 0px 8px 10px -1px hsl(30 5% 10% / 0.05)" },
+      "2xl": { "value": "0px 4px 10px 0px hsl(30 5% 10% / 0.13)" }
+    },
+    "dark": {
+      "2xs": { "value": "0px 8px 15px 0px hsl(0 0% 0% / 0.20)" },
+      "xs": { "value": "0px 8px 15px 0px hsl(0 0% 0% / 0.20)" },
+      "sm": { "value": "0px 8px 15px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40)" },
+      "DEFAULT": { "value": "0px 8px 15px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40)" },
+      "md": { "value": "0px 8px 15px 0px hsl(0 0% 0% / 0.40), 0px 2px 4px -1px hsl(0 0% 0% / 0.40)" },
+      "lg": { "value": "0px 8px 15px 0px hsl(0 0% 0% / 0.40), 0px 4px 6px -1px hsl(0 0% 0% / 0.40)" },
+      "xl": { "value": "0px 8px 15px 0px hsl(0 0% 0% / 0.40), 0px 8px 10px -1px hsl(0 0% 0% / 0.40)" },
+      "2xl": { "value": "0px 8px 15px 0px hsl(0 0% 0% / 1.00)" }
+    }
+  },
+  "zIndex": {
+    "0": { "value": 0, "usage": "Base layer" },
+    "10": { "value": 10, "usage": "Floating elements" },
+    "20": { "value": 20, "usage": "Sidebar rails, sticky headers" },
+    "30": { "value": 30, "usage": "Dropdowns" },
+    "40": { "value": 40, "usage": "Modals, sheets" },
+    "50": { "value": 50, "usage": "Full-screen overlays" }
+  },
+  "transitions": {
+    "fast": { "value": "150ms", "usage": "Quick interactions" },
+    "normal": { "value": "200ms", "usage": "Standard transitions" },
+    "slow": { "value": "300ms", "usage": "Smooth animations" },
+    "easing": {
+      "default": "ease-out",
+      "bounce": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+  "breakpoints": {
+    "sm": { "value": "640px", "description": "Small tablets" },
+    "md": { "value": "768px", "description": "Tablets" },
+    "lg": { "value": "1024px", "description": "Laptops" },
+    "xl": { "value": "1280px", "description": "Desktops" },
+    "2xl": { "value": "1536px", "description": "Large screens" }
+  },
+  "layout": {
+    "sidebar": {
+      "width": { "value": "256px", "css": "16rem" },
+      "widthCollapsed": { "value": "48px", "css": "3rem" },
+      "widthMobile": { "value": "288px", "css": "18rem" }
+    },
+    "slideOutPanel": {
+      "sm": { "value": "384px", "class": "sm:max-w-sm" },
+      "md": { "value": "448px", "class": "sm:max-w-md" },
+      "lg": { "value": "512px", "class": "sm:max-w-lg" },
+      "xl": { "value": "576px", "class": "sm:max-w-xl" },
+      "2xl": { "value": "672px", "class": "sm:max-w-2xl" }
+    },
+    "kanbanColumn": {
+      "width": { "value": "288px", "class": "w-72 min-w-72" }
+    }
+  },
+  "icons": {
+    "sizes": {
+      "xs": { "value": "12px", "class": "h-3 w-3", "usage": "Inline indicators" },
+      "sm": { "value": "16px", "class": "h-4 w-4", "usage": "Buttons, menu items" },
+      "md": { "value": "20px", "class": "h-5 w-5", "usage": "Standalone icons" },
+      "lg": { "value": "24px", "class": "h-6 w-6", "usage": "Feature icons" },
+      "xl": { "value": "32px", "class": "h-8 w-8", "usage": "Empty states" }
+    },
+    "library": "lucide-react"
+  },
+  "components": {
+    "button": {
+      "variants": ["default", "destructive", "outline", "secondary", "ghost", "link"],
+      "sizes": {
+        "default": { "height": "36px", "class": "h-9 px-4 py-2" },
+        "sm": { "height": "32px", "class": "h-8 px-3" },
+        "lg": { "height": "40px", "class": "h-10 px-6" },
+        "icon": { "size": "36px", "class": "size-9" },
+        "icon-sm": { "size": "32px", "class": "size-8" },
+        "icon-lg": { "size": "40px", "class": "size-10" }
+      }
+    },
+    "card": {
+      "padding": "24px",
+      "gap": "24px",
+      "borderRadius": "8px",
+      "class": "bg-card text-card-foreground flex flex-col gap-6 rounded-lg border py-6 shadow-sm"
+    },
+    "input": {
+      "height": "36px",
+      "borderRadius": "6px",
+      "class": "h-9 rounded-md border border-input bg-background px-3 py-2 text-sm"
+    },
+    "badge": {
+      "height": "22px",
+      "borderRadius": "4px",
+      "class": "inline-flex items-center rounded-sm border px-2.5 py-0.5 text-xs font-semibold"
+    },
+    "ellipsisMenu": {
+      "description": "Vertical ellipsis menu for card/row actions",
+      "triggerClass": "absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity",
+      "icon": "MoreVertical",
+      "iconClass": "h-4 w-4"
+    }
+  },
+  "animations": {
+    "settle": {
+      "keyframes": {
+        "0%": { "opacity": 0, "transform": "translateY(-8px) scale(0.98)" },
+        "50%": { "opacity": 1, "transform": "translateY(2px) scale(1.01)" },
+        "100%": { "opacity": 1, "transform": "translateY(0) scale(1)" }
+      },
+      "duration": "350ms",
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      "usage": "Dropped card settle animation"
+    },
+    "scanLine": {
+      "keyframes": {
+        "0%, 100%": { "top": "0" },
+        "50%": { "top": "calc(100% - 2px)" }
+      },
+      "duration": "1.5s",
+      "easing": "ease-in-out",
+      "iteration": "infinite",
+      "usage": "Barcode scanner line"
+    },
+    "spin": {
+      "class": "animate-spin",
+      "usage": "Loading spinners"
+    }
+  }
+}

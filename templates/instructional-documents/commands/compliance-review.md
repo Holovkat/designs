@@ -153,7 +153,7 @@ pnpm build
 ✅ **COMPLIANCE PASSED**
 
 All requirements from `features/phase-X-name.md` have been verified.
-The implementation is ready for UAT.
+The implementation is ready for integration.
 
 Proceeding with `/end-session` workflow...
 ```

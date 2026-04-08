@@ -1,48 +1,52 @@
-# Project Design & Documentation Guide
+# Designs
 
-This repository serves as the central hub for all project analysis, functional design, and instructional documentation. The goal is to provide a structured, reusable framework for designing software projects, ensuring clarity, consistency, and comprehensive planning before implementation begins.
+Central workspace for reusable project-design templates, instructional documentation, and project-specific design snapshots.
 
-## Core Philosophy
+## What This Repo Contains
 
-Every document in this repository should be treated as a briefing for a future developer, project manager, or AI agent. The focus is on capturing the **why** behind decisions, not just the **what**. Context, rationale, and clear specifications are paramount.
+- a reusable `templates/` library for planning new products or major features
+- project-specific design folders such as `fms/`, `coder-pro/`, and `codex-pro/`
+- archived zip exports kept alongside the markdown workspace
 
-## How to Use This Repository
+The repo is documentation-first: the main value is the structure and reuse of the templates rather than a runnable app.
 
-To start a new project or a major feature, copy the entire `templates/` directory and rename it to reflect your project (e.g., `my-new-project-design/`). This will give you a clean, structured set of documents to guide your design process.
+## Documentation Hub
 
----
+| Path | Purpose |
+|------|---------|
+| [`templates/index.md`](templates/index.md) | Template entrypoint and orientation guide |
+| [`templates/AGENTS.md`](templates/AGENTS.md) | Conventions for maintaining the markdown template library |
+| [`templates/functional-design/`](templates/functional-design/) | Core project-design documents and numbered planning flow |
+| [`templates/instructional-documents/`](templates/instructional-documents/) | Workflow guides, prompts, and implementation instructions |
+| [`templates/ui-ux-guidelines/`](templates/ui-ux-guidelines/) | UI/UX reference material |
 
-## Directory Structure
+## Recommended Workflow
 
-The templates are organized into two main categories:
+1. Copy `templates/` into a new project-design folder.
+2. Start with `templates/index.md`.
+3. Use the implementation checklist in `templates/functional-design/` as the planning spine.
+4. Reference `templates/instructional-documents/` for workflow, GitHub, and AI-agent guidance.
 
-### 1. `functional-design/`
+## Current Repo Structure
 
-This directory contains the core documents that define the project's architecture and functionality. It follows a numbered naming convention to create a logical flow, from high-level architecture to deployment.
+```text
+templates/   Reusable planning and instructional documents
+fms/         Project-specific design snapshot / sample workspace
+coder-pro/   Project-specific design snapshot
+codex-pro/   Project-specific design snapshot
+*.zip        Archived exports and handoff bundles
+```
 
-#### Naming Convention
+## Maintenance Notes
 
-Functional design documents are numbered sequentially (e.g., `01-`, `02-`). This numbering indicates the recommended order for thinking about and completing the design. Numbers are spaced out (e.g., `10`, `98`) to allow for new documents to be added in the future without renaming the entire sequence.
+- Treat each markdown file as a reusable briefing for a developer, PM, or AI agent.
+- Prefer linking and cross-referencing over duplicating the same guidance in multiple places.
+- When new standards are added, update the template library first so downstream projects inherit them.
 
-#### The Central Hub: `00-IMPLEMENTATION-CHECKLIST.md`
+## Validation
 
-This is the most important document for tracking the project's progress. It acts as a central hub, linking to all other functional design documents. As you complete each design document, update the checklist to reflect its status. This provides a clear, at-a-glance view of the entire project's design maturity.
+There is no build pipeline in this repo. The useful checks are:
 
-### 2. `instructional-documents/`
-
-This directory contains guides, prompts, and templates intended for developers and AI agents. These documents provide detailed instructions on how to perform specific tasks, such as:
-
--   Following the GitHub workflow.
--   Crafting high-quality commit messages.
--   Synchronizing with upstream repositories.
--   Using project-specific prompts for AI-assisted development.
-
-These documents should be referenced from the `functional-design` templates where appropriate.
-
-## The Design Workflow
-
-1.  **Copy the Template:** Start by copying the `templates/` directory.
-2.  **Start with the Checklist:** Open the `00-IMPLEMENTATION-CHECKLIST.md`. This is your guide.
-3.  **Work Through the Documents:** Follow the links in the checklist to fill out each functional design document in the recommended order.
-4.  **Create Feature Designs:** For each new feature, create a new numbered design document (e.g., `11-FEATURE-USER-PROFILE.md`) and link to it from the implementation checklist.
-5.  **Leverage Instructional Docs:** Use the documents in `instructional-documents/` to guide your development process and ensure you are following the established best practices.
+- internal link review
+- markdown formatting review
+- `git diff --check` before committing

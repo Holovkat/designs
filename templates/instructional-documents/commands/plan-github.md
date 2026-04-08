@@ -31,6 +31,11 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
   resulting GitHub planning artifacts or update the checklist.
 - When delegation is needed, use Codex subagents directly so built-in activity
   shows real orchestration instead of inline roleplay.
+- At planning gate points, use explicit option blocks instead of vague
+  confirmations:
+  `1. Proceed to the next step. (Recommended)`
+  `2. Loop back and revise the current stage.`
+  `3. Stop and replan / cancel.`
 
 ---
 
@@ -90,7 +95,8 @@ gh issue view [NUMBER] --json number,title,body,labels,assignees,milestone,comme
 
 ## Step 5: Present Summary
 
-> "## Imported Issue #[NUMBER]
+> "## Planning Gate: Imported Scope Confirmation
+> **Imported Issue:** #[NUMBER]
 > **Title:** [title]
 > **Author:** [author] | **Created:** [date]
 > **Labels:** [labels]
@@ -98,9 +104,16 @@ gh issue view [NUMBER] --json number,title,body,labels,assignees,milestone,comme
 > ### Description
 > [body]
 >
-> I'll now ask questions to scope the implementation.
+> Choose one:
+> 1. **Proceed with this imported scope. (Recommended)**
+> 2. **Loop back and refine the imported scope first.**
+> 3. **Stop and replan / cancel.**
 >
-> **Before I start, do you want a quick-fix pass or the full planning flow?**"
+> Reply `1`, `2`, or `3`."
+
+After a `Proceed` response, ask:
+
+> "Do you want a quick-fix pass or the full planning flow?"
 
 ## Step 6: Clarification Interview
 

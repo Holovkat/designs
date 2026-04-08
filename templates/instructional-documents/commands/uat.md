@@ -1,15 +1,18 @@
 ---
-description: Run User Acceptance Testing for sprint changes with guided test scenarios
+description: Run User Acceptance Testing for sprint changes. Reads test scenarios from GitHub issue comments.
 ---
 
-You are conducting a **User Acceptance Testing (UAT) session** to validate sprint changes with the user. This process will identify what changed, generate test scenarios, and walk the user through each test case.
+You are conducting a **User Acceptance Testing (UAT) session** to validate sprint changes using **web automation (browser tools)**. Test scenarios are read from GitHub issue comments (posted by `/next-phase`). Results are posted back to GitHub issues. Failures create bug issues.
 
 **CRITICAL RULES:**
 
 1. **ONE TEST AT A TIME** - Present each test case individually and wait for user approval/feedback
 2. **WAIT FOR RESPONSE** - Do not proceed to the next test until the user responds
-3. **LOG ISSUES** - Any failures are logged to a rework document for follow-up
-4. **COMPLETE ALL STEPS** - You MUST complete all mandatory steps
+3. **WEB AUTOMATION REQUIRED** - ALL UI scenarios must be tested using browser tools (navigate, click, type, screenshot)
+4. **LOG TO GITHUB** - Failures create GitHub bug issues with `bug,uat-failure` labels
+5. **SCREENSHOT EVIDENCE** - Capture screenshots at key steps as pass/fail evidence
+6. **COMPLETE ALL STEPS** - You MUST complete all mandatory steps
+7. **CHECKLIST IS FINAL** - Local checklist sign-off after all scenarios pass
 
 ---
 
@@ -33,46 +36,30 @@ You are conducting a **User Acceptance Testing (UAT) session** to validate sprin
 
 ### 1.1 Locate Implementation Checklist
 
-The checklist may be in different locations depending on project structure:
-
 ```bash
-# Check common locations for implementation checklist
-cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null || \
-cat epics/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null || \
-find . -name "*IMPLEMENTATION-CHECKLIST*" -type f 2>/dev/null | head -5
-```
-
-Also check for sprint-specific folders:
-
-```bash
-# Find sprint subdirectories
-ls -d features/sprint-*/ 2>/dev/null
-ls -d epics/sprint-*/ 2>/dev/null
+cat features/00-IMPLEMENTATION-CHECKLIST.md
 ```
 
 ### 1.2 Identify Sprint Under Test
 
-Look for:
+Find the current sprint (most recent with `[x]` completed items). Extract:
+- Epic issue number
+- Task issue numbers
+- Sprint name and goal
 
-- The current sprint being worked on (most recent with `[x]` completed items)
-- The sprint's goal and shard document
-- Any linked epic documents or feature specs
-- Sprint-specific checklist files in subfolders (e.g., `epics/sprint-1/checklist.md`)
+### 1.3 Read Specs from GitHub Issues
 
-### 1.3 Get Sprint Shard Document
-
-Read the corresponding shard document for detailed requirements:
+Read the epic and task issues for detailed requirements and test scenarios:
 
 ```bash
-# Find sprint shard documents - could be in root or subfolders
-ls features/*.md 2>/dev/null
-ls epics/*.md 2>/dev/null
-ls epics/sprint-*/*.md 2>/dev/null
-ls features/sprint-*/*.md 2>/dev/null
+# Read epic for overall acceptance criteria
+gh issue view [EPIC_NUMBER] --json number,title,body,comments
 
-# Read the specific sprint shard
-cat [path/to/sprint-shard].md
+# Read each task issue for specific acceptance criteria and test scenarios
+gh issue view [TASK_NUMBER] --json number,title,body,comments
 ```
+
+Look for comments with "## Test Scenarios (Approved)" header (posted by `/next-phase`).
 
 ---
 
@@ -95,12 +82,13 @@ git diff $(git merge-base HEAD main)..HEAD --stat 2>/dev/null || git diff --stat
 
 ### 2.2 Extract Acceptance Criteria
 
-From the sprint shard document, extract:
+From the GitHub issue bodies, extract:
 
-- All acceptance criteria
+- All acceptance criteria (from task issues)
 - User-facing functionality
 - UI/UX expectations
 - Integration points
+- Previously approved test scenarios (from issue comments)
 
 ### 2.3 Compile Changes Summary
 
@@ -199,13 +187,30 @@ Show the user the complete test suite before starting:
 
 ---
 
-## Step 4: Run Test Suite
+## Step 4: Run Test Suite via Web Automation
 
-**ACTION REQUIRED:** Walk the user through each test case, one at a time.
+**ACTION REQUIRED:** Execute each test scenario using browser tools, then present results to the user.
+
+### 4.0 Web Automation Execution (MANDATORY for UI scenarios)
+
+For EACH UI test scenario, execute using browser tools:
+
+```
+1. browser_navigate → http://localhost:4000/[route]
+2. browser_snapshot → understand current page state
+3. browser_click / browser_type / browser_fill_form → interact with UI elements
+4. browser_wait_for → wait for expected outcomes
+5. browser_snapshot → verify the result
+6. browser_take_screenshot → capture evidence as [scenario-id]-result.png
+```
+
+**Chain multi-page workflows**: navigate through the full user journey, capturing screenshots at each key transition.
+
+**For non-UI scenarios** (API, data): use Execute tool to run commands and verify.
 
 ### 4.1 Present Each Test
 
-For each test scenario, present it clearly:
+After executing via browser tools, present results to the user:
 
 ```markdown
 ---
@@ -286,16 +291,38 @@ Maintain a running status:
 
 **ACTION REQUIRED (IF ANY FAILURES):** Create a rework document for failed tests.
 
-### 5.1 Create Rework Document
+### 5.1 Create GitHub Bug Issues for Failures
 
-If there are ANY failures, create a rework document:
-
-**Filename convention**: `features/UAT/[sprint-name]-rework.UAT.md`
-
-**Use the Create tool** to create the rework document:
+For each failure, create a GitHub bug issue:
 
 ```bash
-# Ensure UAT directory exists
+gh issue create \
+  --title "UAT Failure: [Scenario ID] - [Description]" \
+  --label "bug,uat-failure,sprint-[N]" \
+  --body "## UAT Failure
+
+**Source Task Issue**: #[TASK_NUMBER]
+**Scenario**: [ID] - [Name]
+**Epic**: #[EPIC_NUMBER]
+
+### Expected
+[What should happen]
+
+### Actual
+[What happened]
+
+### Steps to Reproduce
+1. [Step 1]
+2. [Step 2]
+
+*Created by /uat on [DATE]*"
+```
+
+### 5.1b (Optional) Create Local Rework Document
+
+Optionally, also create a local rework summary:
+
+```bash
 mkdir -p features/UAT
 ```
 

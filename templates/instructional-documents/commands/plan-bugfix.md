@@ -33,6 +33,11 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
   artifacts or update the checklist.
 - When specialist work is required, delegate through Codex subagents so built-in
   activity shows the orchestration path.
+- At planning gate points, use explicit option blocks instead of vague
+  confirmations:
+  `1. Proceed to the next step. (Recommended)`
+  `2. Loop back and revise the current stage.`
+  `3. Stop and replan / cancel.`
 
 ---
 
@@ -103,7 +108,25 @@ flowchart TD
 For data flow bugs, use a sequence diagram showing where the flow breaks.
 For state bugs, use a state diagram showing the invalid transition.
 
-### 5.3 Present root cause, mechanism, proposed fix, files to modify, confidence level, the diagnostic diagram, and any captured screenshots. Wait for confirmation.
+### 5.3 Present root cause, mechanism, proposed fix, files to modify, confidence level, the diagnostic diagram, and any captured screenshots using an explicit gate:
+
+> "## Planning Gate: Bug Analysis Confirmation
+>
+> **Root Cause:** [summary]
+> **Mechanism:** [how the bug happens]
+> **Proposed Fix:** [summary]
+> **Files to Modify:** [files]
+> **Confidence Level:** [High/Medium/Low]
+>
+> [Mermaid diagram of the bug flow]
+> [Screenshot of current buggy state if UI bug]
+>
+> Choose one:
+> 1. **Proceed to fix planning and issue creation. (Recommended)**
+> 2. **Loop back and revise the analysis.**
+> 3. **Stop and replan / cancel.**
+>
+> Reply `1`, `2`, or `3`."
 
 ## Step 7: Create GitHub Bug Issue
 

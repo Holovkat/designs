@@ -31,6 +31,11 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
   issues or update the checklist.
 - When specialist work is needed, delegate through Codex subagents instead of
   emulating specialist analysis inline so built-in activity reflects the run.
+- At planning gate points, use explicit option blocks instead of vague
+  confirmations:
+  `1. Proceed to the next step. (Recommended)`
+  `2. Loop back and revise the current stage.`
+  `3. Stop and replan / cancel.`
 
 ## Documentation Reference Strategy
 
@@ -215,9 +220,9 @@ Ask this to conclude:
 
 ## Step 4: Interview Completion Check
 
-**After gathering sufficient information, confirm understanding:**
+**After gathering sufficient information, confirm understanding with an explicit gate:**
 
-> "Let me summarize what I've captured:
+> "## Planning Gate: Summary Confirmation
 >
 > **Feature:** [Name/Title]
 >
@@ -238,9 +243,12 @@ Ask this to conclude:
 > **Technical Notes:**
 > - [Any constraints or preferences mentioned]
 >
-> **Does this capture your vision? Any corrections or additions?**"
-
-**Wait for user confirmation before proceeding.**
+> Choose one:
+> 1. **Proceed to workflow analysis and issue creation. (Recommended)**
+> 2. **Loop back and revise this summary.**
+> 3. **Stop and replan / cancel.**
+>
+> Reply `1`, `2`, or `3`."
 
 **IMPORTANT: Once user confirms, you MUST proceed to Step 5 (workflow impact & diagrams). Do NOT stop here.**
 
