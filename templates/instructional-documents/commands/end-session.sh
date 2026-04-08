@@ -11,12 +11,4 @@ else
   fi
 fi
 
-branch_name="${1:-}"
-
-if [ -z "$branch_name" ]; then
-  echo "Error: Please provide a branch name"
-  echo "Usage: /start-session <branch-name>"
-  exit 1
-fi
-
-exec "$REPO_ROOT/scripts/worktree-session-open.sh" "$branch_name"
+exec "$REPO_ROOT/scripts/worktree-session-close.sh" "$@"

@@ -76,6 +76,11 @@ git checkout docs/update-related-templates && git rebase main && git push --forc
 ## Touch Points / Key Files
 - GitHub workflow: `github-workflow.md`
 - TFD template: `Frontend-Technical-Functional-Requirements-Document-TFD.md`
+- Session installer: `install-session-workflows.sh`
+- Session commands: `commands/`
+- Session backend scripts: `scripts/`
+- Session lifecycle skills: `skills/`
+- Worktree guidance templates: `worktrees/`
 - WorkOS integration: `WorkOS-Convex-Nextjs-Implementation-Guide.md`
 - Architecture guide: `architecture.md`
 - UX standards: `ux_design_standards.md`

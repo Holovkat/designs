@@ -1,6 +1,6 @@
 # Session Workflow - Installation Guide
 
-This package provides slash commands and agent-aware hooks for managing coding sessions with Factory Droid.
+This package provides slash commands, backend scripts, project skills, worktree guidance, and agent-aware hooks for managing coding sessions with Factory Droid.
 
 ## What's Included
 
@@ -11,14 +11,40 @@ This package provides slash commands and agent-aware hooks for managing coding s
 | `/plan-feature`           | Interactive planning session to scope and document a new feature           |
 | `/plan-bugfix`            | Interactive planning session to scope and document a bug fix               |
 | `/plan-github`            | Import GitHub issues/PRs and convert them into implementation specs        |
-| `/start-session <branch>` | Create a new branch and begin coding                                       |
+| `/start-session <branch>` | Create a stacked branch, isolated worktree, and tmux-rooted Droid session  |
 | `/next-phase`             | Continue implementing the next phase from the project checklist            |
-| `/end-session`            | Close out session with compliance review, docs update, and push            |
+| `/end-session`            | Close out session with review gates, merge-back, and cleanup               |
 | `/uat`                    | Run User Acceptance Testing with guided test scenarios and rework tracking |
 | `/compliance-review`      | Verify implementation meets spec requirements (standalone)                 |
 | `/kingmode`               | Activate "King Mode" for deep, multi-dimensional analysis                  |
 | `/sanity-check`           | Verify app loads without errors                                            |
 | `/code-review`            | Get a second droid opinion on recent changes                               |
+
+### Worktree Session Backend
+
+| Component | Description |
+| --------- | ----------- |
+| `scripts/worktree-session-open.sh` | Creates a stacked branch, worktree, session manifest, and launches Droid in tmux |
+| `scripts/worktree-session-prepare.sh` | Runs deterministic per-worktree preparation plus the project prep adapter |
+| `scripts/worktree-session-close.sh` | Merges back to the recorded parent branch and removes session artifacts |
+| `scripts/start-droid-worktree.sh` | Reuses a prepared worktree and launches Droid in a new tmux pane |
+| `scripts/worktree-project-prepare.sh` | Project-specific adapter for runtime/bootstrap tasks |
+| `scripts/worktree-project-cleanup.sh` | Project-specific adapter for shutdown/cleanup tasks |
+
+### Project Skills
+
+| Skill | Description |
+| ----- | ----------- |
+| `worktree-toolkit-init` | Audit and update project-specific worktree lifecycle tooling |
+| `worktree-session-lifecycle` | Operate the start/end session lifecycle through the backend scripts |
+
+### Worktree Guidance
+
+| File | Description |
+| ---- | ----------- |
+| `.worktrees/README.md` | Operator-facing overview for session lifecycle |
+| `.worktrees/AGENTS.md` | Rules and entrypoints for agent-managed worktree sessions |
+| `.worktrees/_meta/README.md` | Manifest contract for merge-back and cleanup |
 
 ### Agent-Aware Hooks
 
@@ -51,6 +77,9 @@ Use the global `/install-workflows` command to set up everything:
 This installs:
 
 - Commands + Hooks + Settings
+- Worktree session backend scripts (`scripts/`)
+- Project-local skills (`skills/`)
+- `.worktrees/` guidance + manifest scaffolding
 - Design templates (`designs/templates/`)
 - Supporting files (`features/`, `changelog/`)
 
@@ -97,6 +126,9 @@ This updates commands and hooks but leaves your `designs/templates/` untouched.
 | `.factory/commands/`     | Yes                  | Yes                          |
 | `.factory/hooks/`        | Yes                  | Yes                          |
 | `.factory/settings.json` | Yes                  | Yes                          |
+| `scripts/`               | Yes                  | Yes                          |
+| `skills/`                | Yes                  | Yes                          |
+| `.worktrees/`            | Yes                  | Yes                          |
 | `features/`              | Yes (if missing)     | Yes (if missing)             |
 | `changelog/`             | Yes (if missing)     | Yes (if missing)             |
 | `designs/templates/`     | **Yes**              | No (use `--with-templates`)  |
@@ -116,7 +148,7 @@ This safely updates commands and hooks without overwriting any customized templa
 ### Step 1: Create directories
 
 ```bash
-mkdir -p .factory/commands .factory/hooks features changelog
+mkdir -p .factory/commands .factory/hooks scripts skills .worktrees/_meta features changelog
 ```
 
 ### Step 2: Copy the command files
@@ -124,8 +156,9 @@ mkdir -p .factory/commands .factory/hooks features changelog
 ```bash
 # From this template directory, copy to your project:
 cp start-session.sh /path/to/your/project/.factory/commands/
-cp next-phase.md /path/to/your/project/.factory/commands/
+cp end-session.sh /path/to/your/project/.factory/commands/
 cp end-session.md /path/to/your/project/.factory/commands/
+cp next-phase.md /path/to/your/project/.factory/commands/
 cp kingmode.md /path/to/your/project/.factory/commands/
 ```
 
@@ -135,34 +168,60 @@ Or manually create each file in `.factory/commands/`:
 - `plan-bugfix.md` - Markdown command (interactive bugfix planning)
 - `plan-github.md` - Markdown command (GitHub issue/PR import)
 - `start-session.sh` - Executable bash script
+- `end-session.sh` - Executable bash wrapper for merge-back + cleanup
 - `next-phase.md` - Markdown command
 - `end-session.md` - Markdown command (includes compliance gate)
 - `uat.md` - Markdown command (user acceptance testing with rework tracking)
 - `compliance-review.md` - Markdown command (standalone compliance check)
 - `kingmode.md` - Markdown command
 
-### Step 3: Copy the hooks
+### Step 3: Copy the backend scripts
+
+```bash
+cp /path/to/templates/instructional-documents/scripts/* /path/to/your/project/scripts/
+chmod +x /path/to/your/project/scripts/*.sh
+```
+
+### Step 4: Copy the project skills
+
+```bash
+cp -R /path/to/templates/instructional-documents/skills/. /path/to/your/project/skills/
+```
+
+### Step 5: Copy the `.worktrees` guidance files
+
+```bash
+cp /path/to/templates/instructional-documents/worktrees/.gitignore /path/to/your/project/.worktrees/
+cp /path/to/templates/instructional-documents/worktrees/README.md /path/to/your/project/.worktrees/
+cp /path/to/templates/instructional-documents/worktrees/AGENTS.md /path/to/your/project/.worktrees/
+cp /path/to/templates/instructional-documents/worktrees/_meta/.gitignore /path/to/your/project/.worktrees/_meta/
+cp /path/to/templates/instructional-documents/worktrees/_meta/README.md /path/to/your/project/.worktrees/_meta/
+```
+
+### Step 6: Copy the hooks
 
 ```bash
 # From the hooks template directory:
 cp /path/to/templates/instructional-documents/hooks/*.sh .factory/hooks/
 ```
 
-### Step 4: Configure Factory settings
+### Step 7: Configure Factory settings
 
 ```bash
 # Copy the agent-aware hooks settings
 cp /path/to/templates/instructional-documents/hooks/settings-agent-aware.json .factory/settings.json
 ```
 
-### Step 5: Make scripts executable
+### Step 8: Make scripts executable
 
 ```bash
 chmod +x .factory/commands/start-session.sh
+chmod +x .factory/commands/end-session.sh
 chmod +x .factory/hooks/*.sh
+chmod +x scripts/*.sh
 ```
 
-### Step 6: Create supporting files
+### Step 9: Create supporting files
 
 #### Implementation Checklist
 
@@ -214,7 +273,7 @@ Development session history with completed work and changes.
 <!-- New sessions are added below this line -->
 ```
 
-### Step 7: Verify installation
+### Step 10: Verify installation
 
 In your project directory, run droid and type:
 
@@ -224,9 +283,9 @@ In your project directory, run droid and type:
 
 You should see:
 
-- `/start-session` - Create new branch for coding session
+- `/start-session` - Create stacked branch + worktree + tmux Droid session
 - `/next-phase` - Continue implementing next phase
-- `/end-session` - Close out session with review
+- `/end-session` - Close out session, then merge back and clean up
 - `/sanity-check` - Verify app loads without errors
 - `/code-review` - Get second droid opinion on changes
 
@@ -247,7 +306,8 @@ your-project/
 │   │   ├── plan-feature.md     # Interactive feature planning
 │   │   ├── plan-bugfix.md      # Interactive bugfix planning
 │   │   ├── plan-github.md      # GitHub issue/PR import
-│   │   ├── start-session.sh    # Creates branch
+│   │   ├── start-session.sh    # Creates stacked branch + worktree
+│   │   ├── end-session.sh      # Merge-back + cleanup wrapper
 │   │   ├── next-phase.md       # Continues implementation
 │   │   ├── end-session.md      # Closes session
 │   │   ├── uat.md              # User acceptance testing
@@ -259,6 +319,27 @@ your-project/
 │   │   ├── pre-commit-workflow.sh     # Pre-commit checks
 │   │   └── post-commit-push.sh        # Auto push
 │   └── settings.json           # Hooks configuration
+├── scripts/
+│   ├── README.md                    # Backend session lifecycle overview
+│   ├── worktree-session-open.sh     # Creates stacked branch + worktree
+│   ├── worktree-session-prepare.sh  # Runs deterministic worktree prep
+│   ├── worktree-session-close.sh    # Merges back + cleans up
+│   ├── start-droid-worktree.sh      # Launches Droid in tmux
+│   ├── worktree-project-prepare.sh  # Project-specific prep adapter
+│   └── worktree-project-cleanup.sh  # Project-specific cleanup adapter
+├── skills/
+│   ├── README.md
+│   ├── worktree-toolkit-init/
+│   │   └── SKILL.md
+│   └── worktree-session-lifecycle/
+│       └── SKILL.md
+├── .worktrees/
+│   ├── .gitignore
+│   ├── README.md
+│   ├── AGENTS.md
+│   └── _meta/
+│       ├── .gitignore
+│       └── README.md
 ├── features/
 │   ├── 00-IMPLEMENTATION-CHECKLIST.md
 │   └── BACKLOG.md
@@ -284,14 +365,20 @@ yarn lint
 yarn build
 ```
 
-### Change default branch
+### Customize project prep adapters
 
-If your default branch is `main` instead of `master`, edit `end-session.md` Step 6.2:
+Edit these scripts for project-specific deterministic setup and cleanup:
 
 ```bash
-git fetch origin main
-git rebase origin/main
+scripts/worktree-project-prepare.sh
+scripts/worktree-project-cleanup.sh
 ```
+
+Typical prep responsibilities:
+- create worktree-local env/runtime files
+- seed data or fixtures
+- start or verify local services
+- emit readiness markers for worker agents
 
 ### Add/remove quality checks
 
@@ -361,6 +448,15 @@ The agent will:
 /start-session feature/my-new-feature
 ```
 
+The backend script will:
+
+1. Require that you already started inside `tmux`
+2. Fail if the current checkout is dirty
+3. Create a stacked branch from the current branch
+4. Create a worktree under `.worktrees/`
+5. Run the deterministic prep scripts
+6. Launch Droid in a new tmux pane rooted in that worktree while preserving the parent pane
+
 ### Continuing project work
 
 ```
@@ -384,14 +480,11 @@ The agent will:
 
 The agent will:
 
-1. Run lint and build
-2. Perform code review with `/review`
-3. Update implementation checklist (mark completed items)
-4. Handle incomplete items (backlog option)
-5. Update session log
-6. Update AGENTS.md if needed
-7. Rebase, commit, and push
-8. Close linked GitHub issues (if sprint complete)
+1. Run review/compliance/UAT gates
+2. Commit and push the task branch
+3. Run the backend merge-back + cleanup script
+4. Remove the isolated worktree/session branch/tmux pane
+5. Return you to the recorded parent branch
 
 ### Running User Acceptance Testing
 
