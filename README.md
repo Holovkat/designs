@@ -10,7 +10,8 @@ This repository is documentation-first. The README is the GitHub index. The deta
 | --- | --- |
 | [Workflow guide source](docs/workflow-guide/index.html) | Canonical detailed operating model for planning, approvals, CI/CD, QA, production approval, and closeout. |
 | [Install and harness setup](docs/workflow-guide/install.html) | Instructions and common prompt for installing commands and skills globally or into a project. |
-| [Rendered workflow guide](https://holovkat.github.io/designs/workflow-guide/) | Rendered HTML guide when GitHub Pages is enabled for this repository. |
+| [Rendered Pages site](https://holovkat.github.io/designs/) | GitHub Pages entrypoint that redirects to the rendered workflow guide. |
+| [Rendered workflow guide](https://holovkat.github.io/designs/workflow-guide/) | Direct link to the detailed HTML operating guide. |
 | [Command pack](templates/instructional-documents/commands/) | Slash-command templates such as `/plan-feature`, `/plan-bugfix`, `/plan-github`, `/plan-review`, `/compliance-review`, `/uat`, and closeout flows. |
 | [Project skills](templates/instructional-documents/skills/) | Project-local skills for worktree/session lifecycle support. |
 | [Workflow installer](templates/instructional-documents/install-session-workflows.sh) | Installer for refreshing commands, hooks, scripts, skills, and worktree guidance into another project. |
