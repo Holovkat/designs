@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Factory Droid Batch Lint Check Hook
+# Agent Harness Batch Lint Check Hook
 # 
 # Runs after a batch of file edits (detected by timing/patterns)
 # or periodically during long coding sessions.
@@ -8,8 +8,8 @@
 # This hook tracks modified files and runs lint on all of them
 # when it detects a pause in editing activity.
 #
-# Place in: .factory/hooks/batch-lint-check.sh
-# Make executable: chmod +x .factory/hooks/batch-lint-check.sh
+# Place in: hooks/batch-lint-check.sh
+# Make executable: chmod +x hooks/batch-lint-check.sh
 
 set -euo pipefail
 
@@ -28,7 +28,7 @@ esac
 
 [[ -z "$FILE_PATH" ]] && exit 0
 
-PROJECT_DIR="${FACTORY_PROJECT_DIR:-$(pwd)}"
+PROJECT_DIR="${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$(pwd)}}"
 cd "$PROJECT_DIR"
 
 # Track modified files in a temp file

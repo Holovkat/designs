@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# Factory Droid Post-Commit Push Hook
+# Agent Harness Post-Commit Push Hook
 # 
 # This hook runs after a git commit succeeds and pushes to main
 #
-# Place in: .factory/hooks/post-commit-push.sh
-# Make executable: chmod +x .factory/hooks/post-commit-push.sh
+# Place in: hooks/post-commit-push.sh
+# Make executable: chmod +x hooks/post-commit-push.sh
 
 set -euo pipefail
 
@@ -33,7 +33,7 @@ echo "🚀 STEP 4: Pushing to main..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Get the project directory
-PROJECT_DIR="${FACTORY_PROJECT_DIR:-$(pwd)}"
+PROJECT_DIR="${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$(pwd)}}"
 cd "$PROJECT_DIR"
 
 # Get current branch

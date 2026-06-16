@@ -1,10 +1,10 @@
 ---
-description: Reopen Droid in an existing prepared worktree pane
+description: Reopen an agent in an existing prepared worktree pane
 ---
 
 # /join-session - Rejoin Worktree Session
 
-Pick an existing isolated worktree under `.worktrees/`, verify it still exists, and reopen Droid in that worktree's tmux pane.
+Pick an existing isolated worktree under `.worktrees/`, verify it still exists, and reopen the agent in that worktree's tmux pane.
 
 ## What It Does
 
@@ -12,7 +12,7 @@ Pick an existing isolated worktree under `.worktrees/`, verify it still exists, 
 2. Enumerates valid git worktrees under `.worktrees/`
 3. Lets you pick one interactively, or accepts a worktree name/path directly
 4. Verifies the selected worktree folder still exists
-5. Reuses the existing tmux pane when available, or splits a new pane and launches Droid there
+5. Reuses the existing tmux pane when available, or splits a new pane and launches the agent there
 
 ## Usage
 
@@ -32,7 +32,7 @@ Leave or detach from the worktree pane
     ↓
 /join-session ← YOU ARE HERE
     ↓
-Resume Droid in the existing isolated worktree
+Resume the agent in the existing isolated worktree
 ```
 
 ## See Also
@@ -42,4 +42,4 @@ Resume Droid in the existing isolated worktree
 
 ---
 
-**ACTION: Run `.factory/commands/join-session.sh $ARGUMENTS`.**
+**ACTION: Run `./commands/join-session.sh $ARGUMENTS`.**

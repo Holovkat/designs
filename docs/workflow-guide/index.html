@@ -36,6 +36,14 @@
               <strong>Overview</strong>
               <span>Generic operating model and document roles.</span>
             </a>
+            <a class="scenario-card" href="#installation">
+              <strong>Installation</strong>
+              <span>Install commands and skills globally or inside a project.</span>
+            </a>
+            <a class="scenario-card" href="#commands">
+              <strong>Commands</strong>
+              <span>Reference the workflow commands and expected outputs.</span>
+            </a>
             <a class="scenario-card" href="#planning-intake">
               <strong>Planning Intake</strong>
               <span>Choose the planning entrypoint for the work type.</span>
@@ -75,14 +83,6 @@
             <a class="scenario-card" href="#closeout">
               <strong>Closeout</strong>
               <span>Finish with retained evidence, cleanup, and lessons learned.</span>
-            </a>
-            <a class="scenario-card" href="#commands">
-              <strong>Commands</strong>
-              <span>Reference the workflow commands and expected outputs.</span>
-            </a>
-            <a class="scenario-card" href="#installation">
-              <strong>Installation</strong>
-              <span>Install commands and skills globally or inside a project.</span>
             </a>
             <a class="scenario-card" href="#overlays">
               <strong>Overlays</strong>
@@ -126,6 +126,159 @@
                     <div class="kv-key">Evidence</div>
                     <div>Every stage should produce traceable notes, commands, links, test results, or approval records.</div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="installation" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Installation</span>
+                <h2>Install the command and skill pack where the harness can discover it.</h2>
+                <p class="lede">
+                  The workflow pack can be installed globally for a harness or locally inside a project. Project-local
+                  setup is usually safer when the repository has its own release authority, QA environment, approval
+                  model, hooks, scripts, or worktree policy.
+                </p>
+                <div class="panel">
+                  <h3>Installed surface</h3>
+                  <ul>
+                    <li>Command markdown for planning, plan review, build, closeout, DoD review, compliance, and UAT.</li>
+                    <li>Project skills for worktree lifecycle, plan review, and DoD review.</li>
+                    <li>Optional hooks, scripts, worktree guidance, settings, and design templates.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Setup page</h3>
+                <p>
+                  Use the install guide for project-local commands, global harness setup, verification checks, and the
+                  reusable setup prompt that another harness or agent can follow.
+                </p>
+                <p><a class="button" href="install.html">Open install guide</a></p>
+              </div>
+            </div>
+          </section>
+
+          <section id="commands" class="section">
+            <div class="stack">
+              <span class="eyebrow">Commands</span>
+              <h2>Command reference</h2>
+              <p class="lede">
+                Commands create a consistent operating rhythm. Each command should leave durable output that can be
+                reviewed outside the current chat session.
+              </p>
+              <div class="matrix" role="table" aria-label="Workflow command matrix">
+                <div class="matrix-head" role="row">
+                  <div role="columnheader">Command</div>
+                  <div role="columnheader">Intent</div>
+                  <div role="columnheader">Expected output</div>
+                  <div role="columnheader">Stage</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/plan-feature</code></div>
+                  <div role="cell">Plan a new feature.</div>
+                  <div role="cell">Creates issue hierarchy and acceptance criteria before implementation.</div>
+                  <div role="cell">Planning</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/plan-bugfix</code></div>
+                  <div role="cell">Investigate and plan a bug fix.</div>
+                  <div role="cell">Records observed behavior, expected behavior, fix tasks, and regression coverage.</div>
+                  <div role="cell">Planning</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/plan-github</code></div>
+                  <div role="cell">Import an existing issue or PR.</div>
+                  <div role="cell">Converts external context into the standard planning hierarchy.</div>
+                  <div role="cell">Planning</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/plan-review</code></div>
+                  <div role="cell">Review plan completeness.</div>
+                  <div role="cell">Ranks planning artifacts against the Q&A/intake record before build approval.</div>
+                  <div role="cell">Planning gate</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/start-session</code></div>
+                  <div role="cell">Start a governed build session.</div>
+                  <div role="cell">Creates the implementation branch or worktree according to project policy.</div>
+                  <div role="cell">Build</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/next-phase</code></div>
+                  <div role="cell">Continue implementation.</div>
+                  <div role="cell">Reads approved issue specs and advances the next implementation slice.</div>
+                  <div role="cell">Build</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/end-session</code></div>
+                  <div role="cell">Close a build session.</div>
+                  <div role="cell">Runs quality gates, records handoff evidence, and performs governed cleanup.</div>
+                  <div role="cell">Closeout</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/compliance-review</code></div>
+                  <div role="cell">Verify requirement traceability.</div>
+                  <div role="cell">Checks implementation against accepted issue scope and blocks incomplete work.</div>
+                  <div role="cell">Review</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/dod-review</code></div>
+                  <div role="cell">Rank Definition of Done.</div>
+                  <div role="cell">Compares requirements with delivered build outcomes before handover or UAT.</div>
+                  <div role="cell">Handover gate</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/uat</code></div>
+                  <div role="cell">Run user acceptance testing.</div>
+                  <div role="cell">Validates approved scenarios, records failures, and drives QA signoff or rework.</div>
+                  <div role="cell">QA/UAT</div>
+                </div>
+              </div>
+
+              <div class="two-column">
+                <div class="stack">
+                  <details class="test-case">
+                    <summary><span><code>/plan-feature</code>, <code>/plan-bugfix</code>, <code>/plan-github</code>, <code>/plan-review</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Planning commands should create or refresh issue-ready specifications, acceptance criteria,
+                        decomposition, risks, and approval questions. <code>/plan-review</code> then checks that output
+                        against the Q&A/intake record. They should not begin implementation.
+                      </p>
+                    </div>
+                  </details>
+                  <details class="test-case">
+                    <summary><span><code>/start-session</code> and <code>/next-phase</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Build commands should load approved issue scope, confirm ownership, apply the required branch or
+                        worktree policy, and advance only the next implementation slice.
+                      </p>
+                    </div>
+                  </details>
+                </div>
+                <div class="stack">
+                  <details class="test-case">
+                    <summary><span><code>/compliance-review</code>, <code>/dod-review</code>, and <code>/uat</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Gate commands should remain evidence-first. They validate accepted scope, rank Definition of
+                        Done, and test user scenarios, then return either approval evidence or concrete rework.
+                      </p>
+                    </div>
+                  </details>
+                  <details class="test-case">
+                    <summary><span><code>/end-session</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Closeout should gather verification results, changed files, risks, cleanup state, and any
+                        project documentation or checklist updates required before handoff.
+                      </p>
+                    </div>
+                  </details>
                 </div>
               </div>
             </div>
@@ -651,159 +804,6 @@ sequenceDiagram
                   A good final handoff names changed files, commands run, verification results, residual risks, and any
                   follow-up tasks. It should be short enough to scan and complete enough to audit later.
                 </p>
-              </div>
-            </div>
-          </section>
-
-          <section id="commands" class="section">
-            <div class="stack">
-              <span class="eyebrow">Commands</span>
-              <h2>Command reference</h2>
-              <p class="lede">
-                Commands create a consistent operating rhythm. Each command should leave durable output that can be
-                reviewed outside the current chat session.
-              </p>
-              <div class="matrix" role="table" aria-label="Workflow command matrix">
-                <div class="matrix-head" role="row">
-                  <div role="columnheader">Command</div>
-                  <div role="columnheader">Intent</div>
-                  <div role="columnheader">Expected output</div>
-                  <div role="columnheader">Stage</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/plan-feature</code></div>
-                  <div role="cell">Plan a new feature.</div>
-                  <div role="cell">Creates issue hierarchy and acceptance criteria before implementation.</div>
-                  <div role="cell">Planning</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/plan-bugfix</code></div>
-                  <div role="cell">Investigate and plan a bug fix.</div>
-                  <div role="cell">Records observed behavior, expected behavior, fix tasks, and regression coverage.</div>
-                  <div role="cell">Planning</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/plan-github</code></div>
-                  <div role="cell">Import an existing issue or PR.</div>
-                  <div role="cell">Converts external context into the standard planning hierarchy.</div>
-                  <div role="cell">Planning</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/plan-review</code></div>
-                  <div role="cell">Review plan completeness.</div>
-                  <div role="cell">Ranks planning artifacts against the Q&A/intake record before build approval.</div>
-                  <div role="cell">Planning gate</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/start-session</code></div>
-                  <div role="cell">Start a governed build session.</div>
-                  <div role="cell">Creates the implementation branch or worktree according to project policy.</div>
-                  <div role="cell">Build</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/next-phase</code></div>
-                  <div role="cell">Continue implementation.</div>
-                  <div role="cell">Reads approved issue specs and advances the next implementation slice.</div>
-                  <div role="cell">Build</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/end-session</code></div>
-                  <div role="cell">Close a build session.</div>
-                  <div role="cell">Runs quality gates, records handoff evidence, and performs governed cleanup.</div>
-                  <div role="cell">Closeout</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/compliance-review</code></div>
-                  <div role="cell">Verify requirement traceability.</div>
-                  <div role="cell">Checks implementation against accepted issue scope and blocks incomplete work.</div>
-                  <div role="cell">Review</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/dod-review</code></div>
-                  <div role="cell">Rank Definition of Done.</div>
-                  <div role="cell">Compares requirements with delivered build outcomes before handover or UAT.</div>
-                  <div role="cell">Handover gate</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/uat</code></div>
-                  <div role="cell">Run user acceptance testing.</div>
-                  <div role="cell">Validates approved scenarios, records failures, and drives QA signoff or rework.</div>
-                  <div role="cell">QA/UAT</div>
-                </div>
-              </div>
-
-              <div class="two-column">
-                <div class="stack">
-                  <details class="test-case">
-                    <summary><span><code>/plan-feature</code>, <code>/plan-bugfix</code>, <code>/plan-github</code>, <code>/plan-review</code></span></summary>
-                    <div class="test-case-body">
-                      <p>
-                        Planning commands should create or refresh issue-ready specifications, acceptance criteria,
-                        decomposition, risks, and approval questions. <code>/plan-review</code> then checks that output
-                        against the Q&A/intake record. They should not begin implementation.
-                      </p>
-                    </div>
-                  </details>
-                  <details class="test-case">
-                    <summary><span><code>/start-session</code> and <code>/next-phase</code></span></summary>
-                    <div class="test-case-body">
-                      <p>
-                        Build commands should load approved issue scope, confirm ownership, apply the required branch or
-                        worktree policy, and advance only the next implementation slice.
-                      </p>
-                    </div>
-                  </details>
-                </div>
-                <div class="stack">
-                  <details class="test-case">
-                    <summary><span><code>/compliance-review</code>, <code>/dod-review</code>, and <code>/uat</code></span></summary>
-                    <div class="test-case-body">
-                      <p>
-                        Gate commands should remain evidence-first. They validate accepted scope, rank Definition of
-                        Done, and test user scenarios, then return either approval evidence or concrete rework.
-                      </p>
-                    </div>
-                  </details>
-                  <details class="test-case">
-                    <summary><span><code>/end-session</code></span></summary>
-                    <div class="test-case-body">
-                      <p>
-                        Closeout should gather verification results, changed files, risks, cleanup state, and any
-                        project documentation or checklist updates required before handoff.
-                      </p>
-                    </div>
-                  </details>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section id="installation" class="section">
-            <div class="two-column">
-              <div class="stack">
-                <span class="eyebrow">Installation</span>
-                <h2>Install the command and skill pack where the harness can discover it.</h2>
-                <p class="lede">
-                  The workflow pack can be installed globally for a harness or locally inside a project. Project-local
-                  setup is usually safer when the repository has its own release authority, QA environment, approval
-                  model, hooks, scripts, or worktree policy.
-                </p>
-                <div class="panel">
-                  <h3>Installed surface</h3>
-                  <ul>
-                    <li>Command markdown for planning, plan review, build, closeout, DoD review, compliance, and UAT.</li>
-                    <li>Project skills for worktree lifecycle, plan review, and DoD review.</li>
-                    <li>Optional hooks, scripts, worktree guidance, settings, and design templates.</li>
-                  </ul>
-                </div>
-              </div>
-              <div class="panel">
-                <h3>Setup page</h3>
-                <p>
-                  Use the install guide for project-local commands, global harness setup, verification checks, and the
-                  reusable setup prompt that another harness or agent can follow.
-                </p>
-                <p><a class="button" href="install.html">Open install guide</a></p>
               </div>
             </div>
           </section>

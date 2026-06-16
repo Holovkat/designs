@@ -19,6 +19,12 @@
 #   --dry-run          Show what would be copied without copying
 #   --help             Show this help message
 #
+# Environment overrides:
+#   DESIGNS_WORKFLOW_SOURCE  Source template directory when refreshing from a project copy
+#   WORKFLOW_COMMANDS_DIR    Target command directory (default: ./commands)
+#   WORKFLOW_HOOKS_DIR       Target hook directory (default: ./hooks)
+#   WORKFLOW_SETTINGS_FILE   Target settings file (default: ./settings.json)
+#
 # Example:
 #   /install-session-workflows           # Refresh commands/scripts/skills/worktrees/hooks
 #   /install-session-workflows --with-templates  # Include templates
@@ -36,29 +42,29 @@ NC='\033[0m' # No Color
 # Get the directory where this script lives
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Determine if running from template source or from a project's .factory/commands
+# Determine if running from template source or from a project's command directory
 # Template source has commands/ and hooks/ subdirectories
-# Project copy is inside .factory/commands/ with hooks/ as sibling
+# Project copy is usually inside commands/ with hooks/ as sibling
 if [[ -d "$SCRIPT_DIR/commands" ]] && [[ -d "$SCRIPT_DIR/hooks" ]]; then
     # Running from template source (e.g., ~/workspace/designs/templates/instructional-documents/)
     TEMPLATE_COMMANDS="$SCRIPT_DIR/commands"
     TEMPLATE_HOOKS="$SCRIPT_DIR/hooks"
     TEMPLATE_DOCS="$SCRIPT_DIR"
 elif [[ "$(basename "$SCRIPT_DIR")" == "commands" ]] && [[ -d "$SCRIPT_DIR/../hooks" ]]; then
-    # Running from project's .factory/commands/ - source from central template
-    CENTRAL_TEMPLATE="$HOME/workspace/designs/templates/instructional-documents"
+    # Running from a project's command directory - source from the template repo
+    CENTRAL_TEMPLATE="${DESIGNS_WORKFLOW_SOURCE:-$HOME/workspace/designs/templates/instructional-documents}"
     if [[ -d "$CENTRAL_TEMPLATE/commands" ]]; then
         TEMPLATE_COMMANDS="$CENTRAL_TEMPLATE/commands"
         TEMPLATE_HOOKS="$CENTRAL_TEMPLATE/hooks"
         TEMPLATE_DOCS="$CENTRAL_TEMPLATE"
     else
         echo -e "${RED}Error: Cannot find template source at $CENTRAL_TEMPLATE${NC}"
-        echo "Please ensure the templates repository is at ~/workspace/designs/"
+        echo "Set DESIGNS_WORKFLOW_SOURCE=/path/to/designs/templates/instructional-documents"
         exit 1
     fi
 else
     echo -e "${RED}Error: Cannot determine template source location${NC}"
-    echo "Run from either the template directory or a project with .factory/commands/"
+    echo "Run from either the template directory or a project command directory with hooks/ as a sibling."
     exit 1
 fi
 
@@ -66,11 +72,11 @@ TEMPLATE_SCRIPTS="$TEMPLATE_DOCS/scripts"
 TEMPLATE_SKILLS="$TEMPLATE_DOCS/skills"
 TEMPLATE_WORKTREES="$TEMPLATE_DOCS/worktrees"
 
-# Target is current working directory
+# Target is current working directory. Override these for harness-specific layouts.
 PROJECT_DIR="$(pwd)"
-TARGET_FACTORY="$PROJECT_DIR/.factory"
-TARGET_COMMANDS="$TARGET_FACTORY/commands"
-TARGET_HOOKS="$TARGET_FACTORY/hooks"
+TARGET_COMMANDS="${WORKFLOW_COMMANDS_DIR:-$PROJECT_DIR/commands}"
+TARGET_HOOKS="${WORKFLOW_HOOKS_DIR:-$PROJECT_DIR/hooks}"
+TARGET_SETTINGS="${WORKFLOW_SETTINGS_FILE:-$PROJECT_DIR/settings.json}"
 TARGET_DESIGNS="$PROJECT_DIR/designs/templates"
 TARGET_SCRIPTS="$PROJECT_DIR/scripts"
 TARGET_SKILLS="$PROJECT_DIR/skills"
@@ -126,6 +132,12 @@ while [[ $# -gt 0 ]]; do
             echo "  --dry-run          Show what would be copied without copying"
             echo "  --help             Show this help message"
             echo ""
+            echo "Environment overrides:"
+            echo "  DESIGNS_WORKFLOW_SOURCE  Source template directory when refreshing from a project copy"
+            echo "  WORKFLOW_COMMANDS_DIR    Target command directory (default: ./commands)"
+            echo "  WORKFLOW_HOOKS_DIR       Target hook directory (default: ./hooks)"
+            echo "  WORKFLOW_SETTINGS_FILE   Target settings file (default: ./settings.json)"
+            echo ""
             echo "Note: Templates are NOT installed by default."
             echo "Use /install-workflows for full install with templates."
             echo ""
@@ -151,7 +163,7 @@ if $DRY_RUN; then
     echo ""
 fi
 
-echo -e "Source:  ${GREEN}$SCRIPT_DIR${NC}"
+echo -e "Source:  ${GREEN}$TEMPLATE_DOCS${NC}"
 echo -e "Target:  ${GREEN}$PROJECT_DIR${NC}"
 echo ""
 
@@ -170,6 +182,7 @@ fi
 if ! $DRY_RUN; then
     mkdir -p "$TARGET_COMMANDS"
     mkdir -p "$TARGET_HOOKS"
+    mkdir -p "$(dirname "$TARGET_SETTINGS")"
     mkdir -p "$TARGET_SCRIPTS"
     mkdir -p "$TARGET_SKILLS"
     mkdir -p "$TARGET_WORKTREE_META"
@@ -213,8 +226,8 @@ if $INSTALL_COMMANDS; then
         fi
     done
     
-    # Copy this installer script itself so /install-session-workflows works locally
-    SELF_SCRIPT="$SCRIPT_DIR/install-session-workflows.sh"
+    # Copy this installer script from the source repo so local refreshes update the refresher too.
+    SELF_SCRIPT="$TEMPLATE_DOCS/install-session-workflows.sh"
     if [[ -f "$SELF_SCRIPT" ]]; then
         if $DRY_RUN; then
             echo -e "  Would copy: ${GREEN}install-session-workflows.sh${NC} (self)"
@@ -338,9 +351,9 @@ if $INSTALL_SETTINGS && $INSTALL_HOOKS; then
     SETTINGS_FILE="$TEMPLATE_HOOKS/settings-agent-aware.json"
     if [[ -f "$SETTINGS_FILE" ]]; then
         if $DRY_RUN; then
-            echo -e "  Would copy: ${GREEN}settings-agent-aware.json${NC} -> settings.json"
+            echo -e "  Would copy: ${GREEN}settings-agent-aware.json${NC} -> $TARGET_SETTINGS"
         else
-            cp "$SETTINGS_FILE" "$TARGET_FACTORY/settings.json"
+            cp "$SETTINGS_FILE" "$TARGET_SETTINGS"
             echo -e "  Copied: ${GREEN}settings.json${NC}"
         fi
     fi
@@ -456,8 +469,8 @@ else
     echo -e "Copied:"
 fi
 
-echo -e "  Commands:  ${GREEN}$COMMANDS_COPIED${NC} files -> .factory/commands/"
-echo -e "  Hooks:     ${GREEN}$HOOKS_COPIED${NC} files -> .factory/hooks/"
+echo -e "  Commands:  ${GREEN}$COMMANDS_COPIED${NC} files -> $TARGET_COMMANDS/"
+echo -e "  Hooks:     ${GREEN}$HOOKS_COPIED${NC} files -> $TARGET_HOOKS/"
 echo -e "  Scripts:   ${GREEN}$SCRIPTS_COPIED${NC} files -> scripts/"
 echo -e "  Skills:    ${GREEN}$SKILLS_COPIED${NC} files -> skills/"
 echo -e "  Worktrees: ${GREEN}$WORKTREE_FILES_COPIED${NC} files -> .worktrees/"
@@ -465,8 +478,9 @@ echo -e "  Templates: ${GREEN}$TEMPLATES_COPIED${NC} files -> designs/templates/
 echo ""
 
 echo -e "${YELLOW}Project structure:${NC}"
-echo "  .factory/commands/     - Slash commands for droid"
-echo "  .factory/hooks/        - Agent-aware automation hooks"
+echo "  commands/             - Slash commands for the agent harness"
+echo "  hooks/                - Agent-aware automation hooks"
+echo "  settings.json         - Optional hook settings for compatible harnesses"
 echo "  scripts/               - Deterministic worktree/session backend"
 echo "  skills/                - Project-local session lifecycle skills"
 echo "  .worktrees/            - Session control surface + manifests"
@@ -479,13 +493,12 @@ echo -e "${YELLOW}Available commands:${NC}"
 echo "  /plan-feature     - Plan feature (creates GitHub epic + task issues)"
 echo "  /plan-bugfix      - Plan bugfix (creates GitHub bug + task issues)"
 echo "  /plan-github      - Import GitHub issues/PRs into task hierarchy"
-echo "  /start-session    - Create stacked branch + worktree + tmux Droid session"
-echo "  /join-session     - Reopen Droid in an existing prepared worktree pane"
-echo "  /start-phase      - Start phase (branch + PR + label transitions)"
+echo "  /plan-review      - Review plan completeness against Q&A evidence"
+echo "  /dod-review       - Review requirements against delivered build outcomes"
+echo "  /start-session    - Create stacked branch + worktree + agent session"
+echo "  /join-session     - Reopen an existing prepared worktree pane"
 echo "  /next-phase       - Continue implementation (reads specs from GitHub issues)"
 echo "  /end-session      - Close session (gates + handoff + merge-back + cleanup)"
-echo "  /end-phase        - Close phase (verify all GitHub issues closed)"
-echo "  /orchestrate      - Full implementation + review loop"
 echo "  /compliance-review - Standalone compliance check (reads from GitHub issues)"
 echo "  /uat              - User acceptance testing (reads scenarios from issues)"
 echo "  /kingmode         - Deep analysis mode"
@@ -508,8 +521,8 @@ if ! $DRY_RUN && command -v gh &> /dev/null; then
 fi
 
 echo -e "${YELLOW}To verify installation:${NC}"
-echo "  1. Run 'droid' in this directory"
-echo "  2. Type '/commands' to see available commands"
+echo "  1. Reload your agent harness in this directory"
+echo "  2. List available slash commands and confirm /install-session-workflows is present"
 echo ""
 
 if ! $DRY_RUN; then

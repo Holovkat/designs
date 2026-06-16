@@ -83,7 +83,7 @@ git push -u origin $(git branch --show-current) 2>/dev/null || git push origin $
 After the branch is committed, pushed, approved, and UAT has passed, run:
 
 ```bash
-.factory/commands/end-session.sh
+./commands/end-session.sh
 ```
 
 That backend script should:
@@ -96,4 +96,4 @@ If the backend cleanup fails, stop and report the blocker instead of deleting st
 
 ---
 
-**BEGIN NOW:** Run quality checks, run the compliance gate, gather the builder handoff facts, invoke `/builder-handoff`, commit and push the task branch, then run `.factory/commands/end-session.sh`.
+**BEGIN NOW:** Run quality checks, run the compliance gate, gather the builder handoff facts, invoke `/builder-handoff`, commit and push the task branch, then run `./commands/end-session.sh`.

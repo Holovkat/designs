@@ -1,11 +1,11 @@
-# Factory Droid CLI - Development Workflow Hooks
+# Agent Harness - Development Workflow Hooks
 
 Automated hooks for commit workflow, incremental linting, build verification, and code review.
 
 ## Hook Types
 
 ### 1. Commit Hooks (Original)
-When you ask Droid to commit, these hooks automatically:
+When you ask the agent to commit, these hooks automatically:
 - **Lint** - Runs linting on staged files
 - **Build** - Builds the project  
 - **Code Review** - Reviews changes using AI model
@@ -20,7 +20,7 @@ These hooks trigger **during** agent coding sessions, not just at commit time:
 | `batch-lint-check.sh` | Every 5 file edits | Batch lint all recently modified files |
 | `pre-completion-build.sh` | Before "done" signals | Full build verification |
 | `sanity-check.sh` | Manual or end-session | Verify app loads without errors |
-| `code-review-checkpoint.sh` | Manual or end-session | Second droid reviews the changes |
+| `code-review-checkpoint.sh` | Manual or end-session | Second agent review of changes |
 
 ## Why Agent-Aware Hooks?
 
@@ -36,9 +36,9 @@ These hooks catch issues **during** development, not just at commit time.
 ### Option A: Commit Hooks Only (Original)
 
 ```bash
-mkdir -p .factory/hooks
-cp pre-commit-workflow.sh post-commit-push.sh .factory/hooks/
-chmod +x .factory/hooks/*.sh
+mkdir -p hooks
+cp pre-commit-workflow.sh post-commit-push.sh hooks/
+chmod +x hooks/*.sh
 
 # Use settings.json for config
 ```
@@ -46,24 +46,24 @@ chmod +x .factory/hooks/*.sh
 ### Option B: Agent-Aware Hooks (Recommended)
 
 ```bash
-mkdir -p .factory/hooks
-cp post-edit-lint.sh sanity-check.sh code-review-checkpoint.sh .factory/hooks/
-cp pre-commit-workflow.sh post-commit-push.sh .factory/hooks/
-chmod +x .factory/hooks/*.sh
+mkdir -p hooks
+cp post-edit-lint.sh sanity-check.sh code-review-checkpoint.sh hooks/
+cp pre-commit-workflow.sh post-commit-push.sh hooks/
+chmod +x hooks/*.sh
 
 # Use settings-agent-aware.json for config
 ```
 
-### 2. Add to Factory settings
+### 2. Add hook settings
 
 Copy the appropriate settings file:
 
 ```bash
 # For commit-only hooks
-cp settings.json .factory/settings.json
+cp settings.json settings.json
 
 # OR for agent-aware hooks (recommended)
-cp settings-agent-aware.json .factory/settings.json
+cp settings-agent-aware.json settings.json
 ```
 
 ### 3. Available Commands (with agent-aware hooks)
@@ -72,7 +72,7 @@ After installing agent-aware hooks, these commands become available:
 
 ```bash
 /sanity-check     # Verify app loads without errors
-/code-review      # Get second droid opinion on changes  
+/code-review      # Get second agent review on changes
 /end-session      # Run sanity check + code review before ending
 ```
 
@@ -104,7 +104,7 @@ ruff check    # etc.
 If you need to skip the workflow:
 
 ```bash
-# Ask Droid to bypass
+# Ask the agent to bypass
 git commit -m "quick fix" --no-verify
 ```
 
@@ -125,25 +125,25 @@ Or temporarily disable hooks in settings:
 | `post-commit-push.sh` | Pushes to main after successful commit |
 | `post-edit-lint.sh` | Incremental lint after file edits |
 | `sanity-check.sh` | Verify app loads without errors |
-| `code-review-checkpoint.sh` | Second droid reviews changes |
+| `code-review-checkpoint.sh` | Second agent review of changes |
 
 ## Requirements
 
-- Factory Droid CLI installed
+- Agent harness installed
 - `jq` for JSON processing: `brew install jq` / `apt install jq`
-- Your custom model configured via BYOK in `~/.factory/config.json`
+- Your review model configured in the active harness
 
 ## Troubleshooting
 
 ### Hooks not running
 1. Check `hooksDisabled` isn't set to `true` in settings
-2. Verify scripts are executable: `ls -la .factory/hooks/`
-3. Check logs: `~/.factory/logs/`
+2. Verify scripts are executable: `ls -la hooks/`
+3. Check your harness logs
 
 ### Code review fails
-Ensure your custom model is configured:
+Ensure your custom model is configured in the active harness:
 ```bash
-cat ~/.factory/config.json | jq '.models'
+echo "Check harness model configuration"
 ```
 
 ### Push to main fails

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# Factory Droid Code Review Checkpoint Hook
+# Agent Harness Code Review Checkpoint Hook
 # 
 # Runs a second droid session to review code changes.
 # Provides an independent "second opinion" on the work done.
 #
-# Place in: .factory/hooks/code-review-checkpoint.sh
-# Make executable: chmod +x .factory/hooks/code-review-checkpoint.sh
+# Place in: hooks/code-review-checkpoint.sh
+# Make executable: chmod +x hooks/code-review-checkpoint.sh
 #
 # Can be triggered:
 # - Manually: ./code-review-checkpoint.sh
@@ -15,7 +15,7 @@
 
 set -euo pipefail
 
-PROJECT_DIR="${FACTORY_PROJECT_DIR:-$(pwd)}"
+PROJECT_DIR="${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$(pwd)}}"
 cd "$PROJECT_DIR"
 
 echo ""
@@ -43,7 +43,7 @@ if ! command -v droid &> /dev/null; then
 fi
 
 # Model for review - can be customized
-REVIEW_MODEL="${FACTORY_REVIEW_MODEL:-custom:gemini-3-pro-high-[Antigravity]-1}"
+REVIEW_MODEL="${WORKFLOW_REVIEW_MODEL:-${FACTORY_REVIEW_MODEL:-custom:gemini-3-pro-high-[Antigravity]-1}}"
 
 echo "🤖 Requesting code review from: $REVIEW_MODEL"
 echo ""

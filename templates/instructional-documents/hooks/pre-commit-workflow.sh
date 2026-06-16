@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Factory Droid Pre-Commit Workflow Hook
+# Agent Harness Pre-Commit Workflow Hook
 # 
 # This hook intercepts git commit commands and runs:
 # 1. Lint on changed files
@@ -8,8 +8,8 @@
 # 3. Code review with a custom model
 # 4. Allows commit, then pushes to main
 #
-# Place in: .factory/hooks/pre-commit-workflow.sh
-# Make executable: chmod +x .factory/hooks/pre-commit-workflow.sh
+# Place in: hooks/pre-commit-workflow.sh
+# Make executable: chmod +x hooks/pre-commit-workflow.sh
 
 set -euo pipefail
 
@@ -28,7 +28,7 @@ fi
 echo "🔄 Pre-commit workflow triggered..."
 
 # Get the project directory
-PROJECT_DIR="${FACTORY_PROJECT_DIR:-$(pwd)}"
+PROJECT_DIR="${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$(pwd)}}"
 cd "$PROJECT_DIR"
 
 # ============================================================

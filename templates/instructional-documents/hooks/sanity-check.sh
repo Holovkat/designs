@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Factory Droid Sanity Check Hook
+# Agent Harness Sanity Check Hook
 # 
 # Verifies the application can start/load without errors.
 # Useful to run before marking a phase complete.
@@ -9,15 +9,15 @@
 # For CLI apps: runs with --help or --version
 # For libraries: runs basic import test
 #
-# Place in: .factory/hooks/sanity-check.sh
-# Make executable: chmod +x .factory/hooks/sanity-check.sh
+# Place in: hooks/sanity-check.sh
+# Make executable: chmod +x hooks/sanity-check.sh
 #
 # Can be triggered manually: ./sanity-check.sh
 # Or via Factory command hook
 
 set -euo pipefail
 
-PROJECT_DIR="${FACTORY_PROJECT_DIR:-$(pwd)}"
+PROJECT_DIR="${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$(pwd)}}"
 cd "$PROJECT_DIR"
 
 echo ""

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$FACTORY_PROJECT_DIR\"/.factory/hooks/pre-commit-workflow.sh",
+            "command": "\"${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$PWD}}\"/hooks/pre-commit-workflow.sh",
             "timeout": 300
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$FACTORY_PROJECT_DIR\"/.factory/hooks/post-commit-push.sh",
+            "command": "\"${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$PWD}}\"/hooks/post-commit-push.sh",
             "timeout": 120
           }
         ]

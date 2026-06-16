@@ -68,7 +68,7 @@
               <div class="matrix-row" role="row">
                 <div role="cell"><strong>Commands</strong></div>
                 <div role="cell"><code>templates/instructional-documents/commands/</code></div>
-                <div role="cell"><code>.factory/commands/</code> or harness command directory</div>
+                <div role="cell"><code>commands/</code> or harness command directory</div>
                 <div role="cell">Planning, review, build, closeout, DoD, compliance, and UAT entrypoints.</div>
               </div>
               <div class="matrix-row" role="row">
@@ -86,7 +86,7 @@
               <div class="matrix-row" role="row">
                 <div role="cell"><strong>Hooks</strong></div>
                 <div role="cell"><code>templates/instructional-documents/hooks/</code></div>
-                <div role="cell"><code>.factory/hooks/</code> or harness hook directory</div>
+                <div role="cell"><code>hooks/</code> or harness hook directory</div>
                 <div role="cell">Post-edit, sanity, review checkpoint, pre-commit, and post-commit automation.</div>
               </div>
               <div class="matrix-row" role="row">
@@ -111,6 +111,11 @@
               <pre><code>cd /path/to/project
 /path/to/designs/templates/instructional-documents/install-session-workflows.sh --dry-run
 /path/to/designs/templates/instructional-documents/install-session-workflows.sh</code></pre>
+              <p>
+                Defaults are <code>commands/</code>, <code>hooks/</code>, and <code>settings.json</code>. Set
+                <code>WORKFLOW_COMMANDS_DIR</code>, <code>WORKFLOW_HOOKS_DIR</code>, or
+                <code>WORKFLOW_SETTINGS_FILE</code> when the harness expects a different project-local layout.
+              </p>
             </div>
             <div class="panel">
               <h3>Common options</h3>
@@ -184,6 +189,9 @@ Source repository:
 Target mode:
 - Choose one: global harness install / project-local install
 - Target project root, if project-local: [PROJECT_ROOT]
+- Project-local command directory, if project-local: [PROJECT_COMMANDS_DIR or PROJECT_ROOT/commands]
+- Project-local hook directory, if project-local: [PROJECT_HOOKS_DIR or PROJECT_ROOT/hooks]
+- Project-local settings file, if project-local: [PROJECT_SETTINGS_FILE or PROJECT_ROOT/settings.json]
 - Harness command directory, if global: [HARNESS_COMMANDS_DIR]
 - Harness skills directory, if global: [HARNESS_SKILLS_DIR]
 - Harness hooks/settings directory, if applicable: [HARNESS_HOOKS_OR_SETTINGS_DIR]
