@@ -11,7 +11,7 @@ You maintain the project-specific worktree session toolkit.
 
 1. Audit the repository for setup/runtime changes that affect isolated worktree sessions
 2. Update the deterministic scripts under `scripts/` that implement session lifecycle behavior
-3. Update command entrypoints under `.factory/commands/`
+3. Update command entrypoints under `commands/`
 4. Update `.worktrees/README.md`, `.worktrees/AGENTS.md`, and manifest guidance if the lifecycle contract changes
 
 ## Scope
@@ -36,7 +36,7 @@ You maintain the project-specific worktree session toolkit.
 - `scripts/start-droid-worktree.sh`
 - `scripts/worktree-project-prepare.sh`
 - `scripts/worktree-project-cleanup.sh`
-- `.factory/commands/start-session.sh`
-- `.factory/commands/end-session.md`
+- `commands/start-session.sh`
+- `commands/end-session.md`
 - `.worktrees/README.md`
 - `.worktrees/AGENTS.md`

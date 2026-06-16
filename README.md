@@ -1,52 +1,105 @@
 # Designs
 
-Central workspace for reusable project-design templates, instructional documentation, and project-specific design snapshots.
+Reusable project-design templates, agent workflow commands, project-local skills, and delivery operating model guidance.
 
-## What This Repo Contains
+This repository is documentation-first. The README is the GitHub index. The detailed workflow meta and stage-gate guidance lives in the HTML guide under `docs/workflow-guide/`.
 
-- a reusable `templates/` library for planning new products or major features
-- project-specific design folders such as `fms/`, `coder-pro/`, and `codex-pro/`
-- archived zip exports kept alongside the markdown workspace
+## Start Here
 
-The repo is documentation-first: the main value is the structure and reuse of the templates rather than a runnable app.
+| Destination | Purpose |
+| --- | --- |
+| [Workflow guide source](docs/workflow-guide/index.html) | Canonical detailed operating model for planning, approvals, CI/CD, QA, production approval, and closeout. |
+| [Install and harness setup](docs/workflow-guide/install.html) | Instructions and common prompt for installing commands and skills globally or into a project. |
+| [Rendered workflow guide](https://holovkat.github.io/designs/workflow-guide/) | Rendered HTML guide when GitHub Pages is enabled for this repository. |
+| [Command pack](templates/instructional-documents/commands/) | Slash-command templates such as `/plan-feature`, `/plan-bugfix`, `/plan-github`, `/plan-review`, `/compliance-review`, `/uat`, and closeout flows. |
+| [Project skills](templates/instructional-documents/skills/) | Project-local skills for worktree/session lifecycle support. |
+| [Workflow installer](templates/instructional-documents/install-session-workflows.sh) | Installer for refreshing commands, hooks, scripts, skills, and worktree guidance into another project. |
+| [Functional design templates](templates/functional-design/) | Planning and implementation checklist templates. |
+| [Instructional documents](templates/instructional-documents/) | GitHub, deployment, architecture, auth, payment, and workflow references. |
+| [UI/UX guidelines](templates/ui-ux-guidelines/) | Design-token and interface-pattern references. |
 
-## Documentation Hub
+## Planning Decomposition
 
-| Path | Purpose |
-|------|---------|
-| [`templates/index.md`](templates/index.md) | Template entrypoint and orientation guide |
-| [`templates/AGENTS.md`](templates/AGENTS.md) | Conventions for maintaining the markdown template library |
-| [`templates/functional-design/`](templates/functional-design/) | Core project-design documents and numbered planning flow |
-| [`templates/instructional-documents/`](templates/instructional-documents/) | Workflow guides, prompts, and implementation instructions |
-| [`templates/ui-ux-guidelines/`](templates/ui-ux-guidelines/) | UI/UX reference material |
-
-## Recommended Workflow
-
-1. Copy `templates/` into a new project-design folder.
-2. Start with `templates/index.md`.
-3. Use the implementation checklist in `templates/functional-design/` as the planning spine.
-4. Reference `templates/instructional-documents/` for workflow, GitHub, and AI-agent guidance.
-
-## Current Repo Structure
-
-```text
-templates/   Reusable planning and instructional documents
-fms/         Project-specific design snapshot / sample workspace
-coder-pro/   Project-specific design snapshot
-codex-pro/   Project-specific design snapshot
-*.zip        Archived exports and handoff bundles
+```mermaid
+flowchart TD
+  A["User request or existing GitHub issue"] --> B{"Planning entrypoint"}
+  B -->|"New feature"| C["/plan-feature"]
+  B -->|"Bug investigation"| D["/plan-bugfix"]
+  B -->|"Existing issue or PR"| E["/plan-github"]
+  C --> F["Planning orchestrator"]
+  D --> F
+  E --> F
+  F --> G["Requirements analysis"]
+  F --> H["UX and workflow analysis"]
+  F --> I["Scenario and regression analysis"]
+  F --> J["Technical feasibility analysis"]
+  G --> K["Issue-ready specification"]
+  H --> K
+  I --> K
+  J --> K
+  K --> L["Plan vs Q&A review"]
+  L --> M{"Plan complete?"}
+  M -->|"Gaps found"| F
+  M -->|"Approved"| N["Epic or parent issue"]
+  N --> O["Phase / sprint issue"]
+  O --> P["Task issues with acceptance criteria"]
+  P --> Q["Local checklist mirrors issue numbers"]
+  Q --> R{"Planning approved?"}
+  R -->|"Needs clarification"| F
+  R -->|"Approved"| S["Ready for build session"]
 ```
 
-## Maintenance Notes
+## Delivery Lifecycle
 
-- Treat each markdown file as a reusable briefing for a developer, PM, or AI agent.
-- Prefer linking and cross-referencing over duplicating the same guidance in multiple places.
-- When new standards are added, update the template library first so downstream projects inherit them.
+```mermaid
+flowchart TD
+  A["Planning approved"] --> B["Start governed build session"]
+  B --> C["Freeze task packet"]
+  C --> D["Implementation"]
+  D --> E["Review, tests, compliance"]
+  E --> F["Compliance and DoD review"]
+  F --> G{"DoD rank passes?"}
+  G -->|"No"| D
+  G -->|"Conditional"| H{"Owner accepts caveats?"}
+  H -->|"No"| D
+  H -->|"Yes"| I
+  G -->|"Yes"| I["Project-defined CI/CD authority"]
+  I --> J["QA readiness manifest"]
+  J --> K{"QA / UAT approved?"}
+  K -->|"No"| L["Rework or replan"]
+  L --> D
+  K -->|"Yes"| M["Production approval gate"]
+  M --> N{"Owner approved promotion?"}
+  N -->|"No"| M
+  N -->|"Yes"| O["Governed production promotion"]
+  O --> P["Production smoke"]
+  P --> Q{"Final signoff?"}
+  Q -->|"No"| L
+  Q -->|"Yes"| R["Closeout and lessons learned"]
+```
+
+## Workflow Detail
+
+See the [workflow guide source](docs/workflow-guide/index.html) for the full guidance covering planning, plan review, Definition of Done ranking, approvals, CI/CD authority, QA/UAT, production approval, closeout, installation, and project-specific overlays.
+
+## Repository Structure
+
+```text
+docs/workflow-guide/               Persistent HTML operating guide
+templates/                         Reusable planning and instructional library
+templates/instructional-documents/  Commands, skills, hooks, scripts, and workflow references
+templates/functional-design/        Planning and implementation checklist templates
+templates/ui-ux-guidelines/         UI/UX and design-system references
+project snapshots/                  Project-specific design snapshots or folders
+*.zip                               Archived exports and handoff bundles
+```
 
 ## Validation
 
-There is no build pipeline in this repo. The useful checks are:
+There is no build pipeline in this repo. Useful checks before committing documentation changes:
 
-- internal link review
-- markdown formatting review
-- `git diff --check` before committing
+```bash
+git diff --check
+```
+
+Review changed Markdown links and open `docs/workflow-guide/index.html` locally when the HTML guide changes.

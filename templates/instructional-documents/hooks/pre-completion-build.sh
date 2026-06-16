@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Factory Droid Pre-Completion Build Hook
+# Agent Harness Pre-Completion Build Hook
 # 
 # Triggers before task completion signals to run full build and sanity check.
 # Intercepts common "done" patterns in agent responses.
@@ -10,8 +10,8 @@
 # - Messages containing checkmarks with "complete" or "finished"
 # - End of multi-step workflows
 #
-# Place in: .factory/hooks/pre-completion-build.sh
-# Make executable: chmod +x .factory/hooks/pre-completion-build.sh
+# Place in: hooks/pre-completion-build.sh
+# Make executable: chmod +x hooks/pre-completion-build.sh
 
 set -euo pipefail
 
@@ -29,7 +29,7 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 # Check if this is an Execute command that might be a completion check
 if [[ "$TOOL_NAME" == "Bash" || "$TOOL_NAME" == "Execute" ]]; then
     # Skip if not in a build-capable project
-    PROJECT_DIR="${FACTORY_PROJECT_DIR:-$(pwd)}"
+    PROJECT_DIR="${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$(pwd)}}"
     cd "$PROJECT_DIR"
     
     # Check if this looks like a status/completion command

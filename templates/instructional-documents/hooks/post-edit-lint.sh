@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# Factory Droid Post-Edit Lint Hook
+# Agent Harness Post-Edit Lint Hook
 # 
 # Triggers after Edit/Create/MultiEdit tools to run incremental linting
 # on the modified file. Catches errors early during agent development.
 #
-# Place in: .factory/hooks/post-edit-lint.sh
-# Make executable: chmod +x .factory/hooks/post-edit-lint.sh
+# Place in: hooks/post-edit-lint.sh
+# Make executable: chmod +x hooks/post-edit-lint.sh
 
 set -euo pipefail
 
@@ -36,7 +36,7 @@ fi
 EXT="${FILE_PATH##*.}"
 
 # Get the project directory
-PROJECT_DIR="${FACTORY_PROJECT_DIR:-$(pwd)}"
+PROJECT_DIR="${WORKFLOW_PROJECT_DIR:-${FACTORY_PROJECT_DIR:-$(pwd)}}"
 cd "$PROJECT_DIR"
 
 echo ""

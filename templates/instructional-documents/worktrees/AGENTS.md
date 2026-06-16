@@ -12,9 +12,9 @@ This directory governs isolated worktree lifecycle for agent sessions.
 
 | Entry point | Purpose |
 |-------------|---------|
-| `.factory/commands/start-session.sh` | Create stacked branch + worktree + prep + Droid tmux pane |
-| `.factory/commands/join-session.sh` | Reopen Droid in an existing prepared worktree pane |
-| `.factory/commands/end-session.md` | Drive the closeout workflow and invoke backend merge-back/cleanup |
+| `commands/start-session.sh` | Create stacked branch + worktree + prep + agent tmux pane |
+| `commands/join-session.sh` | Reopen the agent in an existing prepared worktree pane |
+| `commands/end-session.md` | Drive the closeout workflow and invoke backend merge-back/cleanup |
 | `scripts/worktree-session-open.sh` | Deterministic backend for session creation |
 | `scripts/worktree-session-prepare.sh` | Generic prep plus project adapter hook |
 | `scripts/worktree-session-close.sh` | Merge-back and cleanup backend |

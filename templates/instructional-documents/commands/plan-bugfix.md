@@ -61,7 +61,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 ## Step 1: Context Gathering (Silent)
 
 ```bash
-cat AGENTS.md 2>/dev/null || cat .factory/AGENTS.md 2>/dev/null
+cat AGENTS.md 2>/dev/null || true
 cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null
 git log --oneline -20
 git log --oneline --since="7 days ago"

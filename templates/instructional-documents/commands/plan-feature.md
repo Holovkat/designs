@@ -84,7 +84,7 @@ Tasks must be small enough for a single agent to complete independently:
 Read these files if they exist (do not report errors if missing):
 
 ```bash
-cat AGENTS.md 2>/dev/null || cat .factory/AGENTS.md 2>/dev/null
+cat AGENTS.md 2>/dev/null || true
 cat CLAUDE.md 2>/dev/null
 cat README.md 2>/dev/null
 ```
