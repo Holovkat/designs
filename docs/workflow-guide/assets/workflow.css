@@ -173,12 +173,10 @@ button {
   flex: 0 0 auto;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: clamp(12px, 1.8vw, 24px);
 }
 
-.button,
-.theme-toggle,
-.drawer-toggle {
+.button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -196,25 +194,86 @@ button {
   transition: border-color 160ms ease, color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
-.button:hover,
-.theme-toggle:hover,
-.drawer-toggle:hover {
+.button:hover {
   border-color: var(--accent);
   background: var(--accent-soft);
   color: var(--ink);
   transform: translateY(-1px);
 }
 
-.button:active,
-.theme-toggle:active,
-.drawer-toggle:active {
+.button:active {
   transform: translateY(0);
 }
 
-.theme-toggle,
-.drawer-toggle {
-  width: 40px;
-  padding: 0;
+.nav-tab,
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.nav-tab {
+  padding: 0 0 4px;
+}
+
+.nav-tab::after,
+.theme-toggle::after {
+  position: absolute;
+  right: 0;
+  bottom: 3px;
+  left: 0;
+  height: 2px;
+  background: var(--accent);
+  content: "";
+  opacity: 0;
+  transform: scaleX(0.62);
+  transform-origin: center;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.nav-tab:hover,
+.nav-tab:focus-visible,
+.nav-tab[aria-current="page"],
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  color: var(--ink);
+}
+
+.nav-tab:hover::after,
+.nav-tab:focus-visible::after,
+.nav-tab[aria-current="page"]::after,
+.theme-toggle:hover::after,
+.theme-toggle:focus-visible::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.theme-toggle {
+  width: 34px;
+  padding: 0 0 4px;
+}
+
+.theme-toggle svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 2;
+}
+
+.theme-toggle .theme-icon {
+  display: block;
+  color: currentColor;
 }
 
 .drawer-toggle {
@@ -819,9 +878,12 @@ pre code {
     padding-inline: 12px;
   }
 
-  .theme-toggle,
-  .drawer-toggle {
+  .theme-toggle {
     width: 38px;
+    min-height: 38px;
+  }
+
+  .drawer-toggle {
     min-height: 38px;
   }
 

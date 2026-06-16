@@ -90,7 +90,15 @@ function setTheme(theme) {
     const label = theme === "light" ? "Use dark theme" : "Use light theme";
     button.setAttribute("aria-label", label);
     button.setAttribute("title", label);
-    button.textContent = theme === "light" ? "Dark" : "Light";
+    button.innerHTML =
+      theme === "light"
+        ? `<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`
+        : `<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor"/>
+            <path d="M12 2.5v2.1M12 19.4v2.1M4.6 4.6l1.5 1.5M17.9 17.9l1.5 1.5M2.5 12h2.1M19.4 12h2.1M4.6 19.4l1.5-1.5M17.9 6.1l1.5-1.5" fill="none" stroke="currentColor" stroke-linecap="round"/>
+          </svg>`;
   });
   void renderMermaid();
 }
