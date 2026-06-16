@@ -1,10 +1,10 @@
 ---
-description: Verify implementation meets spec requirements before UAT
+description: Verify implementation meets spec requirements and Definition of Done before UAT
 ---
 
-You are performing a **Compliance Review** to verify the implementation meets all requirements defined in the feature specifications (shards).
+You are performing a **Compliance Review** to verify the implementation meets all requirements defined in the feature specifications (shards). This is also the **Definition of Done (DoD) gate**: compare approved requirements against delivered build outcomes, verification evidence, and known gaps before handover or UAT.
 
-**THIS IS A BLOCKING GATE** - The session cannot end until compliance is achieved or explicitly waived by the user.
+**THIS IS A BLOCKING GATE** - The session cannot end, move to UAT, or be handed to the user until compliance is achieved, the DoD rank passes, or the user explicitly accepts a documented exception.
 
 ---
 
@@ -97,24 +97,44 @@ pnpm lint
 pnpm build
 ```
 
+### 3.7 Requirements vs Build Outcome
+Map every accepted requirement to the delivered implementation:
+
+- Delivered files, behavior, configuration, migration, or documentation
+- Verification evidence such as tests, lint, build, smoke checks, code review, or screenshots
+- Known defects, skipped checks, caveats, waivers, and residual risks
+- Scope drift where the build no longer matches the approved plan
+
+If the work has no traceable approved requirements, assign `D - Replan`.
+
 ---
 
-## Step 4: Generate Compliance Report
+## Step 4: Generate Compliance and DoD Report
 
 **ACTION REQUIRED:** Create a detailed compliance report:
 
 ```markdown
-# Compliance Report: Phase [X] - [Name]
+# Compliance and Definition of Done Report: Phase [X] - [Name]
 
 **Date**: [TODAY]
-**Reviewer**: Droid Compliance Agent
+**Reviewer**: Compliance reviewer
 **Shard Document**: `features/phase-X-name.md`
+**Requirements Source**: [issue/checklist/intake refs]
+**Build Source**: [branch/commit/deployment refs]
+**DoD Rank**: A/B/C/D
+**Decision**: Handover allowed / Owner caveat decision / Rework / Replan
 
 ## Summary
 - **Total Requirements**: [N]
 - **Passed**: [N] ✅
 - **Failed**: [N] ❌
 - **Partial**: [N] ⚠️
+
+## Requirements vs Build Matrix
+
+| Requirement | Delivered outcome | Evidence | Status |
+|-------------|-------------------|----------|--------|
+| [accepted requirement] | [file/behavior/build result] | [test/review/smoke link] | Pass/Partial/Fail |
 
 ## Detailed Results
 
@@ -133,12 +153,32 @@ pnpm build
 |-------------|--------|-------|
 | [Requirement] | ✅/❌/⚠️ | [Details] |
 
+## Gate Results
+
+| Gate | Result | Evidence |
+|------|--------|----------|
+| Code review | Pass/Fail/Not run | [evidence] |
+| Test review | Pass/Fail/Not run | [evidence] |
+| Compliance review | Pass/Fail/Not run | [evidence] |
+| Smoke/UAT readiness | Pass/Fail/Not run | [evidence] |
+
 ## Failed Items Detail
 
 ### [Failed Item 1]
 **Expected**: [What the spec requires]
 **Actual**: [What was found]
 **Gap**: [What's missing]
+
+## DoD Ranking
+
+| Rank | Meaning | Decision |
+|------|---------|----------|
+| `A - Done` | All must-have requirements pass, evidence is complete, and risks are acceptable. | Handover/UAT may proceed. |
+| `B - Done with caveats` | Minor non-critical gaps remain and are documented with owner acceptance needed. | Ask for owner waiver or create follow-up tasks before UAT. |
+| `C - Not done` | One or more must-have requirements, tests, or evidence gates are incomplete. | Return to build rework. |
+| `D - Replan` | Delivered work no longer matches the approved plan or hidden prerequisites changed scope. | Stop and rerun planning. |
+
+Only `A` is a clean Definition of Done pass. `B` is not complete until the owner accepts the caveats or the gaps are resolved.
 
 ## Overall Status: [PASS/FAIL]
 ```
@@ -147,12 +187,12 @@ pnpm build
 
 ## Step 5: Handle Compliance Result
 
-### If ALL requirements PASS:
+### If ALL requirements PASS and DoD rank is `A - Done`:
 
 ```markdown
 ✅ **COMPLIANCE PASSED**
 
-All requirements from `features/phase-X-name.md` have been verified.
+All requirements from `features/phase-X-name.md` have been verified and the DoD rank is `A - Done`.
 The implementation is ready for integration.
 
 Proceeding with `/end-session` workflow...
@@ -162,7 +202,23 @@ Proceeding with `/end-session` workflow...
 
 ---
 
-### If ANY requirements FAIL:
+### If DoD rank is `B - Done with caveats`:
+
+```markdown
+⚠️ **COMPLIANCE CONDITIONAL**
+
+Minor non-critical gaps remain and require owner acceptance before handover or UAT.
+
+## Caveats:
+1. [Caveat 1] - [Owner decision needed]
+2. [Caveat 2] - [Owner decision needed]
+```
+
+Ask the user whether to accept the caveats, create follow-up tasks, or return to build rework.
+
+---
+
+### If ANY requirements FAIL or DoD rank is `C - Not done`:
 
 ```markdown
 ❌ **COMPLIANCE FAILED**
@@ -346,6 +402,9 @@ Proceeding with standard end-session workflow...
 - Lint passes
 - Build succeeds
 - Dev server starts without errors
+- Requirements map to delivered files, behavior, tests, and evidence
+- Known gaps, waivers, and residual risks are documented
+- Definition of Done rank supports the handover decision
 
 ### What Does NOT Get Checked (UAT covers these):
 - Visual appearance matches design

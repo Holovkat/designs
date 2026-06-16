@@ -15,9 +15,8 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | `/start-session <branch>` | Create a stacked branch, isolated worktree, and tmux-rooted agent session  |
 | `/next-phase`             | Continue implementing the next phase from the project checklist            |
 | `/end-session`            | Close out session with review gates, merge-back, and cleanup               |
-| `/dod-review`             | Rank delivered build outcomes against requirements before handover or UAT  |
 | `/uat`                    | Run User Acceptance Testing with guided test scenarios and rework tracking |
-| `/compliance-review`      | Verify implementation meets spec requirements (standalone)                 |
+| `/compliance-review`      | Verify requirements compliance and Definition of Done before handover/UAT  |
 | `/kingmode`               | Activate "King Mode" for deep, multi-dimensional analysis                  |
 | `/sanity-check`           | Verify app loads without errors                                            |
 | `/code-review`            | Get a second agent review on recent changes                                |
@@ -40,7 +39,6 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | `worktree-toolkit-init` | Audit and update project-specific worktree lifecycle tooling |
 | `worktree-session-lifecycle` | Operate the start/end session lifecycle through the backend scripts |
 | `plan-review` | Review planning artifacts against Q&A/intake before build approval |
-| `dod-review` | Rank delivered build outcomes against approved requirements |
 
 ### Worktree Guidance
 
@@ -186,9 +184,8 @@ Or manually create each file in `commands/` or your harness-specific command dir
 - `end-session.sh` - Executable bash wrapper for merge-back + cleanup
 - `next-phase.md` - Markdown command
 - `end-session.md` - Markdown command (includes compliance gate)
-- `dod-review.md` - Markdown command (Definition of Done ranking)
 - `uat.md` - Markdown command (user acceptance testing with rework tracking)
-- `compliance-review.md` - Markdown command (standalone compliance check)
+- `compliance-review.md` - Markdown command (requirements compliance and DoD ranking)
 - `kingmode.md` - Markdown command
 
 ### Step 3: Copy the backend scripts
@@ -303,7 +300,7 @@ You should see:
 - `/next-phase` - Continue implementing next phase
 - `/end-session` - Close out session, then merge back and clean up
 - `/plan-review` - Review planning output against the Q&A/intake record
-- `/dod-review` - Rank requirements vs delivered build outcomes before handover/UAT
+- `/compliance-review` - Verify requirements compliance and rank Definition of Done
 - `/sanity-check` - Verify app loads without errors
 - `/code-review` - Get second agent review on changes
 
@@ -328,8 +325,7 @@ your-project/
 │   ├── end-session.sh      # Merge-back + cleanup wrapper
 │   ├── next-phase.md       # Continues implementation
 │   ├── end-session.md      # Closes session
-│   ├── dod-review.md       # Definition of Done ranking
-│   ├── compliance-review.md # Requirements compliance gate
+│   ├── compliance-review.md # Requirements compliance and DoD gate
 │   ├── uat.md              # User acceptance testing
 │   └── kingmode.md         # Deep analysis mode
 ├── hooks/
@@ -350,8 +346,6 @@ your-project/
 ├── skills/
 │   ├── README.md
 │   ├── plan-review/
-│   │   └── SKILL.md
-│   ├── dod-review/
 │   │   └── SKILL.md
 │   ├── worktree-toolkit-init/
 │   │   └── SKILL.md
@@ -523,16 +517,16 @@ The agent will:
 4. Remove the isolated worktree/session branch/tmux pane
 5. Return you to the recorded parent branch
 
-### Reviewing Definition of Done
+### Reviewing Compliance and Definition of Done
 
 ```
-/dod-review
+/compliance-review
 ```
 
 The agent will:
 
 1. Compare approved requirements against delivered files, behavior, tests, and evidence
-2. Check whether code review, test review, compliance review, and smoke evidence are complete
+2. Check whether code review, test review, smoke evidence, and compliance evidence are complete
 3. Rank the work `A - Done`, `B - Done with caveats`, `C - Not done`, or `D - Replan`
 4. Block handover/UAT unless the rank passes or the owner accepts caveats
 

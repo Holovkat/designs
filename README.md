@@ -11,7 +11,7 @@ This repository is documentation-first. The README is the GitHub index. The deta
 | [Workflow guide source](docs/workflow-guide/index.html) | Canonical detailed operating model for planning, approvals, CI/CD, QA, production approval, and closeout. |
 | [Install and harness setup](docs/workflow-guide/install.html) | Instructions and common prompt for installing commands and skills globally or into a project. |
 | [Rendered workflow guide](https://holovkat.github.io/designs/workflow-guide/) | Rendered HTML guide when GitHub Pages is enabled for this repository. |
-| [Command pack](templates/instructional-documents/commands/) | Slash-command templates such as `/plan-feature`, `/plan-bugfix`, `/plan-github`, `/plan-review`, `/dod-review`, `/compliance-review`, `/uat`, and closeout flows. |
+| [Command pack](templates/instructional-documents/commands/) | Slash-command templates such as `/plan-feature`, `/plan-bugfix`, `/plan-github`, `/plan-review`, `/compliance-review`, `/uat`, and closeout flows. |
 | [Project skills](templates/instructional-documents/skills/) | Project-local skills for worktree/session lifecycle support. |
 | [Workflow installer](templates/instructional-documents/install-session-workflows.sh) | Installer for refreshing commands, hooks, scripts, skills, and worktree guidance into another project. |
 | [Functional design templates](templates/functional-design/) | Planning and implementation checklist templates. |
@@ -57,7 +57,7 @@ flowchart TD
   B --> C["Freeze task packet"]
   C --> D["Implementation"]
   D --> E["Review, tests, compliance"]
-  E --> F["Requirements vs build DoD review"]
+  E --> F["Compliance and DoD review"]
   F --> G{"DoD rank passes?"}
   G -->|"No"| D
   G -->|"Conditional"| H{"Owner accepts caveats?"}

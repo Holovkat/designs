@@ -58,7 +58,7 @@
             </a>
             <a class="scenario-card" href="#review-gates">
               <strong>Review Gates</strong>
-              <span>Score plan quality and Definition of Done before handover.</span>
+              <span>Score plan quality and compliance/DoD before handover.</span>
             </a>
             <a class="scenario-card" href="#build-session">
               <strong>Build Session</strong>
@@ -144,8 +144,8 @@
                 <div class="panel">
                   <h3>Installed surface</h3>
                   <ul>
-                    <li>Command markdown for planning, plan review, build, closeout, DoD review, compliance, and UAT.</li>
-                    <li>Project skills for worktree lifecycle, plan review, and DoD review.</li>
+                    <li>Command markdown for planning, plan review, build, closeout, compliance/DoD, and UAT.</li>
+                    <li>Project skills for worktree lifecycle and plan review.</li>
                     <li>Optional hooks, scripts, worktree guidance, settings, and design templates.</li>
                   </ul>
                 </div>
@@ -220,14 +220,8 @@
                 </div>
                 <div class="matrix-row" role="row">
                   <div role="cell"><code>/compliance-review</code></div>
-                  <div role="cell">Verify requirement traceability.</div>
-                  <div role="cell">Checks implementation against accepted issue scope and blocks incomplete work.</div>
-                  <div role="cell">Review</div>
-                </div>
-                <div class="matrix-row" role="row">
-                  <div role="cell"><code>/dod-review</code></div>
-                  <div role="cell">Rank Definition of Done.</div>
-                  <div role="cell">Compares requirements with delivered build outcomes before handover or UAT.</div>
+                  <div role="cell">Verify requirement traceability and DoD.</div>
+                  <div role="cell">Checks implementation against accepted issue scope, ranks DoD, and blocks incomplete work.</div>
                   <div role="cell">Handover gate</div>
                 </div>
                 <div class="matrix-row" role="row">
@@ -262,11 +256,11 @@
                 </div>
                 <div class="stack">
                   <details class="test-case">
-                    <summary><span><code>/compliance-review</code>, <code>/dod-review</code>, and <code>/uat</code></span></summary>
+                    <summary><span><code>/compliance-review</code> and <code>/uat</code></span></summary>
                     <div class="test-case-body">
                       <p>
-                        Gate commands should remain evidence-first. They validate accepted scope, rank Definition of
-                        Done, and test user scenarios, then return either approval evidence or concrete rework.
+                        Gate commands should remain evidence-first. Compliance validates accepted scope and ranks
+                        Definition of Done before UAT tests user scenarios and returns approval evidence or concrete rework.
                       </p>
                     </div>
                   </details>
@@ -423,15 +417,15 @@ sequenceDiagram
                   <div role="cell"><span class="badge good">Scope fixed</span></div>
                 </div>
                 <div class="matrix-row" role="row">
-                  <div role="cell"><strong>Review, test, compliance</strong></div>
+                  <div role="cell"><strong>Review and test evidence</strong></div>
                   <div role="cell">Before ready-for-integration.</div>
-                  <div role="cell">Code review, relevant tests, requirement traceability, and unresolved risk list.</div>
+                  <div role="cell">Code review, relevant tests, smoke checks, and unresolved risk list.</div>
                   <div role="cell"><span class="badge warn">Integrate or rework</span></div>
                 </div>
                 <div class="matrix-row" role="row">
-                  <div role="cell"><strong>Definition of Done review</strong></div>
+                  <div role="cell"><strong>Compliance / DoD review</strong></div>
                   <div role="cell">Before handover, QA readiness, or UAT.</div>
-                  <div role="cell">Accepted requirements ranked against delivered build outcomes and verification evidence.</div>
+                  <div role="cell">Requirement traceability and DoD rank against delivered build outcomes and verification evidence.</div>
                   <div role="cell"><span class="badge bad">Blocks incomplete work</span></div>
                 </div>
                 <div class="matrix-row" role="row">
@@ -468,8 +462,9 @@ sequenceDiagram
               <h2>Review the plan before build and the build before handover.</h2>
               <p class="lede">
                 Two review gates close the gap between planning intent and delivered work. <code>/plan-review</code>
-                compares the planned artifacts against the Q&A or intake record before build approval. <code>/dod-review</code>
-                compares approved requirements against delivered build outcomes before user handover or UAT.
+                compares the planned artifacts against the Q&A or intake record before build approval.
+                <code>/compliance-review</code> compares approved requirements against delivered build outcomes and assigns
+                the Definition of Done rank before user handover or UAT.
               </p>
               <div class="two-column">
                 <div class="panel">
@@ -669,7 +664,7 @@ sequenceDiagram
   participant Owner as Project owner
   participant Build as Build session
   participant Gates as Review gates
-  participant DoD as DoD review
+  participant Compliance as Compliance / DoD review
   participant Path as Project-defined CI/CD authority
   participant QA as QA / UAT
   participant Prod as Production path
@@ -678,18 +673,18 @@ sequenceDiagram
   Build->>Build: Freeze task packet and implement
   Build->>Gates: Submit build evidence
   Gates-->>Build: Rework if review, test, or compliance fails
-  Gates->>DoD: Send requirements and build outcomes
+  Gates->>Compliance: Send requirements and build outcomes
   alt DoD rank A
-    DoD->>Path: Mark release candidate ready
+    Compliance->>Path: Mark release candidate ready
   else DoD rank B
-    DoD->>Owner: Request caveat decision
+    Compliance->>Owner: Request caveat decision
     alt Caveats accepted
       Owner->>Path: Authorize conditional handover
     else Caveats rejected
       Owner-->>Build: Return for scoped rework
     end
   else DoD rank C or D
-    DoD-->>Build: Return for rework or replanning
+    Compliance-->>Build: Return for rework or replanning
   end
   Path->>Path: Run governed integration or deployment workflow
   Path->>QA: Publish QA readiness manifest

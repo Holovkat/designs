@@ -69,13 +69,13 @@
                 <div role="cell"><strong>Commands</strong></div>
                 <div role="cell"><code>templates/instructional-documents/commands/</code></div>
                 <div role="cell"><code>commands/</code> or harness command directory</div>
-                <div role="cell">Planning, review, build, closeout, DoD, compliance, and UAT entrypoints.</div>
+                <div role="cell">Planning, review, build, closeout, compliance/DoD, and UAT entrypoints.</div>
               </div>
               <div class="matrix-row" role="row">
                 <div role="cell"><strong>Skills</strong></div>
                 <div role="cell"><code>templates/instructional-documents/skills/</code></div>
                 <div role="cell"><code>skills/</code> or harness skill directory</div>
-                <div role="cell">Reusable instructions for lifecycle, plan review, and DoD review behavior.</div>
+                <div role="cell">Reusable instructions for lifecycle and plan review behavior.</div>
               </div>
               <div class="matrix-row" role="row">
                 <div role="cell"><strong>Scripts</strong></div>
@@ -214,7 +214,6 @@ Expected commands:
 - /start-session
 - /next-phase
 - /end-session
-- /dod-review
 - /compliance-review
 - /uat
 - /kingmode
@@ -222,8 +221,7 @@ Expected commands:
 Expected skills:
 - worktree-toolkit-init
 - worktree-session-lifecycle
-- plan-review
-- dod-review</code></pre>
+- plan-review</code></pre>
           </div>
         </section>
 
@@ -239,8 +237,8 @@ Expected skills:
               <div class="panel">
                 <h3>Verification checklist</h3>
                 <ul>
-                  <li>Command list includes the planning, review, build, closeout, DoD, compliance, and UAT commands.</li>
-                  <li>Skill discovery includes lifecycle, plan-review, and DoD-review skills.</li>
+                  <li>Command list includes the planning, review, build, closeout, compliance/DoD, and UAT commands.</li>
+                  <li>Skill discovery includes lifecycle and plan-review skills.</li>
                   <li>Project-local installs keep existing project settings unless replacement was requested.</li>
                   <li>Hooks are executable when the harness uses hook scripts.</li>
                   <li>The target project records any local overlays or exceptions after installation.</li>
