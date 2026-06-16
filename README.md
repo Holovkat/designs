@@ -8,10 +8,9 @@ This repository is documentation-first. The README is the GitHub index. The deta
 
 | Destination | Purpose |
 | --- | --- |
-| [Workflow guide source](docs/workflow-guide/index.html) | Canonical detailed operating model for planning, approvals, CI/CD, QA, production approval, and closeout. |
-| [Install and harness setup](docs/workflow-guide/install.html) | Instructions and common prompt for installing commands and skills globally or into a project. |
 | [Rendered Pages site](https://holovkat.github.io/designs/) | GitHub Pages entrypoint that redirects to the rendered workflow guide. |
-| [Rendered workflow guide](https://holovkat.github.io/designs/workflow-guide/) | Direct link to the detailed HTML operating guide. |
+| [Workflow guide](https://holovkat.github.io/designs/workflow-guide/) | Canonical detailed operating model for planning, approvals, CI/CD, QA, production approval, and closeout. |
+| [Install and harness setup](https://holovkat.github.io/designs/workflow-guide/install.html) | Instructions and common prompt for installing commands and skills globally or into a project. |
 | [Command pack](templates/instructional-documents/commands/) | Slash-command templates such as `/plan-feature`, `/plan-bugfix`, `/plan-github`, `/plan-review`, `/compliance-review`, `/uat`, and closeout flows. |
 | [Project skills](templates/instructional-documents/skills/) | Project-local skills for worktree/session lifecycle support. |
 | [Workflow installer](templates/instructional-documents/install-session-workflows.sh) | Installer for refreshing commands, hooks, scripts, skills, and worktree guidance into another project. |
@@ -81,7 +80,7 @@ flowchart TD
 
 ## Workflow Detail
 
-See the [workflow guide source](docs/workflow-guide/index.html) for the full guidance covering planning, plan review, Definition of Done ranking, approvals, CI/CD authority, QA/UAT, production approval, closeout, installation, and project-specific overlays.
+See the [rendered workflow guide](https://holovkat.github.io/designs/workflow-guide/) for the full guidance covering planning, plan review, Definition of Done ranking, approvals, CI/CD authority, QA/UAT, production approval, closeout, installation, and project-specific overlays.
 
 ## Repository Structure
 
