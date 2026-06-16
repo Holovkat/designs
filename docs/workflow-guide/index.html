@@ -511,30 +511,43 @@ sequenceDiagram
                 </div>
               </div>
               <div class="flow mermaid" aria-label="Delivery lifecycle">
-flowchart TD
-  A["Planning approved"] --> B["Start build session"]
-  B --> C["Freeze task packet"]
-  C --> D["Implementation"]
-  D --> E["Review, test, compliance gates"]
-  E --> F["Requirements vs build DoD review"]
-  F --> G{"DoD rank passes?"}
-  G -->|"No"| D
-  G -->|"Conditional"| H{"Owner accepts caveats?"}
-  H -->|"No"| D
-  H -->|"Yes"| I
-  G -->|"Yes"| I{"Ready for integration?"}
-  I -->|"No"| D
-  I -->|"Yes"| J["Project-defined CI/CD authority"]
-  J --> K["QA readiness manifest"]
-  K --> L{"QA / UAT approved?"}
-  L -->|"No"| M["Rework or replan"]
-  M --> D
-  L -->|"Yes"| N["Production approval gate"]
-  N --> O{"Owner approved promotion?"}
-  O -->|"No"| N
-  O -->|"Yes"| P["Governed production promotion"]
-  P --> Q["Production smoke and final signoff"]
-  Q --> R["Closeout and lessons learned"]
+sequenceDiagram
+  autonumber
+  participant Owner as Project owner
+  participant Build as Build session
+  participant Gates as Review gates
+  participant DoD as DoD review
+  participant Path as Project-defined CI/CD authority
+  participant QA as QA / UAT
+  participant Prod as Production path
+
+  Owner->>Build: Planning approved
+  Build->>Build: Freeze task packet and implement
+  Build->>Gates: Submit build evidence
+  Gates-->>Build: Rework if review, test, or compliance fails
+  Gates->>DoD: Send requirements and build outcomes
+  alt DoD rank A
+    DoD->>Path: Mark release candidate ready
+  else DoD rank B
+    DoD->>Owner: Request caveat decision
+    alt Caveats accepted
+      Owner->>Path: Authorize conditional handover
+    else Caveats rejected
+      Owner-->>Build: Return for scoped rework
+    end
+  else DoD rank C or D
+    DoD-->>Build: Return for rework or replanning
+  end
+  Path->>Path: Run governed integration or deployment workflow
+  Path->>QA: Publish QA readiness manifest
+  alt QA / UAT fails
+    QA-->>Build: Return failures and reproduction evidence
+  else QA / UAT approved
+    QA->>Owner: Provide signoff evidence
+    Owner->>Prod: Approve production promotion
+    Prod->>Prod: Promote through governed production path
+    Prod-->>Owner: Production smoke and final signoff
+  end
 </div>
             </div>
           </section>
