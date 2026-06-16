@@ -11,9 +11,11 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | `/plan-feature`           | Interactive planning session to scope and document a new feature           |
 | `/plan-bugfix`            | Interactive planning session to scope and document a bug fix               |
 | `/plan-github`            | Import GitHub issues/PRs and convert them into implementation specs        |
+| `/plan-review`            | Review planning output against the Q&A/intake record before build approval |
 | `/start-session <branch>` | Create a stacked branch, isolated worktree, and tmux-rooted Droid session  |
 | `/next-phase`             | Continue implementing the next phase from the project checklist            |
 | `/end-session`            | Close out session with review gates, merge-back, and cleanup               |
+| `/dod-review`             | Rank delivered build outcomes against requirements before handover or UAT  |
 | `/uat`                    | Run User Acceptance Testing with guided test scenarios and rework tracking |
 | `/compliance-review`      | Verify implementation meets spec requirements (standalone)                 |
 | `/kingmode`               | Activate "King Mode" for deep, multi-dimensional analysis                  |
@@ -37,6 +39,8 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | ----- | ----------- |
 | `worktree-toolkit-init` | Audit and update project-specific worktree lifecycle tooling |
 | `worktree-session-lifecycle` | Operate the start/end session lifecycle through the backend scripts |
+| `plan-review` | Review planning artifacts against Q&A/intake before build approval |
+| `dod-review` | Rank delivered build outcomes against approved requirements |
 
 ### Worktree Guidance
 
@@ -167,10 +171,12 @@ Or manually create each file in `.factory/commands/`:
 - `plan-feature.md` - Markdown command (interactive feature planning)
 - `plan-bugfix.md` - Markdown command (interactive bugfix planning)
 - `plan-github.md` - Markdown command (GitHub issue/PR import)
+- `plan-review.md` - Markdown command (planning vs Q&A/intake review)
 - `start-session.sh` - Executable bash script
 - `end-session.sh` - Executable bash wrapper for merge-back + cleanup
 - `next-phase.md` - Markdown command
 - `end-session.md` - Markdown command (includes compliance gate)
+- `dod-review.md` - Markdown command (Definition of Done ranking)
 - `uat.md` - Markdown command (user acceptance testing with rework tracking)
 - `compliance-review.md` - Markdown command (standalone compliance check)
 - `kingmode.md` - Markdown command
@@ -286,6 +292,8 @@ You should see:
 - `/start-session` - Create stacked branch + worktree + tmux Droid session
 - `/next-phase` - Continue implementing next phase
 - `/end-session` - Close out session, then merge back and clean up
+- `/plan-review` - Review planning output against the Q&A/intake record
+- `/dod-review` - Rank requirements vs delivered build outcomes before handover/UAT
 - `/sanity-check` - Verify app loads without errors
 - `/code-review` - Get second droid opinion on changes
 
@@ -306,10 +314,13 @@ your-project/
 │   │   ├── plan-feature.md     # Interactive feature planning
 │   │   ├── plan-bugfix.md      # Interactive bugfix planning
 │   │   ├── plan-github.md      # GitHub issue/PR import
+│   │   ├── plan-review.md      # Planning vs Q&A/intake review
 │   │   ├── start-session.sh    # Creates stacked branch + worktree
 │   │   ├── end-session.sh      # Merge-back + cleanup wrapper
 │   │   ├── next-phase.md       # Continues implementation
 │   │   ├── end-session.md      # Closes session
+│   │   ├── dod-review.md       # Definition of Done ranking
+│   │   ├── compliance-review.md # Requirements compliance gate
 │   │   ├── uat.md              # User acceptance testing
 │   │   └── kingmode.md         # Deep analysis mode
 │   ├── hooks/
@@ -329,6 +340,10 @@ your-project/
 │   └── worktree-project-cleanup.sh  # Project-specific cleanup adapter
 ├── skills/
 │   ├── README.md
+│   ├── plan-review/
+│   │   └── SKILL.md
+│   ├── dod-review/
+│   │   └── SKILL.md
 │   ├── worktree-toolkit-init/
 │   │   └── SKILL.md
 │   └── worktree-session-lifecycle/
@@ -442,6 +457,19 @@ The agent will:
 5. Update the implementation checklist
 6. Post implementation plan comment to the GitHub issue (mandatory)
 
+### Reviewing the plan before build
+
+```
+/plan-review
+```
+
+The agent will:
+
+1. Compare the plan against the request, Q&A session, or imported issue
+2. Check scope, non-goals, acceptance criteria, evidence gates, risks, dependencies, and ownership
+3. Rank the plan `A - Approved`, `B - Conditional`, `C - Incomplete`, or `D - Replan`
+4. Block build until the plan passes or the owner accepts documented caveats
+
 ### Starting implementation
 
 ```
@@ -485,6 +513,19 @@ The agent will:
 3. Run the backend merge-back + cleanup script
 4. Remove the isolated worktree/session branch/tmux pane
 5. Return you to the recorded parent branch
+
+### Reviewing Definition of Done
+
+```
+/dod-review
+```
+
+The agent will:
+
+1. Compare approved requirements against delivered files, behavior, tests, and evidence
+2. Check whether code review, test review, compliance review, and smoke evidence are complete
+3. Rank the work `A - Done`, `B - Done with caveats`, `C - Not done`, or `D - Replan`
+4. Block handover/UAT unless the rank passes or the owner accepts caveats
 
 ### Running User Acceptance Testing
 

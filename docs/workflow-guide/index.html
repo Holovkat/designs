@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Delivery Workflow</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="assets/workflow.css" />
+    <script defer src="assets/workflow.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="#overview" aria-label="Project Delivery Workflow home">
+          <span class="brand-mark" aria-hidden="true">PD</span>
+          <span>
+            <span class="eyebrow">Operating Model</span>
+            <strong>Project Delivery Workflow</strong>
+          </span>
+        </a>
+        <nav class="nav-actions" aria-label="Guide actions">
+          <a class="button" href="install.html">Install</a>
+          <a class="button" href="https://github.com/Holovkat/designs#readme">README</a>
+          <a class="button" href="https://github.com/Holovkat/designs/blob/main/docs/workflow-guide/index.html">Source</a>
+          <button class="button" type="button" data-theme-toggle>Theme</button>
+          <button class="button" type="button" data-drawer-toggle aria-controls="workflow-drawer">Contents</button>
+        </nav>
+      </header>
+
+      <div class="layout">
+        <aside id="workflow-drawer" class="drawer" data-drawer aria-label="Workflow sections">
+          <h2>Contents</h2>
+          <p>Use this guide as the standing reference for planning, delivery, approval, QA, production, and closeout.</p>
+          <nav class="scenario-grid" aria-label="Section navigation">
+            <a class="scenario-card" href="#overview">
+              <strong>Overview</strong>
+              <span>Generic operating model and document roles.</span>
+            </a>
+            <a class="scenario-card" href="#planning-intake">
+              <strong>Planning Intake</strong>
+              <span>Choose the planning entrypoint for the work type.</span>
+            </a>
+            <a class="scenario-card" href="#planning-decomposition">
+              <strong>Planning Decomposition</strong>
+              <span>Convert intent into issues, tasks, and checklist mirrors.</span>
+            </a>
+            <a class="scenario-card" href="#approval-gates">
+              <strong>Approval Gates</strong>
+              <span>Know which evidence is required before each transition.</span>
+            </a>
+            <a class="scenario-card" href="#review-gates">
+              <strong>Review Gates</strong>
+              <span>Score plan quality and Definition of Done before handover.</span>
+            </a>
+            <a class="scenario-card" href="#build-session">
+              <strong>Build Session</strong>
+              <span>Start governed work with clear branch, workspace, and task ownership.</span>
+            </a>
+            <a class="scenario-card" href="#builder-gates">
+              <strong>Builder Gates</strong>
+              <span>Separate writer lanes from read-only review roles.</span>
+            </a>
+            <a class="scenario-card" href="#cicd-authority">
+              <strong>CI/CD Authority</strong>
+              <span>Discover the project-defined path before hosted changes.</span>
+            </a>
+            <a class="scenario-card" href="#qa-uat">
+              <strong>QA and UAT</strong>
+              <span>Tie acceptance evidence to the canonical QA environment.</span>
+            </a>
+            <a class="scenario-card" href="#production">
+              <strong>Production</strong>
+              <span>Require owner approval and governed promotion evidence.</span>
+            </a>
+            <a class="scenario-card" href="#closeout">
+              <strong>Closeout</strong>
+              <span>Finish with retained evidence, cleanup, and lessons learned.</span>
+            </a>
+            <a class="scenario-card" href="#commands">
+              <strong>Commands</strong>
+              <span>Reference the workflow commands and expected outputs.</span>
+            </a>
+            <a class="scenario-card" href="#installation">
+              <strong>Installation</strong>
+              <span>Install commands and skills globally or inside a project.</span>
+            </a>
+            <a class="scenario-card" href="#overlays">
+              <strong>Overlays</strong>
+              <span>Add project-specific gates without weakening the base model.</span>
+            </a>
+          </nav>
+        </aside>
+
+        <main class="content">
+          <section id="overview" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Overview</span>
+                <h1>One workflow, many project shapes.</h1>
+                <p class="lede">
+                  This guide describes a generic operating model for moving work from idea to production with clear
+                  planning, approval, implementation, QA, release, and closeout gates.
+                </p>
+                <p>
+                  The README is the repository index: it points readers to the command pack, templates, skills, and
+                  rendered guide. This HTML page is the detailed canonical guidance for how the workflow should be run
+                  inside a project.
+                </p>
+              </div>
+              <div class="panel">
+                <h3>Document contract</h3>
+                <div class="kv">
+                  <div class="kv-row">
+                    <div class="kv-key">Audience</div>
+                    <div>Project owners, planning leads, builder agents, reviewers, QA participants, and release approvers.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Scope</div>
+                    <div>Reusable delivery workflow guidance that can be applied to different stacks and hosting models.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Authority</div>
+                    <div>Project instructions and accepted issue scope always decide local policy where they are stricter.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Evidence</div>
+                    <div>Every stage should produce traceable notes, commands, links, test results, or approval records.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="planning-intake" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Planning Intake</span>
+                <h2>Start with the right planning command.</h2>
+                <p class="lede">
+                  Planning commands turn a request into a reviewed packet before implementation begins. Choose the
+                  command based on the source and shape of the work, not on the tool preference of the current agent.
+                </p>
+                <div class="panel">
+                  <h3>Entrypoints</h3>
+                  <div class="kv">
+                    <div class="kv-row">
+                      <div class="kv-key"><code>/plan-feature</code></div>
+                      <div>Use for new capabilities, workflow changes, interface additions, or multi-step improvements.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key"><code>/plan-bugfix</code></div>
+                      <div>Use when observed behavior differs from expected behavior and regression coverage is needed.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key"><code>/plan-github</code></div>
+                      <div>Use when an existing issue or pull request needs to be converted into the standard hierarchy.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Intake rule</h3>
+                <p>
+                  Do not treat a planning command as permission to build. Intake creates a candidate scope, evidence
+                  requirements, and acceptance criteria. Implementation waits for explicit planning approval.
+                </p>
+                <p>
+                  If the request mixes unrelated outcomes, split it before planning. If requirements are missing, record
+                  questions and recommended options rather than filling gaps with assumptions.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="planning-decomposition" class="section">
+            <div class="stack">
+              <span class="eyebrow">Planning Decomposition</span>
+              <h2>Convert intent into a traceable work hierarchy.</h2>
+              <p class="lede">
+                Planning decomposes work into an epic or parent issue, phase or sprint issue, task issues, and a local
+                checklist mirror that tracks issue numbers, signoff state, and required evidence.
+              </p>
+              <div class="two-column">
+                <div class="panel">
+                  <h3>Hierarchy</h3>
+                  <div class="kv">
+                    <div class="kv-row">
+                      <div class="kv-key">Epic or parent</div>
+                      <div>Defines the business outcome, non-goals, primary risks, and completion contract.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Phase or sprint</div>
+                      <div>Groups related work into an approval-friendly delivery slice with visible dependencies.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Task issues</div>
+                      <div>Carry acceptance criteria, implementation boundaries, tests, and evidence expectations.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Checklist mirror</div>
+                      <div>Records issue numbers, status, blockers, and signoff without replacing the issue source of truth.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel">
+                  <h3>Planning packet</h3>
+                  <p>
+                    A planning packet is ready for approval when scope, acceptance criteria, implementation slices,
+                    review gates, QA scenarios, and known risks can be read without relying on chat memory.
+                  </p>
+                </div>
+              </div>
+              <div class="flow mermaid" aria-label="Planning sequence">
+sequenceDiagram
+  autonumber
+  participant User as User or issue
+  participant Plan as Planning command
+  participant Orch as Planning orchestrator
+  participant Specialists as Specialist analysts
+  participant Writer as Spec writer
+  participant Review as Plan review
+  participant GitHub as Issue source of truth
+  participant Checklist as Local checklist
+
+  User->>Plan: Request feature, bugfix, or issue import
+  Plan->>Orch: Establish planning context
+  Orch->>Specialists: Requirements, UX, scenarios, technical risk
+  Specialists-->>Orch: Evidence-based findings
+  Orch->>Writer: Consolidate issue-ready specification
+  Writer->>Review: Compare plan against Q&A / intake record
+  Review-->>Writer: Rank A/B/C/D and required fixes
+  Writer->>GitHub: Create or update epic, phase / sprint, and task issues
+  GitHub->>Checklist: Mirror issue numbers and signoff state
+  Checklist-->>User: Planning packet ready for approval
+</div>
+            </div>
+          </section>
+
+          <section id="approval-gates" class="section">
+            <div class="stack">
+              <span class="eyebrow">Approval Gates</span>
+              <h2>Each transition has a required gate.</h2>
+              <p class="lede">
+                Gates keep authority explicit. A gate is not complete until the expected artifact exists and the next
+                actor can verify the state from durable evidence.
+              </p>
+              <div class="matrix" role="table" aria-label="Approval gate matrix">
+                <div class="matrix-head" role="row">
+                  <div role="columnheader">Gate</div>
+                  <div role="columnheader">When it happens</div>
+                  <div role="columnheader">Evidence required</div>
+                  <div role="columnheader">Outcome</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>Planning approval</strong></div>
+                  <div role="cell">Before implementation starts.</div>
+                  <div role="cell">Issue hierarchy, acceptance criteria, risks, and open decisions.</div>
+                  <div role="cell"><span class="badge good">Build allowed</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>Plan review</strong></div>
+                  <div role="cell">Before planning is treated as build-ready.</div>
+                  <div role="cell">Q&A/intake record mapped to planned epic, sprint, task, evidence, and risk artifacts.</div>
+                  <div role="cell"><span class="badge warn">Approve, fix, or replan</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>Task packet freeze</strong></div>
+                  <div role="cell">At build session start.</div>
+                  <div role="cell">Selected task scope, ownership boundaries, branch or worktree policy, and stop rules.</div>
+                  <div role="cell"><span class="badge good">Scope fixed</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>Review, test, compliance</strong></div>
+                  <div role="cell">Before ready-for-integration.</div>
+                  <div role="cell">Code review, relevant tests, requirement traceability, and unresolved risk list.</div>
+                  <div role="cell"><span class="badge warn">Integrate or rework</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>Definition of Done review</strong></div>
+                  <div role="cell">Before handover, QA readiness, or UAT.</div>
+                  <div role="cell">Accepted requirements ranked against delivered build outcomes and verification evidence.</div>
+                  <div role="cell"><span class="badge bad">Blocks incomplete work</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>QA readiness</strong></div>
+                  <div role="cell">After governed integration or deployment authority completes.</div>
+                  <div role="cell">Deployment path, commit or build identity, environment, scenarios, accounts, and known limits.</div>
+                  <div role="cell"><span class="badge good">UAT can start</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>QA / UAT approval</strong></div>
+                  <div role="cell">After approved scenarios are executed.</div>
+                  <div role="cell">Pass/fail evidence, defects, user signoff, or rework decision.</div>
+                  <div role="cell"><span class="badge warn">Approve or rework</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>Production approval</strong></div>
+                  <div role="cell">Before any production promotion.</div>
+                  <div role="cell">Owner approval, release notes, rollback plan, and production-specific checks.</div>
+                  <div role="cell"><span class="badge bad">Hard stop without approval</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>Final signoff</strong></div>
+                  <div role="cell">After production smoke and evidence review.</div>
+                  <div role="cell">Smoke results, deployed identity, retained evidence, and closeout notes.</div>
+                  <div role="cell"><span class="badge good">Release closed</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="review-gates" class="section">
+            <div class="stack">
+              <span class="eyebrow">Review Gates</span>
+              <h2>Review the plan before build and the build before handover.</h2>
+              <p class="lede">
+                Two review gates close the gap between planning intent and delivered work. <code>/plan-review</code>
+                compares the planned artifacts against the Q&A or intake record before build approval. <code>/dod-review</code>
+                compares approved requirements against delivered build outcomes before user handover or UAT.
+              </p>
+              <div class="two-column">
+                <div class="panel">
+                  <h3>Plan vs Q&A review</h3>
+                  <p>
+                    Use this gate after the plan is drafted but before implementation starts. It checks that accepted
+                    requirements, non-goals, risks, dependencies, acceptance criteria, and evidence gates from the Q&A
+                    session or imported issue are represented in the epic, sprint, task issues, and checklist mirror.
+                  </p>
+                  <p>
+                    If the plan misses a decision or invents scope, return to the planning command before any build
+                    session starts.
+                  </p>
+                </div>
+                <div class="panel">
+                  <h3>Requirements vs build review</h3>
+                  <p>
+                    Use this gate after implementation and local validation, but before handover to the user, QA, or
+                    UAT. It maps each accepted requirement to the delivered files, behavior, tests, review findings,
+                    compliance evidence, smoke results, and known caveats.
+                  </p>
+                  <p>
+                    Passing automated checks alone is not Definition of Done. The rank depends on requirements coverage
+                    and evidence quality.
+                  </p>
+                </div>
+              </div>
+              <div class="matrix" role="table" aria-label="Definition of Done ranking matrix">
+                <div class="matrix-head" role="row">
+                  <div role="columnheader">Rank</div>
+                  <div role="columnheader">Meaning</div>
+                  <div role="columnheader">Allowed next step</div>
+                  <div role="columnheader">Decision owner</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>A - Approved / Done</strong></div>
+                  <div role="cell">All must-have requirements pass and evidence is complete.</div>
+                  <div role="cell">Build may proceed, or handover/UAT may start after the relevant gate.</div>
+                  <div role="cell">Workflow owner</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>B - Conditional</strong></div>
+                  <div role="cell">Minor non-critical gaps remain and are explicitly documented.</div>
+                  <div role="cell">Owner must accept caveats or request immediate patching.</div>
+                  <div role="cell">Project owner</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>C - Incomplete</strong></div>
+                  <div role="cell">A must-have requirement, evidence gate, or verification step is missing.</div>
+                  <div role="cell">Return to planning or build rework and rerun the review.</div>
+                  <div role="cell">Review gate</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>D - Replan</strong></div>
+                  <div role="cell">The plan/build no longer matches the approved scope or hidden prerequisites changed scope.</div>
+                  <div role="cell">Stop and rerun the appropriate planning command.</div>
+                  <div role="cell">Planning owner</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="build-session" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Build Session</span>
+                <h2>Start implementation with a frozen packet.</h2>
+                <p class="lede">
+                  <code>/start-session</code> begins governed implementation. It should confirm the approved task packet,
+                  branch or worktree policy, local runtime expectations, and the files or modules owned by the task.
+                </p>
+                <div class="panel">
+                  <h3>Session rules</h3>
+                  <ul>
+                    <li>Use isolated workspaces, worktrees, environments, or runtimes when the project requires them.</li>
+                    <li>Keep implementation scoped to the approved task packet and declared ownership boundary.</li>
+                    <li>Do not mix unrelated cleanup, formatting, or refactors into the same slice.</li>
+                    <li>Record commands and evidence needed by reviewers, testers, and later closeout.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Ownership snapshot</h3>
+                <div class="kv">
+                  <div class="kv-row">
+                    <div class="kv-key">Branch policy</div>
+                    <div>Use the current project branch or create the required branch/worktree only when policy says to.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Task packet</div>
+                    <div>Freeze acceptance criteria, owned files, non-goals, and validation before edits start.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Changes</div>
+                    <div>Prefer small, atomic commits or handoff slices that can be reviewed without unrelated context.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Blockers</div>
+                    <div>Stop for unclear authority, mixed environments, missing credentials, or approval gaps.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="builder-gates" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Builder Gates</span>
+                <h2>Separate writing from evaluation.</h2>
+                <p class="lede">
+                  Builder sessions work best when writer roles and read-only gates stay distinct. A writer can propose
+                  fixes and run local validation, but review, test, and compliance gates should remain independently
+                  inspectable.
+                </p>
+                <div class="matrix" role="table" aria-label="Builder role matrix">
+                  <div class="matrix-head" role="row">
+                    <div role="columnheader">Role</div>
+                    <div role="columnheader">Mode</div>
+                    <div role="columnheader">Responsibility</div>
+                    <div role="columnheader">Boundary</div>
+                  </div>
+                  <div class="matrix-row" role="row">
+                    <div role="cell"><code>dev</code></div>
+                    <div role="cell">Writer</div>
+                    <div role="cell">Implements approved changes, tests, fixtures, and local validation artifacts.</div>
+                    <div role="cell">Does not expand scope without approval.</div>
+                  </div>
+                  <div class="matrix-row" role="row">
+                    <div role="cell"><code>reviewer</code></div>
+                    <div role="cell">Read-only gate</div>
+                    <div role="cell">Checks correctness, maintainability, regressions, and project conventions.</div>
+                    <div role="cell">Findings first, with file and line evidence.</div>
+                  </div>
+                  <div class="matrix-row" role="row">
+                    <div role="cell"><code>tester</code></div>
+                    <div role="cell">Read-only gate</div>
+                    <div role="cell">Verifies scenarios, automated checks, exploratory coverage, and failures.</div>
+                    <div role="cell">Records reproduction and expected behavior.</div>
+                  </div>
+                  <div class="matrix-row" role="row">
+                    <div role="cell"><code>compliance</code></div>
+                    <div role="cell">Read-only gate</div>
+                    <div role="cell">Maps implementation to accepted requirements, constraints, and evidence rules.</div>
+                    <div role="cell">Blocks incomplete traceability.</div>
+                  </div>
+                  <div class="matrix-row" role="row">
+                    <div role="cell"><code>builder_orchestrator</code></div>
+                    <div role="cell">Coordinator</div>
+                    <div role="cell">Manages task packets, correction loops, handoff state, and status reporting.</div>
+                    <div role="cell">Does not absorb QA or production approval authority.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Correction loop</h3>
+                <p>
+                  When a read-only gate finds an issue, return the finding to the writer with evidence and expected
+                  remediation. The writer fixes within the approved packet, reruns relevant checks, and sends the same
+                  gate back through review.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="cicd-authority" class="section">
+            <div class="stack">
+              <span class="eyebrow">CI/CD Authority</span>
+              <h2>The project defines the release path.</h2>
+              <p class="lede">
+                CI/CD authority is provider-neutral. A project may define GitHub Actions, Vercel, another hosted
+                platform, a private pipeline, or a manual approval workflow as the authority. Those are examples, not
+                universal assumptions.
+              </p>
+              <div class="two-column">
+                <div class="panel">
+                  <h3>Discovery checklist</h3>
+                  <ul>
+                    <li>Read project instructions, repository docs, workflow files, and hosting configuration.</li>
+                    <li>Identify the canonical branch, deployment target, environment name, and domain mapping.</li>
+                    <li>Confirm which actor or workflow is allowed to deploy, promote, remove, or clean up resources.</li>
+                    <li>Attach evidence to the governed path, not to arbitrary previews or local-only state.</li>
+                  </ul>
+                </div>
+                <div class="panel">
+                  <h3>Hard rule</h3>
+                  <p>
+                    Agents must not manually deploy, redeploy, promote, remove, or clean up hosted resources unless the
+                    user explicitly asks for that exact action. If authority is unclear, stop and ask which environment
+                    and workflow are canonical.
+                  </p>
+                </div>
+              </div>
+              <div class="flow mermaid" aria-label="Delivery lifecycle">
+flowchart TD
+  A["Planning approved"] --> B["Start build session"]
+  B --> C["Freeze task packet"]
+  C --> D["Implementation"]
+  D --> E["Review, test, compliance gates"]
+  E --> F["Requirements vs build DoD review"]
+  F --> G{"DoD rank passes?"}
+  G -->|"No"| D
+  G -->|"Conditional"| H{"Owner accepts caveats?"}
+  H -->|"No"| D
+  H -->|"Yes"| I
+  G -->|"Yes"| I{"Ready for integration?"}
+  I -->|"No"| D
+  I -->|"Yes"| J["Project-defined CI/CD authority"]
+  J --> K["QA readiness manifest"]
+  K --> L{"QA / UAT approved?"}
+  L -->|"No"| M["Rework or replan"]
+  M --> D
+  L -->|"Yes"| N["Production approval gate"]
+  N --> O{"Owner approved promotion?"}
+  O -->|"No"| N
+  O -->|"Yes"| P["Governed production promotion"]
+  P --> Q["Production smoke and final signoff"]
+  Q --> R["Closeout and lessons learned"]
+</div>
+            </div>
+          </section>
+
+          <section id="qa-uat" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">QA and UAT</span>
+                <h2>Acceptance evidence belongs to the canonical QA environment.</h2>
+                <p class="lede">
+                  QA readiness starts after the governed integration path has produced a reviewable build. Evidence
+                  should identify the canonical QA URL or environment, deployed identity, scenarios, accounts or roles,
+                  known limits, and the path that produced the build.
+                </p>
+                <div class="panel">
+                  <h3>Readiness manifest</h3>
+                  <div class="kv">
+                    <div class="kv-row">
+                      <div class="kv-key">Environment</div>
+                      <div>Canonical QA URL or environment identifier, plus any required access constraints.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Build identity</div>
+                      <div>Commit, artifact, deployment, or release candidate identifier from the governed path.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Scenarios</div>
+                      <div>Approved UAT cases, expected outcomes, setup data, and evidence capture instructions.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Known limits</div>
+                      <div>Accepted caveats, blocked areas, data constraints, or follow-up tasks.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <h3><code>/uat</code> outcome</h3>
+                <p>
+                  <code>/uat</code> validates approved scenarios and records evidence. It should produce one of two
+                  outcomes: rework with concrete failures and reproduction steps, or approval with signoff evidence tied
+                  to the canonical QA environment.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="production" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Production</span>
+                <h2>Promotion requires explicit owner approval.</h2>
+                <p class="lede">
+                  Production work follows the governed production path only after QA/UAT approval and explicit owner
+                  approval. Do not infer approval from passing checks, preview availability, or a successful QA smoke.
+                </p>
+                <div class="panel">
+                  <h3>Promotion packet</h3>
+                  <ul>
+                    <li>Owner approval with the production target and release scope named.</li>
+                    <li>Governed promotion path and actor responsible for the production action.</li>
+                    <li>Rollback or mitigation plan, including where evidence will be recorded.</li>
+                    <li>Production smoke steps and final signoff expectations.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Evidence standard</h3>
+                <p>
+                  Production evidence must come from the user-accessible production environment and the approved
+                  deployment path. Random preview evidence, stale aliases, unknown build identities, or local-only
+                  checks do not prove production readiness.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="closeout" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Closeout</span>
+                <h2>Finish the work, not just the code.</h2>
+                <p class="lede">
+                  Closeout confirms that the project can understand what changed, why it changed, how it was verified,
+                  and what remains. It is the bridge between delivery evidence and future maintainability.
+                </p>
+                <div class="panel">
+                  <h3>Closeout checklist</h3>
+                  <ul>
+                    <li>Run required quality gates and record command results.</li>
+                    <li>Update project docs, release notes, or checklist state when required by the project.</li>
+                    <li>Retain evidence for planning, implementation, QA/UAT, production, and final signoff.</li>
+                    <li>Clean temporary files, branches, worktrees, or environments only under project policy.</li>
+                    <li>Record lessons learned when a reusable issue, risk, or workflow gap was discovered.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Handoff note</h3>
+                <p>
+                  A good final handoff names changed files, commands run, verification results, residual risks, and any
+                  follow-up tasks. It should be short enough to scan and complete enough to audit later.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="commands" class="section">
+            <div class="stack">
+              <span class="eyebrow">Commands</span>
+              <h2>Command reference</h2>
+              <p class="lede">
+                Commands create a consistent operating rhythm. Each command should leave durable output that can be
+                reviewed outside the current chat session.
+              </p>
+              <div class="matrix" role="table" aria-label="Workflow command matrix">
+                <div class="matrix-head" role="row">
+                  <div role="columnheader">Command</div>
+                  <div role="columnheader">Intent</div>
+                  <div role="columnheader">Expected output</div>
+                  <div role="columnheader">Stage</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/plan-feature</code></div>
+                  <div role="cell">Plan a new feature.</div>
+                  <div role="cell">Creates issue hierarchy and acceptance criteria before implementation.</div>
+                  <div role="cell">Planning</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/plan-bugfix</code></div>
+                  <div role="cell">Investigate and plan a bug fix.</div>
+                  <div role="cell">Records observed behavior, expected behavior, fix tasks, and regression coverage.</div>
+                  <div role="cell">Planning</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/plan-github</code></div>
+                  <div role="cell">Import an existing issue or PR.</div>
+                  <div role="cell">Converts external context into the standard planning hierarchy.</div>
+                  <div role="cell">Planning</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/plan-review</code></div>
+                  <div role="cell">Review plan completeness.</div>
+                  <div role="cell">Ranks planning artifacts against the Q&A/intake record before build approval.</div>
+                  <div role="cell">Planning gate</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/start-session</code></div>
+                  <div role="cell">Start a governed build session.</div>
+                  <div role="cell">Creates the implementation branch or worktree according to project policy.</div>
+                  <div role="cell">Build</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/next-phase</code></div>
+                  <div role="cell">Continue implementation.</div>
+                  <div role="cell">Reads approved issue specs and advances the next implementation slice.</div>
+                  <div role="cell">Build</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/end-session</code></div>
+                  <div role="cell">Close a build session.</div>
+                  <div role="cell">Runs quality gates, records handoff evidence, and performs governed cleanup.</div>
+                  <div role="cell">Closeout</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/compliance-review</code></div>
+                  <div role="cell">Verify requirement traceability.</div>
+                  <div role="cell">Checks implementation against accepted issue scope and blocks incomplete work.</div>
+                  <div role="cell">Review</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/dod-review</code></div>
+                  <div role="cell">Rank Definition of Done.</div>
+                  <div role="cell">Compares requirements with delivered build outcomes before handover or UAT.</div>
+                  <div role="cell">Handover gate</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/uat</code></div>
+                  <div role="cell">Run user acceptance testing.</div>
+                  <div role="cell">Validates approved scenarios, records failures, and drives QA signoff or rework.</div>
+                  <div role="cell">QA/UAT</div>
+                </div>
+              </div>
+
+              <div class="two-column">
+                <div class="stack">
+                  <details class="test-case">
+                    <summary><span><code>/plan-feature</code>, <code>/plan-bugfix</code>, <code>/plan-github</code>, <code>/plan-review</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Planning commands should create or refresh issue-ready specifications, acceptance criteria,
+                        decomposition, risks, and approval questions. <code>/plan-review</code> then checks that output
+                        against the Q&A/intake record. They should not begin implementation.
+                      </p>
+                    </div>
+                  </details>
+                  <details class="test-case">
+                    <summary><span><code>/start-session</code> and <code>/next-phase</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Build commands should load approved issue scope, confirm ownership, apply the required branch or
+                        worktree policy, and advance only the next implementation slice.
+                      </p>
+                    </div>
+                  </details>
+                </div>
+                <div class="stack">
+                  <details class="test-case">
+                    <summary><span><code>/compliance-review</code>, <code>/dod-review</code>, and <code>/uat</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Gate commands should remain evidence-first. They validate accepted scope, rank Definition of
+                        Done, and test user scenarios, then return either approval evidence or concrete rework.
+                      </p>
+                    </div>
+                  </details>
+                  <details class="test-case">
+                    <summary><span><code>/end-session</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Closeout should gather verification results, changed files, risks, cleanup state, and any
+                        project documentation or checklist updates required before handoff.
+                      </p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="installation" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Installation</span>
+                <h2>Install the command and skill pack where the harness can discover it.</h2>
+                <p class="lede">
+                  The workflow pack can be installed globally for a harness or locally inside a project. Project-local
+                  setup is usually safer when the repository has its own release authority, QA environment, approval
+                  model, hooks, scripts, or worktree policy.
+                </p>
+                <div class="panel">
+                  <h3>Installed surface</h3>
+                  <ul>
+                    <li>Command markdown for planning, plan review, build, closeout, DoD review, compliance, and UAT.</li>
+                    <li>Project skills for worktree lifecycle, plan review, and DoD review.</li>
+                    <li>Optional hooks, scripts, worktree guidance, settings, and design templates.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Setup page</h3>
+                <p>
+                  Use the install guide for project-local commands, global harness setup, verification checks, and the
+                  reusable setup prompt that another harness or agent can follow.
+                </p>
+                <p><a class="button" href="install.html">Open install guide</a></p>
+              </div>
+            </div>
+          </section>
+
+          <section id="overlays" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Overlays</span>
+                <h2>Project-specific gates can extend the base model.</h2>
+                <p class="lede">
+                  The workflow is generic by default, but projects may add stricter overlays for domains where failure
+                  risk, audit needs, or operational complexity is higher.
+                </p>
+                <div class="panel">
+                  <h3>Common overlay categories</h3>
+                  <div class="kv">
+                    <div class="kv-row">
+                      <div class="kv-key">Data</div>
+                      <div>Backups, migration plans, readback checks, retention, restore testing, and data ownership.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Security</div>
+                      <div>Access review, secret handling, permission boundaries, threat notes, and audit evidence.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Regulated flows</div>
+                      <div>Approval records, traceability, separation of duties, and retained validation artifacts.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Infrastructure</div>
+                      <div>Change windows, capacity checks, rollback commands, monitoring, and owner notification.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Tenants</div>
+                      <div>Environment separation, tenant-safe test data, role boundaries, and customer-specific signoff.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Performance</div>
+                      <div>Load expectations, latency budgets, regression baselines, and post-release monitoring.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Overlay rule</h3>
+                <p>
+                  Overlays can add gates, evidence, and stop conditions. They should not bypass the base workflow,
+                  weaken deployment authority, or replace explicit QA and production approvals.
+                </p>
+                <p>
+                  Keep overlay examples generic in shared guidance. Put project names, environment URLs, service names,
+                  tenant identifiers, and domain-specific runbooks in project-local documentation.
+                </p>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="footer">
+        <span>Project Delivery Workflow</span>
+        <span><a href="https://github.com/Holovkat/designs#readme">README</a> <span aria-hidden="true">/</span> <a href="#commands">Commands</a></span>
+      </footer>
+    </div>
+  </body>
+</html>

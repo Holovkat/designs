@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Install Skills and Commands</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="assets/workflow.css" />
+    <script defer src="assets/workflow.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="index.html" aria-label="Project Delivery Workflow">
+          <span class="brand-mark" aria-hidden="true">PD</span>
+          <span>
+            <span class="eyebrow">Setup Guide</span>
+            <strong>Install Skills and Commands</strong>
+          </span>
+        </a>
+        <nav class="nav-actions" aria-label="Guide actions">
+          <a class="button" href="index.html">Workflow</a>
+          <a class="button" href="https://github.com/Holovkat/designs#readme">README</a>
+          <a class="button" href="https://github.com/Holovkat/designs/blob/main/docs/workflow-guide/install.html">Source</a>
+          <button class="button" type="button" data-theme-toggle>Theme</button>
+        </nav>
+      </header>
+
+      <main class="content">
+        <section id="overview" class="section">
+          <div class="two-column">
+            <div class="stack">
+              <span class="eyebrow">Install Model</span>
+              <h1>Install once globally or inside each project.</h1>
+              <p class="lede">
+                The command and skill pack is designed for two operating modes: a global harness setup that makes the
+                workflow available everywhere, or a project-local setup that keeps the commands, skills, hooks, scripts,
+                and worktree guidance inside one repository.
+              </p>
+              <p>
+                Prefer project-local installs when a repository has its own release authority, approvals, QA target,
+                worktree policy, or domain-specific overlays. Use global installs for reusable baseline commands and
+                skills that the harness can apply across many projects.
+              </p>
+            </div>
+            <div class="panel note-panel">
+              <h3>Source of truth</h3>
+              <p>
+                The template package lives under <code>templates/instructional-documents/</code>. The installer copies
+                command markdown, shell scripts, hooks, project skills, and worktree guidance from that package into the
+                target project.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="included" class="section">
+          <div class="stack">
+            <span class="eyebrow">Package Contents</span>
+            <h2>What the workflow pack installs</h2>
+            <div class="matrix" role="table" aria-label="Installed workflow package contents">
+              <div class="matrix-head" role="row">
+                <div role="columnheader">Area</div>
+                <div role="columnheader">Source path</div>
+                <div role="columnheader">Target path</div>
+                <div role="columnheader">Purpose</div>
+              </div>
+              <div class="matrix-row" role="row">
+                <div role="cell"><strong>Commands</strong></div>
+                <div role="cell"><code>templates/instructional-documents/commands/</code></div>
+                <div role="cell"><code>.factory/commands/</code> or harness command directory</div>
+                <div role="cell">Planning, review, build, closeout, DoD, compliance, and UAT entrypoints.</div>
+              </div>
+              <div class="matrix-row" role="row">
+                <div role="cell"><strong>Skills</strong></div>
+                <div role="cell"><code>templates/instructional-documents/skills/</code></div>
+                <div role="cell"><code>skills/</code> or harness skill directory</div>
+                <div role="cell">Reusable instructions for lifecycle, plan review, and DoD review behavior.</div>
+              </div>
+              <div class="matrix-row" role="row">
+                <div role="cell"><strong>Scripts</strong></div>
+                <div role="cell"><code>templates/instructional-documents/scripts/</code></div>
+                <div role="cell"><code>scripts/</code></div>
+                <div role="cell">Deterministic worktree/session preparation, launch, close, and cleanup helpers.</div>
+              </div>
+              <div class="matrix-row" role="row">
+                <div role="cell"><strong>Hooks</strong></div>
+                <div role="cell"><code>templates/instructional-documents/hooks/</code></div>
+                <div role="cell"><code>.factory/hooks/</code> or harness hook directory</div>
+                <div role="cell">Post-edit, sanity, review checkpoint, pre-commit, and post-commit automation.</div>
+              </div>
+              <div class="matrix-row" role="row">
+                <div role="cell"><strong>Worktree guidance</strong></div>
+                <div role="cell"><code>templates/instructional-documents/worktrees/</code></div>
+                <div role="cell"><code>.worktrees/</code></div>
+                <div role="cell">Operator guidance and session metadata conventions for isolated workspaces.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="project-local" class="section">
+          <div class="two-column">
+            <div class="stack">
+              <span class="eyebrow">Project Local</span>
+              <h2>Install into one repository when project policy matters.</h2>
+              <p class="lede">
+                Run the project-local installer from the target repository root when commands, hooks, skills, scripts,
+                and worktree guidance should travel with that project.
+              </p>
+              <pre><code>cd /path/to/project
+/path/to/designs/templates/instructional-documents/install-session-workflows.sh --dry-run
+/path/to/designs/templates/instructional-documents/install-session-workflows.sh</code></pre>
+            </div>
+            <div class="panel">
+              <h3>Common options</h3>
+              <div class="kv">
+                <div class="kv-row">
+                  <div class="kv-key"><code>--dry-run</code></div>
+                  <div>Preview copied files before changing the project.</div>
+                </div>
+                <div class="kv-row">
+                  <div class="kv-key"><code>--commands-only</code></div>
+                  <div>Refresh commands, scripts, skills, and worktree guidance without hooks.</div>
+                </div>
+                <div class="kv-row">
+                  <div class="kv-key"><code>--hooks-only</code></div>
+                  <div>Refresh hooks without changing commands or skills.</div>
+                </div>
+                <div class="kv-row">
+                  <div class="kv-key"><code>--with-templates</code></div>
+                  <div>Copy design templates as well as the workflow pack.</div>
+                </div>
+                <div class="kv-row">
+                  <div class="kv-key"><code>--no-settings</code></div>
+                  <div>Keep the project's existing harness settings file.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="global" class="section">
+          <div class="two-column">
+            <div class="stack">
+              <span class="eyebrow">Global Harness</span>
+              <h2>Install globally when the harness owns discovery.</h2>
+              <p class="lede">
+                Global installation is harness-specific. Copy the same command and skill sources into the harness
+                directories that it reads at startup, then restart or reload the harness so it discovers the new files.
+              </p>
+              <pre><code># Example shape only. Replace destinations with your harness paths.
+cp templates/instructional-documents/commands/*.md /path/to/harness/commands/
+cp -R templates/instructional-documents/skills/. /path/to/harness/skills/
+cp templates/instructional-documents/hooks/*.sh /path/to/harness/hooks/
+chmod +x /path/to/harness/hooks/*.sh</code></pre>
+            </div>
+            <div class="panel">
+              <h3>Global install rules</h3>
+              <ul>
+                <li>Keep project-specific environment names, URLs, credentials, and release rules out of global files.</li>
+                <li>Let project-local instructions override global defaults when they are stricter.</li>
+                <li>Record the global source commit or package version so teams can reproduce the setup.</li>
+                <li>Run a command discovery check after reload so missing files are caught immediately.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="prompt" class="section">
+          <div class="stack">
+            <span class="eyebrow">Reusable Prompt</span>
+            <h2>Common setup prompt for any harness</h2>
+            <p class="lede">
+              Use this prompt when asking an agent or automation harness to install the workflow pack. Fill the
+              placeholders first so it can choose global or project-local setup without guessing.
+            </p>
+            <pre class="prompt-block"><code>You are installing the Designs workflow commands and skills into an agent harness.
+
+Source repository:
+- Designs repo path or URL: [DESIGNS_REPO]
+- Source package path: templates/instructional-documents/
+
+Target mode:
+- Choose one: global harness install / project-local install
+- Target project root, if project-local: [PROJECT_ROOT]
+- Harness command directory, if global: [HARNESS_COMMANDS_DIR]
+- Harness skills directory, if global: [HARNESS_SKILLS_DIR]
+- Harness hooks/settings directory, if applicable: [HARNESS_HOOKS_OR_SETTINGS_DIR]
+
+Install requirements:
+1. Inspect the source package before copying files.
+2. Install commands from templates/instructional-documents/commands/.
+3. Install skills from templates/instructional-documents/skills/.
+4. For project-local setup, run install-session-workflows.sh --dry-run first, then run the installer only if the dry run matches the intended target.
+5. Preserve project-specific instructions, release authority, QA environment, production approval rules, and existing settings unless explicitly told to replace them.
+6. Do not deploy, promote, remove, or clean up hosted environments during installation.
+7. Verify command and skill discovery after installation.
+8. Report changed files, installed commands, installed skills, skipped items, and any manual follow-up.
+
+Expected commands:
+- /plan-feature
+- /plan-bugfix
+- /plan-github
+- /plan-review
+- /start-session
+- /next-phase
+- /end-session
+- /dod-review
+- /compliance-review
+- /uat
+- /kingmode
+
+Expected skills:
+- worktree-toolkit-init
+- worktree-session-lifecycle
+- plan-review
+- dod-review</code></pre>
+          </div>
+        </section>
+
+        <section id="verify" class="section">
+          <div class="two-column">
+            <div class="stack">
+              <span class="eyebrow">Verification</span>
+              <h2>Prove the harness can see the pack.</h2>
+              <p class="lede">
+                Installation is not complete until the target harness can list or invoke the commands and skills from
+                the intended scope.
+              </p>
+              <div class="panel">
+                <h3>Verification checklist</h3>
+                <ul>
+                  <li>Command list includes the planning, review, build, closeout, DoD, compliance, and UAT commands.</li>
+                  <li>Skill discovery includes lifecycle, plan-review, and DoD-review skills.</li>
+                  <li>Project-local installs keep existing project settings unless replacement was requested.</li>
+                  <li>Hooks are executable when the harness uses hook scripts.</li>
+                  <li>The target project records any local overlays or exceptions after installation.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="panel note-panel">
+              <h3>Stop condition</h3>
+              <p>
+                If multiple harnesses, command directories, or project roots are possible, stop and ask which target is
+                canonical before copying files. A partial install into the wrong scope is harder to audit than no install.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>Install Skills and Commands</span>
+        <span><a href="index.html">Workflow</a> <span aria-hidden="true">/</span> <a href="https://github.com/Holovkat/designs#readme">README</a></span>
+      </footer>
+    </div>
+  </body>
+</html>
