@@ -65,6 +65,10 @@
               <strong>Build Session</strong>
               <span>Start governed work with clear branch, workspace, and task ownership.</span>
             </a>
+            <a class="scenario-card" href="#vibe-fix">
+              <strong>Vibe Fix</strong>
+              <span>Handle small observed behavior fixes without broad replanning.</span>
+            </a>
             <a class="scenario-card" href="#builder-gates">
               <strong>Builder Gates</strong>
               <span>Separate writer lanes from read-only review roles.</span>
@@ -146,7 +150,7 @@
                   <h3>Installed surface</h3>
                   <ul>
                     <li>Command markdown for planning, plan review, build, closeout, compliance/DoD, and UAT.</li>
-                    <li>Project skills for worktree lifecycle and plan review.</li>
+                    <li>Project skills for worktree lifecycle, plan review, and scoped vibe fixes.</li>
                     <li>Optional hooks, scripts, worktree guidance, settings, and design templates.</li>
                   </ul>
                 </div>
@@ -565,6 +569,50 @@ sequenceDiagram
                   <div class="kv-row">
                     <div class="kv-key">Blockers</div>
                     <div>Stop for unclear authority, mixed environments, missing credentials, or approval gaps.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="vibe-fix" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Vibe Fix</span>
+                <h2>Use the smallest durable fix for observed behavior drift.</h2>
+                <p class="lede">
+                  The <code>vibe-fix</code> skill is for pragmatic behavior fixes where the expected outcome is clear and
+                  the work should not expand into a full planning cycle. It still requires live-state discovery, scoped
+                  ownership, verification, and evidence.
+                </p>
+                <div class="panel">
+                  <h3>Use when</h3>
+                  <ul>
+                    <li>A route, button, page, API response, or small workflow visibly does the wrong thing.</li>
+                    <li>The expected behavior is obvious enough to ticket lightly and implement directly.</li>
+                    <li>The fix can be made in one effective runtime owner without redesigning the system.</li>
+                    <li>Browser, API, or targeted test verification can prove the behavior now matches the request.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Operating loop</h3>
+                <div class="kv">
+                  <div class="kv-row">
+                    <div class="kv-key">Ticket</div>
+                    <div>Draft the smallest useful problem statement, expected behavior, acceptance criteria, and target.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Inspect</div>
+                    <div>Check the live behavior before editing when a browser, API call, or focused test can show it.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Fix</div>
+                    <div>Change the earliest effective owner in the runtime path and avoid duplicate logic.</div>
+                  </div>
+                  <div class="kv-row">
+                    <div class="kv-key">Signoff</div>
+                    <div>Run the targeted test, direct runtime check, and browser verification that match the failure mode.</div>
                   </div>
                 </div>
               </div>
