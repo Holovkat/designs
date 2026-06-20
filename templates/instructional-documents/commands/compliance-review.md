@@ -2,7 +2,7 @@
 description: Verify implementation meets spec requirements and Definition of Done before UAT
 ---
 
-You are performing a **Compliance Review** to verify the implementation meets all requirements defined in the feature specifications (shards). This is also the **Definition of Done (DoD) gate**: compare approved requirements against delivered build outcomes, verification evidence, and known gaps before handover or UAT.
+You are performing a **Compliance Review** to verify the implementation meets all requirements defined in the approved requirements source. This is also the **Definition of Done (DoD) gate**: compare approved requirements against delivered build outcomes, verification evidence, and known gaps before handover or UAT.
 
 **THIS IS A BLOCKING GATE** - The session cannot end, move to UAT, or be handed to the user until compliance is achieved, the DoD rank passes, or the user explicitly accepts a documented exception.
 
@@ -12,12 +12,12 @@ You are performing a **Compliance Review** to verify the implementation meets al
 
 **ACTION REQUIRED:**
 
-1. Read `features/00-IMPLEMENTATION-CHECKLIST.md`
+1. Locate and read `[CHECKLIST_PATH]` from the current repo's planning convention
 2. Identify the current sprint/phase being worked on
-3. Find the corresponding shard document (e.g., `features/phase-2-menus.md`)
+3. Find the corresponding requirements source such as an issue, checklist section, spec, or shard document
 
 ```bash
-ls features/
+find . -maxdepth 3 -type f \( -name '*IMPLEMENTATION-CHECKLIST*.md' -o -name '*requirements*.md' -o -name '*spec*.md' \) 2>/dev/null
 ```
 
 ---
@@ -26,7 +26,7 @@ ls features/
 
 **ACTION REQUIRED:**
 
-1. Read the phase shard document completely
+1. Read the requirements source completely
 2. Extract ALL acceptance criteria, deliverables, and requirements
 3. Create a compliance checklist from:
    - **Deliverables** - Components/files that must exist
@@ -102,6 +102,7 @@ Map every accepted requirement to the delivered implementation:
 
 - Delivered files, behavior, configuration, migration, or documentation
 - Verification evidence such as tests, lint, build, smoke checks, code review, or screenshots
+- Release vector readiness: code, data, config, service, provider, deployment, verification, cleanup, and closeout rows that apply
 - Known defects, skipped checks, caveats, waivers, and residual risks
 - Scope drift where the build no longer matches the approved plan
 
@@ -118,9 +119,10 @@ If the work has no traceable approved requirements, assign `D - Replan`.
 
 **Date**: [TODAY]
 **Reviewer**: Compliance reviewer
-**Shard Document**: `features/phase-X-name.md`
+**Requirements Document**: `[REQUIREMENTS_SOURCE]`
 **Requirements Source**: [issue/checklist/intake refs]
 **Build Source**: [branch/commit/deployment refs]
+**Release Vectors**: [active rows / deferred rows / not applicable]
 **DoD Rank**: A/B/C/D
 **Decision**: Handover allowed / Owner caveat decision / Rework / Replan
 
@@ -161,6 +163,7 @@ If the work has no traceable approved requirements, assign `D - Replan`.
 | Test review | Pass/Fail/Not run | [evidence] |
 | Compliance review | Pass/Fail/Not run | [evidence] |
 | Smoke/UAT readiness | Pass/Fail/Not run | [evidence] |
+| Release vector readiness | Pass/Fail/Not run | [evidence] |
 
 ## Failed Items Detail
 
@@ -192,7 +195,7 @@ Only `A` is a clean Definition of Done pass. `B` is not complete until the owner
 ```markdown
 ✅ **COMPLIANCE PASSED**
 
-All requirements from `features/phase-X-name.md` have been verified and the DoD rank is `A - Done`.
+All requirements from `[REQUIREMENTS_SOURCE]` have been verified and the DoD rank is `A - Done`.
 The implementation is ready for integration.
 
 Proceeding with `/end-session` workflow...
@@ -240,7 +243,7 @@ Ask the user whether to accept the caveats, create follow-up tasks, or return to
    > "Compliance review found [N] unmet requirements. The implementation does not fully meet the phase specifications.
    >
    > Would you like to:
-   > 1. **Fix and retry** - I'll analyze gaps, create additional shards if needed, and implement fixes
+   > 1. **Fix and retry** - I'll analyze gaps, create additional requirements updates if needed, and implement fixes
    > 2. **Waive compliance** - Proceed with end-session despite gaps (not recommended)
    > 3. **Review details** - Show full compliance report and discuss
    >
@@ -281,25 +284,24 @@ Analyze the compliance gaps for Phase [X]:
 1. What is the root cause of each gap?
 2. What specific code changes are needed?
 3. Are there architectural issues to address?
-4. What new shards/specs are needed?
+4. What new issue/spec/checklist updates are needed?
 5. What's the estimated effort to fix?
 6. Are there dependencies or blockers?
 
 ## Analysis Scope:
-- Review the shard document: `features/phase-X-name.md`
+- Review the requirements source: `[REQUIREMENTS_SOURCE]`
 - Review the current implementation
 - Identify exact files needing changes
 - Determine if scope was underestimated
 ```
 
-### 6A.2 Create Remediation Shards (if needed)
+### 6A.2 Create Remediation Specs (if needed)
 
 If the analysis reveals missing specifications:
 
-1. Create a new shard document:
-   ```
-   features/phase-X-name-remediation.md
-   ```
+1. Create or update the repo-standard remediation issue/spec/checklist entry.
+   Use `[PLAN_ROOT]/[phase-name]-remediation.md` only when the project stores
+   planning specs as local Markdown.
 
 2. Include:
    - Specific gaps being addressed
@@ -309,7 +311,7 @@ If the analysis reveals missing specifications:
 
 ### 6A.3 Update Implementation Checklist
 
-Edit `features/00-IMPLEMENTATION-CHECKLIST.md`:
+Edit `[CHECKLIST_PATH]`:
 
 ```markdown
 ## Phase [X]: [Name] - REMEDIATION
@@ -321,7 +323,7 @@ Edit `features/00-IMPLEMENTATION-CHECKLIST.md`:
 - [ ] Re-run compliance review
 
 **Status**: [in-progress]
-**Remediation Shard**: `features/phase-X-name-remediation.md`
+**Remediation Source**: `[REMEDIATION_SOURCE]`
 ```
 
 ### 6A.4 Get User Approval
@@ -333,8 +335,8 @@ Present the remediation plan to the user:
 
 **Compliance Gaps Identified**: [N]
 
-### New/Updated Shards:
-- `features/phase-X-name-remediation.md`
+### New/Updated Requirements:
+- `[REMEDIATION_SOURCE]`
 
 ### Implementation Tasks:
 1. [Task 1] - Est. [time]

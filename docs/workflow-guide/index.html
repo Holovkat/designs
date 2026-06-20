@@ -45,6 +45,10 @@
               <strong>Commands</strong>
               <span>Reference the workflow commands and expected outputs.</span>
             </a>
+            <a class="scenario-card" href="#intent-confidence">
+              <strong>Intent Confidence</strong>
+              <span>Infer the next step before asking process questions.</span>
+            </a>
             <a class="scenario-card" href="#planning-intake">
               <strong>Planning Intake</strong>
               <span>Choose the planning entrypoint for the work type.</span>
@@ -76,6 +80,10 @@
             <a class="scenario-card" href="#cicd-authority">
               <strong>CI/CD Authority</strong>
               <span>Discover the project-defined path before hosted changes.</span>
+            </a>
+            <a class="scenario-card" href="#release-vectors">
+              <strong>Release Vectors</strong>
+              <span>Track code, data, config, service, deploy, cleanup, and closeout rows.</span>
             </a>
             <a class="scenario-card" href="#qa-uat">
               <strong>QA and UAT</strong>
@@ -206,6 +214,12 @@
                   <div role="cell">Planning gate</div>
                 </div>
                 <div class="matrix-row" role="row">
+                  <div role="cell"><code>/release-assess</code></div>
+                  <div role="cell">Assess release movement.</div>
+                  <div role="cell">Builds a vector matrix for intent, confidence, specialist ownership, and execution order.</div>
+                  <div role="cell">Release gate</div>
+                </div>
+                <div class="matrix-row" role="row">
                   <div role="cell"><code>/start-session</code></div>
                   <div role="cell">Start a governed build session.</div>
                   <div role="cell">Creates the implementation branch or worktree according to project policy.</div>
@@ -250,6 +264,15 @@
                     </div>
                   </details>
                   <details class="test-case">
+                    <summary><span><code>/release-assess</code></span></summary>
+                    <div class="test-case-body">
+                      <p>
+                        Release assessment should infer intent, confidence, active vectors, specialist owners, and
+                        execution order before QA, production, cleanup, or final closeout.
+                      </p>
+                    </div>
+                  </details>
+                  <details class="test-case">
                     <summary><span><code>/start-session</code> and <code>/next-phase</code></span></summary>
                     <div class="test-case-body">
                       <p>
@@ -279,6 +302,45 @@
                     </div>
                   </details>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="intent-confidence" class="section">
+            <div class="two-column">
+              <div class="stack">
+                <span class="eyebrow">Intent and Confidence</span>
+                <h2>Infer the next step before asking process questions.</h2>
+                <p class="lede">
+                  The agent should read the user's wording, branch state, issue/checklist trajectory, recent commits,
+                  docs, and prior decisions before deciding whether to proceed, ask, or escalate.
+                </p>
+                <div class="panel">
+                  <h3>Confidence policy</h3>
+                  <div class="kv">
+                    <div class="kv-row">
+                      <div class="kv-key">High</div>
+                      <div>Proceed and state the inferred intent briefly.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Medium</div>
+                      <div>Proceed with named assumptions and keep the next decision point visible.</div>
+                    </div>
+                    <div class="kv-row">
+                      <div class="kv-key">Low</div>
+                      <div>Ask one focused question before acting, especially when the unknown changes risk or ownership.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Trajectory signals</h3>
+                <ul>
+                  <li>Active branch, staged files, recent commits, and open pull requests.</li>
+                  <li>Issue labels, checklist state, approval comments, and known release gates.</li>
+                  <li>Project-local instructions, specialist docs, and current deployment authority.</li>
+                  <li>Live evidence from the canonical environment when release state matters.</li>
+                </ul>
               </div>
             </div>
           </section>
@@ -749,6 +811,61 @@ sequenceDiagram
             </div>
           </section>
 
+          <section id="release-vectors" class="section">
+            <div class="stack">
+              <span class="eyebrow">Release Vectors</span>
+              <h2>Classify what changed before moving the release.</h2>
+              <p class="lede">
+                Release movement is not a small-versus-large choice. Use <code>/release-assess</code> to identify
+                active vectors, owner rows, evidence, and execution order before QA, production, cleanup, or closeout.
+              </p>
+              <div class="matrix" role="table" aria-label="Release vector matrix">
+                <div class="matrix-head" role="row">
+                  <div role="columnheader">Vector</div>
+                  <div role="columnheader">Owner</div>
+                  <div role="columnheader">Evidence</div>
+                  <div role="columnheader">Order</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell">Code</div>
+                  <div role="cell">Development and review specialists</div>
+                  <div role="cell">Diff, commit, tests, review outcome, and artifact identity.</div>
+                  <div role="cell">Before deploy</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell">Data shape</div>
+                  <div role="cell">Database or schema specialist</div>
+                  <div role="cell">Migration plan, backup/restore evidence, compatibility notes, and readback checks.</div>
+                  <div role="cell">Before app promotion</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell">Data content</div>
+                  <div role="cell">Data owner or domain specialist</div>
+                  <div role="cell">Seed, cleanse, replay, import, or correction evidence with rollback limits.</div>
+                  <div role="cell">Before dependent smoke</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell">Config / service / provider</div>
+                  <div role="cell">Environment, infrastructure, or provider specialist</div>
+                  <div role="cell">Source of truth, target environment, live value, restart or promotion boundary.</div>
+                  <div role="cell">Before live verification</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell">Deployment / verification</div>
+                  <div role="cell">Deployment and testing specialists</div>
+                  <div role="cell">Canonical target, deploy path, smoke scenarios, and user-visible proof.</div>
+                  <div role="cell">Before approval</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell">Cleanup / closeout</div>
+                  <div role="cell">Deployment, repo-maintenance, orchestrator, or knowledge specialist</div>
+                  <div role="cell">Inventory, retained canonical resources, checklist/docs updates, and lessons captured.</div>
+                  <div role="cell">After canonical state is proven</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section id="qa-uat" class="section">
             <div class="two-column">
               <div class="stack">
@@ -762,6 +879,10 @@ sequenceDiagram
                 <div class="panel">
                   <h3>Readiness manifest</h3>
                   <div class="kv">
+                    <div class="kv-row">
+                      <div class="kv-key">Vector matrix</div>
+                      <div>Active release vectors, specialist owners, required evidence, and any unresolved rows.</div>
+                    </div>
                     <div class="kv-row">
                       <div class="kv-key">Environment</div>
                       <div>Canonical QA URL or environment identifier, plus any required access constraints.</div>
@@ -805,6 +926,7 @@ sequenceDiagram
                   <h3>Promotion packet</h3>
                   <ul>
                     <li>Owner approval with the production target and release scope named.</li>
+                    <li>Release vector matrix with data, config, service, deployment, verification, and cleanup rows resolved or explicitly deferred.</li>
                     <li>Governed promotion path and actor responsible for the production action.</li>
                     <li>Rollback or mitigation plan, including where evidence will be recorded.</li>
                     <li>Production smoke steps and final signoff expectations.</li>
@@ -838,7 +960,7 @@ sequenceDiagram
                     <li>Update project docs, release notes, or checklist state when required by the project.</li>
                     <li>Retain evidence for planning, implementation, QA/UAT, production, and final signoff.</li>
                     <li>Clean temporary files, branches, worktrees, or environments only under project policy.</li>
-                    <li>Record lessons learned when a reusable issue, risk, or workflow gap was discovered.</li>
+                    <li>Record lessons learned in the owning specialist knowledge area when a reusable issue, risk, or workflow gap was discovered.</li>
                   </ul>
                 </div>
               </div>

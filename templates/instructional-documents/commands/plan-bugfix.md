@@ -21,8 +21,11 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 
 - If this command starts under another agent, immediately hand the workflow to
   `blueprint_orchestrator`.
-- `blueprint_orchestrator` must ask whether the user wants a `quick-fix` pass or
-  the full planning flow before it commits to specialist delegation.
+- `blueprint_orchestrator` must infer the planning mode from the user's wording,
+  project trajectory, active issue/checklist state, recent commits, and known
+  risk before it commits to specialist delegation.
+- Ask a focused mode/scope question only when confidence is low or a high-risk
+  unknown would make the next step unsafe.
 - Use `tech-analyst` and `scenario-analyst` as the default specialist pair when
   root cause, fix sequencing, and regression coverage need deeper analysis.
 - Pull in `ux-analyst` only when the bug changes user-visible workflow or
@@ -62,7 +65,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 
 ```bash
 cat AGENTS.md 2>/dev/null || true
-cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null
+find . -maxdepth 3 -type f \( -name '*IMPLEMENTATION-CHECKLIST*.md' -o -name 'BACKLOG.md' \) 2>/dev/null
 git log --oneline -20
 git log --oneline --since="7 days ago"
 gh auth status 2>/dev/null
@@ -74,7 +77,8 @@ gh repo view --json name,owner,url 2>/dev/null
 Before launching a specialist or proposing the fix structure:
 
 - Update the condensed shared brief with the current bug symptoms, scope,
-  constraints, non-goals, related files, and lessons learned.
+  inferred intent, confidence, project trajectory, active vectors, constraints,
+  non-goals, related files, and lessons learned.
 - Reuse the shared brief for every specialist delegation instead of having each
   specialist reconstruct the bug context from scratch.
 
@@ -82,9 +86,16 @@ Before launching a specialist or proposing the fix structure:
 
 Ask ONE at a time about symptoms, expected behavior, reproduction steps, impact, and suspicions.
 
-Before the deeper bug questions, ask:
+Before the deeper bug questions, state the inferred mode when confidence is
+medium or high:
 
-> "Do you want a quick-fix pass or the full planning flow?"
+> "I am treating this as a [quick-fix / standard / full-planning] bugfix pass
+> because [one concise reason from the project trajectory]."
+
+If confidence is low, ask one focused question instead:
+
+> "I can take this in more than one direction because [specific ambiguity].
+> Should I treat this as [recommended mode/scope] or [alternate mode/scope]?"
 
 ## Step 4: Root Cause Investigation
 

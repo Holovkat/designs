@@ -12,14 +12,23 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | `/plan-bugfix`            | Interactive planning session to scope and document a bug fix               |
 | `/plan-github`            | Import GitHub issues/PRs and convert them into implementation specs        |
 | `/plan-review`            | Review planning output against the Q&A/intake record before build approval |
+| `/release-assess`         | Assess release intent, confidence, vectors, order, and specialist ownership |
 | `/start-session <branch>` | Create a stacked branch, isolated worktree, and tmux-rooted agent session  |
 | `/next-phase`             | Continue implementing the next phase from the project checklist            |
 | `/end-session`            | Close out session with review gates, merge-back, and cleanup               |
 | `/uat`                    | Run User Acceptance Testing with guided test scenarios and rework tracking |
 | `/compliance-review`      | Verify requirements compliance and Definition of Done before handover/UAT  |
 | `/kingmode`               | Activate "King Mode" for deep, multi-dimensional analysis                  |
-| `/sanity-check`           | Verify app loads without errors                                            |
-| `/code-review`            | Get a second agent review on recent changes                                |
+
+### Hook Command Aliases
+
+These are settings-backed aliases when the harness supports hook command
+aliases; they are not Markdown command files.
+
+| Alias | Description |
+| ----- | ----------- |
+| `/sanity-check` | Verify app loads without errors |
+| `/code-review` | Get a second agent review on recent changes |
 
 ### Worktree Session Backend
 
@@ -31,6 +40,7 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | `scripts/start-droid-worktree.sh` | Reuses a prepared worktree and launches the agent harness in a new tmux pane |
 | `scripts/worktree-project-prepare.sh` | Project-specific adapter for runtime/bootstrap tasks |
 | `scripts/worktree-project-cleanup.sh` | Project-specific adapter for shutdown/cleanup tasks |
+| `scripts/release-vector-assess.sh` | Provider-neutral starter matrix for release/change vectors |
 
 ### Project Skills
 
@@ -39,6 +49,8 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | `worktree-toolkit-init` | Audit and update project-specific worktree lifecycle tooling |
 | `worktree-session-lifecycle` | Operate the start/end session lifecycle through the backend scripts |
 | `plan-review` | Review planning artifacts against Q&A/intake before build approval |
+| `release-assess` | Infer release intent/confidence and route active vectors to specialists |
+| `vibe-fix` | Handle small observed behavior fixes with live verification |
 
 ### Worktree Guidance
 
@@ -56,7 +68,7 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | `sanity-check.sh`           | Manual or end-session       | Verify app loads without errors    |
 | `code-review-checkpoint.sh` | Manual or end-session       | Second agent review of changes     |
 | `pre-commit-workflow.sh`    | Before git commit           | Lint, build, code review           |
-| `post-commit-push.sh`       | After git commit            | Push to main                       |
+| `post-commit-push.sh`       | After git commit            | Push current branch/upstream       |
 
 ## Prerequisites
 
@@ -180,6 +192,7 @@ Or manually create each file in `commands/` or your harness-specific command dir
 - `plan-bugfix.md` - Markdown command (interactive bugfix planning)
 - `plan-github.md` - Markdown command (GitHub issue/PR import)
 - `plan-review.md` - Markdown command (planning vs Q&A/intake review)
+- `release-assess.md` - Markdown command (release intent, vector, and execution-order assessment)
 - `start-session.sh` - Executable bash script
 - `end-session.sh` - Executable bash wrapper for merge-back + cleanup
 - `next-phase.md` - Markdown command
@@ -300,7 +313,11 @@ You should see:
 - `/next-phase` - Continue implementing next phase
 - `/end-session` - Close out session, then merge back and clean up
 - `/plan-review` - Review planning output against the Q&A/intake record
+- `/release-assess` - Assess release intent, vectors, ownership, and order
 - `/compliance-review` - Verify requirements compliance and rank Definition of Done
+
+With agent-aware hook aliases enabled, you may also see:
+
 - `/sanity-check` - Verify app loads without errors
 - `/code-review` - Get second agent review on changes
 
@@ -321,6 +338,7 @@ your-project/
 │   ├── plan-bugfix.md      # Interactive bugfix planning
 │   ├── plan-github.md      # GitHub issue/PR import
 │   ├── plan-review.md      # Planning vs Q&A/intake review
+│   ├── release-assess.md   # Release vector and execution-order assessment
 │   ├── start-session.sh    # Creates stacked branch + worktree
 │   ├── end-session.sh      # Merge-back + cleanup wrapper
 │   ├── next-phase.md       # Continues implementation
@@ -333,7 +351,7 @@ your-project/
 │   ├── sanity-check.sh     # Verify app loads
 │   ├── code-review-checkpoint.sh  # Second opinion
 │   ├── pre-commit-workflow.sh     # Pre-commit checks
-│   └── post-commit-push.sh        # Auto push
+│   └── post-commit-push.sh        # Push current branch/upstream
 ├── settings.json           # Hooks configuration
 ├── scripts/
 │   ├── README.md                    # Backend session lifecycle overview
@@ -342,10 +360,15 @@ your-project/
 │   ├── worktree-session-close.sh    # Merges back + cleans up
 │   ├── start-droid-worktree.sh      # Launches the agent harness in tmux
 │   ├── worktree-project-prepare.sh  # Project-specific prep adapter
-│   └── worktree-project-cleanup.sh  # Project-specific cleanup adapter
+│   ├── worktree-project-cleanup.sh  # Project-specific cleanup adapter
+│   └── release-vector-assess.sh     # Provider-neutral release vector matrix
 ├── skills/
 │   ├── README.md
 │   ├── plan-review/
+│   │   └── SKILL.md
+│   ├── release-assess/
+│   │   └── SKILL.md
+│   ├── vibe-fix/
 │   │   └── SKILL.md
 │   ├── worktree-toolkit-init/
 │   │   └── SKILL.md
@@ -539,10 +562,10 @@ The agent will:
 The agent will:
 
 1. Identify the current sprint and its changes
-2. Analyze git history and shard documents for acceptance criteria
+2. Analyze git history and requirements sources for acceptance criteria
 3. Generate comprehensive test scenarios
 4. Walk you through each test one at a time, awaiting approval
-5. Log any failures to `features/UAT/[sprint-name]-rework.UAT.md`
+5. Log any failures to the project-standard UAT rework document under `[PLAN_ROOT]/UAT/`
 6. Update implementation checklist with UAT status and rework items
 7. Direct you to `/next-phase`, `/plan-feature`, or `/plan-bugfix` for rework
 

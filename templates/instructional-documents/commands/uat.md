@@ -37,7 +37,7 @@ You are conducting a **User Acceptance Testing (UAT) session** to validate sprin
 ### 1.1 Locate Implementation Checklist
 
 ```bash
-cat features/00-IMPLEMENTATION-CHECKLIST.md
+cat [CHECKLIST_PATH]
 ```
 
 ### 1.2 Identify Sprint Under Test
@@ -323,7 +323,7 @@ gh issue create \
 Optionally, also create a local rework summary:
 
 ```bash
-mkdir -p features/UAT
+mkdir -p [PLAN_ROOT]/UAT
 ```
 
 ```markdown
@@ -404,8 +404,8 @@ mkdir -p features/UAT
 
 ## References
 
-- **Sprint Shard**: [`features/[sprint-shard].md`](./[sprint-shard].md)
-- **Implementation Checklist**: [`features/00-IMPLEMENTATION-CHECKLIST.md`](./00-IMPLEMENTATION-CHECKLIST.md)
+- **Requirements Source**: [`[REQUIREMENTS_SOURCE]`]([REQUIREMENTS_SOURCE])
+- **Implementation Checklist**: [`[CHECKLIST_PATH]`]([CHECKLIST_PATH])
 
 ---
 
@@ -531,7 +531,7 @@ The sprint implementation has been validated by UAT. You may now:
 
 ### Documents Created
 
-- **Rework Document**: `features/UAT/[sprint-name]-rework.UAT.md`
+- **Rework Document**: `[PLAN_ROOT]/UAT/[sprint-name]-rework.UAT.md`
 
 ### Rework Checklist Added to Implementation Checklist
 
@@ -557,7 +557,7 @@ After fixing issues, run `/uat` again to re-validate the fixes.
 
 ### If no sprint is in progress:
 
-> "No active sprint found in the implementation checklist. Please run `/next-phase` to start a sprint, or check that `features/00-IMPLEMENTATION-CHECKLIST.md` exists and has sprint items."
+> "No active sprint found in the implementation checklist. Please run `/next-phase` to start a sprint, or check that `[CHECKLIST_PATH]` exists and has sprint items."
 
 ### If sprint has no completed items:
 
@@ -577,10 +577,10 @@ After fixing issues, run `/uat` again to re-validate the fixes.
 >
 > To resume UAT later, run `/uat` again. Partial results have NOT been saved."
 
-### If features/ directory doesn't exist:
+### If the project UAT notes directory doesn't exist:
 
 ```bash
-mkdir -p features/UAT
+mkdir -p [PLAN_ROOT]/UAT
 ```
 
 ---

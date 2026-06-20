@@ -25,10 +25,14 @@ Reference guides, workflows, and technical specifications for developers.
 
 - **[kickoff-requirements-spec.md](./kickoff-requirements-spec.md)** - Project kickoff requirements template
 - **[upgrade-template.md](./upgrade-template.md)** - Version upgrade planning template
+- **[commands/release-assess.md](./commands/release-assess.md)** - Release intent, confidence, vector, and execution-order assessment command
+- **[scripts/release-vector-assess.sh](./scripts/release-vector-assess.sh)** - Provider-neutral release vector starter matrix
 - **[close_out_items_shipping.md](./close_out_items_shipping.md)** - Project closeout checklist
 
 ## AI & Automation
 
 - **[generate_agents.md](./generate_agents.md)** - Agent generation guidelines
+- **[codex-global-planning-agents.md](./codex-global-planning-agents.md)** - Planning-agent intent, confidence, and delegation contract
+- **[codex-global-builder-agents.md](./codex-global-builder-agents.md)** - Builder-agent packet, vector, and validation contract
 - **[agile_pm_prompt.md](./agile_pm_prompt.md)** - Agile PM prompt (empty)
 - **[project_management_prompt.md](./project_management_prompt.md)** - Project management prompt (empty)

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
 # Agent Harness Post-Commit Push Hook
-# 
-# This hook runs after a git commit succeeds and pushes to main
+#
+# This hook runs after a git commit succeeds and pushes the current branch.
 #
 # Place in: hooks/post-commit-push.sh
 # Make executable: chmod +x hooks/post-commit-push.sh
@@ -29,7 +29,7 @@ fi
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🚀 STEP 4: Pushing to main..."
+echo "🚀 STEP 4: Pushing current branch..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Get the project directory
@@ -39,55 +39,27 @@ cd "$PROJECT_DIR"
 # Get current branch
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-if [[ "$CURRENT_BRANCH" == "main" ]]; then
-    # Already on main, just push
-    echo "Pushing to origin main..."
-    git push origin main 2>&1 || {
+if [[ "$CURRENT_BRANCH" == "HEAD" ]]; then
+    echo "❌ Detached HEAD; skipping automatic push"
+    exit 1
+fi
+
+UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null || true)
+
+if [[ -n "$UPSTREAM" ]]; then
+    echo "Pushing $CURRENT_BRANCH to $UPSTREAM..."
+    git push 2>&1 || {
         echo "❌ Push failed!"
         exit 1
     }
 else
-    # On a feature branch - merge to main then push
-    echo "Current branch: $CURRENT_BRANCH"
-    echo "Merging to main and pushing..."
-    
-    # Stash any uncommitted changes
-    STASH_OUTPUT=$(git stash 2>&1) || true
-    
-    # Switch to main, merge, push
-    git checkout main 2>&1 || {
-        echo "❌ Failed to checkout main"
-        [[ "$STASH_OUTPUT" != "No local changes to save" ]] && git stash pop
-        exit 1
-    }
-    
-    git pull origin main --rebase 2>&1 || {
-        echo "❌ Failed to pull latest main"
-        git checkout "$CURRENT_BRANCH"
-        [[ "$STASH_OUTPUT" != "No local changes to save" ]] && git stash pop
-        exit 1
-    }
-    
-    git merge "$CURRENT_BRANCH" --no-edit 2>&1 || {
-        echo "❌ Merge conflict! Please resolve manually."
-        git merge --abort
-        git checkout "$CURRENT_BRANCH"
-        [[ "$STASH_OUTPUT" != "No local changes to save" ]] && git stash pop
-        exit 1
-    }
-    
-    git push origin main 2>&1 || {
+    echo "No upstream found. Pushing $CURRENT_BRANCH to origin and setting upstream..."
+    git push -u origin "$CURRENT_BRANCH" 2>&1 || {
         echo "❌ Push failed!"
-        git checkout "$CURRENT_BRANCH"
-        [[ "$STASH_OUTPUT" != "No local changes to save" ]] && git stash pop
         exit 1
     }
-    
-    # Return to original branch
-    git checkout "$CURRENT_BRANCH"
-    [[ "$STASH_OUTPUT" != "No local changes to save" ]] && git stash pop
 fi
 
-echo "✅ Successfully pushed to main!"
+echo "✅ Successfully pushed $CURRENT_BRANCH!"
 echo ""
 exit 0

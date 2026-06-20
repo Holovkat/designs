@@ -21,8 +21,11 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 
 - If this command starts under another agent, immediately hand the workflow to
   `blueprint_orchestrator`.
-- `blueprint_orchestrator` must ask whether the user wants a `quick-fix` pass or
-  the full planning flow before it commits to specialist delegation.
+- `blueprint_orchestrator` must infer the planning mode from the user's wording,
+  project trajectory, active issue/checklist state, recent commits, and known
+  risk before it commits to specialist delegation.
+- Ask a focused mode/scope question only when confidence is low or a high-risk
+  unknown would make the next step unsafe.
 - `blueprint_orchestrator` may delegate conditionally to `req-analyst`,
   `ux-analyst`, `scenario-analyst`, `tech-analyst`, and `prd-writer`.
 - Every delegation must start from the latest condensed shared brief and require
@@ -92,7 +95,7 @@ cat README.md 2>/dev/null
 ### 1.2 Check Implementation Status
 
 ```bash
-cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null
+find . -maxdepth 3 -type f \( -name '*IMPLEMENTATION-CHECKLIST*.md' -o -name 'BACKLOG.md' \) 2>/dev/null
 ```
 
 ### 1.3 Review Recent Git Activity
@@ -129,7 +132,8 @@ gh label list --limit 100 2>/dev/null
 Before asking the next question or launching a specialist:
 
 - Update the condensed shared brief with the current command, scope,
-  constraints, non-goals, references, and lessons learned.
+  inferred intent, confidence, project trajectory, active vectors, constraints,
+  non-goals, references, and lessons learned.
 - Reuse the shared brief for every specialist delegation instead of rebuilding
   project context from scratch.
 
@@ -151,9 +155,15 @@ Before asking the next question or launching a specialist:
 
 > "I see you want to build: [summarize their prompt in 1-2 sentences]
 >
-> Let me ask some clarifying questions to fully scope this out.
+> I am treating this as a [quick-fix / standard / full-planning] planning pass
+> because [one concise reason from the project trajectory].
 >
-> **Before I start, do you want a quick-fix pass or the full planning flow?**"
+> Let me ask the next clarifying question to scope this correctly."
+
+If confidence is low, replace the mode statement with one focused question:
+
+> "I can take this in more than one direction because [specific ambiguity].
+> Should I treat this as [recommended mode/scope] or [alternate mode/scope]?"
 
 ---
 
@@ -372,7 +382,7 @@ Only trigger if the feature is complex (3+ components, integrations, or architec
 ### 6.1 Read Current Checklist
 
 ```bash
-cat features/00-IMPLEMENTATION-CHECKLIST.md 2>/dev/null
+cat [CHECKLIST_PATH] 2>/dev/null
 ```
 
 ### 6.2 Analyze State
@@ -635,13 +645,13 @@ The local checklist references GitHub issue numbers and is the final sign-off au
 
 ### 9.1 Ensure directory exists
 
-```bash
-mkdir -p features
-```
+Ensure the parent directory for `[CHECKLIST_PATH]` exists. If no project
+checklist convention exists, use `features/00-IMPLEMENTATION-CHECKLIST.md` as
+the default fallback.
 
 ### 9.2 Edit the checklist
 
-Add to `features/00-IMPLEMENTATION-CHECKLIST.md`:
+Add to `[CHECKLIST_PATH]`:
 
 ```markdown
 ---
@@ -702,7 +712,7 @@ Read the file to confirm changes applied correctly.
 | #[S1] | Sub-task | [Sub-task 1] |
 
 ### Checklist Updated
-- `features/00-IMPLEMENTATION-CHECKLIST.md` - Sprint [N] added with issue references
+- `[CHECKLIST_PATH]` - Sprint [N] added with issue references
 
 ### Next Steps
 To begin implementation:

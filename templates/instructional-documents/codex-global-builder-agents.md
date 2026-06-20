@@ -64,6 +64,10 @@ content, checklist state, comments, and current repo context.
 - `task_id`
 - `issue_refs`
 - `goal`
+- `inferred_intent`
+- `confidence`
+- `project_trajectory`
+- `active_vectors`
 - `current_scope`
 - `constraints`
 - `non_goals`
@@ -79,6 +83,7 @@ content, checklist state, comments, and current repo context.
 - `validators`
 - `validation_scope`
 - `regression_surface`
+- `release_vector_matrix`
 - `lessons_learned`
 - `open_findings`
 - `line_stop_conditions`
@@ -91,6 +96,11 @@ If required schema, test data, artifacts, or preload steps are substantial and
 missing, that is a prerequisite planning failure. The builder must line-stop and
 route back to replanning instead of forcing `dev` to invent hidden upstream
 work.
+
+If the packet includes release vectors, the builder preserves them rather than
+flattening the work into "small" or "large." Code, data-shape, data-content,
+config, service, provider, deployment, verification, cleanup, and closeout rows
+remain owned by the relevant specialist or project adapter.
 
 ## Communication Protocol
 
@@ -156,7 +166,8 @@ Default v1 sequence:
   1. task-packet freeze before execution
   2. warm `dev` correction reuse
   3. line-stop / replan on missing prerequisites or complexity creep
-  4. `ready-for-integration` handoff without absorbing UAT signoff into the hot loop
+  4. inferred intent, confidence, trajectory, and active vectors carried into the handoff
+  5. `ready-for-integration` handoff without absorbing UAT signoff into the hot loop
 - v1 does not require a dedicated `lint-build` agent. Build and lint checks may
   be folded into `tester`'s targeted validation packet until evidence shows a
   separate lane is worth the coordination cost.

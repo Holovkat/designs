@@ -75,6 +75,10 @@ git checkout docs/update-related-templates && git rebase main && git push --forc
 
 ## Touch Points / Key Files
 - GitHub workflow: `github-workflow.md`
+- Release assessment command: `commands/release-assess.md`
+- Release vector script: `scripts/release-vector-assess.sh`
+- Release skill: `skills/release-assess/SKILL.md`
+- Planning/builder agent contracts: `codex-global-planning-agents.md`, `codex-global-builder-agents.md`
 - TFD template: `Frontend-Technical-Functional-Requirements-Document-TFD.md`
 - Session installer: `install-session-workflows.sh`
 - Session commands: `commands/`

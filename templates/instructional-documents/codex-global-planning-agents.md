@@ -14,16 +14,27 @@ It is the source-of-truth contract for the global planning agents used by
 
 ## Operating Mode
 
-Before committing to a planning depth, the orchestrator must ask the user how it
-should operate.
+Before committing to a planning depth, the orchestrator must infer how it should
+operate from the user's wording, project trajectory, active issue/checklist
+state, recent commits, and known risk.
 
 - `quick-fix`: minimize specialist calls, keep the issue tree narrow, and favor
   the smallest useful plan.
+- `standard`: use the normal planning path with the smallest specialist set
+  needed to remove uncertainty.
 - `full-planning`: use the standard multi-agent planning flow with specialist
-  analysis, synthesis, and canary validation.
+  analysis, synthesis, and canary validation when scope, risk, or ambiguity
+  warrants it.
 
-If the user does not specify a mode, ask one direct question:
-"Do you want a quick-fix pass or the full planning flow?"
+Confidence policy:
+
+- High confidence: proceed and state the inferred mode briefly.
+- Medium confidence: proceed with named assumptions and make the next decision
+  point visible.
+- Low confidence or high-risk unknowns: ask one focused question before acting.
+
+Do not force a mode question when the project trajectory already makes the next
+step clear.
 
 ## Agent Roster
 
@@ -56,6 +67,10 @@ blocked delegation.
 
 - `planning_command`: one of `/plan-feature`, `/plan-bugfix`, `/plan-github`
 - `goal`: the current planning objective
+- `inferred_intent`: what the user appears to be asking the project to achieve
+- `confidence`: high, medium, or low, with the reason
+- `project_trajectory`: active branch, issue/checklist state, recent commits, and prior decisions that shape the next step
+- `active_vectors`: code, data-shape, data-content, config, service, provider, deployment, verification, cleanup, or closeout if already known
 - `current_scope`: confirmed MVP or fix scope
 - `constraints`: technical, product, or process constraints
 - `non_goals`: explicitly deferred or excluded work
@@ -100,9 +115,11 @@ reviewing the returned work.
 
 ## Delegation Rules
 
-- Start with the operating-mode question before choosing specialists.
+- Infer the operating mode and confidence before choosing specialists.
 - In `quick-fix` mode, delegate only the minimum specialist set required to
   remove uncertainty and keep the plan lightweight.
+- In `standard` mode, delegate to the smallest specialist set needed for the
+  active vectors and open questions.
 - In `full-planning` mode, use the normal specialist selection rules and canary
   validation path.
 - Delegate only when the specialist can reduce orchestration cost or sharpen the

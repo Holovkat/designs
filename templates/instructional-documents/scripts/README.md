@@ -10,6 +10,8 @@ These scripts are the deterministic backend for the session lifecycle.
 - `start-droid-worktree.sh` — tmux-aware Droid launcher for a prepared worktree
 - `worktree-project-prepare.sh` — project-specific initialization hook
 - `worktree-project-cleanup.sh` — project-specific cleanup hook
+- `release-vector-assess.sh` — provider-neutral starter matrix for release intent,
+  confidence, vectors, execution order, and specialist ownership
 
 ## Rule
 

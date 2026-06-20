@@ -19,8 +19,11 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 
 - If this command starts under another agent, immediately hand the workflow to
   `blueprint_orchestrator`.
-- `blueprint_orchestrator` must ask whether the user wants a `quick-fix` pass or
-  the full planning flow before it commits to specialist delegation.
+- `blueprint_orchestrator` must infer the planning mode from imported issue/PR
+  content, project trajectory, active checklist state, recent commits, labels,
+  comments, and known risk before it commits to specialist delegation.
+- Ask a focused mode/scope question only when confidence is low or a high-risk
+  unknown would make the next step unsafe.
 - Use `req-analyst` when imported issue or PR content is sparse or ambiguous.
 - Use `tech-analyst` for dependency, code-path, and sequencing analysis.
 - Use `scenario-analyst` when imported acceptance or validation coverage is
@@ -72,7 +75,8 @@ gh repo view --json name,owner,url 2>/dev/null || echo "NO_GITHUB_REPO"
 Before clarification or delegation:
 
 - Update the condensed shared brief with the imported source, current scope,
-  constraints, non-goals, references, and lessons learned.
+  inferred intent, confidence, project trajectory, active vectors, constraints,
+  non-goals, references, and lessons learned.
 - Reuse that shared brief for every specialist delegation rather than
   restating the full imported issue history each time.
 
@@ -111,9 +115,16 @@ gh issue view [NUMBER] --json number,title,body,labels,assignees,milestone,comme
 >
 > Reply `1`, `2`, or `3`."
 
-After a `Proceed` response, ask:
+After a `Proceed` response, state the inferred mode when confidence is medium or
+high:
 
-> "Do you want a quick-fix pass or the full planning flow?"
+> "I am treating this as a [quick-fix / standard / full-planning] import because
+> [one concise reason from the imported issue and project trajectory]."
+
+If confidence is low, ask one focused question instead:
+
+> "I can take this in more than one direction because [specific ambiguity].
+> Should I treat this as [recommended mode/scope] or [alternate mode/scope]?"
 
 ## Step 6: Clarification Interview
 
@@ -164,7 +175,9 @@ gh issue edit [EPIC] --body "[updated body]"
 
 ## Step 11: Update Implementation Checklist
 
-Add to `features/00-IMPLEMENTATION-CHECKLIST.md`:
+Add to `[CHECKLIST_PATH]` discovered from the current repo. If no project
+checklist convention exists, use `features/00-IMPLEMENTATION-CHECKLIST.md` as
+the default fallback:
 
 ```markdown
 ## Sprint [N]: [Feature Name]
@@ -206,7 +219,7 @@ _Planned via /plan-github on [DATE]_"
 | #[T1] | Task | [Task 1] |
 
 ### Checklist Updated
-- `features/00-IMPLEMENTATION-CHECKLIST.md`
+- `[CHECKLIST_PATH]`
 
 ### Next Steps
 /start-session feature/[name]

@@ -9,7 +9,7 @@ When you ask the agent to commit, these hooks automatically:
 - **Lint** - Runs linting on staged files
 - **Build** - Builds the project  
 - **Code Review** - Reviews changes using AI model
-- **Push** - Pushes to `main` after successful commit
+- **Push** - Pushes the current branch/upstream after successful commit
 
 ### 2. Agent-Aware Hooks (NEW)
 These hooks trigger **during** agent coding sessions, not just at commit time:
@@ -66,9 +66,10 @@ cp settings.json settings.json
 cp settings-agent-aware.json settings.json
 ```
 
-### 3. Available Commands (with agent-aware hooks)
+### 3. Hook command aliases (with agent-aware hooks)
 
-After installing agent-aware hooks, these commands become available:
+After installing agent-aware hooks, these settings-backed aliases become
+available when the harness supports hook command aliases:
 
 ```bash
 /sanity-check     # Verify app loads without errors
@@ -122,7 +123,7 @@ Or temporarily disable hooks in settings:
 | `settings.json` | Commit-only hooks configuration |
 | `settings-agent-aware.json` | Full agent-aware hooks configuration |
 | `pre-commit-workflow.sh` | Runs lint, build, and code review before commit |
-| `post-commit-push.sh` | Pushes to main after successful commit |
+| `post-commit-push.sh` | Pushes the current branch/upstream after successful commit |
 | `post-edit-lint.sh` | Incremental lint after file edits |
 | `sanity-check.sh` | Verify app loads without errors |
 | `code-review-checkpoint.sh` | Second agent review of changes |
@@ -146,6 +147,6 @@ Ensure your custom model is configured in the active harness:
 echo "Check harness model configuration"
 ```
 
-### Push to main fails
+### Push fails
 - Ensure you have push access to the repository
 - Check if branch protection rules allow direct pushes
