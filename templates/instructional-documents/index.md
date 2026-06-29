@@ -1,6 +1,6 @@
 # Instructional Documents Index
 
-Reference guides, workflows, and technical specifications for developers.
+Reference guides, workflows, and technical specifications for developers. For `DESIGN.md` authoring, start with [`../DESIGN.template.md`](../DESIGN.template.md) and validate against `../../design-standard-v01/docs/spec.md`.
 
 ## Developer Guides
 
@@ -11,6 +11,7 @@ Reference guides, workflows, and technical specifications for developers.
 ## Technical Implementation
 
 - **[Frontend-Technical-Functional-Requirements-Document-TFD.md](./Frontend-Technical-Functional-Requirements-Document-TFD.md)** - TFD template and standards
+- **[../DESIGN.template.md](../DESIGN.template.md)** - Starter template for authoring spec-compliant `DESIGN.md` files
 - **[architecture.md](./architecture.md)** - Core architecture sidecar model
 - **[tailwind.md](./tailwind.md)** - Tailwind CSS configuration guide
 - **[ux_design_standards.md](./ux_design_standards.md)** - shadcn/ui design system guidelines
