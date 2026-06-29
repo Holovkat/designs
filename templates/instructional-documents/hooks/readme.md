@@ -116,6 +116,16 @@ Or temporarily disable hooks in settings:
 }
 ```
 
+## OKF Knowledge Capture Hook
+
+The OKF system provides a separate post-commit hook (`templates/okf/post-commit.sh`) that captures commit metadata into a `knowledge/inbox/` directory for later curation. This is installed by `templates/okf/install-okf.sh` or by `install-session-workflows.sh --with-okf`.
+
+| Hook | Trigger | Purpose |
+|------|---------|---------|
+| `post-commit.sh` (OKF) | After git commit | Write commit metadata to `knowledge/inbox/` for OKF curation |
+
+The OKF hook uses `.githooks/` with local `core.hooksPath` and is independent of the commit hooks above. Both can coexist in the same project.
+
 ## Files
 
 | File | Purpose |

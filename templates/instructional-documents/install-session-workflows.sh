@@ -16,6 +16,7 @@
 #   --hooks-only       Only install hooks, skip commands + scripts/skills/worktrees
 #   --no-settings      Skip copying settings.json
 #   --with-templates   Also install design templates
+#   --with-okf         Also install OKF knowledge bundle (hooks, viewer, templates)
 #   --dry-run          Show what would be copied without copying
 #   --help             Show this help message
 #
@@ -88,6 +89,7 @@ INSTALL_COMMANDS=true
 INSTALL_HOOKS=true
 INSTALL_SETTINGS=true
 INSTALL_TEMPLATES=false  # Default OFF - use /install-workflows for full install with templates
+INSTALL_OKF=false        # Default OFF - use --with-okf to install OKF knowledge bundle
 DRY_RUN=false
 
 # Parse arguments
@@ -115,6 +117,10 @@ while [[ $# -gt 0 ]]; do
             INSTALL_TEMPLATES=true
             shift
             ;;
+        --with-okf)
+            INSTALL_OKF=true
+            shift
+            ;;
         --dry-run)
             DRY_RUN=true
             shift
@@ -129,6 +135,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --hooks-only       Only install hooks, skip commands/scripts/skills/worktrees and templates"
             echo "  --no-settings      Skip copying settings.json"
             echo "  --with-templates   Include design templates (default: off)"
+            echo "  --with-okf         Install OKF knowledge bundle (default: off)"
             echo "  --dry-run          Show what would be copied without copying"
             echo "  --help             Show this help message"
             echo ""
@@ -453,6 +460,24 @@ Items moved from sprints for future review, planning, and implementation.
 *Last Updated: $(date +%B\ %Y)*
 EOF
         echo -e "  Created: ${GREEN}features/BACKLOG.md${NC}"
+        echo ""
+    fi
+fi
+
+# Install OKF knowledge bundle
+if $INSTALL_OKF; then
+    OKF_INSTALLER="$TEMPLATE_DOCS/../okf/install-okf.sh"
+    if [[ -f "$OKF_INSTALLER" ]]; then
+        echo -e "${YELLOW}Installing OKF knowledge bundle...${NC}"
+        if $DRY_RUN; then
+            echo -e "  Would run: ${GREEN}$OKF_INSTALLER $PROJECT_DIR${NC}"
+        else
+            bash "$OKF_INSTALLER" "$PROJECT_DIR"
+        fi
+        echo ""
+    else
+        echo -e "${YELLOW}OKF installer not found at $OKF_INSTALLER${NC}"
+        echo -e "  Install manually: bash <designs>/templates/okf/install-okf.sh ."
         echo ""
     fi
 fi

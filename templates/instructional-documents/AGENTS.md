@@ -77,6 +77,10 @@ git checkout docs/update-related-templates && git rebase main && git push --forc
 - GitHub workflow: `github-workflow.md`
 - Release assessment command: `commands/release-assess.md`
 - Release vector script: `scripts/release-vector-assess.sh`
+- OKF skill: `skills/okf/SKILL.md`
+- OKF installer: `../okf/install-okf.sh`
+- OKF deployment runbook: `../okf/DEPLOYMENT-RUNBOOK.md`
+- OKF post-commit hook: `../okf/post-commit.sh`
 - Release skill: `skills/release-assess/SKILL.md`
 - Planning/builder agent contracts: `codex-global-planning-agents.md`, `codex-global-builder-agents.md`
 - TFD template: `Frontend-Technical-Functional-Requirements-Document-TFD.md`

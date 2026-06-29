@@ -17,6 +17,8 @@ This repository is documentation-first. The README is the GitHub index. The deta
 | [Functional design templates](templates/functional-design/) | Planning and implementation checklist templates. |
 | [Instructional documents](templates/instructional-documents/) | GitHub, deployment, architecture, auth, payment, and workflow references. |
 | [UI/UX guidelines](templates/ui-ux-guidelines/) | Design-token and interface-pattern references. |
+| [OKF system](templates/okf/) | Open Knowledge Format standard, viewer, installer, post-commit hook, and deployment runbook. Install with `install-session-workflows.sh --with-okf`. |
+| [OKF knowledge bundle](knowledge/) | Self-documenting OKF knowledge base (48 concepts) covering the OKF standard, viewer, deployment process, and designs project content. View in any browser with `knowledge/viz.html`. |
 
 ## Planning Decomposition
 
