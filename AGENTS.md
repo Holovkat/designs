@@ -7,7 +7,7 @@ Documentation-first repository containing reusable project-design templates, age
 | Area | Path | Description |
 |------|------|-------------|
 | OKF System | `templates/okf/` | OKF standard, viewer, installer, hook, deployment runbook |
-| OKF Knowledge | `knowledge/` | Self-documenting OKF knowledge bundle (48 concepts) |
+| OKF Knowledge | `knowledge/` | Self-documenting OKF knowledge bundle (54 concepts) |
 | Instructional Documents | `templates/instructional-documents/` | Commands, skills, hooks, scripts, workflow references |
 | Functional Design | `templates/functional-design/` | Implementation checklist templates |
 | UI/UX Guidelines | `templates/ui-ux-guidelines/` | Design tokens, component/form/layout patterns |
@@ -17,7 +17,7 @@ Documentation-first repository containing reusable project-design templates, age
 
 ## OKF Deployment
 
-To deploy OKF to another project, read `knowledge/process/deploy-okf.md` and follow `templates/okf/DEPLOYMENT-RUNBOOK.md`. The SKILL.md at `../pi-extensions/skills/okf/SKILL.md` provides agent-facing instructions.
+To deploy OKF to another project, read `knowledge/process/deploy-okf.md` and follow `templates/okf/DEPLOYMENT-RUNBOOK.md`. The SKILL.md at `templates/instructional-documents/skills/okf/SKILL.md` (canonical source, distributed via agent-skill-distro to CLI skill roots) provides agent-facing instructions.
 
 ## OKF Knowledge Bundle
 

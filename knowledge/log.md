@@ -3,6 +3,12 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-07-05T13:15:00Z - AGENTS.md Alignment Patches Applied
+
+- Applied 2 AGENTS.md alignment proposals from the curation audit (operator-approved):
+  1. Concept count: 48 -> 54 (curation added 6 new concepts)
+  2. OKF skill path: `../pi-extensions/skills/okf/SKILL.md` -> `templates/instructional-documents/skills/okf/SKILL.md` (canonical source, distributed via agent-skill-distro)
+
 ## 2026-07-05T13:00:00Z - Curation Cycle: Skill Canonicalisation, OKF-First Protocol, Curation Audit, Hook Contradiction Resolution
 
 - **Processed inbox:** 2 items moved to `inbox/processed/`
