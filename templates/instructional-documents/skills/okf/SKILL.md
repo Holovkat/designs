@@ -1,3 +1,13 @@
+---
+name: okf
+description: >
+  Open Knowledge Format (OKF) agent onboarding, inbox writing, curation, and deployment guidance.
+  Use when working on a project that has a knowledge/ OKF bundle, when initializing one, when
+  curating inbox items into concepts, or when deploying OKF to a new project. Triggers on OKF,
+  knowledge bundle, knowledge base, session synthesis, inbox curation, curate knowledge, or
+  deploy OKF.
+---
+
 # OKF — Open Knowledge Format
 
 Use this skill when working on a project that has a `knowledge/` OKF bundle, when initializing one, or when deploying OKF to a new project.
@@ -6,24 +16,34 @@ Use this skill when working on a project that has a `knowledge/` OKF bundle, whe
 
 OKF is a convention for maintaining project knowledge as markdown files with YAML frontmatter, stored in git alongside code. Git is canonical. Agents read the bundle before starting work and write session syntheses to an inbox after completing work.
 
+## Locating the OKF Source Repo
+
+OKF is distributed from the `designs` repo. Resolve `<designs>` in this order:
+
+1. `$DESIGNS_REPO` if set
+2. `~/workspace/designs` if it exists
+3. Ask the user for the designs repo location
+
+All `<designs>/...` paths below use that root.
+
 ## OKF System Knowledge
 
-The OKF system's own knowledge base lives at `designs/knowledge/`. It contains concepts documenting the OKF standard, viewer architecture, hook system, installer design, deployment process, seeding strategy, AGENTS.md migration pattern, curation workflow, and schema diagram creation. Any agent deploying or maintaining OKF should read these concepts first.
+The OKF system's own knowledge base lives at `<designs>/knowledge/`. It contains concepts documenting the OKF standard, viewer architecture, hook system, installer design, deployment process, seeding strategy, AGENTS.md migration pattern, curation workflow, and schema diagram creation. Any agent deploying or maintaining OKF should read these concepts first.
 
 Key concepts for deployment:
-- `designs/knowledge/process/deploy-okf.md` — 8-phase deployment workflow overview
-- `designs/knowledge/process/seed-from-existing-docs.md` — How to seed from existing project docs
-- `designs/knowledge/process/process-github-epics.md` — Processing closed GitHub epics
-- `designs/knowledge/process/create-schema-diagrams.md` — Mermaid ER diagram creation
-- `designs/knowledge/process/migrate-agents-md.md` — AGENTS.md migration pattern
-- `designs/knowledge/process/curation-pass.md` — Full curation workflow
-- `designs/knowledge/process/verify-deployment.md` — Deployment verification checklist
+- `<designs>/knowledge/process/deploy-okf.md` — 8-phase deployment workflow overview
+- `<designs>/knowledge/process/seed-from-existing-docs.md` — How to seed from existing project docs
+- `<designs>/knowledge/process/process-github-epics.md` — Processing closed GitHub epics
+- `<designs>/knowledge/process/create-schema-diagrams.md` — Mermaid ER diagram creation
+- `<designs>/knowledge/process/migrate-agents-md.md` — AGENTS.md migration pattern
+- `<designs>/knowledge/process/curation-pass.md` — Full curation workflow
+- `<designs>/knowledge/process/verify-deployment.md` — Deployment verification checklist
 
-The full step-by-step deployment runbook is at `designs/templates/okf/DEPLOYMENT-RUNBOOK.md`.
+The full step-by-step deployment runbook is at `<designs>/templates/okf/DEPLOYMENT-RUNBOOK.md`.
 
 ## Deploying OKF to a New Project
 
-When asked to deploy OKF to a project, follow `designs/templates/okf/DEPLOYMENT-RUNBOOK.md` in order:
+When asked to deploy OKF to a project, follow `<designs>/templates/okf/DEPLOYMENT-RUNBOOK.md` in order:
 
 1. **Mechanical Install** — Run `install-okf.sh` to create the knowledge directory structure, viewer, hook, and scripts.
 2. **Seed From Existing Docs** — Read AGENTS.md, docs/, docs/design/, docs/agents/ and create 40-80 concepts summarising each significant topic. Use the `resource` field to link back to source docs.

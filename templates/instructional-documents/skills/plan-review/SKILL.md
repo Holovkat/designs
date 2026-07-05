@@ -1,30 +1,89 @@
 ---
 name: plan-review
-description: Review planning artifacts against the Q&A/intake record before build approval.
+description: >
+  Review planning artifacts against the Q&A/intake record before build approval. Use as a
+  read-only blocking gate before implementation starts. Triggers on plan review, review the plan,
+  check the plan, planning coverage review, or build approval gate.
 ---
 
-Use this skill when a plan must be checked before implementation starts.
+# Plan Review
 
-## Inputs
+A read-only gate that compares the planning output against the original
+request, Q&A session, imported issue, or discovery notes before implementation
+starts.
 
-- Original request, Q&A notes, imported issue, or discovery record
-- Epic, phase / sprint, and task issue drafts
+**THIS IS A BLOCKING GATE** - Do not start build work until the plan is ranked
+as approved or the user explicitly accepts a documented exception.
+
+## Required Inputs
+
+- Original user request, Q&A transcript, imported issue, or discovery notes
+- Epic or parent issue draft
+- Phase / sprint issue draft
+- Task issue drafts
 - Local GitHub issue state, if present
-- Assumptions, non-goals, risks, dependencies, and evidence gates
+- Open decisions, assumptions, non-goals, and risks
 
-## Process
+If any input is missing, mark the review `BLOCKED` and state the exact missing
+artifact.
 
-1. Extract accepted requirements and decisions from the Q&A/intake record.
-2. Map each item to the planning artifacts.
-3. Check for missing scope, weak acceptance criteria, unclear ownership,
-   missing evidence gates, and hidden prerequisites.
-4. Rank the plan:
-   - `A - Approved`
-   - `B - Conditional`
-   - `C - Incomplete`
-   - `D - Replan`
-5. Return the rank, gap list, and exact approval question if a decision is
-   needed.
+## Review Checklist
 
-Do not start implementation from this skill. A failed or conditional rank goes
-back to planning or owner approval.
+Compare the plan against the Q&A/intake record:
+
+| Area | What to verify |
+| --- | --- |
+| Scope | Every accepted outcome from the Q&A appears in the plan. |
+| Non-goals | Excluded work is named so builders do not infer it later. |
+| Acceptance criteria | Each task has observable completion criteria. |
+| Evidence | Required tests, screenshots, commands, data checks, or approvals are named. |
+| Dependencies | Required credentials, environments, data, APIs, or upstream work are explicit. |
+| Ownership | Each task has a clear file/module/workflow boundary. |
+| Risks | Known risks and line-stop conditions are visible. |
+| UAT | User-facing scenarios can be derived from the plan. |
+
+## Ranking
+
+Return one rank:
+
+| Rank | Meaning | Decision |
+| --- | --- | --- |
+| `A - Approved` | Plan fully reflects the Q&A/intake record and can be built. | Build may start after owner approval. |
+| `B - Conditional` | Minor gaps exist, but they are documented and can be accepted by the owner. | Ask for explicit approval or patch the plan. |
+| `C - Incomplete` | Missing requirements, unclear acceptance criteria, or weak evidence gates. | Return to planning. |
+| `D - Replan` | Scope mismatch or hidden prerequisite invalidates the plan. | Stop and rerun the planning command. |
+
+Only `A` allows build without further discussion. `B` requires a named owner
+waiver or an immediate plan patch.
+
+## Output Format
+
+```markdown
+# Plan Review
+
+**Source**: [request / Q&A / issue refs]
+**Plan artifacts**: [epic, sprint, task refs]
+**Rank**: A/B/C/D
+**Decision**: Approved / Conditional approval needed / Return to planning / Replan
+
+## Coverage Matrix
+
+| Intake item | Planned artifact | Status | Evidence |
+| --- | --- | --- | --- |
+| [requirement] | [issue/task ref] | Pass/Partial/Fail | [evidence] |
+
+## Gaps
+
+- [Gap, impact, recommended fix]
+
+## Approval Question
+
+[Only if rank B or C: exact decision needed]
+```
+
+## Rules
+
+- Do not start implementation from this skill. A failed or conditional rank
+  goes back to planning or owner approval.
+- Gather the intake record and planning artifacts, compare them item by item,
+  assign a rank, and return the decision before any build work starts.

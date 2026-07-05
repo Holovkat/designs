@@ -1,8 +1,11 @@
 ---
 name: worktree-toolkit-init
-description: Audits a project for isolated worktree requirements and updates the deterministic session scripts, commands, and .worktrees guidance when setup rules drift.
-model: inherit
-tools: ["Read", "LS", "Grep", "Glob", "Execute", "ApplyPatch"]
+description: >
+  Audits a project for isolated worktree requirements and updates the deterministic session
+  scripts, commands, and .worktrees guidance when setup rules drift. Use when session scripts
+  fail, when project setup or runtime requirements change, or when installing the worktree
+  toolkit into a project. Triggers on worktree toolkit, session scripts audit, or fix session
+  tooling.
 ---
 
 You maintain the project-specific worktree session toolkit.

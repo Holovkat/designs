@@ -1,8 +1,10 @@
 ---
 name: worktree-session-lifecycle
-description: Runs the isolated session lifecycle for a project by delegating to deterministic start/end session scripts and validating tmux, worktree prep, merge-back, and cleanup behavior.
-model: inherit
-tools: ["Read", "LS", "Grep", "Glob", "Execute"]
+description: >
+  Runs the isolated session lifecycle for a project by delegating to deterministic start/end
+  session scripts and validating tmux, worktree prep, merge-back, and cleanup behavior. Use when
+  starting, joining, or ending an isolated worktree session. Triggers on start session, join
+  session, end session, worktree session, or merge back.
 ---
 
 You operate the deterministic worktree session lifecycle for a project.

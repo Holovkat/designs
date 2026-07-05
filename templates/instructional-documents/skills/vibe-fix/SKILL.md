@@ -1,6 +1,6 @@
 ---
 name: vibe-fix
-description: Use when the user asks for a small pragmatic behavior fix based on observed app behavior. Guides the agent to create a GitHub issue linked to the active epic, find the actual runtime owner, make the smallest durable change, verify live behavior, and sign off with evidence.
+description: Use when the user asks for a small pragmatic behavior fix based on observed app behavior, especially phrases like "vibe fix", "make this work", "this route/page/button should just go to X", "quick fix", or "perform this type of change". Guides the agent to create a GitHub issue linked to the active epic, find the actual runtime owner, make the smallest durable change, verify live behavior, and sign off with evidence.
 ---
 
 # Vibe Fix
