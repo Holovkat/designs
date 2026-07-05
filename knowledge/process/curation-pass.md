@@ -1,16 +1,16 @@
 ---
 type: Process
 title: OKF Curation Pass
-description: Full curation workflow for processing inbox items and maintaining concept quality
-resource: ./pi-extensions/.factory/droids/okf-curator.md
-tags: [okf, curation, inbox, maintenance, cross-links]
-timestamp: 2026-06-29T14:30:00Z
+description: Full curation workflow for processing inbox items, auditing knowledge quality, and maintaining AGENTS.md alignment
+resource: ./templates/okf/agents/okf-curator.md
+tags: [okf, curation, inbox, maintenance, cross-links, audit]
+timestamp: 2026-07-05T12:00:00Z
 status: active
 ---
 
 # OKF Curation Pass
 
-Curation transforms inbox items into permanent concept files and maintains the overall quality of the knowledge base. It can be triggered by the `/okf-curate` command, by dispatching the okf-curator droid, or as Phase 6 of the deployment workflow.
+Curation transforms inbox items into permanent concept files and maintains the overall quality of the knowledge base. It can be triggered by the `/okf-curate` command, by dispatching the okf-curator agent (canonical contract at `templates/okf/agents/okf-curator.md`, installed to `.factory/droids/` and `.claude/agents/` by the OKF installer), or as Phase 6 of the deployment workflow. The post-commit hook nudges when `knowledge/inbox/` holds 5 or more unprocessed items.
 
 ## Curation Steps
 
