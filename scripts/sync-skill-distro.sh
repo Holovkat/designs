@@ -107,6 +107,14 @@ elif [[ -d "$PI_EXT/skills" ]]; then
     sync_dir "$SOURCE/skills/okf" "$PI_EXT/skills/okf"
 fi
 
+# 6. OKF curator agent full copies per harness. Canonical source is
+#    templates/okf/agents/okf-curator.md; .factory/droids in pi-extensions is
+#    not rsync-managed, so write directly.
+CURATOR="$REPO_ROOT/templates/okf/agents/okf-curator.md"
+if [[ -d "$PI_EXT/.factory/droids" ]]; then
+    sync_file "$CURATOR" "$PI_EXT/.factory/droids/okf-curator.md"
+fi
+
 echo ""
 if [[ "$DRIFT" -eq 0 ]]; then
     echo "In sync: no drift detected."

@@ -20,12 +20,16 @@ bash <path-to-designs>/templates/okf/install-okf.sh <project-root>
 This will:
 - Create `knowledge/` with all subdirectories and template index files
 - Copy `viewer.html` and `generate-viz.js` into `knowledge/`
+- Copy `okf-query.sh` into `knowledge/` (portable concept search)
+- Install the `okf-curator` agent into `.factory/droids/` (and `.claude/agents/` when present)
 - Install `post-commit.sh` into `.githooks/post-commit` and set local `core.hooksPath`
 - Create `knowledge/inbox/` and `knowledge/inbox/processed/`
 
 Verify the install:
 - `knowledge/index.md` exists with the standard concept type table
 - `knowledge/log.md` exists
+- `knowledge/okf-query.sh` exists and is executable
+- `.factory/droids/okf-curator.md` exists
 - `.githooks/post-commit` exists and is executable
 - `git config core.hooksPath` returns `.githooks`
 
@@ -182,12 +186,14 @@ After seeding and epic processing, run a curation pass to align everything:
 
 1. Read all concepts across all directories.
 2. Add cross-links: where one concept references another, ensure the `resource` or body text links to the related concept using relative markdown links (e.g., `[Related](../architecture/spacetimedb-v2-reference.md)`).
-3. Check for duplicates: merge concepts that cover the same topic.
-4. Check for missing concepts: if a topic is referenced but has no concept, create one.
-5. Move any superseded concepts to `deprecation/` with `supersedes` links.
-6. Verify all `index.md` files have accurate concept listings and counts.
-7. Update `log.md` with the curation entry.
-8. Ensure the State concept reflects the current project status after all seeding.
+3. Check for duplicates and redundancy: merge concepts that cover the same topic or overlap in scope, moving merged-away files to `deprecation/` with `supersedes` links.
+4. Check for contradictions: concept vs concept, concept vs code reality, concept vs AGENTS.md. Resolve in favor of verified current reality; report AGENTS.md fixes as proposals.
+5. Check for ambiguous references: every `resource` field and cross-link must resolve; sharpen vague ones.
+6. Check for missing concepts: if a topic is referenced but has no concept, create one.
+7. Move any superseded concepts to `deprecation/` with `supersedes` links.
+8. Verify all `index.md` files have accurate concept listings and counts.
+9. Update `log.md` with the curation entry.
+10. Ensure the State concept reflects the current project status after all seeding.
 
 ## Phase 7: Generate Viewer
 
@@ -247,9 +253,8 @@ Verify:
 ## Post-Deployment
 
 After deployment, the project is ready for ongoing OKF usage:
-- Agents read `knowledge/` concepts before starting work
-- Agents write session syntheses to `knowledge/inbox/` after completing work
-- The post-commit hook captures commit metadata automatically
-- `/okf-curate` processes inbox items into permanent concepts
-- The curation droid can be dispatched for periodic curation passes
+- Agents read `knowledge/` concepts before starting work and check `decisions/` and `deprecation/` before investigating or proposing plans (OKF-first protocol)
+- Agents write session syntheses to `knowledge/inbox/` before committing, including approaches rejected and why
+- The post-commit hook refreshes the viewer manifest and nudges when the inbox reaches 5+ unprocessed items
+- Curation runs via the `okf-curator` agent or `/okf-curate`: it processes inbox items, then audits for redundancy, contradictions, ambiguous references, and AGENTS.md drift (AGENTS.md patches are proposed, applied only on approval)
 - `viz.html` can be regenerated after any knowledge changes

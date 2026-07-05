@@ -84,6 +84,33 @@ When starting work on a project with an OKF bundle:
 4. Read concept files relevant to the work area (use titles and tags to find them).
 5. Do not read everything. Use the index files for progressive disclosure.
 
+## OKF-First Protocol
+
+The knowledge bundle is the first source of truth. Consult it before
+investigating the codebase or proposing a course of action:
+
+1. **Before investigating**, query the bundle for the topic. Use
+   `knowledge/okf-query.sh <term>` when installed, or grep frontmatter and
+   titles directly:
+
+   ```bash
+   grep -ril "<term>" knowledge/ --include="*.md" | grep -v index.md
+   ```
+
+2. **Before proposing a plan**, read matching concepts in `decisions/` and
+   `deprecation/`. If a path was already taken and rejected, do not re-derive
+   it: cite the concept, state whether its "When This Might Be Relevant Again"
+   conditions apply, and only then decide.
+3. **Cite what you reuse.** When a concept answers the question, reference it
+   instead of re-investigating the codebase.
+4. **Trust but verify freshness.** If a concept's `timestamp` is old and its
+   `resource` file has newer commits, verify against code before relying on it,
+   and note the staleness in your session synthesis.
+5. **Record rejected paths.** When you evaluate and reject an approach during a
+   session, write the rejection and its reason into your inbox synthesis so
+   curation can turn it into a decision or deprecation lesson. This is how
+   repeat investigations are prevented.
+
 ## Writing Inbox Items
 
 After completing meaningful work, write a session synthesis to `knowledge/inbox/`:
@@ -124,7 +151,13 @@ This is about the product, business logic, and application state, not just code 
 
 ## Curation
 
-Curation transforms inbox items into permanent concept files:
+Curation transforms inbox items into permanent concept files and audits the
+bundle. Run it via the `okf-curator` agent (installed to `.factory/droids/`
+and `.claude/agents/` by the OKF installer), the pi `/okf-curate` command, or
+by following the steps below. The post-commit hook prints a nudge when the
+inbox holds 5 or more unprocessed items.
+
+Steps:
 
 1. Read all unprocessed inbox items.
 2. Read existing concept files in relevant directories.
@@ -138,8 +171,13 @@ Curation transforms inbox items into permanent concept files:
 7. Update existing concepts by merging new information.
 8. Move superseded concepts to `deprecation/` with `supersedes` links.
 9. Move processed inbox items to `inbox/processed/`.
-10. Update all `index.md` files with current listings.
-11. Update `log.md` with a summary of changes.
+10. Audit the bundle: merge redundant concepts, resolve contradictions
+    (concept vs concept, concept vs code, concept vs AGENTS.md), and fix
+    ambiguous or broken `resource` fields and cross-links.
+11. Report AGENTS.md alignment proposals (current text -> proposed text) and
+    offer to apply them; never patch AGENTS.md without approval.
+12. Update all `index.md` files with current listings.
+13. Update `log.md` with a summary of changes.
 
 ## Concept Frontmatter
 

@@ -6,7 +6,7 @@ The Open Knowledge Format (OKF) defines a convention for maintaining project kno
 
 1. **Git is canonical.** All knowledge lives in markdown files committed to the project repo. No external system is the source of truth.
 2. **Agents read first.** Before starting work, agents read the OKF bundle to understand current state, architecture, and prior decisions.
-3. **Two-phase capture.** Commit-time writes lightweight session syntheses to an inbox. A curation pass later upserts permanent concept files with full context.
+3. **Two-phase capture.** Agents write lightweight session syntheses to an inbox before committing. A curation pass later upserts permanent concept files with full context.
 4. **Progressive disclosure.** Index files at each level provide summaries. Agents read the index, then drill into specific concepts only when relevant.
 5. **Deprecation is explicit.** When a concept is superseded, the old file is moved to `deprecation/` with a `supersedes` link, not deleted.
 
@@ -294,10 +294,19 @@ If no `curation-prompt.md` exists, the curator uses default behavior (process al
 18. Update concepts with new information, preserving prior context.
 19. If a concept's approach has been replaced in the codebase but the concept still says `status: active`, either update it or move it to deprecation with lessons.
 
-### Phase 6: Finalize
+### Phase 6: Audit
 
-20. Update all `index.md` files with current listings.
-21. Update `knowledge/log.md` with a summary of all changes made in this curation cycle, including gaps filled and concepts re-enriched.
+Run this phase on every curation pass, even when the inbox is empty.
+
+20. **Redundancy control.** Identify concepts that overlap in scope without being literal duplicates. Merge them into one canonical file, preserve all unique reasoning, and move the merged-away file to `deprecation/` with a `supersedes` link. Where a concept duplicates a legacy doc's content, cut the body back to summary plus classification and let `resource` carry the detail.
+21. **Contradiction detection.** Check concepts against each other, against code reality, and against `AGENTS.md`. Resolve each contradiction in favor of verified current reality; record claims that used to be true in `deprecation/` (they are lessons), correct claims that were simply wrong in place.
+22. **Ambiguous reference resolution.** Verify every `resource` field and cross-link resolves. Sharpen vague references (directory-level `resource` when a specific file exists, undefined terms, linkless "see that doc" phrasing) so an agent can follow them without guessing.
+23. **AGENTS.md alignment.** Compare `AGENTS.md` (including nested copies) against the knowledge bundle and tooling. Report each mismatch as a precise proposed edit (current text -> proposed text, with reason). Do not patch AGENTS.md directly; apply the proposals only on operator approval and log the change.
+
+### Phase 7: Finalize
+
+24. Update all `index.md` files with current listings.
+25. Update `knowledge/log.md` with a summary of all changes made in this curation cycle, including gaps filled, concepts re-enriched, and audit findings.
 
 ## Legacy Alignment Mode
 
@@ -362,7 +371,8 @@ When an agent starts work on a project with an OKF bundle:
 2. Read `knowledge/state/index.md` and relevant state files for current status.
 3. Read `knowledge/deprecation/index.md` to understand what has been superseded.
 4. Read concept files relevant to the work area (identified by tags and titles).
-5. After completing work, the commit-time hook captures a session synthesis to `knowledge/inbox/`.
+5. Before investigating or proposing a plan, check `decisions/` and `deprecation/` for paths already taken or rejected (use `knowledge/okf-query.sh` when installed). Cite concepts instead of re-deriving answers.
+6. After completing work, write a session synthesis to `knowledge/inbox/` before committing, including approaches rejected and why. The post-commit hook refreshes the viewer manifest and nudges when the inbox reaches the curation threshold (default 5 items).
 
 ## Versioning
 

@@ -33,6 +33,15 @@ Before starting any work on this project:
 4. Read concept files relevant to your work area (use tags and titles to find them).
 5. Do not read everything. Use index files for progressive disclosure.
 
+### OKF-First Protocol
+
+The knowledge bundle is the first source of truth for this project:
+
+1. Before investigating the codebase, query the bundle for the topic (grep `knowledge/` by title, tags, and body).
+2. Before proposing a plan, check `decisions/` and `deprecation/` for paths already taken or rejected. Cite the concept instead of re-deriving the answer.
+3. If a concept looks stale (old timestamp, `resource` file changed since), verify against code before relying on it and note the staleness in your synthesis.
+4. When you evaluate and reject an approach during a session, record the rejection and reason in your inbox synthesis so it becomes a curated lesson.
+
 ### Legacy Documentation
 
 This project has existing documentation in `templates/instructional-documents/`, `templates/functional-design/`, `templates/ui-ux-guidelines/`, `docs/workflow-guide/`, and `design-standard-v01/`. OKF concepts in `knowledge/` reference these docs via the `resource` field in frontmatter. The existing docs remain as detailed references; OKF concepts provide a typed, searchable, curated index over them.
@@ -45,19 +54,22 @@ Do not move or duplicate existing docs into `knowledge/`. New knowledge that doe
 
 When you finish a meaningful work session:
 
-1. Write a session synthesis to `knowledge/inbox/` using the OKF inbox format.
-2. Include: what was done, decisions made, what was deprecated, lessons learned, current state.
+1. Write a session synthesis to `knowledge/inbox/` using the OKF inbox format, before committing.
+2. Include: what was done, decisions made, approaches rejected and why, what was deprecated, lessons learned, current state.
 3. This is about the product, business logic, and application state, not just code diffs.
-4. The post-commit hook will also write lightweight commit metadata to the inbox.
+4. The post-commit hook does not write inbox items for you; it refreshes the viewer manifest and nudges when the inbox needs curation.
 
 ### Curation
 
-The curation agent processes inbox items into permanent concept files:
+The curation agent (`okf-curator`, canonical contract at `templates/okf/agents/okf-curator.md`) processes inbox items into permanent concept files:
 
 1. Reads all unprocessed inbox items plus existing concepts and codebase context.
 2. Creates or updates concept files in the appropriate directory.
 3. Moves superseded concepts to `knowledge/deprecation/`.
-4. Updates all `index.md` files and `knowledge/log.md`.
+4. Audits the bundle: merges redundant concepts, resolves contradictions, fixes ambiguous references, and reports AGENTS.md alignment proposals (applied only on approval).
+5. Updates all `index.md` files and `knowledge/log.md`.
+
+Run curation when the post-commit hook reports 5 or more unprocessed inbox items, or after any significant epic closes.
 
 ### Concept Types
 

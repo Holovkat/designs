@@ -118,6 +118,27 @@ if [ -f "$VIEWER_SRC" ]; then
 	echo "  Run 'node knowledge/generate-viz.js knowledge/' to generate a self-contained viz.html"
 fi
 
+# 1c. Install the query helper
+QUERY_SRC="${SCRIPT_DIR}/okf-query.sh"
+if [ -f "$QUERY_SRC" ]; then
+	cp "$QUERY_SRC" "${KNOWLEDGE_DIR}/okf-query.sh"
+	chmod +x "${KNOWLEDGE_DIR}/okf-query.sh"
+	echo "Installed knowledge/okf-query.sh (portable concept search)"
+fi
+
+# 1d. Install the curator agent for each harness present (or create the default Factory location)
+CURATOR_SRC="${SCRIPT_DIR}/agents/okf-curator.md"
+if [ -f "$CURATOR_SRC" ]; then
+	mkdir -p "${TARGET}/.factory/droids"
+	cp "$CURATOR_SRC" "${TARGET}/.factory/droids/okf-curator.md"
+	echo "Installed okf-curator droid to .factory/droids/"
+	if [ -d "${TARGET}/.claude" ]; then
+		mkdir -p "${TARGET}/.claude/agents"
+		cp "$CURATOR_SRC" "${TARGET}/.claude/agents/okf-curator.md"
+		echo "Installed okf-curator agent to .claude/agents/"
+	fi
+fi
+
 # 1b. Detect legacy documentation and advise
 DOCS_DIR="${TARGET}/docs"
 if [ -d "$DOCS_DIR" ]; then
@@ -187,5 +208,6 @@ echo "Next steps:"
 echo "  1. Commit the knowledge/ directory to git"
 echo "  2. Ensure the post-commit hook is active (git config core.hooksPath .githooks)"
 echo "  3. Agents should read knowledge/index.md before starting work"
-echo "  4. Use /okf-capture after sessions to write inbox items"
-echo "  5. Run /okf-curate periodically to process inbox items into concepts"
+echo "  4. Use /okf-capture (or write inbox items directly) after sessions"
+echo "  5. Run curation (okf-curator agent or /okf-curate) when the hook nudges"
+echo "     at 5+ unprocessed inbox items, or after any significant epic closes"

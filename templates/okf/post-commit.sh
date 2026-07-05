@@ -32,4 +32,13 @@ if [ -f "${MANIFEST_SCRIPT}" ] && command -v node >/dev/null 2>&1; then
 	node "${MANIFEST_SCRIPT}" --manifest >/dev/null 2>&1 || true
 fi
 
+# Curation nudge: count unprocessed inbox items and remind when they pile up
+NUDGE_THRESHOLD="${OKF_NUDGE_THRESHOLD:-5}"
+INBOX_COUNT="$(find "${KNOWLEDGE_DIR}/inbox" -maxdepth 1 -name '*.md' ! -name 'index.md' 2>/dev/null | wc -l | tr -d ' ')"
+if [ "${INBOX_COUNT}" -ge "${NUDGE_THRESHOLD}" ]; then
+	echo ""
+	echo "OKF: ${INBOX_COUNT} unprocessed inbox items in knowledge/inbox/."
+	echo "     Run a curation pass: dispatch the okf-curator agent or /okf-curate."
+fi
+
 exit 0

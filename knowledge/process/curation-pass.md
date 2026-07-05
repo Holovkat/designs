@@ -71,6 +71,15 @@ Move any superseded concepts to `deprecation/` with `supersedes` links pointing 
 
 Move processed inbox items to `knowledge/inbox/processed/`.
 
+### 9b. Audit the Bundle
+
+Run on every pass, even with an empty inbox:
+
+- **Redundancy control:** merge concepts that overlap in scope (not just literal duplicates); the merged-away file goes to `deprecation/` with a `supersedes` link.
+- **Contradiction detection:** check concept vs concept, concept vs code reality, and concept vs AGENTS.md. Resolve in favor of verified current reality; formerly-true claims become deprecation lessons.
+- **Ambiguous reference resolution:** every `resource` field and cross-link must resolve; sharpen vague references so agents can follow them without guessing.
+- **AGENTS.md alignment:** report mismatches between AGENTS.md and the knowledge bundle or tooling as precise proposed edits. Apply only on operator approval, then log the change.
+
 ### 10. Update Indexes and Log
 
 - Update all `index.md` files with current listings and accurate counts. See [Index Structure](../domain/index-structure.md).
