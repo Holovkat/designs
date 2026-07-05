@@ -1,10 +1,10 @@
 ---
 type: Architecture
 title: OKF Installer Design
-description: How install-okf.sh deploys the knowledge directory, viewer, hook, and AGENTS.md section
+description: How install-okf.sh deploys the knowledge directory, viewer, query helper, hook, curator droid, and AGENTS.md section
 resource: ./templates/okf/install-okf.sh
 tags: [okf, installer, bash, deployment, setup]
-timestamp: 2026-06-29T14:30:00Z
+timestamp: 2026-07-05T13:00:00Z
 status: active
 ---
 
@@ -28,9 +28,13 @@ If `knowledge/` already exists, the script warns and skips directory creation, p
 
 Template index files are copied from `templates/` if available. The root `index.md` is generated with `sed` substitution for `{{PROJECT_NAME}}` (set to the target directory basename) and `{{DATE}}` (set to the current UTC date). If no templates directory exists, minimal index files are created inline.
 
-## Step 2: Install Viewer and Generator
+## Step 2: Install Viewer, Generator, and Query Helper
 
-`viewer.html` and `generate-viz.js` are copied from the script directory into `knowledge/`. The user is told to run `node knowledge/generate-viz.js knowledge/` to generate the self-contained `viz.html`.
+`viewer.html` and `generate-viz.js` are copied from the script directory into `knowledge/`. The user is told to run `node knowledge/generate-viz.js knowledge/` to generate the self-contained `viz.html`. The `okf-query.sh` portable concept search tool is also copied to `knowledge/okf-query.sh` and made executable. See [OKF Query Helper](./okf-query-helper.md).
+
+## Step 2b: Install Curator Droid
+
+The `okf-curator.md` agent contract is copied to `.factory/droids/` in the target project. If a `.claude/` directory exists, it is also copied to `.claude/agents/`. See [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md).
 
 ## Step 3: Legacy Documentation Detection
 
@@ -62,7 +66,7 @@ See [Migrate AGENTS.md](../process/migrate-agents-md.md) for the full migration 
 
 ## Post-Install Guidance
 
-The script prints next steps: commit the `knowledge/` directory, ensure the post-commit hook is active, agents should read `knowledge/index.md` before work, use `/okf-capture` after sessions, and run `/okf-curate` periodically.
+The script prints next steps: commit the `knowledge/` directory, ensure the post-commit hook is active, agents should read `knowledge/index.md` before work, write session syntheses to `knowledge/inbox/` before committing, and run curation (okf-curator droid) when the hook nudges at 5+ unprocessed inbox items or after any significant epic closes.
 
 ## Relationship to Deployment Runbook
 

@@ -3,6 +3,39 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-07-05T13:00:00Z - Curation Cycle: Skill Canonicalisation, OKF-First Protocol, Curation Audit, Hook Contradiction Resolution
+
+- **Processed inbox:** 2 items moved to `inbox/processed/`
+  - `2026-07-05T11-00-00Z-skill-effectiveness-review-and-canonicalisation.md`
+  - `2026-07-05T12-30-00Z-okf-curation-audit-and-okf-first-protocol.md`
+- **Created:** `decisions/skill-canonicalisation.md` - Designs repo as canonical source for workflow skills; SKILL.md canonical over commands; three-layer distribution
+- **Created:** `decisions/okf-first-protocol.md` - Knowledge bundle is first source of truth; query before investigating, check decisions/deprecation before planning
+- **Created:** `decisions/curation-audit-and-nudge.md` - Phase 6 Audit (redundancy, contradictions, ambiguous refs, AGENTS.md alignment); passive nudge at threshold 5
+- **Created:** `architecture/okf-query-helper.md` - Portable grep-based concept search tool with frontmatter ranking and --decisions scope
+- **Created:** `process/skill-distribution-sync.md` - Three-layer workflow for syncing skills from designs to agent-skill-distro to CLI roots
+- **Created:** `deprecation/index.md` - New deprecation directory index
+- **Deprecated:** `architecture/hook-system.md` -> `deprecation/post-commit-inbox-capture.md` (with full lesson sections)
+  - Issue: Concept described old hook that wrote commit metadata to inbox; hook now only refreshes manifest and nudges
+  - Lesson: Hooks should be minimal; agents are better capture sources; instruction docs drift silently from tooling
+- **Created:** `architecture/hook-system.md` (new) - Describes current manifest-refresh + curation nudge behavior
+- **Updated:** `decisions/post-commit-capture-model.md` - Reflected capture moving from hook to agents; added evolution section and deprecation cross-link
+- **Updated:** `domain/inbox-format.md` - Removed hook as inbox source; agents are sole source; updated frontmatter field descriptions
+- **Updated:** `domain/concept-types.md` - Removed "written by the post-commit hook" from Inbox type description
+- **Updated:** `domain/frontmatter-schema.md` - Updated provenance fields description (no longer "hook-written")
+- **Updated:** `domain/link-resolution.md` - Fixed example link text from "captures commit metadata" to "refreshes the viewer manifest and nudges for curation"
+- **Updated:** `architecture/okf-standard-spec.md` - Updated design principle #2 (OKF-First Protocol), #3 (two-phase capture wording), onboarding step 5
+- **Updated:** `architecture/installer-design.md` - Added query helper and curator droid installation steps; updated description and timestamp
+- **Updated:** `state/current-state.md` - Updated hook description, added query helper, curator contract, OKF-first protocol, skill canonicalisation; updated component table
+- **Updated:** `state/designs-project-state.md` - Updated skills count (6), added sync script, added new decisions to Key Decisions
+- **Updated:** `process/curation-pass.md` - Fixed step 1 (agents, not hook), updated triggering section, added Related Concepts
+- **Updated:** `process/deploy-okf.md` - Updated Phase 1 (query helper, curator), Phase 6 (audit), post-deployment section
+- **Updated:** All `index.md` files with current listings and accurate counts
+- **Audit findings:**
+  - Contradiction resolved: hook-system.md described old metadata-writing hook -> deprecated with lessons, new concept created
+  - Contradiction resolved: 8 concepts referenced old hook behavior -> all updated in place
+  - Ambiguous reference flagged: `architecture/templates-architecture.md` resource `./templates/` is directory-level (acceptable for whole-directory concept)
+  - AGENTS.md alignment proposals: 2 proposed (see curation report), not applied
+
 ## 2026-06-29T14:30:00Z - Seeded Designs Project Content Concepts
 
 - **Created:** `architecture/design-standard-spec.md` - DESIGN.md standard specification, token schema, section order

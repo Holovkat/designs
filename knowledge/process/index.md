@@ -7,7 +7,7 @@
 | [Process GitHub Epics](./process-github-epics.md) | How to convert closed GitHub epics into OKF knowledge entries | [okf, github, epics, issues, gh-cli] | active |
 | [Create Schema Diagrams](./create-schema-diagrams.md) | How to create mermaid ER diagram concepts from database schema sources | [okf, schema, mermaid, er-diagram, database] | active |
 | [Migrate AGENTS.md to OKF](./migrate-agents-md.md) | How to update a project's AGENTS.md to use OKF references | [okf, agents-md, migration, affine, legacy] | active |
-| [OKF Curation Pass](./curation-pass.md) | Full curation workflow for processing inbox items and maintaining concept quality | [okf, curation, inbox, maintenance, cross-links] | active |
+| [OKF Curation Pass](./curation-pass.md) | Full curation workflow for processing inbox items, auditing knowledge quality, and maintaining AGENTS.md alignment | [okf, curation, inbox, maintenance, cross-links, audit] | active |
 | [Verify OKF Deployment](./verify-deployment.md) | Verification checklist for confirming a complete OKF deployment | [okf, verification, deployment, quality-check] | active |
 | [GitHub Workflow Guide](./github-workflow.md) | Graphite-style stacking workflow with squash merge, branch chaining, and force-with-lease rebasing | [designs, github, workflow, graphite, stacking, squash-merge, git] | active |
 | [Deployment Guide](./deployment-guide.md) | Dual-environment deployment with Vercel for production demos and Dokku on Hetzner for UAT testing | [designs, deployment, vercel, dokku, hetzner, docker, ci-cd] | active |
@@ -23,4 +23,5 @@
 | [Kickoff Requirements Spec](./kickoff-requirements.md) | Requirements gathering and technical specification process for creating TFD documents and requirement shards | [designs, kickoff, requirements, tfd, specification, sharding, planning] | active |
 | [Implementation Checklist](./implementation-checklist.md) | Functional design implementation checklist template with phased steps from architecture through deployment | [designs, implementation, checklist, functional-design, sprints, tracking] | active |
 | [Install Session Workflows](./install-session-workflows.md) | Installer script for refreshing commands, hooks, scripts, skills, and worktree guidance into another project | [designs, installer, session, workflows, commands, hooks, skills, scripts] | active |
+| [Skill Distribution Sync](./skill-distribution-sync.md) | Three-layer workflow for syncing canonical workflow skills from designs to agent-skill-distro to installed CLI skill roots | [skills, distribution, sync, agent-skill-distro, cli-roots, canonical, workflow] | active |
 | [Workflow Guide](./workflow-guide.md) | HTML-based operating model for planning, approvals, CI/CD, QA, production approval, and closeout | [designs, workflow, guide, html, operating-model, planning, approvals, ci-cd, qa] | active |

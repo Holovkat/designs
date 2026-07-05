@@ -4,13 +4,13 @@ title: OKF Inbox Format
 description: Session synthesis format for inbox items with frontmatter and body sections
 resource: ./templates/okf/OKF-STANDARD.md
 tags: [okf, inbox, session-synthesis, format, capture]
-timestamp: 2026-06-29T14:30:00Z
+timestamp: 2026-07-05T13:00:00Z
 status: active
 ---
 
 # OKF Inbox Format
 
-Inbox items are session syntheses written at commit time or after work sessions. They use the same frontmatter as permanent concepts but with `type: Inbox`. They serve as staging material for the curation agent.
+Inbox items are session syntheses written by agents before committing. They use the same frontmatter as permanent concepts but with `type: Inbox`. They serve as staging material for the curation agent.
 
 ## Source of Inbox Items
 
@@ -38,12 +38,12 @@ epic_refs: [1495]
 ### Key Fields
 
 - `type`: Always `Inbox` for inbox items.
-- `title`: Descriptive title for the session or commit.
+- `title`: Descriptive title for the session.
 - `description`: One-line summary.
 - `tags`: Lowercase, relevant tags for the work area.
 - `timestamp`: ISO 8601 datetime.
-- `session_id`: UUID of the agent session (for agent-written items).
-- `commit_sha`: Short git SHA (for hook-written items).
+- `session_id`: UUID of the agent session.
+- `commit_sha`: Short git SHA (optional, when the session produced a specific commit).
 - `branch`: Branch name.
 - `issue_refs`: GitHub issue numbers referenced by the work.
 - `epic_refs`: Epic issue numbers.
@@ -79,7 +79,7 @@ The timestamp has colons and periods replaced with dashes, truncated to 19 chara
 
 Examples:
 - `2026-06-29T10-00-00-route-geometry-qa-fixes.md`
-- `2026-06-29T14-22-31-commit` (fallback slug for hook items)
+- `2026-07-05T11-00-00Z-skill-effectiveness-review-and-canonicalisation.md`
 
 ## Lifecycle
 

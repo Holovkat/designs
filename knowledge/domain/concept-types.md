@@ -4,7 +4,7 @@ title: OKF Concept Types
 description: The 8 concept types and when to use each one
 resource: ./templates/okf/OKF-STANDARD.md
 tags: [okf, concepts, types, taxonomy]
-timestamp: 2026-06-29T14:30:00Z
+timestamp: 2026-07-05T13:00:00Z
 status: active
 ---
 
@@ -33,7 +33,7 @@ OKF defines eight concept types, each mapping to a directory in the `knowledge/`
 - **Process vs Domain:** Process describes how workflows operate (sprint flow, deployment steps). Domain describes business logic and rules. If it is about how agents or humans work, use Process. If it is about the business domain, use Domain.
 - **State vs others:** State is a snapshot of the current situation. It changes frequently. Other types are more stable. There is typically one State concept per project, updated during curation passes.
 - **Deprecation:** Used when a concept is superseded. The old file is moved to `deprecation/` with a `supersedes` field pointing to the replacement. Never delete a concept file; always deprecate it.
-- **Inbox:** Temporary staging type. Inbox items are written by the post-commit hook or by agents after sessions. They are processed by the curation agent into permanent concepts and then moved to `inbox/processed/`. See [Inbox Format](./inbox-format.md).
+- **Inbox:** Temporary staging type. Inbox items are written by agents after sessions (before committing). They are processed by the curation agent into permanent concepts and then moved to `inbox/processed/`. See [Inbox Format](./inbox-format.md).
 
 ## Examples
 

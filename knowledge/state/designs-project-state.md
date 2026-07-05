@@ -1,10 +1,10 @@
 ---
 type: State
 title: Designs Project Content State
-description: Current state of the designs project's own content including templates, guides, UI/UX patterns, and infrastructure docs
+description: Current state of the designs project's own content including templates, guides, UI/UX patterns, infrastructure docs, and skill distribution
 resource: ./README.md
-tags: [designs, state, content, templates, guides, ui-ux, infrastructure]
-timestamp: 2026-06-29T14:30:00Z
+tags: [designs, state, content, templates, guides, ui-ux, infrastructure, skills, distribution]
+timestamp: 2026-07-05T13:00:00Z
 status: active
 ---
 
@@ -53,10 +53,10 @@ The designs repository is a documentation-first collection of reusable project-d
 - **codex-global-builder-agents.md** - Builder agent pack contract
 - **convex-self-hosted-quickref.md** - Convex self-hosted quick reference
 - **convex-self-hosted-setup.md** - Full Convex self-hosted infrastructure documentation
-- **commands/** - 18 slash command templates and scripts
-- **skills/** - 5 project-local skills (plan-review, release-assess, vibe-fix, worktree-session-lifecycle, worktree-toolkit-init)
+- **commands/** - 18 slash command templates and scripts (plan-review and release-assess are now thin pointers to their canonical SKILL.md files)
+- **skills/** - 6 project-local skills (okf, plan-review, release-assess, vibe-fix, worktree-session-lifecycle, worktree-toolkit-init). See [Workflow Skill Canonicalisation](../decisions/skill-canonicalisation.md).
 - **hooks/** - 8 git hooks with settings.json files
-- **scripts/** - 9 shell scripts for release vectors and worktree session management
+- **scripts/** - 10 shell scripts for release vectors, worktree session management, and skill distribution sync (`sync-skill-distro.sh`)
 - **worktrees/** - Worktree session guidance with AGENTS.md and README.md
 - **install-session-workflows.sh** - Session workflows installer script
 
@@ -120,7 +120,8 @@ The designs repository is a documentation-first collection of reusable project-d
 | Session Workflows Installer | Complete | `templates/instructional-documents/install-session-workflows.sh` |
 | Functional Design Templates | Complete | `templates/functional-design/` (14 files) |
 | Slash Commands | Complete | `templates/instructional-documents/commands/` (18 files) |
-| Project Skills | Complete | `templates/instructional-documents/skills/` (5 skills) |
+| Project Skills | Complete | `templates/instructional-documents/skills/` (6 skills) |
+| Skill Distribution Sync | Complete | `scripts/sync-skill-distro.sh` |
 | Git Hooks | Complete | `templates/instructional-documents/hooks/` (8 hooks) |
 | Session Scripts | Complete | `templates/instructional-documents/scripts/` (9 scripts) |
 | Codex Planning Agent Pack | In Progress | `~/.codex/agents/` (Sprint 1) |
@@ -130,6 +131,9 @@ The designs repository is a documentation-first collection of reusable project-d
 
 - [Documentation-First Approach](../decisions/documentation-first-approach.md): README is GitHub index, HTML guide is canonical operating model
 - [Graphite Stacking for Docs](../decisions/graphite-stacking-for-docs.md): Use stacking workflow for dependent documentation changes
+- [Workflow Skill Canonicalisation](../decisions/skill-canonicalisation.md): Designs is canonical source for workflow skills; SKILL.md canonical over commands; three-layer distribution
+- [OKF-First Protocol](../decisions/okf-first-protocol.md): Knowledge bundle is the first source of truth
+- [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md): Phase 6 Audit and passive nudge cadence
 
 ## Related Concepts
 

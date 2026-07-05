@@ -16,7 +16,7 @@ Curation transforms inbox items into permanent concept files and maintains the o
 
 ### 1. Read All Unprocessed Inbox Items
 
-Read all `.md` files in `knowledge/inbox/` (not in `inbox/processed/`). These are session syntheses written by the post-commit hook or by agents. See [Inbox Format](../domain/inbox-format.md).
+Read all `.md` files in `knowledge/inbox/` (not in `inbox/processed/`). These are session syntheses written by agents before committing. See [Inbox Format](../domain/inbox-format.md).
 
 ### 2. Read Existing Concept Files
 
@@ -128,6 +128,14 @@ Log entry added to knowledge/log.md
 
 ## Triggering Curation
 
-- **Pi extension:** `/okf-curate` command generates a curation prompt with inbox item list and issue refs.
-- **Curator droid:** Dispatch the `okf-curator` droid for a full curation pass.
+- **Curator droid:** Dispatch the `okf-curator` droid (canonical contract at `templates/okf/agents/okf-curator.md`, installed to `.factory/droids/` and `.claude/agents/`) for a full curation pass.
+- **Post-commit nudge:** The [Hook System](../architecture/hook-system.md) nudges when unprocessed inbox items reach the threshold (default 5).
 - **Deployment Phase 6:** Run as part of the [deployment workflow](./deploy-okf.md).
+- **On demand:** After any significant epic closes, run a curation pass to capture the work.
+
+## Related Concepts
+
+- [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md) - Decision establishing the audit phase and passive nudge cadence
+- [OKF-First Protocol](../decisions/okf-first-protocol.md) - Consumption protocol that relies on audit-clean concepts
+- [Hook System](../architecture/hook-system.md) - The hook that implements the curation nudge
+- [OKF Query Helper](../architecture/okf-query-helper.md) - Portable search tool for querying the bundle

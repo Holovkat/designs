@@ -4,7 +4,7 @@ title: OKF Standard Specification
 description: The v0.1 specification defining the Open Knowledge Format convention
 resource: ./templates/okf/OKF-STANDARD.md
 tags: [okf, standard, specification, frontmatter, concepts]
-timestamp: 2026-06-29T14:30:00Z
+timestamp: 2026-07-05T13:00:00Z
 status: active
 ---
 
@@ -15,8 +15,8 @@ The Open Knowledge Format (OKF) defines a convention for maintaining project kno
 ## Design Principles
 
 1. **Git is canonical.** All knowledge lives in markdown files committed to the project repo. No external system is the source of truth.
-2. **Agents read first.** Before starting work, agents read the OKF bundle to understand current state, architecture, and prior decisions.
-3. **Two-phase capture.** Commit-time writes lightweight session syntheses to an inbox. A curation pass later upserts permanent concept files with full context.
+2. **Agents read first (OKF-First Protocol).** Before starting work, agents query the OKF bundle to understand current state, architecture, and prior decisions. See [OKF-First Protocol](../decisions/okf-first-protocol.md).
+3. **Two-phase capture.** Agents write session syntheses to an inbox before committing. A curation pass later upserts permanent concept files with full context. The post-commit hook refreshes the viewer manifest and nudges for curation.
 4. **Progressive disclosure.** Index files at each level provide summaries. Agents read the index, then drill into specific concepts only when relevant.
 5. **Deprecation is explicit.** When a concept is superseded, the old file is moved to `deprecation/` with a `supersedes` link, not deleted.
 
@@ -51,7 +51,7 @@ The curation agent reads all unprocessed inbox items, existing concept files, th
 2. Read `knowledge/state/index.md` for the current state of play.
 3. Read `knowledge/deprecation/index.md` to understand what has been superseded.
 4. Read concept files relevant to the work area (identified by tags and titles).
-5. After completing work, the commit-time hook captures a session synthesis to `knowledge/inbox/`.
+5. After completing work, agents write a session synthesis to `knowledge/inbox/` before committing. The post-commit hook refreshes the viewer manifest and nudges for curation.
 
 ## Versioning
 

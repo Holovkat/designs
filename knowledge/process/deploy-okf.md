@@ -21,13 +21,13 @@ The OKF deployment runbook defines an 8-phase workflow that any agent can follow
 
 ## Phase 1: Mechanical Install
 
-Run the installer script to create the knowledge directory structure, copy the viewer and generator, install the post-commit hook, and update AGENTS.md. See [Installer Design](../architecture/installer-design.md).
+Run the installer script to create the knowledge directory structure, copy the viewer, generator, and query helper, install the post-commit hook, install the okf-curator droid to `.factory/droids/`, and update AGENTS.md. See [Installer Design](../architecture/installer-design.md).
 
 ```bash
 bash <path-to-designs>/templates/okf/install-okf.sh <project-root>
 ```
 
-Verify: `knowledge/index.md` exists, `knowledge/log.md` exists, `.githooks/post-commit` is executable, `git config core.hooksPath` returns `.githooks`.
+Verify: `knowledge/index.md` exists, `knowledge/log.md` exists, `knowledge/okf-query.sh` is executable, `.githooks/post-commit` is executable, `git config core.hooksPath` returns `.githooks`, `.factory/droids/okf-curator.md` exists.
 
 ## Phase 2: Seed From Existing Docs
 
@@ -47,7 +47,7 @@ Update the project's AGENTS.md to replace AFFiNE/docs references with OKF refere
 
 ## Phase 6: Curation Pass
 
-Read all concepts, add cross-links, check for duplicates, check for missing concepts, move superseded to deprecation, verify index counts, update log.md and state. See [Curation Pass](./curation-pass.md).
+Read all concepts, add cross-links, check for duplicates, check for missing concepts, move superseded to deprecation, run the audit (redundancy, contradictions, ambiguous references, AGENTS.md alignment), verify index counts, update log.md and state. See [Curation Pass](./curation-pass.md) and [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md).
 
 ## Phase 7: Generate Viewer
 
@@ -66,9 +66,9 @@ Count concepts per directory and verify index counts match. Verify no AFFiNE ref
 ## Post-Deployment
 
 After deployment, the project is ready for ongoing OKF usage:
-- Agents read `knowledge/` concepts before starting work.
-- Agents write session syntheses to `knowledge/inbox/` after completing work.
-- The post-commit hook captures commit metadata automatically.
-- `/okf-curate` processes inbox items into permanent concepts.
-- The curation droid can be dispatched for periodic curation passes.
+- Agents read `knowledge/` concepts before starting work (OKF-first protocol).
+- Agents write session syntheses to `knowledge/inbox/` before committing.
+- The post-commit hook refreshes the viewer manifest and nudges for curation when the inbox reaches the threshold (default 5).
+- The okf-curator droid processes inbox items into permanent concepts and audits the bundle.
 - `viz.html` can be regenerated after any knowledge changes.
+- `knowledge/okf-query.sh` provides portable concept search.

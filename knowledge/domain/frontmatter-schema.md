@@ -70,7 +70,7 @@ Creates a link from a deprecation entry to its replacement. Used for audit trail
 The curation agent fetches these GitHub issues via `gh issue view` to enrich concept content with full context (directives, acceptance criteria, reasoning). The Pi extension's `/okf-curate` command lists these for the curation prompt.
 
 ### session_id / commit_sha / branch
-Provenance fields primarily used in inbox items written by the post-commit hook. They link the inbox item back to the specific commit and session that produced it.
+Provenance fields used in inbox items to link them back to the specific commit and session that produced them.
 
 ## Example
 

@@ -18,7 +18,7 @@ In a concept body, links use standard markdown syntax with relative paths:
 
 ```markdown
 See [Viewer Architecture](../architecture/viewer-architecture.md) for details.
-The [Hook System](./hook-system.md) captures commit metadata.
+The [Hook System](./hook-system.md) refreshes the viewer manifest and nudges for curation.
 ```
 
 Links are relative to the concept file's directory, just like normal markdown file links.
