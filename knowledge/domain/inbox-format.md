@@ -12,10 +12,11 @@ status: active
 
 Inbox items are session syntheses written at commit time or after work sessions. They use the same frontmatter as permanent concepts but with `type: Inbox`. They serve as staging material for the curation agent.
 
-## Two Sources of Inbox Items
+## Source of Inbox Items
 
-1. **Post-commit hook:** Automatically writes lightweight commit metadata (SHA, author, branch, changed files, issue refs extracted from commit subject). See [Hook System](../architecture/hook-system.md).
-2. **Agent capture:** After a meaningful work session, an agent writes a full session synthesis using the `/okf-capture` command or manually. This captures richer context: decisions, rationale, lessons learned.
+Inbox items are written by agents. After a meaningful work session, an agent writes a full session synthesis to `knowledge/inbox/` BEFORE committing, using the OKF inbox format (or manually). The synthesis captures richer context than commit metadata alone: decisions, rationale, approaches rejected, lessons learned, and current state.
+
+> **Note:** The post-commit hook previously wrote lightweight commit metadata stubs to the inbox. This was deprecated because the stubs were low-signal and redundant with agent-written syntheses. The hook now only refreshes the viewer manifest and nudges for curation. See [Post-Commit Inbox Capture (Deprecated)](../deprecation/post-commit-inbox-capture.md) and [Hook System](../architecture/hook-system.md).
 
 ## Frontmatter
 
@@ -47,7 +48,7 @@ epic_refs: [1495]
 - `issue_refs`: GitHub issue numbers referenced by the work.
 - `epic_refs`: Epic issue numbers.
 
-Not all fields are present in every item. Hook-written items have `commit_sha` and `branch` but not `session_id`. Agent-written items may have both.
+Not all fields are present in every item. Agent-written items typically have `session_id`, `branch`, and optionally `commit_sha` and `issue_refs`.
 
 ## Body Sections
 
@@ -68,7 +69,7 @@ Insights gained during the work. Things that would help future agents avoid mist
 ### Current State
 What works now, what is in progress, what is blocked. A snapshot of the situation after the session.
 
-Hook-written items have a simpler body: commit metadata, changed files list, and a notes placeholder.
+All inbox items are agent-written and follow the full body structure above.
 
 ## Filename Format
 
@@ -82,7 +83,7 @@ Examples:
 
 ## Lifecycle
 
-1. **Written:** By the post-commit hook or an agent to `knowledge/inbox/`.
+1. **Written:** By an agent to `knowledge/inbox/` before committing.
 2. **Awaiting curation:** Listed in `inbox/index.md`.
 3. **Processed:** The curation agent reads the item, creates or updates permanent concepts, then moves the item to `knowledge/inbox/processed/`.
 4. **Archived:** Processed items remain in `inbox/processed/` for audit trail purposes.
