@@ -17,7 +17,7 @@ that owns each row.
 - Keep the user in the loop through explicit assumptions, not unnecessary
   permission prompts.
 - When confidence is low, ask one focused question.
-- Use project trajectory: current branch, recent issues, checklist state, docs,
+- Use project trajectory: current branch, recent issues, epic state, docs,
   prior decisions, and live evidence.
 - Simplify without removing needed control. Run only the gates required by active
   vectors.
@@ -47,7 +47,7 @@ Create or update this matrix before QA, production, cleanup, or final closeout:
 | `deployment` | yes/no/unknown | deployment specialist | artifact identity, canonical target, promotion path, alias/domain mapping | [vectors] | pending |
 | `verification` | yes/no/unknown | testing specialist | scenario list, pass/fail evidence, known limits | [vectors] | pending |
 | `cleanup` | yes/no/unknown | deployment or repo-maintenance specialist | exact inventory, explicit approval, retained canonical resources | [vectors] | pending |
-| `closeout` | yes/no/unknown | orchestrator/knowledge specialist | issue/checklist/docs/notes updated, lessons captured | [vectors] | pending |
+| `closeout` | yes/no/unknown | orchestrator/knowledge specialist | issue/docs/notes updated, lessons captured | [vectors] | pending |
 
 If `scripts/release-vector-assess.sh` exists, use it as the starter matrix:
 

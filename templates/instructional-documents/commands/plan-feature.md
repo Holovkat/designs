@@ -2,17 +2,18 @@
 description: Interactive planning session to scope and document a new feature. Creates GitHub issues as source of truth.
 ---
 
-You are conducting an **interactive planning session** to scope a new feature. This process will interview the user, analyze the codebase, and produce GitHub issues containing all specification content. The local implementation checklist references issue numbers and serves as the final sign-off authority.
+You are conducting an **interactive planning session** to scope a new feature. This process will interview the user, analyze the codebase, and produce GitHub issues containing all specification content. GitHub issues are the source of truth for both specs and task state.
 
 **CRITICAL RULES:**
 1. **ONE QUESTION AT A TIME** - Never ask multiple questions in a single response
 2. **WAIT FOR ANSWERS** - Do not proceed until the user responds
 3. **INTERVIEW MODE** - This is a conversation, not a checklist dump
 4. **GITHUB IS THE SHARD** - Issue bodies contain all spec content (no local shard .md files)
-5. **CHECKLIST IS FINAL AUTHORITY** - Local checklist is the last sign-off on completion
-6. **COMPLETE ALL MANDATORY STEPS** - You MUST complete Steps 1-4 (interview), then Steps 6-10 (GitHub issues + checklist). Do NOT stop after the interview.
+5. **GITHUB ISSUES ARE THE SOURCE OF TRUTH** - Issue bodies contain all spec content. Task state is tracked on the issues themselves (labels, state). No local checklist file is needed.
+6. **COMPLETE ALL MANDATORY STEPS** - You MUST complete Steps 1-4 (interview), then Steps 6-8 (GitHub issues). Do NOT stop after the interview.
 7. **CONCISE BY REFERENCE** - Link to existing docs (design, UX, patterns), NEVER duplicate their content in issue bodies
 8. **ATOMIC TASKS** - Each task must be completable by a single agent in one session (1-3 files, one deliverable)
+9. **KEEP USER-FACING OUTPUT BRIEF** - Status updates only during execution. All detailed information goes into GitHub issues and comments. Do not repeat to the user what has been written to GitHub. Final summary: issues created, epic number, next steps.
 
 ## Planning Pack Ownership
 
@@ -22,7 +23,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 - If this command starts under another agent, immediately hand the workflow to
   `blueprint_orchestrator`.
 - `blueprint_orchestrator` must infer the planning mode from the user's wording,
-  project trajectory, active issue/checklist state, recent commits, and known
+  project trajectory, active issue/epic state, recent commits, and known
   risk before it commits to specialist delegation.
 - Ask a focused mode/scope question only when confidence is low or a high-risk
   unknown would make the next step unsafe.
@@ -31,7 +32,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 - Every delegation must start from the latest condensed shared brief and require
   the fixed payload described in the planning-agent contract.
 - Specialists are read-only. Only `blueprint_orchestrator` may publish planning
-  issues or update the checklist.
+  issues.
 - When specialist work is needed, delegate through Codex subagents instead of
   emulating specialist analysis inline so built-in activity reflects the run.
 - At planning gate points, use explicit option blocks instead of vague
@@ -71,10 +72,9 @@ Tasks must be small enough for a single agent to complete independently:
 | 6 | Determine Sprint Placement | **MANDATORY** |
 | 7 | Create GitHub Epic Issue | **MANDATORY** |
 | 8 | Create Task and Sub-task Issues | **MANDATORY** |
-| 9 | Update Implementation Checklist | **MANDATORY** |
-| 10 | Planning Summary | **MANDATORY** |
+| 9 | Planning Summary | **MANDATORY** |
 
-**DO NOT STOP after Step 4.** After user confirms understanding, you MUST proceed to Step 5 (workflow impact analysis, diagrams, screen capture), then create GitHub issues (Steps 7-8) and update the checklist (Step 9).
+**DO NOT STOP after Step 4.** After user confirms understanding, you MUST proceed to Step 5 (workflow impact analysis, diagrams, screen capture), then create GitHub issues (Steps 7-8).
 
 ---
 
@@ -95,7 +95,7 @@ cat README.md 2>/dev/null
 ### 1.2 Check Implementation Status
 
 ```bash
-find . -maxdepth 3 -type f \( -name '*IMPLEMENTATION-CHECKLIST*.md' -o -name 'BACKLOG.md' \) 2>/dev/null
+find . -maxdepth 3 -type f -name 'BACKLOG.md' 2>/dev/null
 ```
 
 ### 1.3 Review Recent Git Activity
@@ -379,28 +379,30 @@ Only trigger if the feature is complex (3+ components, integrations, or architec
 
 ## Step 6: Determine Sprint Placement (MANDATORY)
 
-### 6.1 Read Current Checklist
+### 6.1 Check Open Epics and Sprints
 
 ```bash
-cat [CHECKLIST_PATH] 2>/dev/null
+gh issue list --label "epic" --state open --json number,title,labels --jq '.[] | "\(.number) \(.title) [\(.labels | map(.name) | join(", "))]"'
 ```
 
 ### 6.2 Analyze State
 
-Check for existing incomplete sprints (`- [ ]` items) and determine next sprint number.
+Check for existing open epics with incomplete tasks. Query linked issues for
+each open epic to determine if there are unfinished tasks. Determine the next
+sprint number from existing sprint labels.
 
-### 6.3 Handle Existing Incomplete Sprints
+### 6.3 Handle Existing Incomplete Epics
 
-**If there ARE incomplete sprints:**
+**If there ARE open epics with incomplete tasks:**
 
-> "I see there are incomplete items in existing sprints:
+> "I see there are incomplete tasks in an existing epic:
 >
-> **[Sprint X: Name]**
-> - [ ] #[issue] - [Incomplete item 1]
+> **#[NN] - [Epic Title]**
+> - Open tasks: [count]
 >
 > For this new feature, would you like to:
-> 1. **Create a new sprint** - Add as Sprint [N+1]
-> 2. **Add to existing sprint** - Incorporate into Sprint X
+> 1. **Create a new sprint/epic** - Add as Sprint [N+1]
+> 2. **Add to existing epic** - Incorporate into #[NN]
 >
 > Reply 1 or 2."
 
@@ -628,9 +630,9 @@ gh issue create \
 "
 ```
 
-### 8.5 Update Parent Issue Checklists
+### 8.5 Update Parent Issue Task Lists
 
-After all issues are created, update epic and task bodies to replace `#PENDING` with actual issue numbers:
+After all issues are created, update epic and task bodies to replace `#PENDING` with actual issue numbers. The epic body's task list (`- [ ] #NNN`) is the ordered reference; GitHub tracks these as linked issues and auto-checks them when the linked issues close.
 
 ```bash
 gh issue edit [EPIC] --body "[updated body with real issue numbers]"
@@ -639,91 +641,16 @@ gh issue edit [TASK] --body "[updated body with real sub-task numbers]"
 
 ---
 
-## Step 9: Update Implementation Checklist (MANDATORY)
+## Step 9: Planning Summary (MANDATORY)
 
-The local checklist references GitHub issue numbers and is the final sign-off authority.
-
-### 9.1 Ensure directory exists
-
-Ensure the parent directory for `[CHECKLIST_PATH]` exists. If no project
-checklist convention exists, use `features/00-IMPLEMENTATION-CHECKLIST.md` as
-the default fallback.
-
-### 9.2 Edit the checklist
-
-Add to `[CHECKLIST_PATH]`:
+Present a brief summary to the user. Do not repeat what was written to GitHub issues.
 
 ```markdown
----
+## Planning Complete
 
-## Sprint [N]: [Feature Name]
-**Goal**: [One-line goal]
-**Epic**: #[EPIC_NUMBER]
-
-### Phase 1: [Phase Name]
-- [ ] #[TASK_1] - [Task 1 name]
-- [ ] #[TASK_2] - [Task 2 name]
-
-### Phase 2: [Phase Name]
-- [ ] #[TASK_3] - [Task 3 name]
-- [ ] #[TASK_4] - [Task 4 name]
-```
-
-**If checklist doesn't exist**, create it:
-
-```markdown
-# Implementation Checklist
-
-Track implementation progress. Each item references a GitHub issue.
-Check off items here as the final sign-off that work is complete.
-
----
-
-## Sprint 1: [Feature Name]
-**Goal**: [Goal]
-**Epic**: #[EPIC_NUMBER]
-
-### Phase 1: [Phase Name]
-- [ ] #[TASK_1] - [Task 1 name]
-```
-
-### 9.3 Verify the edit
-
-Read the file to confirm changes applied correctly.
-
----
-
-## Step 10: Planning Summary (MANDATORY)
-
-```markdown
-## Feature Planning Complete
-
-### GitHub Issues Created
 - **Epic**: #[EPIC] - [Feature Name]
-- **Tasks**: [X] task issues
-- **Sub-tasks**: [Y] sub-task issues
-
-### Issue Numbers
-| Issue | Type | Title |
-|-------|------|-------|
-| #[E] | Epic | [Feature Name] |
-| #[T1] | Task | [Task 1] |
-| #[T2] | Task | [Task 2] |
-| #[S1] | Sub-task | [Sub-task 1] |
-
-### Checklist Updated
-- `[CHECKLIST_PATH]` - Sprint [N] added with issue references
-
-### Next Steps
-To begin implementation:
-```
-/start-session feature/[feature-name]
-```
-
-Or continue existing work:
-```
-/next-phase
-```
+- **Tasks**: [X] created | **Sub-tasks**: [Y] created
+- **Next**: `/start-session feature/[feature-name]`
 ```
 
 ---
@@ -739,9 +666,6 @@ Or continue existing work:
 ### No GitHub repo
 > "This directory isn't connected to a GitHub repository. Run `gh repo view` to verify."
 
-### Checklist doesn't exist
-Create it with new sprint as Sprint 1.
-
 ### Features directory doesn't exist
 ```bash
 mkdir -p features
@@ -756,7 +680,6 @@ Created automatically in Step 7.1.
 1. Start with Step 1 - Context Gathering (silently)
 2. Proceed to Steps 2-4 - Interview the user
 3. **THEN YOU MUST** proceed to Steps 7-8 to create GitHub issues
-4. Update the checklist in Step 9
-5. Present the summary in Step 10
+4. Present the summary in Step 9
 
-**The planning session is NOT complete until GitHub issues exist and the checklist references them.**
+**The planning session is NOT complete until GitHub issues exist.**

@@ -2,17 +2,18 @@
 description: Interactive bugfix planning that creates GitHub issues for bug and fix tasks
 ---
 
-You are conducting an **interactive bug investigation** to analyze a bug and produce a fix specification. All content is created as GitHub issues. The local implementation checklist references issue numbers and serves as the final sign-off authority.
+You are conducting an **interactive bug investigation** to analyze a bug and produce a fix specification. All content is created as GitHub issues. GitHub issues are the source of truth for both specs and task state.
 
 **CRITICAL RULES:**
 1. **ONE QUESTION AT A TIME** - Never ask multiple questions in a single response
 2. **WAIT FOR ANSWERS** - Do not proceed until user responds
 3. **FOCUS ON ROOT CAUSE** - Understand cause, not just symptoms
 4. **GITHUB IS THE SOURCE** - Bug spec and fix tasks live in GitHub issues
-5. **CHECKLIST IS FINAL AUTHORITY** - Local checklist is the last sign-off
-6. **COMPLETE ALL STEPS** - MUST create GitHub issues and update checklist
+5. **TASK STATE ON ISSUES** - Completion is tracked via issue state and labels, not a local checklist
+6. **COMPLETE ALL STEPS** - MUST create GitHub issues
 7. **CONCISE BY REFERENCE** - Link to `docs/design/`, `docs/ux-specifications/`, and `AGENTS.md` files. Never duplicate standards in issues.
 8. **ATOMIC TASKS** - Each fix task completable by a single agent (1-3 files, one deliverable). Split cross-domain fixes (FE/BE) into separate tasks.
+9. **KEEP USER-FACING OUTPUT BRIEF** - Status updates only during execution. All detailed information goes into GitHub issues and comments. Do not repeat to the user what has been written to GitHub. Final summary: issues created, epic/bug number, next steps.
 
 ## Planning Pack Ownership
 
@@ -22,7 +23,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 - If this command starts under another agent, immediately hand the workflow to
   `blueprint_orchestrator`.
 - `blueprint_orchestrator` must infer the planning mode from the user's wording,
-  project trajectory, active issue/checklist state, recent commits, and known
+  project trajectory, active issue/epic state, recent commits, and known
   risk before it commits to specialist delegation.
 - Ask a focused mode/scope question only when confidence is low or a high-risk
   unknown would make the next step unsafe.
@@ -33,7 +34,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 - Use `prd-writer` only after the bug scope and task split are stable enough to
   draft issue-ready content.
 - Specialists are read-only. Only `blueprint_orchestrator` may publish planning
-  artifacts or update the checklist.
+  artifacts.
 - When specialist work is required, delegate through Codex subagents so built-in
   activity shows the orchestration path.
 - At planning gate points, use explicit option blocks instead of vague
@@ -56,8 +57,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 | 6 | Determine Fix Placement | **MANDATORY** |
 | 7 | Create GitHub Bug Issue | **MANDATORY** |
 | 8 | Create Fix Task Issues | **MANDATORY** |
-| 9 | Update Implementation Checklist | **MANDATORY** |
-| 10 | Planning Summary | **MANDATORY** |
+| 9 | Planning Summary | **MANDATORY** |
 
 ---
 
@@ -65,7 +65,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 
 ```bash
 cat AGENTS.md 2>/dev/null || true
-find . -maxdepth 3 -type f \( -name '*IMPLEMENTATION-CHECKLIST*.md' -o -name 'BACKLOG.md' \) 2>/dev/null
+find . -maxdepth 3 -type f -name 'BACKLOG.md' 2>/dev/null
 git log --oneline -20
 git log --oneline --since="7 days ago"
 gh auth status 2>/dev/null
@@ -150,7 +150,7 @@ gh label create "task" --color "1d76db" --force 2>/dev/null
 gh issue create \
   --title "Bug: [Description]" \
   --label "bug,epic,sprint-[N]" \
-  --body "[concise bug spec with: Reference Index (relevant doc links), diagnostic Mermaid diagram, screenshot evidence, task checklist using #PENDING. Do NOT duplicate design standards -- link to docs/design/ files.]"
+  --body "[concise bug spec with: Reference Index (relevant doc links), diagnostic Mermaid diagram, screenshot evidence, task list using #PENDING. Do NOT duplicate design standards -- link to docs/design/ files.]"
 ```
 
 **Simple single-task bug:**
@@ -172,25 +172,20 @@ gh issue create \
   --body "[concise fix spec: Reference Index, What, File, Acceptance Criteria. Link to pattern docs.]"
 ```
 
-Update parent bug issue checklist with real issue numbers.
+Update parent bug issue task list with real issue numbers.
 
-## Step 9: Update Implementation Checklist
+## Step 9: Planning Summary
+
+Present a brief summary to the user. Do not repeat what was written to GitHub.
 
 ```markdown
-## Sprint [N]: Bugfix - [Description]
-**Goal**: Fix [bug]
-**Epic**: #[BUG_NUMBER]
-**Severity**: [Level]
+## Bugfix Planned
 
-### Bugfix Tasks
-- [ ] #[TASK_1] - [Fix description]
-- [ ] #[TASK_2] - [Regression test]
+- **Bug**: #[NN] - [Description]
+- **Fix tasks**: [X] created
+- **Next**: `/start-session feature/[name]`
 ```
-
-## Step 10: Planning Summary
-
-Report all created issues, checklist update, and next steps.
 
 ---
 
-**BEGIN NOW:** Interview, investigate, create GitHub issues, update checklist.
+**BEGIN NOW:** Interview, investigate, create GitHub issues. Keep user-facing output brief — detail goes to GitHub.

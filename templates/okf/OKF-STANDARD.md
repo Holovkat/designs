@@ -136,6 +136,49 @@ Insights gained during the work.
 What works now, what's in progress, what's blocked.
 ```
 
+## Deprecation Concept Format
+
+Deprecation is not deletion. A deprecated concept captures what was learned from the old approach so that future agents and developers can make informed decisions about whether to re-adopt it. Deprecation means "not right for this purpose right now", not "this was wrong".
+
+Deprecated concepts use the same frontmatter as other concepts, plus:
+
+```yaml
+---
+type: Deprecation
+title: Old Routing Engine
+description: Tile-based routing approach, superseded by geometry pipeline
+resource: ./src/routing/old-engine.ts
+tags: [routing, deprecated, geometry]
+timestamp: 2026-06-29T14:00:00Z
+status: deprecated
+supersedes: [new-routing-pipeline.md]
+deprecated_reason: Could not handle real-time geometry updates
+deprecated_date: 2026-06-29
+---
+```
+
+### Required Body Sections
+
+```markdown
+# What Was the Issue
+What problems did this approach cause? What were the symptoms?
+
+# Why It Was Deprecated
+The specific trigger that led to deprecation. What made us change?
+
+# Lessons Learned
+What did we learn from using this approach? What would we do differently?
+
+# When This Might Be Relevant Again
+Scenarios or contexts where this pattern could still be the right choice.
+Deprecation is contextual, not absolute.
+
+# What to Watch Out For
+Risks or pitfalls if we try this approach again. What to check before re-adopting.
+```
+
+Agents should read `deprecation/index.md` before starting work to avoid re-introducing patterns that were already tried and learned from.
+
 ## Index File Format
 
 Each directory contains an `index.md` that lists its contents:
@@ -186,17 +229,75 @@ The root `log.md` records knowledge updates in reverse chronological order:
 - **Processed inbox:** 3 items moved to `inbox/processed/`
 ```
 
+## Curation Prompt
+
+An optional file at `knowledge/curation-prompt.md` lets each project customize what the curation agent focuses on. If present, the curator reads it before processing and follows its guidance.
+
+Example `curation-prompt.md`:
+
+```markdown
+# Curation Focus for This Project
+
+## Priorities
+- Domain rules and business logic are the most important concepts. Capture every rule explicitly.
+- API contracts between extensions must be documented as architecture concepts.
+- Deprecation entries must always include concrete failure scenarios, not just "superseded".
+
+## Focus Areas
+- `src/domain/` - Extract domain entities and rules
+- `docs/architecture/` - Ensure all architecture docs have concepts
+- GitHub issues labeled "decision" - Create decision concepts from these
+
+## Ignore
+- Sprint-specific docs in `docs/sprints/` - transient, captured by inbox
+- Auto-generated API docs in `docs/api/` - too low-level for concepts
+```
+
+If no `curation-prompt.md` exists, the curator uses default behavior (process all inbox items, scan all docs, cover all concept types equally).
+
 ## Curation Rules
 
-1. The curation agent reads all unprocessed inbox items plus existing concept files plus the codebase.
-2. **The curation agent fetches and reads GitHub issues referenced by `issue_refs` in inbox item frontmatter** (using `gh issue view`). These issues contain pre-approved directives, acceptance criteria, linked epics, and full reasoning that enriches the curated concepts beyond commit messages alone.
-3. For each inbox item, the agent determines which concept(s) to create or update.
-4. New concepts get a filename matching the slugified title.
-5. Updated concepts get new content merged with existing, preserving prior context.
-6. When a concept is superseded, the old file moves to `deprecation/` with `supersedes` pointing to the new file.
-7. After curation, processed inbox items move to `inbox/processed/`.
-8. The agent updates `log.md` with a summary of all changes.
-9. The agent updates all `index.md` files to reflect the current state.
+### Phase 1: Read Context
+
+1. Read `knowledge/curation-prompt.md` if it exists. Follow its priorities and focus areas.
+2. Read all unprocessed inbox items in `knowledge/inbox/`.
+3. Read existing concept files across all concept directories.
+4. **Fetch and read GitHub issues referenced by `issue_refs` in inbox item frontmatter** (using `gh issue view`). These issues contain pre-approved directives, acceptance criteria, linked epics, and full reasoning that enriches the curated concepts beyond commit messages alone.
+
+### Phase 2: Gap Detection
+
+5. Scan `docs/`, `docs/design/`, `docs/agents/`, and other documentation directories for significant docs that have no corresponding OKF concept (check `resource` fields).
+6. Scan the codebase for significant modules, services, or patterns that have no architectural or domain concept.
+7. Check for concepts whose `resource` field points to a file that no longer exists (stale references).
+8. Check for concepts whose `status` is `in-progress` or `blocked` that may have been resolved by recent work.
+9. Produce a gap list: docs without concepts, stale references, missing coverage areas.
+
+### Phase 3: Process Inbox Items
+
+10. For each inbox item, determine which concept(s) to create or update.
+11. New concepts get a filename matching the slugified title.
+12. Updated concepts get new content merged with existing, preserving prior context.
+13. When a concept is superseded, move the old file to `deprecation/` with all required lesson sections (see Deprecation Concept Format above). The deprecation entry must capture what was learned, not just what was replaced.
+14. After curation, processed inbox items move to `inbox/processed/`.
+
+### Phase 4: Fill Gaps
+
+15. For each gap identified in Phase 2, create or update concepts to cover the missing material.
+16. For stale resource references, update the `resource` field or move the concept to deprecation if the referenced file is gone.
+
+### Phase 5: Re-Enrich Existing Concepts
+
+17. Re-read existing concepts and check if the codebase has changed in ways that would update them. Look at:
+    - Files referenced by `resource` fields for significant changes (use `git log --oneline` to check recent commits)
+    - Concepts with `status: in-progress` or `status: blocked` that may now be resolved
+    - Concepts that haven't been updated in a long time and may be stale
+18. Update concepts with new information, preserving prior context.
+19. If a concept's approach has been replaced in the codebase but the concept still says `status: active`, either update it or move it to deprecation with lessons.
+
+### Phase 6: Finalize
+
+20. Update all `index.md` files with current listings.
+21. Update `knowledge/log.md` with a summary of all changes made in this curation cycle, including gaps filled and concepts re-enriched.
 
 ## Legacy Alignment Mode
 

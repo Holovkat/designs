@@ -15,7 +15,7 @@ It is the source-of-truth contract for the global planning agents used by
 ## Operating Mode
 
 Before committing to a planning depth, the orchestrator must infer how it should
-operate from the user's wording, project trajectory, active issue/checklist
+operate from the user's wording, project trajectory, active issue/epic
 state, recent commits, and known risk.
 
 - `quick-fix`: minimize specialist calls, keep the issue tree narrow, and favor
@@ -40,21 +40,20 @@ step clear.
 
 | Agent | Model | Reasoning | Sandbox | Responsibility | Final publisher |
 | --- | --- | --- | --- | --- | --- |
-| `blueprint_orchestrator` | `gpt-5.4-mini` | `xhigh` | `workspace-write` | Interview, decide delegation, synthesize findings, publish GitHub planning artifacts, update checklist | Yes |
+| `blueprint_orchestrator` | `gpt-5.4-mini` | `xhigh` | `workspace-write` | Interview, decide delegation, synthesize findings, publish GitHub planning artifacts | Yes |
 | `req-analyst` | `gpt-5.4-mini` | `xhigh` | `read-only` | Requirement clarity, scope gaps, ambiguous assumptions, acceptance framing | No |
 | `ux-analyst` | `gpt-5.4-mini` | `xhigh` | `read-only` | Workflow, operator experience, screen impact, visible planning outputs | No |
 | `scenario-analyst` | `gpt-5.4-mini` | `xhigh` | `read-only` | Happy path, edge cases, exception coverage, regression scenarios | No |
 | `tech-analyst` | `gpt-5.4-mini` | `xhigh` | `read-only` | Constraints, dependencies, sequencing, implementation-facing planning risks | No |
-| `prd-writer` | `gpt-5.4-mini` | `xhigh` | `read-only` | Draft issue-ready blueprint sections, acceptance criteria, deferred scope notes, checklist-ready summaries | No |
+| `prd-writer` | `gpt-5.4-mini` | `xhigh` | `read-only` | Draft issue-ready blueprint sections, acceptance criteria, deferred scope notes, issue-ready summaries | No |
 
 ## Ownership Boundaries
 
 - `blueprint_orchestrator` is planning-only. It may create or edit planning
-  issues and the local implementation checklist, but it may not edit
-  implementation code.
+  issues, but it may not edit implementation code.
 - Specialists are read-only and report findings back to the orchestrator. They
-  may not publish final GitHub issues, edit the checklist, or perform coding.
-- Planning handoff stops at GitHub issues plus checklist updates. Build or
+  may not publish final GitHub issues or perform coding.
+- Planning handoff stops at GitHub issues. Build or
   implementation work starts only from a later explicit user command.
 
 ## Shared Brief
@@ -69,7 +68,7 @@ blocked delegation.
 - `goal`: the current planning objective
 - `inferred_intent`: what the user appears to be asking the project to achieve
 - `confidence`: high, medium, or low, with the reason
-- `project_trajectory`: active branch, issue/checklist state, recent commits, and prior decisions that shape the next step
+- `project_trajectory`: active branch, issue/epic state, recent commits, and prior decisions that shape the next step
 - `active_vectors`: code, data-shape, data-content, config, service, provider, deployment, verification, cleanup, or closeout if already known
 - `current_scope`: confirmed MVP or fix scope
 - `constraints`: technical, product, or process constraints

@@ -28,10 +28,12 @@ When asked to rejoin an existing session:
 
 When asked to end a session:
 
-1. Confirm review/UAT gates are complete
+1. Confirm review/compliance gates are complete
 2. Ensure the isolated worktree checkout is clean
 3. Follow the closeout workflow in `commands/end-session.md`
-4. Report the merge-back target branch and cleanup result
+4. If all task issues for the epic are closed and UAT has passed, the epic is
+   closed and the branch is fully collapsed
+5. Report the merge-back target branch, epic closeout status, and cleanup result
 
 ## Rules
 

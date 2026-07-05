@@ -14,8 +14,8 @@ This package provides slash commands, backend scripts, project skills, worktree 
 | `/plan-review`            | Review planning output against the Q&A/intake record before build approval |
 | `/release-assess`         | Assess release intent, confidence, vectors, order, and specialist ownership |
 | `/start-session <branch>` | Create a stacked branch, isolated worktree, and tmux-rooted agent session  |
-| `/next-phase`             | Continue implementing the next phase from the project checklist            |
-| `/end-session`            | Close out session with review gates, merge-back, and cleanup               |
+| `/next-phase`             | Continue implementing the next task from GitHub linked issues            |
+| `/end-session`            | Close out session, close epic and collapse branch when all tasks done      |
 | `/uat`                    | Run User Acceptance Testing with guided test scenarios and rework tracking |
 | `/compliance-review`      | Verify requirements compliance and Definition of Done before handover/UAT  |
 | `/kingmode`               | Activate "King Mode" for deep, multi-dimensional analysis                  |
@@ -249,31 +249,16 @@ chmod +x scripts/*.sh
 
 ### Step 9: Create supporting files
 
-#### Implementation Checklist
+#### Implementation Checklist (Legacy)
 
-Create `features/00-IMPLEMENTATION-CHECKLIST.md` with your project phases:
+The local `00-IMPLEMENTATION-CHECKLIST.md` is a legacy artifact from before
+GitHub-native task tracking. New projects should not create one. GitHub issues
+linked to the epic are the source of truth for task queue and completion state.
+Existing projects with checklists can migrate by closing off remaining items
+and noting that GitHub is the source of truth going forward.
 
-```markdown
-# Implementation Checklist
-
-## Sprint 1: [Name]
-
-**Goal**: [Description]
-
-### Epic: [Name]
-
-- [ ] Task 1
-- [ ] Task 2
-
-## Sprint 2: [Name]
-
-**Goal**: [Description]
-
-### Epic: [Name]
-
-- [ ] Task 1
-- [ ] Task 2
-```
+For backward compatibility, `/next-phase` includes a legacy fallback that reads
+the checklist when GitHub has no linked issues for the active epic.
 
 #### Backlog File
 
@@ -311,7 +296,7 @@ You should see:
 
 - `/start-session` - Create stacked branch + worktree + tmux agent session
 - `/next-phase` - Continue implementing next phase
-- `/end-session` - Close out session, then merge back and clean up
+- `/end-session` - Close out session, close epic and collapse branch when all tasks done
 - `/plan-review` - Review planning output against the Q&A/intake record
 - `/release-assess` - Assess release intent, vectors, ownership, and order
 - `/compliance-review` - Verify requirements compliance and rank Definition of Done
@@ -382,7 +367,7 @@ your-project/
 │       ├── .gitignore
 │       └── README.md
 ├── features/
-│   ├── 00-IMPLEMENTATION-CHECKLIST.md
+│   ├── 00-IMPLEMENTATION-CHECKLIST.md (legacy, optional)
 │   └── BACKLOG.md
 └── changelog/
     └── SESSION-LOG.md
@@ -445,8 +430,8 @@ The agent will:
 1. Gather context (review docs, git history, codebase)
 2. Interview you one question at a time about the feature
 3. Trigger `/kingmode` analysis if needed
-4. Generate a numbered shard document in `features/`
-5. Update the implementation checklist with new sprint/tasks
+4. Generate a numbered shard document in `features/` (optional)
+5. Create GitHub issues as the source of truth for tasks
 
 ### Planning a bug fix
 
@@ -459,8 +444,7 @@ The agent will:
 1. Gather context and review recent changes
 2. Interview you about the bug symptoms and behavior
 3. Investigate the codebase to identify root cause
-4. Generate a bugfix shard with analysis and fix plan
-5. Update the implementation checklist
+4. Generate a bugfix GitHub issue with analysis and fix plan
 
 ### Importing from GitHub
 
@@ -479,9 +463,8 @@ The agent will:
 1. Fetch issue/PR details from GitHub (title, body, labels, comments)
 2. Present the content and clarify any missing details
 3. Determine if it's a bug, feature, or chore
-4. Generate a shard document with GitHub context preserved
-5. Update the implementation checklist
-6. Post implementation plan comment to the GitHub issue (mandatory)
+4. Generate GitHub issues with imported context preserved
+5. Post implementation plan comment to the GitHub issue (mandatory)
 
 ### Reviewing the plan before build
 
@@ -520,7 +503,7 @@ The backend script will:
 The agent will:
 
 1. Check for uncommitted changes (offers to run end-session first)
-2. Read the implementation checklist
+2. Read the active epic and its linked task issues from GitHub
 3. Find the next incomplete sprint
 4. Create/switch to the sprint branch
 5. Show the implementation plan
@@ -534,11 +517,13 @@ The agent will:
 
 The agent will:
 
-1. Run review/compliance/UAT gates
+1. Run review/compliance gates
 2. Commit and push the task branch
-3. Run the backend merge-back + cleanup script
-4. Remove the isolated worktree/session branch/tmux pane
-5. Return you to the recorded parent branch
+3. Check if all task issues for the epic are closed and UAT has passed
+4. If yes: close the epic, collapse the branch entirely
+5. If no: run merge-back + cleanup for the current task only
+6. Remove the isolated worktree/session branch/tmux pane
+7. Return you to the recorded parent branch
 
 ### Reviewing Compliance and Definition of Done
 
@@ -566,7 +551,7 @@ The agent will:
 3. Generate comprehensive test scenarios
 4. Walk you through each test one at a time, awaiting approval
 5. Log any failures to the project-standard UAT rework document under `[PLAN_ROOT]/UAT/`
-6. Update implementation checklist with UAT status and rework items
+6. Update GitHub issue labels with UAT status (uat-passed/uat-failed)
 7. Direct you to `/next-phase`, `/plan-feature`, or `/plan-bugfix` for rework
 
 ### Activating King Mode

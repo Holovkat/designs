@@ -20,7 +20,7 @@ It is the source-of-truth contract for the governed build agents that begin from
 
 | Agent | Model | Reasoning | Sandbox | Responsibility | Final publisher |
 | --- | --- | --- | --- | --- | --- |
-| `builder_orchestrator` | `gpt-5.4-mini` | `xhigh` | `workspace-write` | Intake, task-packet reconstruction, lane routing, warm continuity, line-stop and replan decisions, GitHub/checklist sync | Yes |
+| `builder_orchestrator` | `gpt-5.4-mini` | `xhigh` | `workspace-write` | Intake, task-packet reconstruction, lane routing, warm continuity, line-stop and replan decisions, GitHub issue sync | Yes |
 | `dev` | `gpt-5.4-mini` | `xhigh` | `workspace-write` | Sole durable writer for implementation code, tests, task-local fixtures, and correction work | No |
 | `reviewer` | `gpt-5.4-mini` | `xhigh` | `read-only` | Diff-scoped correctness, acceptance, and owned-surface review | No |
 | `tester` | `gpt-5.4-mini` | `xhigh` | `read-only` | Targeted verification against changed files, regression surface, and declared test artifacts | No |
@@ -57,7 +57,7 @@ It is the source-of-truth contract for the governed build agents that begin from
 ## Task Packet
 
 Every task must start from a frozen task packet reconstructed from GitHub issue
-content, checklist state, comments, and current repo context.
+content, issue state, comments, and current repo context.
 
 ### Required packet fields
 

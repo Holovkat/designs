@@ -9,7 +9,7 @@ Use this skill when a plan must be checked before implementation starts.
 
 - Original request, Q&A notes, imported issue, or discovery record
 - Epic, phase / sprint, and task issue drafts
-- Local checklist mirror, if present
+- Local GitHub issue state, if present
 - Assumptions, non-goals, risks, dependencies, and evidence gates
 
 ## Process

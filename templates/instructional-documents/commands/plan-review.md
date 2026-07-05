@@ -17,7 +17,7 @@ as approved or the user explicitly accepts a documented exception.
 - Epic or parent issue draft
 - Phase / sprint issue draft
 - Task issue drafts
-- Local checklist mirror, if present
+- Local GitHub issue state, if present
 - Open decisions, assumptions, non-goals, and risks
 
 If any input is missing, mark the review `BLOCKED` and state the exact missing
@@ -72,7 +72,7 @@ waiver or an immediate plan patch.
 
 | Intake item | Planned artifact | Status | Evidence |
 | --- | --- | --- | --- |
-| [requirement] | [issue/task/checklist ref] | Pass/Partial/Fail | [evidence] |
+| [requirement] | [issue/task ref] | Pass/Partial/Fail | [evidence] |
 
 ## Gaps
 

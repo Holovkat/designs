@@ -42,7 +42,7 @@ Use the structure of the `Frontend-Technical-Functional-Requirements-Document-TF
     - **Core Infrastructure:** Create/Update standard setup files (01-10) as seen in `templates/functional-design`.
     - **Features:** Create separate files for each major feature (11+), mapping to the Phases in the TFD.
 3.  **Naming Convention:** Follow the convention in `templates/functional-design`:
-    - `00-IMPLEMENTATION-CHECKLIST.md` (Master checklist)
+    - `00-IMPLEMENTATION-CHECKLIST.md` (legacy, optional — GitHub issues are the source of truth)
     - `01-ARCHITECTURE-OVERVIEW.md`
     - `02-FOLDER-LAYOUT.md`
     - ...
@@ -57,7 +57,7 @@ Use the structure of the `Frontend-Technical-Functional-Requirements-Document-TF
   - User Stories / Requirements
   - Technical Implementation Details (Components, APIs, State)
   - Verification Plan
-- Update `00-IMPLEMENTATION-CHECKLIST.md` to include all generated shards.
+- Create GitHub issues for each shard, linked to an epic issue.
 
 ## Instructions for the Agent
 

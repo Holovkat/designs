@@ -6,18 +6,25 @@ You are performing a **Compliance Review** to verify the implementation meets al
 
 **THIS IS A BLOCKING GATE** - The session cannot end, move to UAT, or be handed to the user until compliance is achieved, the DoD rank passes, or the user explicitly accepts a documented exception.
 
+**OUTPUT PRINCIPLE** - Keep user-facing output brief: rank result, failed items, next action. All detailed compliance matrices, evidence, and remediation plans go into GitHub issues and comments. Do not repeat to the user what has been written to GitHub.
+
 ---
 
 ## Step 1: Identify Current Phase
 
 **ACTION REQUIRED:**
 
-1. Locate and read `[CHECKLIST_PATH]` from the current repo's planning convention
+1. Locate and read the active epic and its task issues from GitHub
 2. Identify the current sprint/phase being worked on
-3. Find the corresponding requirements source such as an issue, checklist section, spec, or shard document
+3. Find the corresponding requirements source from the task issue body
 
 ```bash
-find . -maxdepth 3 -type f \( -name '*IMPLEMENTATION-CHECKLIST*.md' -o -name '*requirements*.md' -o -name '*spec*.md' \) 2>/dev/null
+# Identify the active epic from the current branch
+gh issue list --label "epic" --state open --json number,title
+
+# Read the epic and its linked task issues
+gh issue view [EPIC_NUMBER] --json number,title,body,comments
+gh issue view [TASK_NUMBER] --json number,title,body,labels,state
 ```
 
 ---
@@ -28,7 +35,7 @@ find . -maxdepth 3 -type f \( -name '*IMPLEMENTATION-CHECKLIST*.md' -o -name '*r
 
 1. Read the requirements source completely
 2. Extract ALL acceptance criteria, deliverables, and requirements
-3. Create a compliance checklist from:
+3. Create a compliance checklist from the task issue body:
    - **Deliverables** - Components/files that must exist
    - **Acceptance Criteria** - Functional requirements that must be met
    - **Implementation Details** - Specific patterns/APIs required
@@ -120,7 +127,7 @@ If the work has no traceable approved requirements, assign `D - Replan`.
 **Date**: [TODAY]
 **Reviewer**: Compliance reviewer
 **Requirements Document**: `[REQUIREMENTS_SOURCE]`
-**Requirements Source**: [issue/checklist/intake refs]
+**Requirements Source**: [issue/epic refs]
 **Build Source**: [branch/commit/deployment refs]
 **Release Vectors**: [active rows / deferred rows / not applicable]
 **DoD Rank**: A/B/C/D
@@ -284,7 +291,7 @@ Analyze the compliance gaps for Phase [X]:
 1. What is the root cause of each gap?
 2. What specific code changes are needed?
 3. Are there architectural issues to address?
-4. What new issue/spec/checklist updates are needed?
+4. What new issue/spec updates are needed?
 5. What's the estimated effort to fix?
 6. Are there dependencies or blockers?
 
@@ -299,9 +306,8 @@ Analyze the compliance gaps for Phase [X]:
 
 If the analysis reveals missing specifications:
 
-1. Create or update the repo-standard remediation issue/spec/checklist entry.
-   Use `[PLAN_ROOT]/[phase-name]-remediation.md` only when the project stores
-   planning specs as local Markdown.
+1. Create or update the repo-standard remediation issue.
+   Use a GitHub issue linked to the epic with a `remediation` label.
 
 2. Include:
    - Specific gaps being addressed
@@ -311,11 +317,13 @@ If the analysis reveals missing specifications:
 
 ### 6A.3 Update Implementation Checklist
 
-Edit `[CHECKLIST_PATH]`:
+Create a GitHub remediation issue linked to the epic:
 
-```markdown
-## Phase [X]: [Name] - REMEDIATION
-**Goal**: Address compliance gaps from initial implementation
+```bash
+gh issue create \
+  --title "Remediation: [Phase Name] - Compliance Gaps" \
+  --label "task,remediation,sprint-[N]" \
+  --body "## Remediation Tasks
 
 ### Additional Tasks (Remediation)
 - [ ] [Gap fix 1]
@@ -323,7 +331,8 @@ Edit `[CHECKLIST_PATH]`:
 - [ ] Re-run compliance review
 
 **Status**: [in-progress]
-**Remediation Source**: `[REMEDIATION_SOURCE]`
+**Source Epic**: #[EPIC_NUMBER]
+"
 ```
 
 ### 6A.4 Get User Approval
@@ -342,9 +351,9 @@ Present the remediation plan to the user:
 1. [Task 1] - Est. [time]
 2. [Task 2] - Est. [time]
 
-### Updated Checklist Items:
-- [ ] [New checklist item 1]
-- [ ] [New checklist item 2]
+### Updated GitHub Issues:
+- #[NN] - [New remediation task 1]
+- #[NN] - [New remediation task 2]
 
 **Total Estimated Effort**: [time]
 
@@ -361,7 +370,7 @@ If approved:
    pnpm lint
    pnpm tsc --noEmit
    ```
-3. Mark checklist items as complete
+3. Mark remediation issue tasks as complete via GitHub labels
 
 ### 6A.6 Re-run Compliance Review
 

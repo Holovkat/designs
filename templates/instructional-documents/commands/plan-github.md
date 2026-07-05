@@ -2,15 +2,16 @@
 description: Import GitHub issues or PRs and convert to implementation specs with child issues
 ---
 
-You are importing a **GitHub issue or PR** and converting it into actionable implementation specifications. All spec content is created as GitHub child issues under the imported issue (which becomes or links to an epic). The local implementation checklist references issue numbers and serves as the final sign-off.
+You are importing a **GitHub issue or PR** and converting it into actionable implementation specifications. All spec content is created as GitHub child issues under the imported issue (which becomes or links to an epic). GitHub issues are the source of truth for both specs and task state.
 
 **CRITICAL RULES:**
 1. **ONE QUESTION AT A TIME** - Never ask multiple questions in a single response
 2. **WAIT FOR ANSWERS** - Do not proceed until user responds
 3. **GITHUB IS THE SOURCE** - All spec content lives in GitHub issue bodies
-4. **CHECKLIST IS FINAL AUTHORITY** - Local checklist is the last sign-off
+4. **TASK STATE ON ISSUES** - Completion is tracked via issue state and labels, not a local checklist
 5. **POST GITHUB COMMENT** - MANDATORY at the end for traceability
 6. **COMPLETE ALL STEPS** - Do NOT stop after the interview
+7. **KEEP USER-FACING OUTPUT BRIEF** - Status updates only during execution. All detailed information goes into GitHub issues and comments. Do not repeat to the user what has been written to GitHub. Final summary: issues created, epic number, next steps.
 
 ## Planning Pack Ownership
 
@@ -20,7 +21,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 - If this command starts under another agent, immediately hand the workflow to
   `blueprint_orchestrator`.
 - `blueprint_orchestrator` must infer the planning mode from imported issue/PR
-  content, project trajectory, active checklist state, recent commits, labels,
+  content, project trajectory, active epic state, recent commits, labels,
   comments, and known risk before it commits to specialist delegation.
 - Ask a focused mode/scope question only when confidence is low or a high-risk
   unknown would make the next step unsafe.
@@ -31,7 +32,7 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 - Use `prd-writer` to convert the imported material and specialist findings into
   issue-ready planning content for final orchestrator review.
 - Specialists are read-only. Only `blueprint_orchestrator` may publish the
-  resulting GitHub planning artifacts or update the checklist.
+  resulting GitHub planning artifacts.
 - When delegation is needed, use Codex subagents directly so built-in activity
   shows real orchestration instead of inline roleplay.
 - At planning gate points, use explicit option blocks instead of vague
@@ -56,9 +57,8 @@ defined in [codex-global-planning-agents.md](../codex-global-planning-agents.md)
 | 8 | Sprint Placement | **MANDATORY** |
 | 9 | Create/Update Epic Structure | **MANDATORY** |
 | 10 | Create Task and Sub-task Issues | **MANDATORY** |
-| 11 | Update Implementation Checklist | **MANDATORY** |
-| 12 | Post GitHub Comment | **MANDATORY** |
-| 13 | Summary | **MANDATORY** |
+| 11 | Post GitHub Comment | **MANDATORY** |
+| 12 | Summary | **MANDATORY** |
 
 ---
 
@@ -139,7 +139,7 @@ Ask ONE at a time:
 **If the imported issue should BE the epic:**
 ```bash
 gh issue edit [NUMBER] --add-label "epic,sprint-[N]"
-gh issue edit [NUMBER] --body "[full spec body with task checklist]"
+gh issue edit [NUMBER] --body "[full spec body with task list using #PENDING]"
 ```
 
 **Ensure labels exist:**
@@ -168,29 +168,12 @@ gh issue create \
   --body "[sub-task spec referencing parent task and epic]"
 ```
 
-Update parent checklists with real issue numbers:
+Update parent issue task lists with real issue numbers:
 ```bash
 gh issue edit [EPIC] --body "[updated body]"
 ```
 
-## Step 11: Update Implementation Checklist
-
-Add to `[CHECKLIST_PATH]` discovered from the current repo. If no project
-checklist convention exists, use `features/00-IMPLEMENTATION-CHECKLIST.md` as
-the default fallback:
-
-```markdown
-## Sprint [N]: [Feature Name]
-**Goal**: [One-line goal]
-**Epic**: #[EPIC]
-**Source**: #[ORIGINAL] (imported via /plan-github)
-
-### Phase 1: [Phase Name]
-- [ ] #[TASK_1] - [Task 1 name]
-- [ ] #[TASK_2] - [Task 2 name]
-```
-
-## Step 12: Post GitHub Comment (MANDATORY)
+## Step 11: Post GitHub Comment (MANDATORY)
 
 ```bash
 gh issue comment [ORIGINAL] --body "## Implementation Planned
@@ -205,26 +188,18 @@ gh issue comment [ORIGINAL] --body "## Implementation Planned
 _Planned via /plan-github on [DATE]_"
 ```
 
-## Step 13: Summary
+## Step 12: Summary
+
+Present a brief summary to the user. Do not repeat what was written to GitHub.
 
 ```markdown
-## GitHub Import Complete
+## Import Complete
 
-### Source: #[number] - [title]
-
-### Issues Created
-| Issue | Type | Title |
-|-------|------|-------|
-| #[E] | Epic | [Feature Name] |
-| #[T1] | Task | [Task 1] |
-
-### Checklist Updated
-- `[CHECKLIST_PATH]`
-
-### Next Steps
-/start-session feature/[name]
+- **Source**: #[number] - [title]
+- **Epic**: #[E] | **Tasks**: [X] created
+- **Next**: `/start-session feature/[name]`
 ```
 
 ---
 
-**BEGIN NOW:** Fetch the issue, interview for clarity, create GitHub child issues, update checklist, post comment.
+**BEGIN NOW:** Fetch the issue, interview for clarity, create GitHub child issues, post comment. Keep user-facing output brief — detail goes to GitHub.

@@ -18,7 +18,7 @@ order.
 Before asking the user a question, inspect current evidence:
 
 - current branch, status, and recent commits
-- active issue, epic, checklist, or release notes
+- active issue, epic, or release notes
 - nearest project instructions and release authority
 - changed files and untracked files
 - recent comments or deployment evidence when available
@@ -66,7 +66,7 @@ If the script is unavailable, create the same matrix manually:
 | `deployment` | yes/no/unknown | deployment specialist | artifact identity, canonical target, promotion path, alias/domain mapping | [vectors] | pending |
 | `verification` | yes/no/unknown | testing specialist | scenario list, pass/fail evidence, known limits | [vectors] | pending |
 | `cleanup` | yes/no/unknown | deployment or repo-maintenance specialist | exact inventory, explicit approval, retained canonical resources | [vectors] | pending |
-| `closeout` | yes/no/unknown | orchestrator/knowledge specialist | issue/checklist/docs/notes updated, lessons captured | [vectors] | pending |
+| `closeout` | yes/no/unknown | orchestrator/knowledge specialist | issue/docs/notes updated, lessons captured | [vectors] | pending |
 
 ## Specialist Ownership
 
