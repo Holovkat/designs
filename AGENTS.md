@@ -15,6 +15,23 @@ Documentation-first repository containing reusable project-design templates, age
 | Workflow Guide | `docs/workflow-guide/` | HTML operating guide for planning, approvals, CI/CD, QA |
 | Templates AGENTS | `templates/AGENTS.md` | Templates area agent instructions |
 
+## AGENTS Hierarchy
+
+`AGENTS.md` files are operational contracts for their subtrees. Use them to find the right local rules, ownership boundaries, verification expectations, and child documentation indexes. OKF remains the durable knowledge system; do not duplicate OKF concept content into `AGENTS.md` files.
+
+Before substantial edits:
+
+1. Read this root `AGENTS.md`.
+2. Identify the files and folders you expect to touch.
+3. Walk from the repository root to each target path.
+4. Read every `AGENTS.md` found along each route.
+5. Use the nearest `AGENTS.md` as the local contract, with parent files supplying broader repo rules.
+6. If instructions conflict, the closer `AGENTS.md` controls local implementation details, but it must not weaken root-level OKF, safety, or project governance rules.
+
+Update the nearest owning `AGENTS.md` only when a change affects durable purpose, scope, ownership, responsibilities, workflow, required inputs or outputs, verification, permissions, constraints, side effects, artifacts, user behavior preferences, or child index contents. Update parent or child files when their structure, ownership, workflow, or index becomes stale. Small edits that do not change behavior or contracts may leave `AGENTS.md` unchanged, but the closeout pass must still check for drift.
+
+Keep `AGENTS.md` files concise and operational: stable contracts, not session diaries. Put broad rules in parent files, local details in child files, and product or system knowledge in OKF concepts or inbox syntheses.
+
 ## OKF Deployment
 
 To deploy OKF to another project, read `knowledge/process/deploy-okf.md` and follow `templates/okf/DEPLOYMENT-RUNBOOK.md`. The SKILL.md at `templates/instructional-documents/skills/okf/SKILL.md` (canonical source, distributed via agent-skill-distro to CLI skill roots) provides agent-facing instructions.
@@ -54,10 +71,12 @@ Do not move or duplicate existing docs into `knowledge/`. New knowledge that doe
 
 When you finish a meaningful work session:
 
-1. Write a session synthesis to `knowledge/inbox/` using the OKF inbox format, before committing.
-2. Include: what was done, decisions made, approaches rejected and why, what was deprecated, lessons learned, current state.
-3. This is about the product, business logic, and application state, not just code diffs.
-4. The post-commit hook does not write inbox items for you; it refreshes the viewer manifest and nudges when the inbox needs curation.
+1. Re-check changed paths against the applicable `AGENTS.md` chain.
+2. Update nearest, parent, or child `AGENTS.md` files only when durable contracts or indexes changed.
+3. Write a session synthesis to `knowledge/inbox/` using the OKF inbox format, before committing.
+4. Include: what was done, decisions made, approaches rejected and why, what was deprecated, lessons learned, current state.
+5. This is about the product, business logic, and application state, not just code diffs.
+6. The post-commit hook does not write inbox items for you; it refreshes the viewer manifest and nudges when the inbox needs curation.
 
 ### Curation
 
