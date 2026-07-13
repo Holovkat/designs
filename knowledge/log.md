@@ -3,6 +3,14 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-07-13T03:54:51Z - Retired Paraffine/AFFiNE Project Memory
+
+- Removed the active `affine-project-notes` skill from the shared distro and Codex index.
+- Declared both `paraffine` and `affine-project-notes` blocked identities in deterministic skill-audit policy.
+- Added deterministic cleanup for stale Codex links owned by the distro.
+- Kept the generic `para-organizer` filesystem skill separate because OKF supersedes project memory, not personal file classification.
+- Recorded OKF as the repository-native replacement and retained only deprecation/migration evidence.
+
 ## 2026-07-13T03:35:53Z - Skill Governance and Staged Verification Alignment
 
 - Added `templates/instructional-documents/skill-governance.md` as the central ownership, deterministic-audit, quarantine, and T1-T5 verification reference.

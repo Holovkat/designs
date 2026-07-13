@@ -12,7 +12,7 @@
 | [Domain](./domain/index.md) | 7 | OKF domain knowledge and designs design domain rules |
 | [Decisions](./decisions/index.md) | 8 | Architectural decisions and rationale |
 | [Process](./process/index.md) | 23 | OKF workflows and designs project processes |
-| [Deprecation](./deprecation/index.md) | 1 | Superseded patterns with lessons |
+| [Deprecation](./deprecation/index.md) | 2 | Superseded patterns with lessons |
 | [State](./state/index.md) | 2 | Current state of OKF system and designs project content |
 | [Inbox](./inbox/index.md) | 2 | Items awaiting curation |
 
