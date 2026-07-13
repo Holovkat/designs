@@ -85,6 +85,9 @@ The following patterns are no longer part of the global operating model:
 - fixed phase agents tied to retired project paths and mandatory per-phase full QA;
 - globally forced TDD, review, or full-verification plugins that override project risk and delivery stages;
 - persistent compressed-language modes that can reduce clarity during technical or destructive operations.
+- Paraffine/AFFiNE project-memory skills and MCP-backed check-ins; project knowledge now belongs in the repository's OKF `knowledge/` bundle.
+
+The generic `para-organizer` filesystem skill is a separate personal file-organization tool. It is not part of project-memory governance and is not superseded by OKF.
 
 ## Change Workflow
 
