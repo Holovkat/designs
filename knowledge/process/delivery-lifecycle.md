@@ -1,10 +1,10 @@
 ---
 type: Process
 title: Delivery Lifecycle
-description: Governed delivery lifecycle from planning approval through implementation, compliance, QA/UAT, production approval, and closeout
+description: Efficient staged delivery from approved planning through targeted development checks, sprint checkpoints, Dev UAT, full QA application readiness, release approval, and closeout
 resource: ./README.md
-tags: [designs, delivery, lifecycle, governance, qa, uat, production, closeout]
-timestamp: 2026-06-29T14:30:00Z
+tags: [designs, delivery, lifecycle, governance, verification, dev-uat, qa, regression, production, closeout]
+timestamp: 2026-07-13T03:35:53Z
 status: active
 ---
 
@@ -12,46 +12,45 @@ status: active
 
 ## Overview
 
-The delivery lifecycle governs the flow from planning approval to closeout, with stage gates for compliance, QA/UAT, and production approval.
+The lifecycle keeps implementation fast by scaling verification at coherent boundaries. Changed behavior receives tests during development; affected subsystems are checked at sprint checkpoints; completed sprint or epic functionality is accepted in Dev; full application regression runs after approved deployment to canonical QA.
 
 ## Lifecycle Stages
 
-1. **Planning approved** - Entry point into the governed build session
-2. **Start governed build session** - Create isolated worktree context
-3. **Freeze task packet** - Lock down requirements, contracts, and acceptance criteria
-4. **Implementation** - Write code, tests, fixtures
-5. **Review, tests, compliance** - Quality gates run
-6. **Compliance and DoD review** - Definition of Done ranking
-7. **DoD rank passes?** - Gate: No -> back to implementation; Conditional -> owner accepts caveats; Yes -> proceed
-8. **Project-defined CI/CD authority** - Build validation
-9. **QA readiness manifest** - Prepared for QA
-10. **QA/UAT approved?** - Gate: No -> rework/replan; Yes -> proceed
-11. **Production approval gate** - Owner approves promotion
-12. **Owner approved promotion?** - Gate: No -> stays at gate; Yes -> proceed
-13. **Governed production promotion** - Deploy to production
-14. **Production smoke** - Post-deployment verification
-15. **Final signoff?** - Gate: No -> rework/replan; Yes -> proceed
-16. **Closeout and lessons learned** - Document and archive
+1. **Planning approved** - Enter the governed build session with authoritative epic and sprint acceptance criteria.
+2. **Freeze task packet** - Lock the current task scope, contracts, risks, and evidence expectations.
+3. **T1 Development** - Implement the smallest clean change, add or update tests for changed behavior, and run targeted checks plus the narrowest relevant analyzer or build check.
+4. **T2 Sprint checkpoint** - After a coherent dependency or phase batch, run affected-subsystem checks and one combined code/specification review.
+5. **Compliance and DoD review** - Rank delivered scope and resolve missing requirements or accepted caveats.
+6. **T3 Dev UAT** - Validate the completed sprint or epic journeys, acceptance criteria, material failure paths, and relevant integration boundaries in canonical Dev.
+7. **Dev functionality accepted?** - Failure returns scoped evidence to implementation; success authorizes the governed QA path.
+8. **Project-defined QA deployment authority** - Produce the canonical QA build through the project-governed workflow.
+9. **T4 QA application readiness** - Run the full repository-required suite and end-to-end regression across applicable integrations, roles, supported devices, persistence/offline behavior, migrations, and operational failure paths.
+10. **QA application ready?** - Failure returns reproduction evidence for rework; success proceeds to explicit owner approval.
+11. **Production approval gate** - The owner names the production target and authorized release scope.
+12. **Governed production promotion** - Move the approved artifact through the project-defined path.
+13. **T5 Release verification** - Confirm active release vectors, artifact identity, canonical environment, and post-deployment smoke scenarios.
+14. **Final signoff and closeout** - Record evidence, residual risk, cleanup, documentation, and lessons learned.
 
 ## Stage Gates
 
-| Gate | Decision Point | Failure Path |
-|------|---------------|--------------|
-| DoD rank | Pass / Conditional / No | No -> implementation; Conditional -> owner decision |
-| QA/UAT | Approved / Not approved | Not approved -> rework or replan |
-| Production approval | Owner approved / Not | Not -> stays at gate |
-| Final signoff | Pass / Fail | Fail -> rework or replan |
+| Gate | Decision point | Failure path |
+| --- | --- | --- |
+| T1 changed behavior | Targeted checks pass / fail | Fix the current change before advancing |
+| T2 sprint checkpoint | Affected subsystem coherent / not coherent | Return the batch for scoped rework |
+| DoD rank | Pass / conditional / fail | Conditional requires owner decision; failure returns to implementation |
+| T3 Dev UAT | Sprint or epic functionality accepted / rejected | Return changed flows and reproduction evidence |
+| T4 QA readiness | Full application regression passes / fails | Rework or replan, then repeat QA readiness |
+| Production approval | Explicitly approved / not approved | Stay at the gate |
+| T5 final signoff | Pass / fail | Rework, rollback, or replan through the governed path |
 
 ## Key Principles
 
-- Implementation can loop back from any quality gate
-- Owner acceptance is required for conditional DoD passes
-- Production promotion is explicitly governed, not automatic
-- Closeout captures lessons learned for future cycles
-
-## Mermaid Diagram
-
-The README contains a mermaid flowchart visualizing this lifecycle from "Planning approved" through to "Closeout and lessons learned".
+- Do not run whole-application regression after every minor edit.
+- Do not defer tests for changed behavior until the end of the epic.
+- Dev UAT proves delivered functionality; QA proves application readiness.
+- High-risk changes may widen an earlier gate around the affected risk.
+- Evidence and completion language must name the highest stage actually proven.
+- Production promotion remains explicitly governed and never follows automatically from passing tests.
 
 ## Related Concepts
 
@@ -60,4 +59,4 @@ The README contains a mermaid flowchart visualizing this lifecycle from "Plannin
 - [Closeout Process](./closeout-process.md)
 - [Implementation Checklist](./implementation-checklist.md)
 - [Workflow Guide](./workflow-guide.md)
-- [Deployment Guide](./deployment-guide.md)
+- [Skill Distribution Sync](./skill-distribution-sync.md)

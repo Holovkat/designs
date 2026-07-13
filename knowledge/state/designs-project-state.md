@@ -4,7 +4,7 @@ title: Designs Project Content State
 description: Current state of the designs project's own content including templates, guides, UI/UX patterns, infrastructure docs, and skill distribution
 resource: ./README.md
 tags: [designs, state, content, templates, guides, ui-ux, infrastructure, skills, distribution]
-timestamp: 2026-07-05T13:00:00Z
+timestamp: 2026-07-13T03:35:53Z
 status: active
 ---
 
@@ -22,7 +22,7 @@ The designs repository is a documentation-first collection of reusable project-d
 - GitHub Pages site at `https://holovkat.github.io/designs/`
 
 ### Workflow Guide (docs/workflow-guide/)
-- `index.html` - 1039-line HTML operating model covering overview, installation, commands, intent confidence, planning intake, planning decomposition, approval gates, and more
+- `index.html` - HTML operating model covering overview, installation, commands, intent confidence, planning, staged verification, Dev UAT, QA application readiness, approval gates, and release governance
 - `install.html` - Installation instructions page
 - `assets/workflow.css` and `assets/workflow.js` - Supporting assets
 - `docs/superpowers/` - Plans and specs subdirectories (minimal content)
@@ -51,6 +51,7 @@ The designs repository is a documentation-first collection of reusable project-d
 - **generate_agents.md** - AGENTS.md hierarchy generation guide
 - **codex-global-planning-agents.md** - Planning agent pack contract
 - **codex-global-builder-agents.md** - Builder agent pack contract
+- **skill-governance.md** - Ownership boundary between designs, agent-skill-distro, projects, and installed roots; deterministic audit/quarantine policy; T1-T5 verification stages
 - **convex-self-hosted-quickref.md** - Convex self-hosted quick reference
 - **convex-self-hosted-setup.md** - Full Convex self-hosted infrastructure documentation
 - **commands/** - 18 slash command templates and scripts (plan-review and release-assess are now thin pointers to their canonical SKILL.md files)
@@ -64,7 +65,8 @@ The designs repository is a documentation-first collection of reusable project-d
 - **00-IMPLEMENTATION-CHECKLIST.md** - Live implementation status for designs repo (Codex planning + builder agent packs)
 - **00-TEMPLATE-IMPLEMENTATION-CHECKLIST.md** - Archived template baseline
 - **01-ARCHITECTURE-OVERVIEW.md** through **10-CI-CD-PIPELINE.md** - Phased setup templates
-- **98-TESTING-AND-VERIFICATION.md** and **99-DEPLOYMENT-STRATEGY.md** - Post-release templates
+- **98-TESTING-AND-VERIFICATION.md** - T1 development, T2 sprint checkpoint, T3 Dev UAT, T4 QA application readiness, and T5 release verification template
+- **99-DEPLOYMENT-STRATEGY.md** - Post-release deployment template
 
 ### UI/UX Guidelines (templates/ui-ux-guidelines/)
 - **README.md** - Overview with minimalist/borderless design philosophy (Notional-inspired)
@@ -114,6 +116,8 @@ The designs repository is a documentation-first collection of reusable project-d
 | Convex Self-Hosted Docs | Complete | `templates/instructional-documents/convex-self-hosted-*.md` |
 | Planning Agent Contracts | Complete | `templates/instructional-documents/codex-global-planning-agents.md` |
 | Builder Agent Contracts | Complete | `templates/instructional-documents/codex-global-builder-agents.md` |
+| Skill Governance | Complete | `templates/instructional-documents/skill-governance.md` |
+| Testing and Verification Template | Complete | `templates/functional-design/98-TESTING-AND-VERIFICATION.md` |
 | Agent Generation Guides | Complete | `templates/instructional-documents/generate-*.md` |
 | UI/UX Guidelines | Complete | `templates/ui-ux-guidelines/` (7 files) |
 | Design Standard | Complete (alpha) | `design-standard-v01/` |

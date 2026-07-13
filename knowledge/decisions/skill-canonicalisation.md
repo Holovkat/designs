@@ -1,10 +1,10 @@
 ---
 type: Decision
 title: Workflow Skill Canonicalisation
-description: Designs repo is the canonical source for workflow skills; SKILL.md is canonical over commands; three-layer distribution via agent-skill-distro
+description: Designs owns reusable workflow content while agent-skill-distro owns distribution policy, runtime overlays, deterministic auditing, quarantine, and skill CI
 resource: ./scripts/sync-skill-distro.sh
 tags: [skills, canonicalisation, distribution, agent-skill-distro, skill-md, commands, okf]
-timestamp: 2026-07-05T13:00:00Z
+timestamp: 2026-07-13T03:35:53Z
 status: active
 ---
 
@@ -18,14 +18,16 @@ A second issue: the OKF skill (`templates/instructional-documents/skills/okf/SKI
 
 ## Decision
 
-1. **Designs repo is the canonical source** for all workflow skills. The `agent-skill-distro` repo syncs from designs and distributes to installed CLI skill roots.
+1. **Designs is canonical for reusable workflow content authored here.** Skills under `templates/instructional-documents/skills/`, operating-model guidance, and reusable templates are edited in this repo and synced outward.
 2. **SKILL.md is canonical over command files.** Where a skill and a command cover the same workflow, the SKILL.md holds the full content and the command file is a thin pointer to the skill.
-3. **Three-layer distribution model:** designs (source) -> agent-skill-distro (distribution) -> installed CLI skill roots (claude, codex, pi, agents). Each layer is kept in sync by `scripts/sync-skill-distro.sh`.
-4. **The OKF skill is globally distributed** via the distro's `shared/skills/okf` with per-target symlinks.
+3. **Agent-skill-distro is canonical for distribution mechanics and policy.** It owns shared and harness-specific roots, runtime adapters, deterministic audits, quarantine manifests, and skill CI. Distro-native skills do not need a duplicate source in designs.
+4. **Three-layer distribution model:** designs reusable content -> agent-skill-distro distribution and policy -> installed CLI roots. `scripts/sync-skill-distro.sh` manages only explicitly mapped assets.
+5. **Project repositories remain authoritative for local behavior.** Their nearest `AGENTS.md`, project skills, acceptance criteria, canonical environments, and risk-specific commands override generic workflow detail without weakening global safety or release authority.
+6. **The OKF skill is globally distributed** via the distro's `shared/skills/okf` with per-target symlinks.
 
 ## Rationale
 
-- **Single source of truth:** With designs as canonical, there is one place to edit a skill. The distro handles the mechanics of copying to multiple CLI roots.
+- **Explicit source of truth:** Reusable content is edited in designs; runtime policy is edited in the distro; project-specific contracts stay with the project. This prevents circular copying and false claims that every skill must exist in all repositories.
 - **SKILL.md over commands:** Skills have richer metadata (YAML frontmatter with trigger phrases) and are auto-discoverable by CLI harnesses. Commands are invoked explicitly. Making SKILL.md canonical ensures the auto-triggerable version has the full content.
 - **Three-layer model:** Keeps the separation clean. Designs owns content, distro owns distribution, CLI roots are consumers. The `--check` mode of the sync script catches drift.
 - **Frontmatter is required for triggering:** Without `name` and `description` in YAML frontmatter, a skill is invisible to CLI harnesses. This is now enforced by the canonicalisation process.
@@ -39,6 +41,13 @@ A second issue: the OKF skill (`templates/instructional-documents/skills/okf/SKI
 - Created `scripts/sync-skill-distro.sh` (`--check` / `--apply`) to sync designs into agent-skill-distro.
 - Ran the sync and the distro's update-skills refresh. OKF skill installed in `~/.codex/skills`, `~/.claude/skills`, `~/.agents/skills`, `~/.pi/agent/skills`, and `pi-extensions/skills`.
 
+### 2026-07-13 Governance Update
+
+- Defined the designs-versus-distro ownership boundary in `templates/instructional-documents/skill-governance.md`.
+- Adopted T1 development, T2 sprint checkpoint, T3 Dev UAT, T4 QA application readiness, and T5 release verification stages.
+- Recorded deterministic distro auditing, reversible quarantine, and CI enforcement as distribution-layer responsibilities.
+- Clarified that Dev UAT accepts changed sprint or epic functionality in Dev while full end-to-end regression belongs to QA application readiness.
+
 ## What Was Deprecated
 
 - The forked `~/.codex/skills/vibe-fix` copy (backed up to `~/.skill-root-backups/`, replaced with a managed symlink).
@@ -50,6 +59,7 @@ A second issue: the OKF skill (`templates/instructional-documents/skills/okf/SKI
 - Skills without YAML frontmatter never trigger in CLI harnesses; the OKF skill had been undeployable since creation.
 - The distro's `rsync --delete` on managed roots silently reverts direct edits to live copies; always write to the distro source tree, not the live root.
 - Three-layer distribution drifts without an automated check; `sync-skill-distro.sh --check` now provides it.
+- Treating designs as the source for every distro-native policy file creates a second form of drift. Ownership must be explicit per asset, not inferred from the word "skill."
 
 ## Alternatives Considered
 

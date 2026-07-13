@@ -3,6 +3,15 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-07-13T03:35:53Z - Skill Governance and Staged Verification Alignment
+
+- Added `templates/instructional-documents/skill-governance.md` as the central ownership, deterministic-audit, quarantine, and T1-T5 verification reference.
+- Replaced the generic testing template with staged T1 development, T2 sprint checkpoint, T3 Dev UAT, T4 QA application readiness, and T5 release guidance.
+- Updated the rendered workflow guide and README lifecycle to separate Dev functional acceptance from full QA regression.
+- Updated the workflow skill canonicalisation decision to distinguish designs-owned reusable content from distro-owned runtime distribution policy.
+- Updated the skill distribution process with strict audit, behavioral-test, CI, and managed-root refresh requirements.
+- Recorded the session in the OKF inbox and refreshed affected indexes and state descriptions.
+
 ## 2026-07-05T13:15:00Z - AGENTS.md Alignment Patches Applied
 
 - Applied 2 AGENTS.md alignment proposals from the curation audit (operator-approved):
