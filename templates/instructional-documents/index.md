@@ -19,12 +19,12 @@ Reference guides, workflows, and technical specifications for developers. For `D
 ## Authentication & Payments
 
 - **[work-os-auth.md](./work-os-auth.md)** - WorkOS authentication implementation
-- **[zzWorkOS-Convex-Nextjs-Implementation-Guide.md](./zzWorkOS-Convex-Nextjs-Implementation-Guide.md)** - WorkOS + Convex + Next.js integration
 - **[stripe-payment-gateway.md](./stripe-payment-gateway.md)** - Stripe payment gateway setup
 
 ## Project Management
 
 - **[kickoff-requirements-spec.md](./kickoff-requirements-spec.md)** - Project kickoff requirements template
+- **[skill-governance.md](./skill-governance.md)** - Skill ownership, deterministic audit policy, quarantine, and staged delivery verification
 - **[upgrade-template.md](./upgrade-template.md)** - Version upgrade planning template
 - **[commands/release-assess.md](./commands/release-assess.md)** - Release intent, confidence, vector, and execution-order assessment command
 - **[scripts/release-vector-assess.sh](./scripts/release-vector-assess.sh)** - Provider-neutral release vector starter matrix

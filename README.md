@@ -9,16 +9,17 @@ This repository is documentation-first. The README is the GitHub index. The deta
 | Destination | Purpose |
 | --- | --- |
 | [Rendered Pages site](https://holovkat.github.io/designs/) | GitHub Pages entrypoint that redirects to the rendered workflow guide. |
-| [Workflow guide](https://holovkat.github.io/designs/workflow-guide/) | Canonical detailed operating model for planning, approvals, CI/CD, QA, production approval, and closeout. |
+| [Workflow guide](https://holovkat.github.io/designs/workflow-guide/) | Canonical detailed operating model for planning, staged verification, Dev UAT, QA application readiness, production approval, and closeout. |
 | [Install and harness setup](https://holovkat.github.io/designs/workflow-guide/install.html) | Instructions and common prompt for installing commands and skills globally or into a project. |
-| [Command pack](templates/instructional-documents/commands/) | Slash-command templates such as `/plan-feature`, `/plan-bugfix`, `/plan-github`, `/plan-review`, `/compliance-review`, `/uat`, and closeout flows. |
+| [Command pack](templates/instructional-documents/commands/) | Slash-command templates such as `/plan-feature`, `/plan-bugfix`, `/plan-github`, `/plan-review`, `/compliance-review`, `/uat`, `/uat-comprehensive`, and closeout flows. |
 | [Project skills](templates/instructional-documents/skills/) | Project-local skills for worktree/session lifecycle support. |
 | [Workflow installer](templates/instructional-documents/install-session-workflows.sh) | Installer for refreshing commands, hooks, scripts, skills, and worktree guidance into another project. |
 | [Functional design templates](templates/functional-design/) | Planning and implementation checklist templates. |
 | [Instructional documents](templates/instructional-documents/) | GitHub, deployment, architecture, auth, payment, and workflow references. |
+| [Skill governance](templates/instructional-documents/skill-governance.md) | Ownership boundaries, deterministic audit and quarantine policy, and staged T1-T5 verification. |
 | [UI/UX guidelines](templates/ui-ux-guidelines/) | Design-token and interface-pattern references. |
 | [OKF system](templates/okf/) | Open Knowledge Format standard, viewer, installer, post-commit hook, and deployment runbook. Install with `install-session-workflows.sh --with-okf`. |
-| [OKF knowledge bundle](knowledge/) | Self-documenting OKF knowledge base (48 concepts) covering the OKF standard, viewer, deployment process, and designs project content. View in any browser with `knowledge/viz.html`. |
+| [OKF knowledge bundle](knowledge/) | Self-documenting OKF knowledge base (54 concepts) covering the OKF standard, viewer, deployment process, and designs project content. View in any browser with `knowledge/viz.html`. |
 
 ## Planning Decomposition
 
@@ -57,32 +58,35 @@ flowchart TD
 flowchart TD
   A["Planning approved"] --> B["Start governed build session"]
   B --> C["Freeze task packet"]
-  C --> D["Implementation"]
-  D --> E["Review, tests, compliance"]
+  C --> D["Implementation + T1 changed tests"]
+  D --> E["T2 sprint checkpoints"]
   E --> F["Compliance and DoD review"]
   F --> G{"DoD rank passes?"}
   G -->|"No"| D
   G -->|"Conditional"| H{"Owner accepts caveats?"}
   H -->|"No"| D
   H -->|"Yes"| I
-  G -->|"Yes"| I["Project-defined CI/CD authority"]
-  I --> J["QA readiness manifest"]
-  J --> K{"QA / UAT approved?"}
-  K -->|"No"| L["Rework or replan"]
-  L --> D
-  K -->|"Yes"| M["Production approval gate"]
-  M --> N{"Owner approved promotion?"}
-  N -->|"No"| M
-  N -->|"Yes"| O["Governed production promotion"]
-  O --> P["Production smoke"]
-  P --> Q{"Final signoff?"}
-  Q -->|"No"| L
-  Q -->|"Yes"| R["Closeout and lessons learned"]
+  G -->|"Yes"| I["T3 Dev UAT: sprint / epic functionality"]
+  I --> J{"Dev functionality accepted?"}
+  J -->|"No"| D
+  J -->|"Yes"| K["Project-defined QA deployment authority"]
+  K --> L["T4 QA application readiness"]
+  L --> M{"Full regression passes?"}
+  M -->|"No"| N["Rework or replan"]
+  N --> D
+  M -->|"Yes"| O["Production approval gate"]
+  O --> P{"Owner approved promotion?"}
+  P -->|"No"| O
+  P -->|"Yes"| Q["Governed production promotion"]
+  Q --> R["T5 production smoke"]
+  R --> S{"Final signoff?"}
+  S -->|"No"| N
+  S -->|"Yes"| T["Closeout and lessons learned"]
 ```
 
 ## Workflow Detail
 
-See the [rendered workflow guide](https://holovkat.github.io/designs/workflow-guide/) for the full guidance covering planning, plan review, Definition of Done ranking, approvals, CI/CD authority, QA/UAT, production approval, closeout, installation, and project-specific overlays.
+See the [rendered workflow guide](https://holovkat.github.io/designs/workflow-guide/) for the full guidance covering planning, plan review, Definition of Done ranking, staged verification, Dev UAT, QA application readiness, CI/CD authority, production approval, closeout, installation, and project-specific overlays.
 
 ## Repository Structure
 

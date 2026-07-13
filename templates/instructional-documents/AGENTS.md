@@ -75,6 +75,7 @@ git checkout docs/update-related-templates && git rebase main && git push --forc
 
 ## Touch Points / Key Files
 - GitHub workflow: `github-workflow.md`
+- Skill governance and staged verification: `skill-governance.md`
 - Release assessment command: `commands/release-assess.md`
 - Release vector script: `scripts/release-vector-assess.sh`
 - OKF skill: `skills/okf/SKILL.md`

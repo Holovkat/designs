@@ -20,6 +20,10 @@ Do not reduce the decision to "small change" or "large change." A release is a
 set of vectors. Execute the gates required by the active vectors, in dependency
 order.
 
+Apply `/delivery-verification` before routing vectors: T3 proves changed
+functionality in Dev, T4 proves full application readiness in canonical QA, and
+T5 proves the approved promotion. A QA deployment alone is not T4 evidence.
+
 ## Principles
 
 - Determine intention before action.

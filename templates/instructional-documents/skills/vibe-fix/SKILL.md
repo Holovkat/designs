@@ -1,107 +1,44 @@
 ---
 name: vibe-fix
-description: Use when the user asks for a small pragmatic behavior fix based on observed app behavior, especially phrases like "vibe fix", "make this work", "this route/page/button should just go to X", "quick fix", or "perform this type of change". Guides the agent to create a GitHub issue linked to the active epic, find the actual runtime owner, make the smallest durable change, verify live behavior, and sign off with evidence.
+description: Make a small pragmatic behavior or presentation fix from observed application behavior. Use for phrases such as "vibe fix", "make this work", "this route/page/button should just go to X", "quick fix", or "perform this type of change", while preserving project patterns, linking the work to the active epic, and using proportional T1 verification.
 ---
 
 # Vibe Fix
 
-Handle small behavior fixes with disciplined pragmatism: identify the request,
-find the real source of behavior, make the smallest durable change, verify it
-live, and stop.
+Find the real behavior owner, make the smallest durable change, prove that
+change directly, and stop.
 
-**CRITICAL RULES:**
-1. **GITHUB IS THE SOURCE OF TRUTH** - Create a GitHub issue for the fix, linked to the active epic. Do not use a local checklist.
-2. **BRANCH IDENTIFIES THE EPIC** - Parse the current branch to find the active epic, same as `/next-phase`.
-3. **LINK THE ISSUE TO THE EPIC** - The new issue must be linked to the epic so it appears in the epic's tracked issues.
-4. **KEEP USER-FACING OUTPUT BRIEF** - Status updates only during execution. All detailed information goes into the GitHub issue. Do not repeat to the user what has been written to GitHub.
+1. Inspect the active repository, branch/workspace, nearest `AGENTS.md`, dirty
+   state, and observed behavior.
+2. Identify the active epic from the current branch and tracker state. Use
+   `glab` for GitLab and `gh` for GitHub; do not substitute a local checklist
+   when the project tracker is authoritative.
+3. Create the smallest task item for the fix, label/type it according to the
+   repository's conventions, and link it to the active epic. Include observed
+   behavior, desired behavior, intended files, acceptance criterion, and
+   targeted verification.
+4. Locate the single runtime owner. Reuse existing components, architecture,
+   design tokens, and patterns; do not create a second source of truth.
+5. Freeze a tiny T1 packet: observed behavior, desired behavior, intended files,
+   acceptance criterion, targeted test/direct evidence, and risk escalation.
+6. Make the smallest scoped change. Do not broaden into cleanup, redesign,
+   migration, or refactoring unless required for the fix.
+7. Add or update a focused test when behavior changed. Documentation, copy-only
+   presentation, formatting, generated output, and non-behavioral configuration
+   do not require artificial tests.
+8. Run the targeted test and narrowest relevant static check. Use the direct
+   project-native runtime proof for visible behavior: browser, simulator,
+   emulator, physical device, API, database, or logs as appropriate.
+9. Review the intended diff for duplicate logic, stale ineffective code,
+   unrelated dirty files, and plan/design drift.
+10. Post a concise tracker sign-off with files, targeted/runtime evidence, and
+    result, then close the small task only after the observed behavior is fixed.
+11. Report `Task implementation green (T1)` with the task reference and exact
+    evidence. Do not claim Dev UAT, QA application readiness, deployment, or
+    release.
 
-## Workflow
-
-1. Identify the active repo, branch, dirty worktree state, and nearest project
-   instructions.
-2. Identify the active epic from the current branch (strip harness prefix,
-   match slug against open epics). If no epic matches, use the oldest open epic
-   or ask the user.
-
-```bash
-gh issue list --label "epic" --state open --json number,title --jq '.[] | "\(.number) \(.title)"'
-```
-
-3. Create a GitHub issue for the fix, labeled `task`, and link it to the active
-   epic. The issue body should contain: what to fix, files involved, acceptance
-   criteria, and verification steps.
-
-```bash
-gh issue create \
-  --title "Vibe Fix: [brief description]" \
-  --label "task,vibe-fix" \
-  --body "## Vibe Fix
-
-**Epic**: #[EPIC_NUMBER]
-**Branch**: [branch-name]
-**Observed**: [what was seen]
-
-### What
-[1-2 sentences: what needs fixing]
-
-### Files
-- \`[path/to/file]\` - [what to change]
-
-### Acceptance Criteria
-- [ ] [criterion]
-
-### Verification
-- [ ] [how to verify]
-
-_Created by vibe-fix on [DATE]_
-"
-```
-
-Link the issue to the epic by adding it to the epic's task list:
-
-```bash
-gh issue edit [EPIC_NUMBER] --body "[updated body with new issue number in task list]"
-```
-
-4. Inspect live behavior before editing when practical.
-5. Locate the actual behavior owner and avoid duplicate sources of truth.
-6. Make the smallest scoped change.
-7. Add or update a focused test only where it locks the behavior that failed.
-8. Verify with the most direct evidence: targeted test, runtime/API check, and
-   browser check for user-visible behavior.
-9. Review the final diff for duplicate logic, stale ineffective code, unrelated
-   dirty files, and validation gaps.
-10. Post a sign-off comment on the issue with evidence, then close it.
-
-```bash
-gh issue comment [ISSUE_NUMBER] --body "## Fix Signed Off
-
-**Files changed**: [list]
-**Verification**: [test/run evidence]
-**Browser/runtime evidence**: [screenshot or check result]
-**Result**: Fixed
-
-_Signed off by vibe-fix on [DATE]_"
-
-gh issue close [ISSUE_NUMBER]
-```
-
-## Guardrails
-
-- Do not broaden into refactors, redesigns, migrations, or cleanup unless
-  required for the fix.
-- Do not trust configuration or code that appears correct until live behavior
-  confirms it is effective.
-- If two layers can implement the same behavior, choose one source of truth.
-- Preserve unrelated dirty work.
-- If specialist ownership is required by the project, delegate or request
-  specialist validation before acting in that domain.
-
-## Output
-
-Report briefly to the user. Do not repeat what was written to GitHub.
-
-- issue created: #[NN]
-- files changed: [list]
-- verification: [pass/fail]
-- signed off: yes/no
+Escalate proportionally if the apparent quick fix touches auth, authorization,
+security, payments, migrations/data loss, shared protocols/telemetry,
+persistence, concurrency, global navigation/design tokens, infrastructure, or
+release configuration. Preserve unrelated work and do not deploy or promote
+without explicit approval.

@@ -1,42 +1,71 @@
-# 90- Testing and Verification
+# Testing and Verification
 
-This document outlines the testing strategy for the project.
+Use staged verification so implementation remains fast while application-readiness evidence remains rigorous.
 
-## 1. Testing Levels
+## 1. Verification Stages
 
-### 1.1. Unit Tests
+### T1 Development
 
-- **Purpose:** To test individual components or functions in isolation.
-- **Framework:** e.g., Jest, Mocha, pytest.
-- **Location:** `src/**/*.test.js` or `tests/unit`.
-- **Guidelines:**
-  - Each function should have a corresponding unit test.
-  - Mocks and stubs should be used to isolate the unit under test.
+- Add or update tests for every changed behavior.
+- Run those targeted tests and the narrowest relevant analyzer, type, lint, or build check.
+- Do not run the complete application suite after every minor edit unless the affected risk requires it.
 
-### 1.2. Integration Tests
+### T2 Sprint Checkpoint
 
-- **Purpose:** To test the interaction between multiple components.
-- **Framework:** e.g., Supertest, Cypress, pytest.
-- **Location:** `tests/integration`.
-- **Guidelines:**
-  - Tests should cover the main user flows.
-  - Use a test database or mock external services.
+- Run affected-subsystem checks after a coherent dependency or phase batch.
+- Perform one combined code and specification review for the checkpoint.
+- Record remaining acceptance criteria, known risks, and deferred work.
 
-### 1.3. End-to-End (E2E) Tests
+### T3 Dev UAT
 
-- **Purpose:** To test the entire application from the user's perspective.
-- **Framework:** e.g., Cypress, Playwright, Selenium.
-- **Location:** `tests/e2e`.
-- **Guidelines:**
-  - Tests should simulate real user scenarios.
-  - Run against a staging or production-like environment.
+- Validate the completed sprint or epic functionality in canonical Dev.
+- Exercise changed user journeys, acceptance criteria, material failure paths, and relevant integration boundaries.
+- Treat this as functional acceptance, not whole-application regression.
 
-## 2. Test Execution
+### T4 QA Application Readiness
 
-- **Local:** `npm test` or `pytest`.
-- **CI/CD:** Tests are automatically run on every push to the main branch.
+- Begin after approved deployment to canonical QA.
+- Run the full repository-required suite and end-to-end regression.
+- Include integrations, roles and permissions, supported devices, persistence and offline behavior, migrations, and operational failure paths where applicable.
+- Repeat until the application-readiness gate passes, then hand off to the human approval path.
 
-## 3. Code Coverage
+### T5 Release
 
-- **Tool:** e.g., Istanbul, coverage.py.
-- **Target:** Aim for >80% code coverage.
+- Use the project-defined CI and deployment authority.
+- Verify active release vectors, artifact identity, canonical environment, and post-deployment smoke scenarios.
+- Do not infer production approval from passing technical checks.
+
+## 2. Risk-Based Expansion
+
+Authentication, authorization, security, payments, migrations or destructive data, shared protocols, persistence, concurrency, global navigation or design tokens, infrastructure, and release configuration can widen an earlier gate around the affected risk.
+
+State the highest stage actually proven. Do not describe targeted development checks as QA regression or release readiness.
+
+## 3. Project Configuration
+
+Each project should record:
+
+- canonical Dev, QA, and production environments;
+- targeted test commands by subsystem;
+- full QA regression command or suite;
+- supported role, browser, and device matrices;
+- test-data and tenant boundaries;
+- migration, rollback, and restore checks;
+- evidence location and human approval authority.
+
+## 4. Example Commands
+
+Replace these placeholders with project-native commands:
+
+```bash
+# T1 targeted verification
+<test-command> <changed-test-or-subsystem>
+<analyzer-or-type-check> <affected-scope>
+
+# T2 affected subsystem
+<subsystem-test-command>
+
+# T4 full QA application readiness
+<full-repository-suite>
+<end-to-end-regression-suite>
+```

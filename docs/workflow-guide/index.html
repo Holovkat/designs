@@ -86,8 +86,8 @@
               <span>Track code, data, config, service, deploy, cleanup, and closeout rows.</span>
             </a>
             <a class="scenario-card" href="#qa-uat">
-              <strong>QA and UAT</strong>
-              <span>Tie acceptance evidence to the canonical QA environment.</span>
+              <strong>Dev UAT and QA Readiness</strong>
+              <span>Accept changed functionality in Dev, then run full regression in canonical QA.</span>
             </a>
             <a class="scenario-card" href="#production">
               <strong>Production</strong>
@@ -245,9 +245,15 @@
                 </div>
                 <div class="matrix-row" role="row">
                   <div role="cell"><code>/uat</code></div>
-                  <div role="cell">Run user acceptance testing.</div>
-                  <div role="cell">Validates approved scenarios, records failures, and drives QA signoff or rework.</div>
-                  <div role="cell">QA/UAT</div>
+                  <div role="cell">Run Dev functional acceptance.</div>
+                  <div role="cell">Validates changed sprint or epic journeys and acceptance criteria in canonical Dev.</div>
+                  <div role="cell">T3 Dev UAT</div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><code>/uat-comprehensive</code></div>
+                  <div role="cell">Run QA application-readiness testing.</div>
+                  <div role="cell">Runs the full repository suite and end-to-end regression after approved deployment to canonical QA.</div>
+                  <div role="cell">T4 QA readiness</div>
                 </div>
               </div>
 
@@ -284,11 +290,12 @@
                 </div>
                 <div class="stack">
                   <details class="test-case">
-                    <summary><span><code>/compliance-review</code> and <code>/uat</code></span></summary>
+                    <summary><span><code>/compliance-review</code>, <code>/uat</code>, and <code>/uat-comprehensive</code></span></summary>
                     <div class="test-case-body">
                       <p>
                         Gate commands should remain evidence-first. Compliance validates accepted scope and ranks
-                        Definition of Done before UAT tests user scenarios and returns approval evidence or concrete rework.
+                        Definition of Done. <code>/uat</code> then accepts changed sprint or epic functionality in Dev;
+                        <code>/uat-comprehensive</code> owns full QA regression and application-readiness evidence.
                       </p>
                     </div>
                   </details>
@@ -485,26 +492,32 @@ sequenceDiagram
                 </div>
                 <div class="matrix-row" role="row">
                   <div role="cell"><strong>Review and test evidence</strong></div>
-                  <div role="cell">Before ready-for-integration.</div>
-                  <div role="cell">Code review, relevant tests, smoke checks, and unresolved risk list.</div>
-                  <div role="cell"><span class="badge warn">Integrate or rework</span></div>
+                  <div role="cell">At T1 development and T2 sprint checkpoints.</div>
+                  <div role="cell">Changed tests, narrow static checks, affected-subsystem checks, combined review, and unresolved risk.</div>
+                  <div role="cell"><span class="badge warn">Continue or rework</span></div>
                 </div>
                 <div class="matrix-row" role="row">
                   <div role="cell"><strong>Compliance / DoD review</strong></div>
-                  <div role="cell">Before handover, QA readiness, or UAT.</div>
+                  <div role="cell">Before Dev UAT.</div>
                   <div role="cell">Requirement traceability and DoD rank against delivered build outcomes and verification evidence.</div>
                   <div role="cell"><span class="badge bad">Blocks incomplete work</span></div>
                 </div>
                 <div class="matrix-row" role="row">
-                  <div role="cell"><strong>QA readiness</strong></div>
-                  <div role="cell">After governed integration or deployment authority completes.</div>
-                  <div role="cell">Deployment path, commit or build identity, environment, scenarios, accounts, and known limits.</div>
-                  <div role="cell"><span class="badge good">UAT can start</span></div>
+                  <div role="cell"><strong>T3 Dev UAT</strong></div>
+                  <div role="cell">After the sprint or epic functionality is complete.</div>
+                  <div role="cell">Canonical Dev identity, changed acceptance criteria, functional flows, failures, and residual risk.</div>
+                  <div role="cell"><span class="badge good">QA path allowed</span></div>
                 </div>
                 <div class="matrix-row" role="row">
-                  <div role="cell"><strong>QA / UAT approval</strong></div>
-                  <div role="cell">After approved scenarios are executed.</div>
-                  <div role="cell">Pass/fail evidence, defects, user signoff, or rework decision.</div>
+                  <div role="cell"><strong>QA deployment readiness</strong></div>
+                  <div role="cell">After the governed QA deployment authority completes.</div>
+                  <div role="cell">Canonical QA target, deployment path, build identity, active vectors, accounts, and known limits.</div>
+                  <div role="cell"><span class="badge good">T4 can start</span></div>
+                </div>
+                <div class="matrix-row" role="row">
+                  <div role="cell"><strong>T4 QA application readiness</strong></div>
+                  <div role="cell">After full repository and end-to-end regression.</div>
+                  <div role="cell">Pass/fail evidence, defects, retests, supported matrices, residual risk, and human signoff.</div>
                   <div role="cell"><span class="badge warn">Approve or rework</span></div>
                 </div>
                 <div class="matrix-row" role="row">
@@ -776,32 +789,37 @@ sequenceDiagram
   participant Build as Build session
   participant Gates as Review gates
   participant Compliance as Compliance / DoD review
+  participant DevUAT as Dev UAT
   participant Path as Project-defined CI/CD authority
-  participant QA as QA / UAT
+  participant QA as QA application readiness
   participant Prod as Production path
 
   Owner->>Build: Planning approved
-  Build->>Build: Freeze task packet and implement
-  Build->>Gates: Submit build evidence
+  Build->>Build: Implement + T1 changed tests
+  Build->>Gates: T2 sprint checkpoint evidence
   Gates-->>Build: Rework if review, test, or compliance fails
   Gates->>Compliance: Send requirements and build outcomes
   alt DoD rank A
-    Compliance->>Path: Mark release candidate ready
+    Compliance->>DevUAT: Submit sprint / epic for T3 acceptance
   else DoD rank B
     Compliance->>Owner: Request caveat decision
     alt Caveats accepted
-      Owner->>Path: Authorize conditional handover
+      Owner->>DevUAT: Authorize conditional Dev UAT
     else Caveats rejected
       Owner-->>Build: Return for scoped rework
     end
   else DoD rank C or D
     Compliance-->>Build: Return for rework or replanning
   end
-  Path->>Path: Run governed integration or deployment workflow
-  Path->>QA: Publish QA readiness manifest
-  alt QA / UAT fails
+  alt Dev functionality fails
+    DevUAT-->>Build: Return scoped failures and evidence
+  else Dev functionality accepted
+    DevUAT->>Path: Approve governed QA deployment path
+    Path->>QA: Publish build identity and readiness manifest
+  end
+  alt Full QA regression fails
     QA-->>Build: Return failures and reproduction evidence
-  else QA / UAT approved
+  else QA application ready
     QA->>Owner: Provide signoff evidence
     Owner->>Prod: Approve production promotion
     Prod->>Prod: Promote through governed production path
@@ -869,46 +887,50 @@ sequenceDiagram
           <section id="qa-uat" class="section">
             <div class="two-column">
               <div class="stack">
-                <span class="eyebrow">QA and UAT</span>
-                <h2>Acceptance evidence belongs to the canonical QA environment.</h2>
+                <span class="eyebrow">Dev UAT</span>
+                <h2>Accept delivered functionality without hauling the whole application through every sprint.</h2>
                 <p class="lede">
-                  QA readiness starts after the governed integration path has produced a reviewable build. Evidence
-                  should identify the canonical QA URL or environment, deployed identity, scenarios, accounts or roles,
-                  known limits, and the path that produced the build.
+                  T3 Dev UAT answers whether the changed sprint or epic functionality works as intended in canonical
+                  Dev. It covers delivered journeys, acceptance criteria, material failure paths, and relevant
+                  integration boundaries. It is not whole-application regression.
                 </p>
                 <div class="panel">
-                  <h3>Readiness manifest</h3>
+                  <h3><code>/uat</code> evidence</h3>
                   <div class="kv">
                     <div class="kv-row">
-                      <div class="kv-key">Vector matrix</div>
-                      <div>Active release vectors, specialist owners, required evidence, and any unresolved rows.</div>
+                      <div class="kv-key">Scope</div>
+                      <div>Changed sprint or epic acceptance criteria and explicitly excluded historical regression.</div>
                     </div>
                     <div class="kv-row">
                       <div class="kv-key">Environment</div>
-                      <div>Canonical QA URL or environment identifier, plus any required access constraints.</div>
+                      <div>Canonical Dev environment, build identity, data or tenant context, and access constraints.</div>
                     </div>
                     <div class="kv-row">
-                      <div class="kv-key">Build identity</div>
-                      <div>Commit, artifact, deployment, or release candidate identifier from the governed path.</div>
+                      <div class="kv-key">Flows</div>
+                      <div>Changed happy paths, material failure paths, and affected integration boundaries.</div>
                     </div>
                     <div class="kv-row">
-                      <div class="kv-key">Scenarios</div>
-                      <div>Approved UAT cases, expected outcomes, setup data, and evidence capture instructions.</div>
-                    </div>
-                    <div class="kv-row">
-                      <div class="kv-key">Known limits</div>
-                      <div>Accepted caveats, blocked areas, data constraints, or follow-up tasks.</div>
+                      <div class="kv-key">Outcome</div>
+                      <div>Functional acceptance or scoped rework with concrete reproduction evidence.</div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="panel">
-                <h3><code>/uat</code> outcome</h3>
+                <span class="eyebrow">QA Application Readiness</span>
+                <h3><code>/uat-comprehensive</code> owns full regression</h3>
                 <p>
-                  <code>/uat</code> validates approved scenarios and records evidence. It should produce one of two
-                  outcomes: rework with concrete failures and reproduction steps, or approval with signoff evidence tied
-                  to the canonical QA environment.
+                  T4 begins after approved deployment to canonical QA. Run the full repository-required suite and
+                  end-to-end regression across the application, integrations, roles and permissions, supported devices,
+                  persistence or offline behavior, migrations, and operational failure paths that apply.
                 </p>
+                <ul>
+                  <li>T1: changed tests and narrow checks during implementation.</li>
+                  <li>T2: affected-subsystem checks at sprint checkpoints.</li>
+                  <li>T3: changed functionality accepted in canonical Dev.</li>
+                  <li>T4: full application regression in canonical QA.</li>
+                  <li>T5: governed release checks and canonical-environment smoke.</li>
+                </ul>
               </div>
             </div>
           </section>
@@ -919,7 +941,7 @@ sequenceDiagram
                 <span class="eyebrow">Production</span>
                 <h2>Promotion requires explicit owner approval.</h2>
                 <p class="lede">
-                  Production work follows the governed production path only after QA/UAT approval and explicit owner
+                  Production work follows the governed production path only after T4 QA application readiness and explicit owner
                   approval. Do not infer approval from passing checks, preview availability, or a successful QA smoke.
                 </p>
                 <div class="panel">
@@ -958,7 +980,7 @@ sequenceDiagram
                   <ul>
                     <li>Run required quality gates and record command results.</li>
                     <li>Update project docs, release notes, or checklist state when required by the project.</li>
-                    <li>Retain evidence for planning, implementation, QA/UAT, production, and final signoff.</li>
+                    <li>Retain evidence for planning, T1/T2 implementation checks, T3 Dev UAT, T4 QA readiness, T5 release, and final signoff.</li>
                     <li>Clean temporary files, branches, worktrees, or environments only under project policy.</li>
                     <li>Record lessons learned in the owning specialist knowledge area when a reusable issue, risk, or workflow gap was discovered.</li>
                   </ul>
