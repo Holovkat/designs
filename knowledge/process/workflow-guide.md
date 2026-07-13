@@ -1,10 +1,10 @@
 ---
 type: Process
 title: Workflow Guide
-description: HTML-based operating model for planning, approvals, CI/CD, QA, production approval, and closeout
+description: HTML-based operating model for planning, staged verification, Dev UAT, QA application readiness, CI/CD authority, production approval, and closeout
 resource: ./docs/workflow-guide/index.html
-tags: [designs, workflow, guide, html, operating-model, planning, approvals, ci-cd, qa]
-timestamp: 2026-06-29T14:30:00Z
+tags: [designs, workflow, guide, html, operating-model, planning, approvals, verification, dev-uat, ci-cd, qa]
+timestamp: 2026-07-13T03:35:53Z
 status: active
 ---
 
@@ -12,7 +12,7 @@ status: active
 
 ## Overview
 
-The workflow guide is a persistent HTML operating model hosted on GitHub Pages at `https://holovkat.github.io/designs/workflow-guide/`. It is the canonical detailed operating model for planning, approvals, CI/CD, QA, production approval, and closeout.
+The workflow guide is a persistent HTML operating model hosted on GitHub Pages at `https://holovkat.github.io/designs/workflow-guide/`. It is the canonical detailed operating model for planning, staged T1-T5 verification, Dev UAT, QA application readiness, CI/CD authority, production approval, and closeout.
 
 ## Structure
 
@@ -34,6 +34,7 @@ The guide covers these workflow areas:
 | Planning Intake | Choose the planning entrypoint for the work type |
 | Planning Decomposition | Convert intent into issues, tasks, and checklist mirrors |
 | Approval Gates | (and subsequent sections for the full lifecycle) |
+| Dev UAT and QA Readiness | Separates sprint or epic functional acceptance in Dev from full application regression in canonical QA |
 
 ## Related Pages
 

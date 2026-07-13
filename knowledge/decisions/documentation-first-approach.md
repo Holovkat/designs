@@ -4,7 +4,7 @@ title: Documentation-First Approach
 description: Decision to make the designs repo documentation-first with README as GitHub index and HTML guide as canonical operating model
 resource: ./README.md
 tags: [designs, decision, documentation-first, readme, html-guide, operating-model]
-timestamp: 2026-06-29T14:30:00Z
+timestamp: 2026-07-13T03:35:53Z
 status: active
 ---
 
@@ -25,7 +25,7 @@ The designs repository is documentation-first. The README is the GitHub index. T
 
 - README links to: rendered Pages site, workflow guide, install guide, command pack, project skills, workflow installer, functional design templates, instructional documents, UI/UX guidelines
 - README contains mermaid diagrams for Planning Decomposition and Delivery Lifecycle
-- The HTML guide covers planning, plan review, Definition of Done ranking, approvals, CI/CD authority, QA/UAT, production approval, closeout, installation, and project-specific overlays
+- The HTML guide covers planning, plan review, Definition of Done ranking, T1/T2 implementation verification, T3 Dev UAT, T4 QA application readiness, CI/CD authority, production approval, T5 release verification, closeout, installation, and project-specific overlays
 - Validation is lightweight: `git diff --check` and reviewing changed markdown links
 
 ## Alternatives Considered
