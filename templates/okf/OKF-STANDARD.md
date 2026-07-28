@@ -104,37 +104,102 @@ Any additional YAML fields are allowed. Common extensions:
 
 ## Inbox Item Format
 
-Inbox items are session syntheses written at commit time. They use the same frontmatter as permanent concepts but with `type: Inbox`:
+The bundle takes two kinds of write, and they must never restate each other.
+
+### Tier 1: Commit Capture
+
+One compact item per commit, written by the repository's post-commit hook from
+the commit message body. It records **why** the change was made, **how** it was
+approached, and **what it impacts**. It does not list changed files: git already
+holds that, and a file list carries no knowledge value.
+
+The hook cannot infer intent, so the rationale comes from the commit message
+body. Commit bodies must state why and impact, not only what:
+
+```
+type(scope): subject
+
+<why and how>
+
+Impact: <what this affects>
+```
+
+The hook nudges when a commit body is only a subject line.
+
+Tier 1 frontmatter:
 
 ```yaml
 ---
 type: Inbox
-title: Session 2026-06-29 - Route geometry QA fixes
-description: Session synthesis for route geometry work
-tags: [mobile, routing, qa]
-timestamp: 2026-06-29T10:00:00Z
-session_id: 6acfd15b-bdf5-4b4b-9c1b-daff51ff57c0
-commit_sha: 5449a3d2
-branch: codex/issue-1503
-issue_refs: [1503]
-epic_refs: [1495]
+title: <subject without type/scope prefix>
+description: Commit capture for <short-sha>
+tags: [project, scope]
+timestamp: <ISO-8601>
+commit_sha: <full-sha>
+branch: <branch>
+issue_refs: [<n>]
+capture_tier: commit
 ---
+```
 
-# What Was Done
-Summary of work completed in this session.
+Body:
 
+```markdown
+# Why And How
+
+<rationale from commit body>
+
+# Impact
+
+<impact from commit body, or "Not recorded" when missing>
+```
+
+### Tier 2: Session Synthesis
+
+One item per session, written once at session close, after the work is
+committed, owned by the `end-session` skill. It records only what the individual
+commit captures cannot: decisions and their rationale, what was deprecated or
+superseded, lessons about the product or workflow, and the resulting state. It
+references the session's commit SHAs instead of restating their captures.
+
+Never per task. Never per fix. Never mid-session.
+
+Tier 2 frontmatter:
+
+```yaml
+---
+type: Inbox
+title: <what changed, in product terms>
+description: <one line>
+tags: [lowercase, consistent]
+timestamp: <ISO-8601>
+session_id: <session-uuid>
+commit_sha: [<sha>, <sha>]
+branch: <branch-name>
+issue_refs: [<n>]
+epic_refs: [<n>]
+capture_tier: session
+---
+```
+
+Body:
+
+```markdown
 # Decisions Made
-Architectural or product decisions and their rationale.
+Decisions and their rationale.
 
 # What Was Deprecated
-Patterns, components, or approaches that were removed or superseded.
+Patterns or approaches removed or superseded.
 
 # Lessons Learned
-Insights gained during the work.
+Insights about the product, business logic, or workflow.
 
 # Current State
-What works now, what's in progress, what's blocked.
+What works now, what is in progress, what is blocked.
 ```
+
+There is deliberately no `# What Was Done` section. The commit captures already
+hold that.
 
 ## Deprecation Concept Format
 
