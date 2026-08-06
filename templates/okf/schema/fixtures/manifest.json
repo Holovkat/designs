@@ -1,0 +1,108 @@
+{
+  "strictValid": [
+    {
+      "file": "strict-valid/architecture.json"
+    },
+    {
+      "file": "strict-valid/component.json"
+    },
+    {
+      "file": "strict-valid/decision.json"
+    },
+    {
+      "file": "strict-valid/deprecation.json"
+    },
+    {
+      "file": "strict-valid/domain.json"
+    },
+    {
+      "file": "strict-valid/inbox-commit-sha256.json"
+    },
+    {
+      "file": "strict-valid/inbox-commit.json"
+    },
+    {
+      "file": "strict-valid/inbox-session.json"
+    },
+    {
+      "file": "strict-valid/process.json"
+    },
+    {
+      "file": "strict-valid/state.json"
+    }
+  ],
+  "strictInvalid": [
+    {
+      "file": "strict-invalid/deprecation-empty-supersedes.json",
+      "expectedKeywords": [
+        "minItems"
+      ]
+    },
+    {
+      "file": "strict-invalid/inbox-commit-short-sha.json",
+      "expectedKeywords": [
+        "pattern"
+      ]
+    },
+    {
+      "file": "strict-invalid/inbox-session-missing-session-id.json",
+      "expectedKeywords": [
+        "required"
+      ]
+    },
+    {
+      "file": "strict-invalid/missing-title.json",
+      "expectedKeywords": [
+        "required"
+      ]
+    },
+    {
+      "file": "strict-invalid/non-deprecation-deprecated-status.json",
+      "expectedKeywords": [
+        "const"
+      ]
+    },
+    {
+      "file": "strict-invalid/relationship-without-id.json",
+      "expectedKeywords": [
+        "required"
+      ]
+    },
+    {
+      "file": "strict-invalid/verified-without-evidence.json",
+      "expectedKeywords": [
+        "required"
+      ]
+    }
+  ],
+  "legacyCompatible": [
+    {
+      "file": "legacy-compatible/inbox-missing-capture-tier.json",
+      "warningCode": "legacy-unspecified-capture-tier",
+      "expectedKeywords": [
+        "required"
+      ]
+    },
+    {
+      "file": "legacy-compatible/duplicate-tags.json",
+      "warningCode": "quality-warning-duplicate-tags",
+      "expectedKeywords": [
+        "uniqueItems"
+      ]
+    },
+    {
+      "file": "legacy-compatible/short-sha.json",
+      "warningCode": "provenance-unresolved-short-sha",
+      "expectedKeywords": [
+        "pattern"
+      ]
+    },
+    {
+      "file": "legacy-compatible/deprecation-path-supersedes.json",
+      "warningCode": "legacy-replaced-by-ambiguous",
+      "expectedKeywords": [
+        "pattern"
+      ]
+    }
+  ]
+}

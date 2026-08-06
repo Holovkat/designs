@@ -1,0 +1,13 @@
+{
+  "branch": "main",
+  "capture_tier": "commit",
+  "commit_sha": "ecb76f8",
+  "description": "Invalid short object identifier",
+  "tags": [
+    "fixture",
+    "okf"
+  ],
+  "timestamp": "2026-08-06T04:10:00Z",
+  "title": "Short SHA capture",
+  "type": "Inbox"
+}

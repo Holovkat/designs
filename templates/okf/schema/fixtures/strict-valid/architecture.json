@@ -1,0 +1,13 @@
+{
+  "description": "A strict fixture for the OKF application profile",
+  "resource": "templates/okf/OKF-STANDARD.md",
+  "status": "active",
+  "tags": [
+    "okf",
+    "fixture"
+  ],
+  "timestamp": "2026-08-06T04:10:00Z",
+  "title": "Fixture Architecture",
+  "type": "Architecture",
+  "x_demo_note": "unknown extensions are preserved"
+}

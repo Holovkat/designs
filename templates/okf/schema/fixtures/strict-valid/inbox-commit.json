@@ -1,0 +1,24 @@
+{
+  "assertion_state": "historical",
+  "branch": "main",
+  "capture_tier": "commit",
+  "commit_sha": "0123456789abcdef0123456789abcdef01234567",
+  "description": "Commit capture fixture",
+  "evidence_refs": [
+    "git:0123456789abcdef0123456789abcdef01234567"
+  ],
+  "generated_at": "2026-08-06T04:10:00Z",
+  "generated_by": "okf-post-commit",
+  "issue_refs": [
+    26
+  ],
+  "source_authority": "repository-git",
+  "source_repository": "self",
+  "tags": [
+    "fixture",
+    "okf"
+  ],
+  "timestamp": "2026-08-06T04:10:00Z",
+  "title": "Fixture commit capture",
+  "type": "Inbox"
+}
