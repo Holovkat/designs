@@ -3,6 +3,12 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-06T05:36:06Z - Epic #26 Parser Runtime Distribution Approval
+
+- **Approved:** repository-local, pinned parser-runtime packaging to unblock the installed C8 viewer and C9 query consumers; C3 remains separately bounded by A3/A4/A5.
+- **Retained constraints:** no runtime network/dependency install, hook/curator/scheduler start, bundle mutation, external traversal, or fallback ad-hoc parser.
+- **Still deferred:** JSON-LD/RDF/SHACL, curation/canary execution, archive/deletion, cross-project rollout, and `AGENTS.md` edits.
+
 ## 2026-08-06T04:06:20Z - Epic #26 Phase B Approval
 
 - **Approved:** the portable native semantic-profile direction: flat strict core, warning-first legacy compatibility, stable project-local IDs and typed relationships, flat provenance/assertion metadata, and claim-scoped authority.

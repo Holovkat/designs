@@ -2,6 +2,7 @@
 
 | Title | Description | Tags | Status |
 |-------|-------------|------|--------|
+| [OKF Parser Runtime Distribution](./okf-parser-runtime-distribution.md) | Operator-approved local parser-runtime packaging to unblock installed C8 and C9 consumers | [okf, parser, distribution, viewer, query, curation-safety] | active |
 | [OKF Semantic Profile and Semantic-Web Scope](./semantic-profile-and-semantic-web-scope.md) | Operator-approved portable native semantic profile with JSON-LD/RDF/SHACL deferred from the Phase C core | [okf, semantic-profile, relationships, provenance, json-ld, rdf, shacl] | active |
 | [Bounded Curation Execution Safety Requirements](./bounded-curation-execution-safety.md) | Operator-approved fail-closed requirements and regression scenarios for any future OKF curator execution; numeric and canary parameters remain per-run decisions | [okf, curation, safety, scheduling, quotas, locking, cancellation, resumability] | active |
 | [Inbox Quality and Retention Policy](./inbox-quality-and-retention-policy.md) | Operator-approved warning-first, non-destructive quality, deduplication, retention, and archive rules for OKF inbox items | [okf, inbox, quality, retention, deduplication, provenance] | active |
