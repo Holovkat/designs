@@ -3,9 +3,9 @@ type: Inbox
 title: OKF two-tier rollout and Phase A gate
 description: Session synthesis for the approved two-tier rollout, hook isolation remediation, and Phase A gate
 tags: [okf, capture-tier, curation, hooks, skills, governance]
-timestamp: 2026-08-06T03:20:58Z
+timestamp: 2026-08-06T03:23:55Z
 session_id: 019fd470-7afa-7023-bdbd-0d971652dacf
-commit_sha: [374104e24bf3edab627a730b4d14a034c10ba1bf, 44e72a088209ecb52138ac60658c05dd83254dc6, e575f34dc720dbfead37fef55827186ecf8c3b4e, 4c9aa397fb1be50adf30724b6b52ec5babf3a7e8, 5015ffa3fdef8b89ca76c349aae7cdebd5144842, ecb76f8, 20acf252fb92a7b4da26dd058738102b96487a92, 0d572f1e477782fa8599358786b309063e3a8c95, e5ab653c22e0bc2e7134f64415adadf494a758f3]
+commit_sha: [374104e24bf3edab627a730b4d14a034c10ba1bf, 44e72a088209ecb52138ac60658c05dd83254dc6, e575f34dc720dbfead37fef55827186ecf8c3b4e, 4c9aa397fb1be50adf30724b6b52ec5babf3a7e8, 5015ffa3fdef8b89ca76c349aae7cdebd5144842, ecb76f8, 20acf252fb92a7b4da26dd058738102b96487a92, 0d572f1e477782fa8599358786b309063e3a8c95, e5ab653c22e0bc2e7134f64415adadf494a758f3, c0c46f39b8e81a6c5613792aeb45620aeb38b52f]
 branch: main
 issue_refs: [26, 27, 28, 29, 30, 31]
 epic_refs: [26]
@@ -49,7 +49,7 @@ capture_tier: session
 # Current State
 
 - Phase A0 is complete; P0 hook isolation is fixed and covered by the hook
-  suite. A4/A5 are operator-approved.
+  suite. A1/A2 evidence and the approved A3/A4/A5 records are now canonical.
 - Canonical templates, the distributed `okf` skill, and the distributed
   `end-session` skill share the two-tier cadence and terminal loop guard.
 - Phase B semantic-guardrail design may proceed. Phase C needs accepted Phase B
