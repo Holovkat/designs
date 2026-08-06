@@ -35,3 +35,22 @@ malformed YAML, alias rejection, BOM/CRLF envelopes, unclosed envelopes, and bod
 As with the schema runner, dependencies are declared but not installed by this
 repository slice; create a lockfile only through an approved dependency-refresh
 workflow.
+
+## C4/C5 run-safety seams
+
+`run-guard.mjs`, `run-plan.mjs`, `run-control.mjs`, `run-lock.mjs`,
+`run-report.mjs`, and `run-checkpoint.mjs` are Node-standard-library seams for
+future, separately approved bounded curation work. They validate an explicit
+operator plan, exact Git root, contained inputs, caller-supplied positive caps,
+kill-switch state, an atomic lock, bounded evidence, and deterministic resume.
+They provide no curator, executor, scheduler, network client, or mutation of
+`knowledge/`. Numeric limits are deliberately never defaulted.
+
+The fixture-only contract is tested with:
+
+```bash
+npm --prefix templates/okf run test:run-safety
+```
+
+See `knowledge/decisions/bounded-curation-execution-safety.md` for the governing
+approval boundary; passing these tests is not authority to run a batch or canary.

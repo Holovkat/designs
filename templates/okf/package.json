@@ -6,6 +6,7 @@
   "scripts": {
     "test:frontmatter": "node tests/frontmatter-parser_test.mjs",
     "test:lint": "node tests/linter_test.mjs",
+    "test:run-safety": "node tests/run-safety_test.mjs",
     "test:schema": "node schema/schema-test.mjs"
   },
   "devDependencies": {
