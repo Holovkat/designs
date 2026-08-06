@@ -3,6 +3,21 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-06T02:16:23Z - Epic #26 P0 Hook Isolation Remediation
+
+- **Fixed:** `templates/okf/post-commit.sh` and the installed `.githooks/post-commit` no longer invoke a parent-workspace manifest generator.
+- **Verified:** `templates/okf/tests/post-commit_test.sh` supplies a parent generator fixture and proves it is not invoked while Tier 1 capture still succeeds.
+- **Updated:** A4/A5 proposed decision evidence now records `20acf25` as the completed P0 remediation. The First Decision Gate remains required for every future executor, canary, or cadence implementation.
+- **Not performed:** no scheduler, cron, Factory action, curator run, external repository mutation, archive, deletion, or `AGENTS.md` change.
+
+## 2026-08-06T02:02:04Z - Epic #26 Phase A Quality and Cadence Decision Drafts
+
+- **Added (proposed):** `decisions/inbox-quality-and-retention-policy.md` — warning-first, non-destructive size, quality, deduplication, provenance, retention, archive, and deletion boundaries from A1–A3 evidence.
+- **Added (proposed):** `decisions/curation-cadence-first-decision-gate.md` — explicit operator-requested status review and bounded manual curation recommendation, with scheduler/Factory rejection and the A1 P0 isolation blocker.
+- **Updated:** decision and root indexes for the two new Phase A decision records.
+- **Not performed:** no hook, installer, viewer, query, curator, scheduler, cron, Factory, canary, external repository, inbox, archive, deletion, or `AGENTS.md` mutation.
+- **Gate:** both records await the First Decision Gate; no implementation is authorized. P0 hook isolation must be remediated and independently verified first.
+
 ## 2026-07-13T03:54:51Z - Retired Paraffine/AFFiNE Project Memory
 
 - Removed the active `affine-project-notes` skill from the shared distro and Codex index.

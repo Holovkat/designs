@@ -12,4 +12,5 @@ Session syntheses awaiting curation. Items here are written by agents before com
 | [propose capture routing and curation trigger #31](./2026-08-06T00-45-37Z-propose-capture-routing-and-curation-trigger-31.md) | 2026-08-06T00:45:37Z | okf, okf | #26, #31 |
 | [persist session captures with a terminal guard #29](./2026-08-06T01-08-26Z-persist-session-captures-with-a-terminal-guard-29.md) | 2026-08-06T01:08:26Z | okf, okf | #29 |
 | [OKF two-tier rollout completion](./2026-08-06T01-08-42Z-okf-two-tier-rollout-completion.md) | 2026-08-06T01:08:42Z | okf, capture-tier, curation, hooks, skills | #27, #28, #29, #30, #31 |
+| [confine post-commit capture to its repository #26](./2026-08-06T02-15-37Z-confine-post-commit-capture-to-its-repository-26.md) | 2026-08-06T02:15:37Z | okf, okf | #26 |
 <!-- Rows added by agents, removed by curation agent -->
