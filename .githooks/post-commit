@@ -183,13 +183,6 @@ if [[ -f "$INDEX" ]] && grep -q '^|-' "$INDEX"; then
 fi
 update_root_inbox_count
 
-# Refresh the workspace viewer manifest. Guarded and never fatal: the script
-# lives outside the repository and may be absent on other machines.
-MANIFEST_SCRIPT="$(dirname "$REPO_ROOT")/generate-all-viz.js"
-if [[ -f "$MANIFEST_SCRIPT" ]] && command -v node >/dev/null 2>&1; then
-    node "$MANIFEST_SCRIPT" --manifest >/dev/null 2>&1 || true
-fi
-
 # Nudge when rationale or impact is missing
 if [[ "$RATIONALE_MISSING" == true || "$IMPACT_MISSING" == true ]]; then
     printf '\nOKF: capture written with gaps -> %s\n' "${OUT#"$REPO_ROOT"/}" >&2

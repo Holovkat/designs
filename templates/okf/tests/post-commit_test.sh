@@ -12,7 +12,12 @@ fail() { printf '  FAIL  %s\n' "$1"; FAILURES=$((FAILURES + 1)); }
 
 setup_repo() {
     local dir
-    dir="$(mktemp -d)"
+    if [[ $# -eq 1 ]]; then
+        dir="$1"
+        mkdir -p "$dir"
+    else
+        dir="$(mktemp -d)"
+    fi
     git -C "$dir" init -q
     git -C "$dir" config user.email "test@example.com"
     git -C "$dir" config user.name "Test"
@@ -124,18 +129,26 @@ git -C "$repo" commit -q -m "okf-capture: persist session captures"
 after_capture_loop=$(ls -1 "$repo"/knowledge/inbox/*.md | rg -vc 'index\.md$' || echo 0)
 if [[ "$after_capture_loop" -eq "$before_capture_loop" ]]; then pass "skips capture-persistence commits"; else fail "skips capture-persistence commits"; fi
 
-# 8: the manifest refresh must never fail a commit when node is unavailable
-echo six > "$repo/f.txt"
-git -C "$repo" add f.txt
-if PATH=/usr/bin:/bin git -C "$repo" -c core.hooksPath="$repo/.git/hooks" commit -q -F - <<'MSG'
+# 8: the hook must not invoke a parent-workspace manifest generator
+isolation_parent="$(mktemp -d)"
+isolation_repo="$(setup_repo "$isolation_parent/repo")"
+isolation_marker="$isolation_parent/parent-generator-called"
+cat > "$isolation_parent/generate-all-viz.js" <<'JS'
+const fs = require('fs');
+fs.writeFileSync(process.env.OKF_PARENT_MANIFEST_MARKER, 'called');
+JS
+echo six > "$isolation_repo/f.txt"
+git -C "$isolation_repo" add f.txt
+if OKF_PARENT_MANIFEST_MARKER="$isolation_marker" git -C "$isolation_repo" commit -q -F - <<'MSG'
 feat(nav): add lane guidance
 
 Drivers missed exits without lane hints.
 
 Impact: turn-by-turn now shows lane guidance.
 MSG
-then pass "commit succeeds when node is unavailable"; else fail "commit succeeds when node is unavailable"; fi
-if [[ -n "$(latest_item "$repo")" ]]; then pass "capture still written without node"; else fail "capture still written without node"; fi
+then pass "commit succeeds beside a parent generator"; else fail "commit succeeds beside a parent generator"; fi
+if [[ ! -e "$isolation_marker" ]]; then pass "does not invoke the parent-workspace generator"; else fail "does not invoke the parent-workspace generator"; fi
+if [[ -n "$(latest_item "$isolation_repo")" ]]; then pass "capture still written without a manifest refresh"; else fail "capture still written without a manifest refresh"; fi
 
 # 9: merge commits are skipped
 merge_repo="$(setup_repo)"
@@ -197,7 +210,7 @@ PATH="$collision_repo/fake-bin:$PATH" git -C "$collision_repo" commit -q -m "cho
 collision_count=$(find "$collision_repo/knowledge/inbox" -maxdepth 1 -type f -name '*-retain-collision-capture*.md' | wc -l | tr -d ' ')
 if [[ "$collision_count" -eq 2 ]]; then pass "avoids same-second capture overwrites"; else fail "avoids same-second capture overwrites"; fi
 
-rm -rf "$repo" "$bare" "$merge_repo" "$amend_repo" "$collision_repo"
+rm -rf "$repo" "$bare" "$merge_repo" "$amend_repo" "$collision_repo" "$isolation_parent"
 
 if [[ $FAILURES -gt 0 ]]; then
     printf '\n%d test(s) failed\n' "$FAILURES"
