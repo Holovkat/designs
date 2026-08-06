@@ -2,7 +2,7 @@
 
 | Title | Description | Tags | Status |
 |-------|-------------|------|--------|
-| [Proposed Capture Routing and Explicit Curation Trigger](./capture-routing-and-curation-trigger.md) | Proposed dirty-tree routing, loop-guard subjects, and bounded manual curation trigger for the two-tier inbox; requires operator approval before implementation | [okf, inbox, capture-tier, curation, git-hooks, governance, proposed] | in-progress |
+| [Capture Routing and Explicit Curation Trigger](./capture-routing-and-curation-trigger.md) | Approved dirty-tree routing, loop-guard subjects, and bounded manual curation trigger for the two-tier inbox | [okf, inbox, capture-tier, curation, git-hooks, governance] | active |
 | [Legacy Alignment Mode](./legacy-alignment-mode.md) | Keep existing docs in place; OKF concepts reference them via resource field | [okf, legacy, docs, alignment, migration] | active |
 | [Post-Commit Capture Model](./post-commit-capture-model.md) | Two-phase knowledge capture: agents write syntheses before committing, hook refreshes manifest and nudges, curation pass processes later | [okf, hooks, capture, inbox, separation-of-concerns, agents] | active |
 | [Per-Project Knowledge Bundles](./per-project-bundles.md) | Each project maintains its own knowledge/ directory in git | [okf, architecture, bundling, git, per-project] | active |

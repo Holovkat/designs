@@ -28,10 +28,10 @@ REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 INBOX="${REPO_ROOT}/knowledge/inbox"
 [[ -d "$INBOX" ]] || exit 0
 
-# Skip curation commits to prevent loops
+# Skip terminal capture-persistence and curation commits to prevent loops.
 COMMIT_SUBJECT="$(git log -1 --format='%s' 2>/dev/null || echo '')"
 case "$COMMIT_SUBJECT" in
-    okf-curation:*) exit 0 ;;
+    okf-capture:*|okf-curation:*) exit 0 ;;
 esac
 
 # Merge commits carry no single authorial rationale; do not add inbox noise.

@@ -9,4 +9,5 @@ Session syntheses awaiting curation. Items here are written by agents before com
 | [activate Tier 1 capture hook #27](./2026-08-06-002348-activate-tier-1-capture-hook-27.md) | 2026-08-06T00:23:48Z | okf, okf | #27 |
 | [single-source the two-tier cadence #28](./2026-08-06-003933-single-source-the-two-tier-cadence-28.md) | 2026-08-06T00:39:33Z | okf, okf | #28 |
 | [harden Tier 1 capture mechanics #30](./2026-08-06T00-43-55Z-harden-tier-1-capture-mechanics-30.md) | 2026-08-06T00:43:55Z | okf, okf | #30 |
+| [propose capture routing and curation trigger #31](./2026-08-06T00-45-37Z-propose-capture-routing-and-curation-trigger-31.md) | 2026-08-06T00:45:37Z | okf, okf | #26, #31 |
 <!-- Rows added by agents, removed by curation agent -->

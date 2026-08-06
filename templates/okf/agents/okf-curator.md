@@ -15,6 +15,11 @@ You will be given:
 - Path to a project with a `knowledge/` OKF bundle
 - The inbox items to process (in `knowledge/inbox/`)
 - The existing concept files across all concept directories
+- An explicit operator request for this repository-scoped run
+
+Do not schedule, self-reinvoke, traverse outside the supplied repository, or
+create additional sessions. Runtime, item, and byte ceilings are introduced
+only after the Epic #26 First Decision Gate approves them.
 
 ## Phase 1: Read Context
 
@@ -52,6 +57,12 @@ You will be given:
 13. Update existing concepts by merging new information, preserving prior context.
 14. When a concept is superseded, move the old file to `deprecation/` and write all required lesson sections (see Deprecation Format below).
 15. Move processed inbox items to `knowledge/inbox/processed/`.
+
+### Commit Convention
+
+Commit only bounded curation output with `okf-curation: <bounded batch summary>`.
+This subject is a post-commit loop guard; do not use it for ordinary work or
+capture persistence.
 
 ## Phase 4: Fill Gaps
 

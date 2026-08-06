@@ -116,6 +116,14 @@ git -C "$repo" commit -q -m "okf-curation: process inbox items"
 after_loop=$(ls -1 "$repo"/knowledge/inbox/*.md | rg -vc 'index\.md$' || echo 0)
 if [[ "$after_loop" -eq "$before_loop" ]]; then pass "skips curation commits"; else fail "skips curation commits"; fi
 
+# 7b: terminal capture-persistence commits are skipped to leave a clean tree
+echo capture > "$repo/capture.txt"
+git -C "$repo" add capture.txt
+before_capture_loop=$(ls -1 "$repo"/knowledge/inbox/*.md | rg -vc 'index\.md$' || echo 0)
+git -C "$repo" commit -q -m "okf-capture: persist session captures"
+after_capture_loop=$(ls -1 "$repo"/knowledge/inbox/*.md | rg -vc 'index\.md$' || echo 0)
+if [[ "$after_capture_loop" -eq "$before_capture_loop" ]]; then pass "skips capture-persistence commits"; else fail "skips capture-persistence commits"; fi
+
 # 8: the manifest refresh must never fail a commit when node is unavailable
 echo six > "$repo/f.txt"
 git -C "$repo" add f.txt

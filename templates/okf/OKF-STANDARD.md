@@ -201,6 +201,20 @@ What works now, what is in progress, what is blocked.
 There is deliberately no completion-summary section. The commit captures already
 hold that context.
 
+### Capture Persistence
+
+At session close, `end-session` stages pending Tier 1 captures and their index
+rows with the one Tier 2 synthesis, then commits only those files as
+`okf-capture: persist session captures`. The post-commit hook skips both
+`okf-capture:` and `okf-curation:` subjects so this terminal persistence commit
+does not create another Tier 1 item. Curators use
+`okf-curation: <bounded batch summary>` for concept commits.
+
+At a sprint checkpoint or epic close, an operator may run a repository-scoped
+inbox-status check and explicitly request one bounded curation batch. Count,
+age, and size inform that decision only; they never start curation, scheduling,
+or session creation.
+
 ## Deprecation Concept Format
 
 Deprecation is not deletion. A deprecated concept captures what was learned from the old approach so that future agents and developers can make informed decisions about whether to re-adopt it. Deprecation means "not right for this purpose right now", not "this was wrong".

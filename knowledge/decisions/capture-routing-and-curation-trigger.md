@@ -1,14 +1,14 @@
 ---
 type: Decision
-title: Proposed Capture Routing and Explicit Curation Trigger
-description: Proposed dirty-tree routing, loop-guard subjects, and bounded manual curation trigger for the two-tier inbox; requires operator approval before implementation
+title: Capture Routing and Explicit Curation Trigger
+description: Approved dirty-tree routing, loop-guard subjects, and bounded manual curation trigger for the two-tier inbox
 resource: https://github.com/Holovkat/designs/issues/31
-tags: [okf, inbox, capture-tier, curation, git-hooks, governance, proposed]
-timestamp: 2026-08-06T00:44:39Z
-status: in-progress
+tags: [okf, inbox, capture-tier, curation, git-hooks, governance]
+timestamp: 2026-08-06T01:06:33Z
+status: active
 issue_refs: [31]
 epic_refs: [26]
-decision_status: proposed-awaiting-operator-approval
+decision_status: operator-approved-2026-08-06
 ---
 
 # Context
@@ -21,7 +21,7 @@ would make it continuously noisy. Epic #26 records a prior cron/Factory runaway
 of 57,595 sessions and 6.34 GiB, so this decision must not restore schedules or
 unbounded automation.
 
-# Proposed Decision — Requires Operator Approval
+# Decision
 
 ## Capture Persistence Owner and Subject Convention
 
@@ -49,7 +49,7 @@ operator separately chooses whether to run one bounded curator batch.
 
 This replaces the removed count nudge without treating a numeric threshold as
 automation authority. Batch limits, locking, cancellation, resumability, and
-canary evidence remain First Decision Gate work; this proposal does not approve
+canary evidence remain First Decision Gate work; this decision does not approve
 them.
 
 # Alternatives Considered and Rejected
@@ -69,7 +69,7 @@ them.
 - **Cross-project rollout:** rejected. This decision applies only to canonical
   `designs` templates; the fms backlogs remain outside Phase A0.
 
-# Proposed Text Changes — Not Implemented
+# Approved Implementation Contract
 
 ## `templates/okf/OKF-STANDARD.md`
 
@@ -77,7 +77,7 @@ them.
 it does not say who commits the hook-created dirty files or which commit
 subjects are loop-guarded.
 
-**Proposed:**
+**Approved implementation:**
 
 ```md
 ### Capture Persistence
@@ -93,7 +93,7 @@ does not create another Tier 1 item. Curators use
 **Current:** the standard says curation is an explicit operator action pending a
 bounded cadence, but gives no selected manual trigger.
 
-**Proposed:**
+**Approved implementation:**
 
 ```md
 At a sprint checkpoint or epic close, an operator may run a repository-scoped
@@ -107,7 +107,7 @@ or session creation.
 **Current:** the contract specifies Phase 3 processing and loop-prevention
 responsibilities indirectly, but contains no commit-subject convention.
 
-**Proposed after Phase 3 step 15:**
+**Approved after Phase 3 step 15:**
 
 ```md
 16. Commit only the bounded curation output with
@@ -118,7 +118,7 @@ responsibilities indirectly, but contains no commit-subject convention.
 **Current:** the contract's Input section does not require a bounded,
 operator-requested invocation.
 
-**Proposed:**
+**Approved implementation:**
 
 ```md
 The operator must explicitly request this repository-scoped curation run. Do
@@ -138,7 +138,7 @@ case "$COMMIT_SUBJECT" in
 esac
 ```
 
-**Proposed:**
+**Approved implementation:**
 
 ```bash
 # Skip terminal capture-persistence and curation commits to prevent loops.
@@ -149,7 +149,9 @@ esac
 
 # Approval Boundary
 
-This is a decision proposal for Epic #26 gate item A5. It authorizes no code,
-skill, hook, scheduler, cron, Factory configuration, curator invocation, or
-cross-project rollout. Apply the listed text only after an operator explicitly
-approves this decision and its bounded-execution assumptions.
+The operator approved this decision on 2026-08-06. It authorizes the
+repository-local hook guard, `end-session` capture persistence, and the listed
+standard and curator-contract alignment. It does **not** authorize a scheduler,
+cron, Factory configuration, curator invocation, or cross-project rollout.
+Runtime ceilings, locking, cancellation, resumability, and canary evidence
+remain First Decision Gate work.
