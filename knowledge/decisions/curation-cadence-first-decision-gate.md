@@ -1,22 +1,22 @@
 ---
 type: Decision
-title: Proposed Curation Cadence for the First Decision Gate
-description: Explicit, repository-scoped, operator-requested status review and bounded manual curation recommendation; awaiting the Epic #26 First Decision Gate
+title: Curation Cadence and First Decision Gate
+description: Operator-approved explicit, repository-scoped, operator-requested status review and bounded manual curation model
 resource: https://github.com/Holovkat/designs/issues/26
-tags: [okf, curation, cadence, safety, operator-approval, proposed]
-timestamp: 2026-08-06T02:02:04Z
-status: in-progress
+tags: [okf, curation, cadence, safety, operator-approval]
+timestamp: 2026-08-06T03:19:40Z
+status: active
 issue_refs: [26]
-decision_status: proposed-awaiting-first-decision-gate
+epic_refs: [26]
+decision_status: operator-approved-2026-08-06
 ---
 
 # Decision Status and Scope
 
-This is the Epic #26 A5 recommendation, not an implementation authorization.
-It selects the current operating model, identifies the First Decision Gate
-inputs, and records proposed text changes only. It does not enable a scheduler,
-cron, launchd job, Factory task, curator run, canary, hook deployment,
-cross-project rollout, archive, deletion, or `AGENTS.md` patch.
+The operator approved this Epic #26 A5 decision on 2026-08-06. It selects the
+current operating model and the First Decision Gate boundary. It does not enable
+a scheduler, cron, launchd job, Factory task, curator run, canary, hook
+deployment, cross-project rollout, archive, deletion, or `AGENTS.md` patch.
 
 # Evidence and Constraints
 
@@ -81,10 +81,9 @@ No request may use a home directory, `/Users`, a parent workspace, broad
 filesystem discovery, a global hook path, or a cross-project selection. One
 repository and one executor session are the maximum scope of a run.
 
-# First Decision Gate Checklist
+# First Decision Gate Record
 
-The operator must approve all of the following before implementation beyond
-read-only status reporting:
+The operator approved the following boundary before Phase B design work:
 
 1. A1 deployment audit plus the `20acf25` P0 remediation and its fixture proof
    that the active canonical hook has no parent-workspace manifest call.
@@ -171,8 +170,8 @@ inbox count to its index.
 # Approval Boundary
 
 The A1 P0 hook-isolation finding is remediated by `20acf25` and its parent-
-generator fixture. This recommendation now awaits the operator's First Decision
-Gate decision. Approval would permit only subsequent approved Phase B design and
-scoped Phase C implementation packets, followed by isolated D3 planning when
-their prerequisites pass; it would not permit a scheduler, broad rollout, or
-automatic curation.
+generator fixture. The approved gate permits Phase B design work. Each scoped
+Phase C implementation packet still needs an accepted Phase B contract, and
+D3 planning still needs its separate named dataset, numeric ceilings, success
+metrics, and stop/rollback approval. The gate does not permit a scheduler,
+broad rollout, or automatic curation.

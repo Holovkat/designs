@@ -1,22 +1,23 @@
 ---
 type: Decision
-title: Proposed Inbox Quality and Retention Policy
-description: Warning-first, non-destructive quality, deduplication, retention, and archive rules for OKF inbox items; awaiting the Epic #26 First Decision Gate
+title: Inbox Quality and Retention Policy
+description: Operator-approved warning-first, non-destructive quality, deduplication, retention, and archive rules for OKF inbox items
 resource: https://github.com/Holovkat/designs/issues/26
-tags: [okf, inbox, quality, retention, deduplication, provenance, proposed]
-timestamp: 2026-08-06T02:02:04Z
-status: in-progress
+tags: [okf, inbox, quality, retention, deduplication, provenance]
+timestamp: 2026-08-06T03:19:40Z
+status: active
 issue_refs: [26]
-decision_status: proposed-for-first-decision-gate
+epic_refs: [26]
+decision_status: operator-approved-2026-08-06
 ---
 
 # Decision Status and Scope
 
-This is the proposed Epic #26 A4 policy. It is warning-first and
-non-destructive: it authorizes no capture rejection, automatic cleanup, archive,
-delete, curation run, scheduler, cross-project rollout, or `AGENTS.md` change.
-It converts A1–A3 evidence into requirements for later validation, triage, and
-operator-reviewed archive work.
+The operator approved this Epic #26 A4 policy on 2026-08-06. It is
+warning-first and non-destructive: it authorizes no capture rejection, automatic
+cleanup, archive, delete, curation run, scheduler, cross-project rollout, or
+`AGENTS.md` change. It converts A1–A3 evidence into requirements for later
+validation, triage, and operator-reviewed archive work.
 
 # Verified Evidence Used
 
@@ -46,11 +47,11 @@ artifacts. A capture must summarize the decision or impact and point to the
 canonical Git object, issue, log, build artifact, or external evidence instead
 of copying it.
 
-The proposed `max_inbox_item_bytes` is **16 KiB**. This is a warning-and-review
+The initial `max_inbox_item_bytes` is **16 KiB**. This is a warning-and-review
 boundary, not a hook rejection: an item above it remains in place, is marked
 `oversized` by future triage, and requires an explicit human decision before
-any rewrite, archive, or deletion. The boundary is proposed from the 3,918 B
-A2 maximum and must be approved at the First Decision Gate before enforcement.
+any rewrite, archive, or deletion. It is based on the 3,918 B A2 maximum and
+remains warning-only until a separately approved enforcement migration.
 
 Prohibited content includes raw logs, stack-trace dumps, full API/database
 payloads, binary encodings, credentials, private keys, token values, bulk
@@ -134,14 +135,15 @@ operator approval that identifies every path and manifest, confirms rollback is
 no longer required, and is recorded in Git. No automated or batch policy can
 supply that approval.
 
-# Open Parameters for the First Decision Gate
+# Parameters for Future Implementation Packets
 
-The gate must approve or revise: 16 KiB as the initial warning value; the
-30-day and count/bytes review signals; source-authority treatment for external
-SHAs; the exact archive-manifest location and retention duration; security
-handling for captured sensitive material; and warning-to-enforcement migration
-criteria. A3's runner ceilings, lock/checkpoint locations, and kill-switch
-mechanism remain separate gate decisions.
+The gate approved 16 KiB as the initial warning value and the 30-day and
+count/bytes review signals. Before C/D implementation packets, define the
+source-authority treatment for external SHAs; exact archive-manifest location
+and retention duration; security handling for captured sensitive material;
+warning-to-enforcement migration criteria; and A3-aligned per-run ceilings,
+lock/checkpoint locations, and kill-switch mechanism. None is inferred by this
+policy.
 
 # Rejected Paths
 
@@ -157,8 +159,8 @@ mechanism remain separate gate decisions.
 
 # Implementation Boundary
 
-C1/C2 may implement warning-mode schema/linter fixtures from this policy only
-after the First Decision Gate. C3 may add non-blocking capture-time warnings;
-D1 may classify; D2 may implement the reversible archive workflow. None may
-start curation, schedule work, mutate another project, or delete material based
-on this proposal alone.
+C1/C2 may implement warning-mode schema/linter fixtures from this policy after
+the accepted Phase B profile defines compatible fields. C3 may add non-blocking
+capture-time warnings; D1 may classify; D2 may implement the reversible archive
+workflow. None may start curation, schedule work, mutate another project, or
+delete material based on this policy alone.

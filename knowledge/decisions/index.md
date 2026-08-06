@@ -2,8 +2,8 @@
 
 | Title | Description | Tags | Status |
 |-------|-------------|------|--------|
-| [Proposed Inbox Quality and Retention Policy](./inbox-quality-and-retention-policy.md) | Warning-first, non-destructive quality, deduplication, retention, and archive rules for OKF inbox items; awaiting the Epic #26 First Decision Gate | [okf, inbox, quality, retention, deduplication, provenance, proposed] | in-progress |
-| [Proposed Curation Cadence for the First Decision Gate](./curation-cadence-first-decision-gate.md) | Explicit, repository-scoped, operator-requested status review and bounded manual curation recommendation; awaiting the Epic #26 First Decision Gate | [okf, curation, cadence, safety, operator-approval, proposed] | in-progress |
+| [Inbox Quality and Retention Policy](./inbox-quality-and-retention-policy.md) | Operator-approved warning-first, non-destructive quality, deduplication, retention, and archive rules for OKF inbox items | [okf, inbox, quality, retention, deduplication, provenance] | active |
+| [Curation Cadence and First Decision Gate](./curation-cadence-first-decision-gate.md) | Operator-approved explicit, repository-scoped, operator-requested status review and bounded manual curation model | [okf, curation, cadence, safety, operator-approval] | active |
 | [Capture Routing and Explicit Curation Trigger](./capture-routing-and-curation-trigger.md) | Approved dirty-tree routing, loop-guard subjects, and bounded manual curation trigger for the two-tier inbox | [okf, inbox, capture-tier, curation, git-hooks, governance] | active |
 | [Legacy Alignment Mode](./legacy-alignment-mode.md) | Keep existing docs in place; OKF concepts reference them via resource field | [okf, legacy, docs, alignment, migration] | active |
 | [Post-Commit Capture Model](./post-commit-capture-model.md) | Two-phase knowledge capture: agents write syntheses before committing, hook refreshes manifest and nudges, curation pass processes later | [okf, hooks, capture, inbox, separation-of-concerns, agents] | active |

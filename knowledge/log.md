@@ -3,6 +3,13 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-06T03:19:40Z - Epic #26 First Decision Gate Approval
+
+- **Approved:** A4 warning-first inbox quality and retention policy, including the 16 KiB review boundary and advisory age/load signals.
+- **Approved:** A5 explicit, repository-scoped, operator-requested status-review cadence; no threshold-triggered execution, scheduler, cron, launchd, Factory action, or automatic curation.
+- **Authorized:** Phase B semantic-guardrail design work only. Phase C remains dependent on accepted Phase B contracts; every future canary requires its own named dataset, numeric ceilings, success metrics, and stop/rollback approval.
+- **Not authorized:** cross-project rollout, curator invocation, archive/deletion, or `AGENTS.md` changes.
+
 ## 2026-08-06T02:16:23Z - Epic #26 P0 Hook Isolation Remediation
 
 - **Fixed:** `templates/okf/post-commit.sh` and the installed `.githooks/post-commit` no longer invoke a parent-workspace manifest generator.
