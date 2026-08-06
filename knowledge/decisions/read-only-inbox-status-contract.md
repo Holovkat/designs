@@ -34,6 +34,10 @@ dependencies at runtime or substitute an ad-hoc parser.
 
 # Approval Boundary
 
+The `okf-inbox-status.mjs` command and its synthetic fixture evidence are
+implemented in the canonical template. It remains a local read-only projection;
+no live-inbox canary has been run.
+
 This decision authorizes C6 contract documentation and fixture-only
 implementation work. It does not authorize a live-inbox canary, curator run,
 scheduler, hook integration, dependency refresh, archive/deletion, JSON-LD/RDF/
