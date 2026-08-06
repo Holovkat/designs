@@ -1,6 +1,6 @@
 # Epic #26 B5 — Semantic Profile and Semantic-Web Scope Decision
 
-**Status:** Proposed for operator approval after Phase B.
+**Status:** Operator-approved for the scoped Phase C core on 2026-08-06.
 
 **Evidence level:** T1 design and isolated offline spike only.
 
@@ -202,10 +202,10 @@ duplicate ID; each predicate/cycle rule; invalid verification metadata; stale
 validity; legacy `supersedes`; resource-root resolution; and an offline JSON
 projection with no remote context. Fixtures must not modify live inbox content.
 
-## Operator Decision Requested
+## Approval Boundary
 
-Approve or revise this B5 recommendation before Phase C. Approval would
-authorize only the scoped C1/C7/C2/C8/C9 profile/parser/linter/viewer/query
-packets above. It would not authorize JSON-LD/RDF/SHACL implementation,
+The operator approved this B5 recommendation on 2026-08-06. The approval
+authorizes only the scoped C1/C7/C2/C8/C9 profile/parser/linter/viewer/query
+packets above. It does not authorize JSON-LD/RDF/SHACL implementation,
 scheduler/cron/Factory activity, curator execution, canaries, archive/deletion,
 cross-project rollout, or `AGENTS.md` changes.

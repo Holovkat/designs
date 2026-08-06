@@ -1,23 +1,23 @@
 ---
 type: Decision
-title: Proposed OKF Semantic Profile and Semantic-Web Scope
-description: Phase B recommendation for a portable native semantic profile and deferred JSON-LD/RDF/SHACL scope
+title: OKF Semantic Profile and Semantic-Web Scope
+description: Operator-approved portable native semantic profile with JSON-LD/RDF/SHACL deferred from the Phase C core
 resource: ./docs/epic-26/b5-semantic-web-scope-decision.md
-tags: [okf, semantic-profile, relationships, provenance, json-ld, rdf, shacl, proposed]
-timestamp: 2026-08-06T03:56:39Z
-status: in-progress
+tags: [okf, semantic-profile, relationships, provenance, json-ld, rdf, shacl]
+timestamp: 2026-08-06T04:06:20Z
+status: active
 issue_refs: [26]
 epic_refs: [26]
-decision_status: proposed-for-phase-c-approval
+decision_status: operator-approved-phase-c-core-2026-08-06
 ---
 
 # Decision Status and Scope
 
-This is the Epic #26 B5 recommendation. It reconciles B1–B4 and requests
-operator approval before Phase C. Markdown/YAML and Git remain canonical. It
-does not authorize parser/schema/linter/viewer/query implementation, an RDF
-store, JSON-LD exporter, SHACL engine, scheduler, curator run, canary, archive,
-deletion, cross-project rollout, or `AGENTS.md` change.
+The operator approved this Epic #26 B5 decision on 2026-08-06. Markdown/YAML
+and Git remain canonical. The approval authorizes only the scoped Phase C
+profile/parser/linter/viewer/query packets defined below. It does not authorize
+an RDF store, JSON-LD exporter, SHACL engine, scheduler, curator run, canary,
+archive, deletion, cross-project rollout, or `AGENTS.md` change.
 
 # Proposed Decision
 
@@ -84,8 +84,8 @@ semantics, resource resolution, parser limits, and curator gate wording before
 claiming strict conformance. The complete B1–B5 evidence and fixture list are
 in `docs/epic-26/`.
 
-# Approval Requested
+# Approval Boundary
 
-Approve or revise this decision to authorize only the scoped Phase C profile,
-parser, linter, viewer, and query packets. Any JSON-LD/RDF/SHACL implementation
-or curation/canary action requires a separate approval.
+The operator approved the scoped Phase C profile, parser, linter, viewer, and
+query packets on 2026-08-06. Any JSON-LD/RDF/SHACL implementation or
+curation/canary action still requires a separate approval.

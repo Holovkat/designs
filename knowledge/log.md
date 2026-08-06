@@ -3,6 +3,12 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-06T04:06:20Z - Epic #26 Phase B Approval
+
+- **Approved:** the portable native semantic-profile direction: flat strict core, warning-first legacy compatibility, stable project-local IDs and typed relationships, flat provenance/assertion metadata, and claim-scoped authority.
+- **Deferred:** JSON-LD/RDF/SHACL implementation, namespace/identity export policy, remote contexts, semantic-web dependencies, and all curation/canary/scheduler activity.
+- **Authorized:** only the Phase C C1/C7/C2/C8/C9 profile, parser, linter, viewer, and query packets. A3/A4/A5 boundaries remain active.
+
 ## 2026-08-06T03:56:39Z - Epic #26 Phase B Semantic-Guardrail Design
 
 - **Added (proposed):** B1–B5 evidence reports under `docs/epic-26/`, covering the core profile, stable typed relationships, provenance/assertion state, external vocabulary mapping, and B5 synthesis.
