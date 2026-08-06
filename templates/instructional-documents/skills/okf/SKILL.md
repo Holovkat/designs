@@ -14,7 +14,7 @@ Use this skill when working on a project that has a `knowledge/` OKF bundle, whe
 
 ## What OKF Is
 
-OKF is a convention for maintaining project knowledge as markdown files with YAML frontmatter, stored in git alongside code. Git is canonical. Agents read the bundle before starting work and write session syntheses to an inbox after completing work.
+OKF is a convention for maintaining project knowledge as markdown files with YAML frontmatter, stored in git alongside code. Git is canonical. Agents read the bundle before starting work; the post-commit hook writes compact Tier 1 captures and `end-session` writes one complementary Tier 2 synthesis at session close.
 
 ## Locating the OKF Source Repo
 
@@ -113,49 +113,67 @@ investigating the codebase or proposing a course of action:
 
 ## Writing Inbox Items
 
-After completing meaningful work, write a session synthesis to `knowledge/inbox/`:
+The inbox has two complementary capture tiers. They must not restate each
+other; Git remains the source for changed files.
+
+### Tier 1: Commit Capture
+
+The repository post-commit hook writes one compact `capture_tier: commit` item
+for each ordinary commit. Supply its rationale through a commit body that says
+why/how and includes an `Impact:` trailer:
+
+```text
+type(scope): subject
+
+<why and how>
+
+Impact: <what this affects>
+```
+
+The hook extracts the rationale, impact, commit SHA, branch, and issue
+references. A subject-only commit is captured with explicit gaps so authors can
+correct future commit bodies.
+
+### Tier 2: Session Synthesis
+
+At session close, `end-session` writes exactly one `capture_tier: session` item
+after work is committed. It references the session commit SHAs instead of
+repeating Tier 1 detail:
 
 ```yaml
 ---
 type: Inbox
-title: Session 2026-06-29 - Route geometry QA fixes
-description: Session synthesis for route geometry work
-tags: [mobile, routing, qa]
-timestamp: 2026-06-29T10:00:00Z
+title: <what changed, in product terms>
+description: <one line>
+tags: [lowercase, consistent]
+timestamp: <ISO-8601>
 session_id: <session-uuid>
-commit_sha: <sha>
+commit_sha: [<sha>, <sha>]
 branch: <branch-name>
-issue_refs: [1503]
-epic_refs: [1495]
+issue_refs: [<n>]
+epic_refs: [<n>]
+capture_tier: session
 ---
 
-# What Was Done
-Summary of work completed.
-
 # Decisions Made
-Decisions and their rationale.
 
 # What Was Deprecated
-Patterns or approaches removed or superseded.
 
 # Lessons Learned
-Insights gained during the work.
 
 # Current State
-What works now, what's in progress, what's blocked.
 ```
 
-Filename format: `<ISO-timestamp-with-dashes>-<slugified-title>.md`
-
-This is about the product, business logic, and application state, not just code diffs. Capture the full session context so another agent reading this knows exactly the current state of play.
+Filename format: `<ISO-timestamp-with-dashes>-<slugified-title>.md`.
 
 ## Curation
 
 Curation transforms inbox items into permanent concept files and audits the
-bundle. Run it via the `okf-curator` agent (installed to `.factory/droids/`
-and `.claude/agents/` by the OKF installer), the pi `/okf-curate` command, or
-by following the steps below. The post-commit hook prints a nudge when the
-inbox holds 5 or more unprocessed items.
+bundle. Run it only through an explicit, repository-scoped operator action via
+the `okf-curator` agent (installed to `.factory/droids/` and `.claude/agents/`
+by the OKF installer), the pi `/okf-curate` command, or the steps below. Do not
+add schedules, cron, Factory automation, or a cross-project rollout before Epic
+#26's First Decision Gate approves bounded execution controls.
 
 Steps:
 

@@ -73,10 +73,9 @@ When you finish a meaningful work session:
 
 1. Re-check changed paths against the applicable `AGENTS.md` chain.
 2. Update nearest, parent, or child `AGENTS.md` files only when durable contracts or indexes changed.
-3. Write a session synthesis to `knowledge/inbox/` using the OKF inbox format, before committing.
-4. Include: what was done, decisions made, approaches rejected and why, what was deprecated, lessons learned, current state.
-5. This is about the product, business logic, and application state, not just code diffs.
-6. The post-commit hook does not write inbox items for you; it refreshes the viewer manifest and nudges when the inbox needs curation.
+3. Tier 1: the post-commit hook writes one compact `capture_tier: commit` inbox item for each ordinary commit. Commit bodies must state why/how and `Impact:`; Git remains the source for changed files.
+4. Tier 2: at session close, `end-session` writes one `capture_tier: session` synthesis after work is committed. It references commit SHAs and contains only Decisions Made, What Was Deprecated, Lessons Learned, and Current State; it does not repeat Tier 1 captures or include a completion-summary section.
+5. Tier 1 and Tier 2 captures are complementary; neither replaces curation. Do not add schedules, cron, Factory automation, or a cross-project rollout before Epic #26's First Decision Gate.
 
 ### Curation
 
@@ -88,7 +87,7 @@ The curation agent (`okf-curator`, canonical contract at `templates/okf/agents/o
 4. Audits the bundle: merges redundant concepts, resolves contradictions, fixes ambiguous references, and reports AGENTS.md alignment proposals (applied only on approval).
 5. Updates all `index.md` files and `knowledge/log.md`.
 
-Run curation when the post-commit hook reports 5 or more unprocessed inbox items, or after any significant epic closes.
+Run curation only through an explicit, repository-scoped operator action until Epic #26's First Decision Gate approves a bounded cadence; the former five-item hook nudge is removed.
 
 ### Concept Types
 

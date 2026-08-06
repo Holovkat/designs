@@ -2,6 +2,7 @@
 
 | Title | Description | Tags | Status |
 |-------|-------------|------|--------|
+| [Two-Tier Inbox Capture Cadence](./two-tier-inbox-cadence.md) | Complementary commit-time and session-close inbox captures, with explicit operator-controlled curation pending the Epic #26 cadence decision | [okf, inbox, capture-tier, post-commit, session-synthesis, curation] | active |
 | [Deploy OKF to a Project](./deploy-okf.md) | Full 8-phase deployment workflow from mechanical install to final verification | [okf, deployment, runbook, install, workflow] | active |
 | [Seed Knowledge From Existing Docs](./seed-from-existing-docs.md) | How to create OKF concepts from a project's existing documentation | [okf, seeding, docs, legacy, concepts] | active |
 | [Process GitHub Epics](./process-github-epics.md) | How to convert closed GitHub epics into OKF knowledge entries | [okf, github, epics, issues, gh-cli] | active |

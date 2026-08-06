@@ -33,10 +33,9 @@ Do not move or duplicate existing docs into `knowledge/`. New knowledge that doe
 
 When you finish a meaningful work session:
 
-1. Write a session synthesis to `knowledge/inbox/` using the OKF inbox format, before committing.
-2. Include: what was done, decisions made, approaches rejected and why, what was deprecated, lessons learned, current state.
-3. This is about the product, business logic, and application state, not just code diffs.
-4. The post-commit hook does not write inbox items for you; it refreshes the viewer manifest and nudges when the inbox needs curation.
+1. Tier 1: the post-commit hook writes one compact `capture_tier: commit` inbox item for each ordinary commit. Commit bodies must state why/how and `Impact:`; Git remains the source for changed files.
+2. Tier 2: at session close, `end-session` writes one `capture_tier: session` synthesis after work is committed. It references commit SHAs and contains only Decisions Made, What Was Deprecated, Lessons Learned, and Current State; it does not repeat Tier 1 captures or include a completion-summary section.
+3. Tier 1 and Tier 2 captures are complementary; neither replaces curation. Do not add schedules, cron, Factory automation, or a cross-project rollout before Epic #26's First Decision Gate.
 
 ### Curation
 
@@ -48,7 +47,7 @@ The curation agent (`okf-curator`, installed to `.factory/droids/` and `.claude/
 4. Audits the bundle: merges redundant concepts, resolves contradictions, fixes ambiguous references, and reports AGENTS.md alignment proposals (applied only on approval).
 5. Updates all `index.md` files and `knowledge/log.md`.
 
-Run curation when the post-commit hook reports 5 or more unprocessed inbox items, or after any significant epic closes.
+Run curation only through an explicit, repository-scoped operator action until Epic #26's First Decision Gate approves a bounded cadence; the former five-item hook nudge is removed.
 
 ### Concept Types
 

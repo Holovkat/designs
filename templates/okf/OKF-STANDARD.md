@@ -6,7 +6,7 @@ The Open Knowledge Format (OKF) defines a convention for maintaining project kno
 
 1. **Git is canonical.** All knowledge lives in markdown files committed to the project repo. No external system is the source of truth.
 2. **Agents read first.** Before starting work, agents read the OKF bundle to understand current state, architecture, and prior decisions.
-3. **Two-phase capture.** Agents write lightweight session syntheses to an inbox before committing. A curation pass later upserts permanent concept files with full context.
+3. **Two-tier capture.** The post-commit hook writes one compact Tier 1 commit capture; `end-session` writes one complementary Tier 2 session synthesis after committed work. A later, explicit curation pass upserts permanent concept files with full context.
 4. **Progressive disclosure.** Index files at each level provide summaries. Agents read the index, then drill into specific concepts only when relevant.
 5. **Deprecation is explicit.** When a concept is superseded, the old file is moved to `deprecation/` with a `supersedes` link, not deleted.
 
@@ -198,8 +198,8 @@ Insights about the product, business logic, or workflow.
 What works now, what is in progress, what is blocked.
 ```
 
-There is deliberately no `# What Was Done` section. The commit captures already
-hold that.
+There is deliberately no completion-summary section. The commit captures already
+hold that context.
 
 ## Deprecation Concept Format
 
@@ -437,7 +437,9 @@ When an agent starts work on a project with an OKF bundle:
 3. Read `knowledge/deprecation/index.md` to understand what has been superseded.
 4. Read concept files relevant to the work area (identified by tags and titles).
 5. Before investigating or proposing a plan, check `decisions/` and `deprecation/` for paths already taken or rejected (use `knowledge/okf-query.sh` when installed). Cite concepts instead of re-deriving answers.
-6. After completing work, write a session synthesis to `knowledge/inbox/` before committing, including approaches rejected and why. The post-commit hook refreshes the viewer manifest and nudges when the inbox reaches the curation threshold (default 5 items).
+6. Tier 1 is automatic: the post-commit hook writes one compact `capture_tier: commit` item for each ordinary commit. Commit bodies must state why/how and `Impact:`.
+7. Tier 2 is written once at session close by `end-session`, after work is committed. It references the session commit SHAs and records only decisions, deprecations, lessons, and current state.
+8. Curation remains an explicit, repository-scoped operator action until an approved bounded cadence replaces the former five-item hook nudge. Do not add schedules, cron, or Factory automation before the Epic #26 First Decision Gate.
 
 ## Versioning
 
