@@ -132,11 +132,15 @@ RUNTIME_SRC="${SCRIPT_DIR}/runtime"
 PARSER_LIB_SRC="${SCRIPT_DIR}/lib"
 RUNTIME_DEST="${TARGET}/.okf/runtime"
 PARSER_LIB_DEST="${TARGET}/.okf/lib"
-if [ -f "${RUNTIME_SRC}/package-lock.json" ] && [ -f "${RUNTIME_SRC}/vendor/yaml/package.json" ] && [ -f "${PARSER_LIB_SRC}/frontmatter.mjs" ] && [ -f "${PARSER_LIB_SRC}/yaml-runtime.mjs" ]; then
-	mkdir -p "$RUNTIME_DEST" "$PARSER_LIB_DEST"
+STATUS_BIN_SRC="${SCRIPT_DIR}/bin/okf-inbox-status.mjs"
+STATUS_BIN_DEST="${TARGET}/.okf/bin"
+if [ -f "${RUNTIME_SRC}/package-lock.json" ] && [ -f "${RUNTIME_SRC}/vendor/yaml/package.json" ] && [ -f "${PARSER_LIB_SRC}/frontmatter.mjs" ] && [ -f "${PARSER_LIB_SRC}/yaml-runtime.mjs" ] && [ -f "${PARSER_LIB_SRC}/inbox-status.mjs" ] && [ -f "${PARSER_LIB_SRC}/run-control.mjs" ] && [ -f "${PARSER_LIB_SRC}/run-guard.mjs" ] && [ -f "${PARSER_LIB_SRC}/run-lock.mjs" ] && [ -f "$STATUS_BIN_SRC" ]; then
+	mkdir -p "$RUNTIME_DEST" "$PARSER_LIB_DEST" "$STATUS_BIN_DEST"
 	cp -R "${RUNTIME_SRC}/." "$RUNTIME_DEST/"
-	cp "${PARSER_LIB_SRC}/frontmatter.mjs" "${PARSER_LIB_SRC}/yaml-runtime.mjs" "$PARSER_LIB_DEST/"
-	echo "Installed pinned local OKF parser runtime (offline; not executed)"
+	cp "${PARSER_LIB_SRC}/frontmatter.mjs" "${PARSER_LIB_SRC}/yaml-runtime.mjs" "${PARSER_LIB_SRC}/inbox-status.mjs" "${PARSER_LIB_SRC}/run-control.mjs" "${PARSER_LIB_SRC}/run-guard.mjs" "${PARSER_LIB_SRC}/run-lock.mjs" "$PARSER_LIB_DEST/"
+	cp "$STATUS_BIN_SRC" "$STATUS_BIN_DEST/"
+	chmod +x "${STATUS_BIN_DEST}/okf-inbox-status.mjs"
+	echo "Installed pinned local OKF parser runtime and read-only inbox status command (offline; not executed)"
 else
 	echo "Warning: pinned local OKF parser runtime is incomplete; C6/C8/C9 consumers remain unavailable."
 fi

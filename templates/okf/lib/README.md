@@ -54,3 +54,14 @@ npm --prefix templates/okf run test:run-safety
 
 See `knowledge/decisions/bounded-curation-execution-safety.md` for the governing
 approval boundary; passing these tests is not authority to run a batch or canary.
+
+## C6 inbox status
+
+`inbox-status.mjs` is the C6 deterministic, explicit-root, read-only inbox
+projection. It reuses the C7 parser and C4/C5 read-only root/control readers,
+but it never acquires a lock or writes a run artifact. Its count, age, and size
+signals are advisory only and never grant curation authority.
+
+```bash
+npm --prefix templates/okf run test:inbox-status
+```

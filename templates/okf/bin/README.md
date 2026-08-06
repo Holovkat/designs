@@ -49,6 +49,23 @@ not authorize a curator, canary, scheduler, or deployment; that authority
 remains governed by
 `knowledge/decisions/bounded-curation-execution-safety.md`.
 
+## `okf-inbox-status.mjs`
+
+C6 reports the health of one explicitly named inbox. It is advisory and
+read-only: a successful report does not start, recommend, or authorize
+curation.
+
+```bash
+node .okf/bin/okf-inbox-status.mjs \
+  --root /absolute/path/to/repository \
+  --format json
+```
+
+It returns `0` when it produces a report—even when advisory findings, an active
+kill switch, or a lock are present—and `2` only for invalid input or an unsafe/
+unreadable scope. It never acquires a lock, creates a file, follows a symlink,
+uses a network service, invokes a hook/curator, or discovers another root.
+
 ## Installed parser runtime
 
 The installer copies the reviewed `yaml@2.8.3` runtime plus the C7 parser to

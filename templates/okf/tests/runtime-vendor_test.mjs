@@ -48,13 +48,16 @@ test("installer copies the parser runtime and parser without executing either", 
     command(target, "git", ["init", "-q"]);
     command(target, "git", ["config", "user.email", "okf@example.test"]);
     command(target, "git", ["config", "user.name", "OKF test"]);
+    command(target, "git", ["commit", "--allow-empty", "-qm", "fixture"]);
     const result = command(template, "bash", [installer, target]);
-    assert.match(result.stdout, /Installed pinned local OKF parser runtime/);
+    assert.match(result.stdout, /Installed pinned local OKF parser runtime and read-only inbox status command/);
     const installedParser = join(target, ".okf", "lib", "frontmatter.mjs");
     const installedVendor = join(target, ".okf", "runtime", "vendor", "yaml", "package.json");
     assert.equal(JSON.parse(readFileSync(installedVendor, "utf8")).version, "2.8.3");
     command(target, process.execPath, ["--input-type=module", "-e", `import { parseFrontmatter } from ${JSON.stringify(pathToFileURL(installedParser).href)}; const value = parseFrontmatter('---\\ntags: [offline]\\n---\\nbody'); if (value.frontmatter.tags[0] !== 'offline') process.exit(1);`]);
     assert.equal(readFileSync(join(target, ".okf", "runtime", "package-lock.json"), "utf8"), readFileSync(join(runtime, "package-lock.json"), "utf8"));
+    const status = command(target, process.execPath, [join(target, ".okf", "bin", "okf-inbox-status.mjs"), "--root", target, "--format", "json"]);
+    assert.equal(JSON.parse(status.stdout).read_only, true);
   } finally {
     rmSync(parent, { recursive: true, force: true });
   }
