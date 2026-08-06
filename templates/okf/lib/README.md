@@ -1,9 +1,8 @@
 # OKF Shared Frontmatter Parser
 
 `frontmatter.mjs` is the C7 read-only YAML envelope parser for future local
-OKF consumers. It uses the exact `yaml` dependency declared in
-`templates/okf/package.json` and deliberately separates parsing from profile
-validation.
+OKF consumers. It loads the exact repository-local `yaml@2.8.3` runtime through
+`yaml-runtime.mjs` and deliberately separates parsing from profile validation.
 
 ## Contract
 
@@ -32,9 +31,10 @@ npm --prefix templates/okf run test:frontmatter
 
 The fixtures cover quoted colons, flow arrays, block arrays, duplicate keys,
 malformed YAML, alias rejection, BOM/CRLF envelopes, unclosed envelopes, and body preservation.
-As with the schema runner, dependencies are declared but not installed by this
-repository slice; create a lockfile only through an approved dependency-refresh
-workflow.
+Schema/linter dependencies remain declared but are not installed by this
+repository slice. The parser runtime is different: its reviewed local copy and
+lockfile live under `templates/okf/runtime/`, so an installed parser never
+resolves a host-global package or installs/fetches dependencies at runtime.
 
 ## C4/C5 run-safety seams
 

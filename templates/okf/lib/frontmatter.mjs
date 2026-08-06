@@ -1,4 +1,4 @@
-import { isMap, parseDocument } from "yaml";
+import { isMap, parseDocument } from "./yaml-runtime.mjs";
 
 const OPENING_DELIMITER = /^---[ \t]*\r?\n/;
 const CLOSING_DELIMITER = /^(?:---|\.\.\.)[ \t]*(?:\r?\n|$)/gm;

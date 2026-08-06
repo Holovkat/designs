@@ -126,7 +126,22 @@ if [ -f "$QUERY_SRC" ]; then
 	echo "Installed knowledge/okf-query.sh (portable concept search)"
 fi
 
-# 1d. Install the curator agent for each harness present (or create the default Factory location)
+# 1d. Install the pinned local parser runtime for future read-only consumers.
+# This is a file copy only: it never runs npm, Node, a hook, or a curator.
+RUNTIME_SRC="${SCRIPT_DIR}/runtime"
+PARSER_LIB_SRC="${SCRIPT_DIR}/lib"
+RUNTIME_DEST="${TARGET}/.okf/runtime"
+PARSER_LIB_DEST="${TARGET}/.okf/lib"
+if [ -f "${RUNTIME_SRC}/package-lock.json" ] && [ -f "${RUNTIME_SRC}/vendor/yaml/package.json" ] && [ -f "${PARSER_LIB_SRC}/frontmatter.mjs" ] && [ -f "${PARSER_LIB_SRC}/yaml-runtime.mjs" ]; then
+	mkdir -p "$RUNTIME_DEST" "$PARSER_LIB_DEST"
+	cp -R "${RUNTIME_SRC}/." "$RUNTIME_DEST/"
+	cp "${PARSER_LIB_SRC}/frontmatter.mjs" "${PARSER_LIB_SRC}/yaml-runtime.mjs" "$PARSER_LIB_DEST/"
+	echo "Installed pinned local OKF parser runtime (offline; not executed)"
+else
+	echo "Warning: pinned local OKF parser runtime is incomplete; C6/C8/C9 consumers remain unavailable."
+fi
+
+# 1e. Install the curator agent for each harness present (or create the default Factory location)
 CURATOR_SRC="${SCRIPT_DIR}/agents/okf-curator.md"
 if [ -f "$CURATOR_SRC" ]; then
 	mkdir -p "${TARGET}/.factory/droids"

@@ -7,11 +7,11 @@
     "test:frontmatter": "node tests/frontmatter-parser_test.mjs",
     "test:lint": "node tests/linter_test.mjs",
     "test:run-safety": "node tests/run-safety_test.mjs",
+    "test:runtime": "node tests/runtime-vendor_test.mjs",
     "test:schema": "node schema/schema-test.mjs"
   },
   "devDependencies": {
     "ajv": "8.18.0",
-    "ajv-formats": "3.0.1",
-    "yaml": "2.8.3"
+    "ajv-formats": "3.0.1"
   }
 }

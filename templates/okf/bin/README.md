@@ -48,3 +48,13 @@ fail-closed block, and `2` for malformed arguments. A passing preflight does
 not authorize a curator, canary, scheduler, or deployment; that authority
 remains governed by
 `knowledge/decisions/bounded-curation-execution-safety.md`.
+
+## Installed parser runtime
+
+The installer copies the reviewed `yaml@2.8.3` runtime plus the C7 parser to
+`.okf/runtime/` and `.okf/lib/`. It only copies files: it does not run Node,
+`npm install`, a hook, or a curator. The runtime is verified with:
+
+```bash
+npm --prefix templates/okf run test:runtime
+```
