@@ -165,9 +165,20 @@ echo "Installing post-commit hook..."
 
 mkdir -p "$GITHOOKS_DIR"
 HOOK_TARGET="${GITHOOKS_DIR}/post-commit"
+CHAINED_HOOK="${GITHOOKS_DIR}/post-commit.pre-okf"
 if [ -f "$HOOK_TARGET" ]; then
-	echo "  Existing post-commit hook found, backing up to post-commit.bak"
-	mv "$HOOK_TARGET" "${HOOK_TARGET}.bak"
+	if grep -q "OKF post-commit hook" "$HOOK_TARGET"; then
+		echo "  Existing OKF post-commit hook found; preserving its chained hook."
+	else
+		if [ -e "$CHAINED_HOOK" ]; then
+			echo "Error: cannot preserve ${HOOK_TARGET}; ${CHAINED_HOOK} already exists."
+			echo "  Reconcile the chained hook manually rather than clobbering either hook."
+			exit 1
+		fi
+		echo "  Existing post-commit hook found; chaining it as post-commit.pre-okf"
+		mv "$HOOK_TARGET" "$CHAINED_HOOK"
+		chmod +x "$CHAINED_HOOK"
+	fi
 fi
 cp "$HOOK_SCRIPT" "$HOOK_TARGET"
 chmod +x "$HOOK_TARGET"

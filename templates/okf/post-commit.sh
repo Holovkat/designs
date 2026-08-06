@@ -7,9 +7,22 @@
 # already holds that and a file list carries no knowledge value.
 #
 # Skips curation commits (message prefix "okf-curation:") to prevent loops.
+# Chains a pre-existing hook retained as post-commit.pre-okf by install-okf.sh.
 # Never fails a commit. Every exit path is 0.
 
 set -uo pipefail
+
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+run_chained_post_commit() {
+    local chained_hook="${HOOK_DIR}/post-commit.pre-okf"
+    if [[ -x "$chained_hook" ]]; then
+        "$chained_hook" "$@" || true
+    fi
+}
+
+# Keep an existing hook manager active even when the OKF hook exits early.
+trap 'run_chained_post_commit "$@"' EXIT
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 INBOX="${REPO_ROOT}/knowledge/inbox"
