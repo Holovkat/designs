@@ -279,6 +279,10 @@ The root `index.md` lists all concept groups with counts:
 | [Inbox](./inbox/index.md) | 3 | Items awaiting curation |
 ```
 
+The post-commit hook updates the root `Inbox` count immediately after writing a
+Tier 1 capture. Curation updates the remaining group counts when it changes
+permanent concepts; neither operation needs a schedule.
+
 ## Log File Format
 
 The root `log.md` records knowledge updates in reverse chronological order:

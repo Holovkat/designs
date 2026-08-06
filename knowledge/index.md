@@ -14,7 +14,7 @@
 | [Process](./process/index.md) | 24 | OKF workflows and designs project processes |
 | [Deprecation](./deprecation/index.md) | 2 | Superseded patterns with lessons |
 | [State](./state/index.md) | 2 | Current state of OKF system and designs project content |
-| [Inbox](./inbox/index.md) | 2 | Items awaiting curation |
+| [Inbox](./inbox/index.md) | 4 | Items awaiting curation |
 
 ## Quick Links
 

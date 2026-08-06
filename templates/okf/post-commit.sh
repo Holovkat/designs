@@ -34,13 +34,17 @@ case "$COMMIT_SUBJECT" in
     okf-curation:*) exit 0 ;;
 esac
 
+# Merge commits carry no single authorial rationale; do not add inbox noise.
+PARENT_COUNT="$(git rev-list --parents -n 1 HEAD 2>/dev/null | awk '{print NF - 1}')"
+[[ "${PARENT_COUNT:-0}" -gt 1 ]] && exit 0
+
 SHA_FULL="$(git log -1 --format=%H)"
 SHA_SHORT="$(git log -1 --format=%h)"
 SUBJECT="$(git log -1 --format=%s)"
 BODY="$(git log -1 --format=%b)"
 BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo detached)"
 TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-STAMP="$(date -u +%Y-%m-%d-%H%M%S)"
+STAMP="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
 
 # Impact trailer: last line starting "Impact:"; rationale is the rest
 IMPACT="$(printf '%s\n' "$BODY" | sed -n 's/^[Ii]mpact:[[:space:]]*//p' | tail -1)"
@@ -71,7 +75,34 @@ TAGS="okf"
 TITLE="$(printf '%s' "$SUBJECT" | sed -E 's/^[a-z]+(\([^)]*\))?!?:[[:space:]]*//')"
 [[ -z "$TITLE" ]] && TITLE="$SUBJECT"
 
-OUT="$INBOX/$STAMP-$SLUG.md"
+# An amend creates a new SHA with the same parent and subject. Reuse the
+# existing capture rather than creating a duplicate for the rewritten commit.
+has_amend_capture() {
+    local current_parent existing existing_sha existing_title existing_parent
+    current_parent="$(git rev-parse "${SHA_FULL}^" 2>/dev/null || true)"
+    [[ -n "$current_parent" ]] || return 1
+
+    while IFS= read -r existing; do
+        existing_sha="$(awk -F': ' '$1 == "commit_sha" {print $2; exit}' "$existing")"
+        [[ -n "$existing_sha" && "$existing_sha" != "$SHA_FULL" ]] || continue
+        existing_title="$(awk -F': ' '$1 == "title" {sub(/^[^:]*:[[:space:]]*/, ""); print; exit}' "$existing")"
+        [[ "$existing_title" == "$TITLE" ]] || continue
+        existing_parent="$(git rev-parse "${existing_sha}^" 2>/dev/null || true)"
+        [[ "$existing_parent" == "$current_parent" ]] && return 0
+    done < <(find "$INBOX" -maxdepth 1 -type f -name "*-${SLUG}*.md" ! -name 'index.md' -print)
+
+    return 1
+}
+
+has_amend_capture && exit 0
+
+OUT_BASE="$INBOX/$STAMP-$SLUG"
+OUT="${OUT_BASE}.md"
+COLLISION=1
+while [[ -e "$OUT" ]]; do
+    OUT="${OUT_BASE}-${SHA_SHORT}-${COLLISION}.md"
+    COLLISION=$((COLLISION + 1))
+done
 
 {
     printf -- '---\n'
@@ -101,14 +132,56 @@ OUT="$INBOX/$STAMP-$SLUG.md"
     fi
 } > "$OUT"
 
-# Append one row to the inbox index when the table exists
+insert_inbox_index_row() {
+    local index="$1" row="$2" comment_line tmp
+    [[ -f "$index" ]] && grep -q '^|-' "$index" || return 0
+
+    comment_line="$(grep -n '^[[:space:]]*<!--.*-->[[:space:]]*$' "$index" | tail -1 | cut -d: -f1 || true)"
+    if [[ -z "$comment_line" ]]; then
+        printf '%s\n' "$row" >> "$index"
+        return 0
+    fi
+
+    tmp="$(mktemp "${index}.tmp.XXXXXX" 2>/dev/null)" || {
+        printf '%s\n' "$row" >> "$index"
+        return 0
+    }
+    if awk -v row="$row" -v line="$comment_line" 'NR == line {print row} {print}' "$index" > "$tmp"; then
+        mv "$tmp" "$index"
+    else
+        rm -f "$tmp"
+        printf '%s\n' "$row" >> "$index"
+    fi
+}
+
+update_root_inbox_count() {
+    local root_index count tmp
+    root_index="${REPO_ROOT}/knowledge/index.md"
+    [[ -f "$root_index" ]] || return 0
+    count="$(find "$INBOX" -maxdepth 1 -type f -name '*.md' ! -name 'index.md' | wc -l | tr -d ' ')"
+    tmp="$(mktemp "${root_index}.tmp.XXXXXX" 2>/dev/null)" || return 0
+    if awk -v count="$count" '
+        /^\| \[Inbox\]\(\.\/inbox\/index\.md\) \| [0-9]+ \|/ {
+            sub(/\| [0-9]+ \|/, "| " count " |")
+        }
+        {print}
+    ' "$root_index" > "$tmp"; then
+        mv "$tmp" "$root_index"
+    else
+        rm -f "$tmp"
+    fi
+}
+
+# Keep capture rows inside the inbox table and keep the root Inbox count live.
 INDEX="$INBOX/index.md"
 if [[ -f "$INDEX" ]] && grep -q '^|-' "$INDEX"; then
     ISSUE_CELL="—"
     [[ -n "$ISSUE_REFS" ]] && ISSUE_CELL="$(printf '#%s' "$ISSUE_REFS" | sed 's/, /, #/g')"
-    printf '| [%s](./%s) | %s | %s | %s |\n' \
-        "$TITLE" "$(basename "$OUT")" "$TIMESTAMP" "$TAGS" "$ISSUE_CELL" >> "$INDEX"
+    INDEX_ROW="$(printf '| [%s](./%s) | %s | %s | %s |' \
+        "$TITLE" "$(basename "$OUT")" "$TIMESTAMP" "$TAGS" "$ISSUE_CELL")"
+    insert_inbox_index_row "$INDEX" "$INDEX_ROW"
 fi
+update_root_inbox_count
 
 # Refresh the workspace viewer manifest. Guarded and never fatal: the script
 # lives outside the repository and may be absent on other machines.

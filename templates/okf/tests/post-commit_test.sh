@@ -19,8 +19,10 @@ setup_repo() {
     git -C "$dir" config commit.gpgsign false
     git -C "$dir" config core.hooksPath "$dir/.git/hooks"
     mkdir -p "$dir/knowledge/inbox"
-    printf '# Inbox\n\n| Title | Timestamp | Tags | Issues |\n|-------|-----------|------|--------|\n' \
+    printf '# Inbox\n\n| Title | Timestamp | Tags | Issues |\n|-------|-----------|------|--------|\n<!-- Rows added by agents, removed by curation agent -->\n' \
         > "$dir/knowledge/inbox/index.md"
+    printf '# Knowledge Index\n\n| Group | Count | Description |\n|-------|-------|-------------|\n| [Inbox](./inbox/index.md) | 0 | Items awaiting curation |\n' \
+        > "$dir/knowledge/index.md"
     mkdir -p "$dir/.git/hooks"
     cp "$HOOK_SRC" "$dir/.git/hooks/post-commit"
     chmod +x "$dir/.git/hooks/post-commit"
@@ -49,6 +51,11 @@ if rg -q "retire the global reconciliation gate" "$item" 2>/dev/null; then pass 
 if rg -q "serialised sign-in behind a single lock" "$item" 2>/dev/null; then pass "captures why and how"; else fail "captures why and how"; fi
 if rg -q "removes the sign-in bottleneck" "$item" 2>/dev/null; then pass "captures the impact trailer"; else fail "captures the impact trailer"; fi
 if rg -q "capture_tier: commit" "$item" 2>/dev/null; then pass "tags as commit tier"; else fail "tags as commit tier"; fi
+if [[ "$(basename "$item")" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z-.+\.md$ ]]; then pass "uses the ISO filename format"; else fail "uses the ISO filename format"; fi
+index_row_line=$(rg -n -F "./$(basename "$item")" "$repo/knowledge/inbox/index.md" | cut -d: -f1)
+index_comment_line=$(rg -n '^<!--.*-->$' "$repo/knowledge/inbox/index.md" | cut -d: -f1)
+if [[ -n "$index_row_line" && "$index_row_line" -lt "$index_comment_line" ]]; then pass "inserts index rows before the trailing comment"; else fail "inserts index rows before the trailing comment"; fi
+if rg -q '^| \[Inbox\](\./inbox/index\.md) | 1 |' "$repo/knowledge/index.md"; then pass "updates the root Inbox count"; else fail "updates the root Inbox count"; fi
 
 # 2: never lists changed files
 if rg -q "a\.txt" "$item" 2>/dev/null; then fail "omits the changed file list"; else pass "omits the changed file list"; fi
@@ -122,7 +129,67 @@ MSG
 then pass "commit succeeds when node is unavailable"; else fail "commit succeeds when node is unavailable"; fi
 if [[ -n "$(latest_item "$repo")" ]]; then pass "capture still written without node"; else fail "capture still written without node"; fi
 
-rm -rf "$repo" "$bare"
+# 9: merge commits are skipped
+merge_repo="$(setup_repo)"
+echo base > "$merge_repo/base.txt"
+git -C "$merge_repo" add base.txt
+git -C "$merge_repo" commit -q -m "chore: establish merge base"
+base_branch="$(git -C "$merge_repo" branch --show-current)"
+git -C "$merge_repo" checkout -q -b feature/capture-merge
+printf 'feature\n' > "$merge_repo/feature.txt"
+git -C "$merge_repo" add feature.txt
+git -C "$merge_repo" commit -q -m "feat: add merge-side change"
+git -C "$merge_repo" checkout -q "$base_branch"
+printf 'main\n' > "$merge_repo/main.txt"
+git -C "$merge_repo" add main.txt
+git -C "$merge_repo" commit -q -m "feat: add main-side change"
+merge_before=$(find "$merge_repo/knowledge/inbox" -maxdepth 1 -type f -name '*.md' ! -name index.md | wc -l | tr -d ' ')
+git -C "$merge_repo" merge --no-ff feature/capture-merge -m "Merge feature/capture-merge"
+merge_after=$(find "$merge_repo/knowledge/inbox" -maxdepth 1 -type f -name '*.md' ! -name index.md | wc -l | tr -d ' ')
+if [[ "$merge_after" -eq "$merge_before" ]]; then pass "skips merge commits"; else fail "skips merge commits"; fi
+
+# 10: amending a captured commit does not create a duplicate
+amend_repo="$(setup_repo)"
+echo base > "$amend_repo/base.txt"
+git -C "$amend_repo" add base.txt
+git -C "$amend_repo" commit -q -m "chore: establish amend base"
+echo change > "$amend_repo/change.txt"
+git -C "$amend_repo" add change.txt
+git -C "$amend_repo" commit -q -F - <<'MSG'
+feat(okf): preserve capture through amend
+
+The amend keeps the same intent while rewriting the commit SHA.
+
+Impact: inbox capture remains one logical commit record.
+MSG
+amend_before=$(find "$amend_repo/knowledge/inbox" -maxdepth 1 -type f -name '*.md' ! -name index.md | wc -l | tr -d ' ')
+sleep 1
+git -C "$amend_repo" commit --amend -q --no-edit
+amend_after=$(find "$amend_repo/knowledge/inbox" -maxdepth 1 -type f -name '*.md' ! -name index.md | wc -l | tr -d ' ')
+if [[ "$amend_after" -eq "$amend_before" ]]; then pass "deduplicates amended commits"; else fail "deduplicates amended commits"; fi
+
+# 11: same-second same-subject captures do not overwrite each other
+collision_repo="$(setup_repo)"
+mkdir -p "$collision_repo/fake-bin"
+cat > "$collision_repo/fake-bin/date" <<'DATE'
+#!/usr/bin/env bash
+case "$*" in
+  '-u +%Y-%m-%dT%H:%M:%SZ') printf '2026-08-06T01:02:03Z\n' ;;
+  '-u +%Y-%m-%dT%H-%M-%SZ') printf '2026-08-06T01-02-03Z\n' ;;
+  *) /bin/date "$@" ;;
+esac
+DATE
+chmod +x "$collision_repo/fake-bin/date"
+echo one > "$collision_repo/one.txt"
+git -C "$collision_repo" add one.txt
+PATH="$collision_repo/fake-bin:$PATH" git -C "$collision_repo" commit -q -m "chore: retain collision capture"
+echo two > "$collision_repo/two.txt"
+git -C "$collision_repo" add two.txt
+PATH="$collision_repo/fake-bin:$PATH" git -C "$collision_repo" commit -q -m "chore: retain collision capture"
+collision_count=$(find "$collision_repo/knowledge/inbox" -maxdepth 1 -type f -name '*-retain-collision-capture*.md' | wc -l | tr -d ' ')
+if [[ "$collision_count" -eq 2 ]]; then pass "avoids same-second capture overwrites"; else fail "avoids same-second capture overwrites"; fi
+
+rm -rf "$repo" "$bare" "$merge_repo" "$amend_repo" "$collision_repo"
 
 if [[ $FAILURES -gt 0 ]]; then
     printf '\n%d test(s) failed\n' "$FAILURES"
