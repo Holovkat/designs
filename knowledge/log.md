@@ -3,6 +3,12 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-06T05:37:13Z - Epic #26 C6 Inbox Status Contract Approval
+
+- **Approved:** explicit repository-local, read-only C6 inbox status reporting with deterministic health, quality, provenance, index, lock, and kill-switch evidence.
+- **Retained constraints:** advisory findings never trigger or authorize curation; no status command may mutate, acquire/clear controls, schedule/notify, access another root, or invoke a curator.
+- **Deferred:** installed implementation awaits local parser-runtime packaging; live-inbox canaries, curation, dependency refresh, and rollout remain separately gated.
+
 ## 2026-08-06T05:36:06Z - Epic #26 Parser Runtime Distribution Approval
 
 - **Approved:** repository-local, pinned parser-runtime packaging to unblock the installed C8 viewer and C9 query consumers; C3 remains separately bounded by A3/A4/A5.

@@ -2,6 +2,7 @@
 
 | Title | Description | Tags | Status |
 |-------|-------------|------|--------|
+| [Read-Only Inbox Status Contract](./read-only-inbox-status-contract.md) | Operator-approved C6 contract for explicit repository-local inbox health reporting without curation authority | [okf, inbox, status, curation-safety, read-only, c6] | active |
 | [OKF Parser Runtime Distribution](./okf-parser-runtime-distribution.md) | Operator-approved local parser-runtime packaging to unblock installed C8 and C9 consumers | [okf, parser, distribution, viewer, query, curation-safety] | active |
 | [OKF Semantic Profile and Semantic-Web Scope](./semantic-profile-and-semantic-web-scope.md) | Operator-approved portable native semantic profile with JSON-LD/RDF/SHACL deferred from the Phase C core | [okf, semantic-profile, relationships, provenance, json-ld, rdf, shacl] | active |
 | [Bounded Curation Execution Safety Requirements](./bounded-curation-execution-safety.md) | Operator-approved fail-closed requirements and regression scenarios for any future OKF curator execution; numeric and canary parameters remain per-run decisions | [okf, curation, safety, scheduling, quotas, locking, cancellation, resumability] | active |
