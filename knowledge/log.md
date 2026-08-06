@@ -3,6 +3,13 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-06T03:56:39Z - Epic #26 Phase B Semantic-Guardrail Design
+
+- **Added (proposed):** B1–B5 evidence reports under `docs/epic-26/`, covering the core profile, stable typed relationships, provenance/assertion state, external vocabulary mapping, and B5 synthesis.
+- **Added (proposed):** `decisions/semantic-profile-and-semantic-web-scope.md` — portable native semantic-profile recommendation; JSON-LD/RDF/SHACL deferred from Phase C core scope.
+- **Verified:** the isolated offline B5 spike produced deterministic JSON bytes with an embedded temporary context; no JSON-LD/RDF/SHACL validator or library was available, installed, or fetched.
+- **Deferred:** all implementation, strict-profile declaration, semantic-web namespace/identity, RDF/SHACL dependencies, curation, canary, scheduler, archive/deletion, cross-project rollout, and `AGENTS.md` edits await the stated later approvals.
+
 ## 2026-08-06T03:23:02Z - Epic #26 Phase A Evidence Integration
 
 - **Integrated:** A1 canonical deployment audit and A2 read-only designs inbox-health baseline (Markdown and JSON) from their isolated evidence worktrees.
