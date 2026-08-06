@@ -25,16 +25,19 @@ separately bounded by the A3/A4/A5 capture and execution controls.
 - It must not run `npm install`, fetch a dependency, inspect a parent/home
   directory, invoke a hook or curator, schedule work, or mutate a knowledge
   bundle merely by being installed or loaded.
-- It may use the already-declared `yaml` parser version only through a reviewed
-  local distribution design. Lockfile generation and dependency refresh remain
-  separate approved workflows.
+- It may use `yaml@2.8.3` only through a reviewed local distribution design.
+  The operator approved one focused runtime lockfile refresh and reviewed local
+  vendoring of that exact artifact on 2026-08-06. Any later dependency change,
+  lockfile refresh, or package addition remains a separate approval.
 - JSON-LD, RDF, SHACL, remote contexts, graph services, namespace export,
   curation runs, canaries, archive/deletion, cross-project rollout, and
   `AGENTS.md` changes remain outside this approval.
 
 # Outcome
 
-C8 and C9 may proceed with a narrowly reviewed packaging design and fixture
-evidence. A deployed consumer must fail closed or retain legacy read-only
-behavior when its packaged parser runtime is unavailable; it must not silently
-substitute an ad-hoc parser or acquire dependencies at runtime.
+The runtime package is now recorded under `templates/okf/runtime/` with its
+lockfile, integrity metadata, and fixture proof. C8, C9, and the approved C6
+contract may consume it through a narrowly reviewed local path. A deployed
+consumer must fail closed or retain legacy read-only behavior when its packaged
+parser runtime is unavailable; it must not silently substitute an ad-hoc parser
+or acquire dependencies at runtime.
