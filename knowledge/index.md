@@ -10,7 +10,7 @@
 | [Architecture](./architecture/index.md) | 8 | System structure, design standards, token schemas, tooling |
 | [Components](./components/index.md) | 5 | UI component, form, data display, interactive, and layout patterns |
 | [Domain](./domain/index.md) | 7 | OKF domain knowledge and designs design domain rules |
-| [Decisions](./decisions/index.md) | 11 | Architectural decisions and rationale |
+| [Decisions](./decisions/index.md) | 12 | Architectural decisions and rationale |
 | [Process](./process/index.md) | 24 | OKF workflows and designs project processes |
 | [Deprecation](./deprecation/index.md) | 2 | Superseded patterns with lessons |
 | [State](./state/index.md) | 2 | Current state of OKF system and designs project content |

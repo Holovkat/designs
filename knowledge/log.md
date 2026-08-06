@@ -3,6 +3,12 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-06T03:23:02Z - Epic #26 Phase A Evidence Integration
+
+- **Integrated:** A1 canonical deployment audit and A2 read-only designs inbox-health baseline (Markdown and JSON) from their isolated evidence worktrees.
+- **Integrated and approved:** A3 `Bounded Curation Execution Safety Requirements`; requirements are active while numeric quotas, canonical control paths, named datasets, and success measures remain per-run decisions.
+- **Verified boundary:** integration copies accepted read-only/design artifacts only; it does not run curation, schedule work, mutate external repositories, archive/delete knowledge, or change `AGENTS.md`.
+
 ## 2026-08-06T03:19:40Z - Epic #26 First Decision Gate Approval
 
 - **Approved:** A4 warning-first inbox quality and retention policy, including the 16 KiB review boundary and advisory age/load signals.

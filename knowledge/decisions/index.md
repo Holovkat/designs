@@ -2,6 +2,7 @@
 
 | Title | Description | Tags | Status |
 |-------|-------------|------|--------|
+| [Bounded Curation Execution Safety Requirements](./bounded-curation-execution-safety.md) | Operator-approved fail-closed requirements and regression scenarios for any future OKF curator execution; numeric and canary parameters remain per-run decisions | [okf, curation, safety, scheduling, quotas, locking, cancellation, resumability] | active |
 | [Inbox Quality and Retention Policy](./inbox-quality-and-retention-policy.md) | Operator-approved warning-first, non-destructive quality, deduplication, retention, and archive rules for OKF inbox items | [okf, inbox, quality, retention, deduplication, provenance] | active |
 | [Curation Cadence and First Decision Gate](./curation-cadence-first-decision-gate.md) | Operator-approved explicit, repository-scoped, operator-requested status review and bounded manual curation model | [okf, curation, cadence, safety, operator-approval] | active |
 | [Capture Routing and Explicit Curation Trigger](./capture-routing-and-curation-trigger.md) | Approved dirty-tree routing, loop-guard subjects, and bounded manual curation trigger for the two-tier inbox | [okf, inbox, capture-tier, curation, git-hooks, governance] | active |

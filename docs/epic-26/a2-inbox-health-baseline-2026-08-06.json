@@ -1,0 +1,529 @@
+{
+  "items": [
+    {
+      "age_bucket": ">7d-30d",
+      "age_hours": 691.508333,
+      "body_gaps": [],
+      "bytes": 2188,
+      "capture_tier": "legacy-unspecified",
+      "commit_shas": [],
+      "content_sha256": "ed99b1541f250a3fcd1a7e08cef22137ab9e9d51e9de803c7e030603f7e391df",
+      "duplicate_tags": [],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": true,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [],
+      "lifecycle": "unprocessed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/2026-07-08T06-03-52Z-agents-hierarchy-okf-alignment.md",
+      "session_id": "",
+      "source_quality": "legacy-rich-synthesis",
+      "tags": [
+        "agents",
+        "okf",
+        "hierarchy",
+        "governance",
+        "documentation"
+      ],
+      "timestamp": "2026-07-08T06:03:52Z",
+      "title": "Session 2026-07-08 - AGENTS hierarchy and OKF alignment",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": ">7d-30d",
+      "age_hours": 573.974722,
+      "body_gaps": [],
+      "bytes": 2938,
+      "capture_tier": "legacy-unspecified",
+      "commit_shas": [],
+      "content_sha256": "5adc533cc8a7c522c4b37c931e4893842a644893462a7390598a31c8a9436e4d",
+      "duplicate_tags": [],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": true,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [],
+      "lifecycle": "unprocessed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/2026-07-13T03-35-53Z-skill-governance-and-staged-verification.md",
+      "session_id": "",
+      "source_quality": "legacy-rich-synthesis",
+      "tags": [
+        "skills",
+        "governance",
+        "verification",
+        "dev-uat",
+        "qa",
+        "ci",
+        "quarantine",
+        "documentation"
+      ],
+      "timestamp": "2026-07-13T03:35:53Z",
+      "title": "Session 2026-07-13 - Skill governance and staged verification",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": "0-24h",
+      "age_hours": 1.176111,
+      "body_gaps": [],
+      "bytes": 661,
+      "capture_tier": "commit",
+      "commit_shas": [
+        "374104e24bf3edab627a730b4d14a034c10ba1bf"
+      ],
+      "content_sha256": "641629134ab92c9a060450ae64fa1b63688fb3a14b8f4159f85046e3682def25",
+      "duplicate_tags": [
+        "okf"
+      ],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": false,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [
+        "27"
+      ],
+      "lifecycle": "unprocessed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/2026-08-06-002348-activate-tier-1-capture-hook-27.md",
+      "session_id": "",
+      "source_quality": "tier-1-complete",
+      "tags": [
+        "okf",
+        "okf"
+      ],
+      "timestamp": "2026-08-06T00:23:48Z",
+      "title": "activate Tier 1 capture hook",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": "0-24h",
+      "age_hours": 0.913611,
+      "body_gaps": [],
+      "bytes": 676,
+      "capture_tier": "commit",
+      "commit_shas": [
+        "44e72a088209ecb52138ac60658c05dd83254dc6"
+      ],
+      "content_sha256": "13b0ab4fc8fab2a063a500dcd3bc532e3eed33ed9e035bd7dc091885c5e79832",
+      "duplicate_tags": [
+        "okf"
+      ],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": false,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [
+        "28"
+      ],
+      "lifecycle": "unprocessed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/2026-08-06-003933-single-source-the-two-tier-cadence-28.md",
+      "session_id": "",
+      "source_quality": "tier-1-complete",
+      "tags": [
+        "okf",
+        "okf"
+      ],
+      "timestamp": "2026-08-06T00:39:33Z",
+      "title": "single-source the two-tier cadence",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": "0-24h",
+      "age_hours": 0.840833,
+      "body_gaps": [],
+      "bytes": 663,
+      "capture_tier": "commit",
+      "commit_shas": [
+        "e575f34dc720dbfead37fef55827186ecf8c3b4e"
+      ],
+      "content_sha256": "7a71dad687c32c4b8da495b23e76bb304f5cc7ca672dbc1035cb89386702358c",
+      "duplicate_tags": [
+        "okf"
+      ],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": true,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [
+        "30"
+      ],
+      "lifecycle": "unprocessed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/2026-08-06T00-43-55Z-harden-tier-1-capture-mechanics-30.md",
+      "session_id": "",
+      "source_quality": "tier-1-complete",
+      "tags": [
+        "okf",
+        "okf"
+      ],
+      "timestamp": "2026-08-06T00:43:55Z",
+      "title": "harden Tier 1 capture mechanics",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": "0-24h",
+      "age_hours": 0.8125,
+      "body_gaps": [],
+      "bytes": 740,
+      "capture_tier": "commit",
+      "commit_shas": [
+        "4c9aa397fb1be50adf30724b6b52ec5babf3a7e8"
+      ],
+      "content_sha256": "b2e4c56772453a750f6a4cbb9e0c18f6ec8c8964a6a56671b385d16f851a8299",
+      "duplicate_tags": [
+        "okf"
+      ],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": true,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [
+        "26",
+        "31"
+      ],
+      "lifecycle": "unprocessed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/2026-08-06T00-45-37Z-propose-capture-routing-and-curation-trigger-31.md",
+      "session_id": "",
+      "source_quality": "tier-1-complete",
+      "tags": [
+        "okf",
+        "okf"
+      ],
+      "timestamp": "2026-08-06T00:45:37Z",
+      "title": "propose capture routing and curation trigger",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": "0-24h",
+      "age_hours": 0.432222,
+      "body_gaps": [],
+      "bytes": 733,
+      "capture_tier": "commit",
+      "commit_shas": [
+        "5015ffa3fdef8b89ca76c349aae7cdebd5144842"
+      ],
+      "content_sha256": "d16985a171b254b7c74fb9832e0628d9678bd3c53333e11e08a309178c1003d0",
+      "duplicate_tags": [
+        "okf"
+      ],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": true,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [
+        "29"
+      ],
+      "lifecycle": "unprocessed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/2026-08-06T01-08-26Z-persist-session-captures-with-a-terminal-guard-29.md",
+      "session_id": "",
+      "source_quality": "tier-1-complete",
+      "tags": [
+        "okf",
+        "okf"
+      ],
+      "timestamp": "2026-08-06T01:08:26Z",
+      "title": "persist session captures with a terminal guard",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": "0-24h",
+      "age_hours": 0.427778,
+      "body_gaps": [],
+      "bytes": 2338,
+      "capture_tier": "session",
+      "commit_shas": [
+        "374104e24bf3edab627a730b4d14a034c10ba1bf",
+        "44e72a088209ecb52138ac60658c05dd83254dc6",
+        "e575f34dc720dbfead37fef55827186ecf8c3b4e",
+        "4c9aa397fb1be50adf30724b6b52ec5babf3a7e8",
+        "5015ffa3fdef8b89ca76c349aae7cdebd5144842",
+        "ecb76f8"
+      ],
+      "content_sha256": "5392f51afdc14ad1fd234ff12595640ed512b044897a9c2049267b001f29ab0a",
+      "duplicate_tags": [],
+      "epic_refs": [
+        "26"
+      ],
+      "filename_matches_timestamp_prefix": true,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31"
+      ],
+      "lifecycle": "unprocessed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/2026-08-06T01-08-42Z-okf-two-tier-rollout-completion.md",
+      "session_id": "019fd470-7afa-7023-bdbd-0d971652dacf",
+      "source_quality": "tier-2-complete",
+      "tags": [
+        "okf",
+        "capture-tier",
+        "curation",
+        "hooks",
+        "skills"
+      ],
+      "timestamp": "2026-08-06T01:08:42Z",
+      "title": "OKF two-tier rollout completion",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": ">30d-90d",
+      "age_hours": 758.572778,
+      "body_gaps": [],
+      "bytes": 3186,
+      "capture_tier": "legacy-unspecified",
+      "commit_shas": [],
+      "content_sha256": "ac3b1e7adef860be4b310c7e454b3e4ca83c27c9343661b39ea284e41482b5a4",
+      "duplicate_tags": [],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": true,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [],
+      "lifecycle": "processed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/processed/2026-07-05T11-00-00Z-skill-effectiveness-review-and-canonicalisation.md",
+      "session_id": "",
+      "source_quality": "legacy-rich-synthesis",
+      "tags": [
+        "skills",
+        "okf",
+        "distribution",
+        "agent-skill-distro",
+        "workflow"
+      ],
+      "timestamp": "2026-07-05T11:00:00Z",
+      "title": "Session 2026-07-05 - Skill effectiveness review and canonicalisation",
+      "type": "Inbox"
+    },
+    {
+      "age_bucket": ">30d-90d",
+      "age_hours": 757.072778,
+      "body_gaps": [],
+      "bytes": 3918,
+      "capture_tier": "legacy-unspecified",
+      "commit_shas": [],
+      "content_sha256": "5032f2fd60be50ec15065dc2f801c7c382f22d940b518663fe3ccecae3a5de2d",
+      "duplicate_tags": [],
+      "epic_refs": [],
+      "filename_matches_timestamp_prefix": true,
+      "frontmatter_gaps": [],
+      "frontmatter_status": "valid",
+      "issue_refs": [],
+      "lifecycle": "processed",
+      "non_lowercase_tags": [],
+      "path": "knowledge/inbox/processed/2026-07-05T12-30-00Z-okf-curation-audit-and-okf-first-protocol.md",
+      "session_id": "",
+      "source_quality": "legacy-rich-synthesis",
+      "tags": [
+        "okf",
+        "curation",
+        "audit",
+        "agents-md",
+        "okf-first",
+        "memory",
+        "harness-integration"
+      ],
+      "timestamp": "2026-07-05T12:30:00Z",
+      "title": "Session 2026-07-05 - OKF curation audit phase and OKF-first protocol",
+      "type": "Inbox"
+    }
+  ],
+  "measurement": {
+    "bundle_root": "/private/tmp/designs-epic26-a2-health",
+    "collector": "docs/epic-26/a2_measure_inbox_health.py",
+    "git_revision": "ad19265e2c7b786002477b95fa02e2fada06f11e",
+    "measured_at_utc": "2026-08-06T01:34:22Z",
+    "read_only": true
+  },
+  "schema_version": "a2-inbox-health-v1",
+  "scope": {
+    "excluded": [
+      "all non-Markdown files",
+      "all files outside the supplied bundle root"
+    ],
+    "included": [
+      "knowledge/inbox/*.md (excluding index.md)",
+      "knowledge/inbox/processed/**/*.md (excluding index.md)"
+    ]
+  },
+  "summary": {
+    "all_items": {
+      "age_histogram": {
+        "0-24h": 6,
+        ">24h-7d": 0,
+        ">30d-90d": 2,
+        ">7d-30d": 2,
+        ">90d": 0,
+        "missing-or-invalid": 0
+      },
+      "capture_tier_distribution": {
+        "commit": 5,
+        "legacy-unspecified": 4,
+        "session": 1
+      },
+      "count": 10,
+      "maximum_item": {
+        "bytes": 3918,
+        "path": "knowledge/inbox/processed/2026-07-05T12-30-00Z-okf-curation-audit-and-okf-first-protocol.md"
+      },
+      "source_quality_distribution": {
+        "legacy-rich-synthesis": 4,
+        "tier-1-complete": 5,
+        "tier-2-complete": 1
+      },
+      "total_bytes": 18041
+    },
+    "body_structure_gaps": {
+      "count": 0,
+      "paths": []
+    },
+    "duplicate_groups": {
+      "commit_sha_reference": [
+        {
+          "key": "374104e24bf3edab627a730b4d14a034c10ba1bf",
+          "paths": [
+            "knowledge/inbox/2026-08-06-002348-activate-tier-1-capture-hook-27.md",
+            "knowledge/inbox/2026-08-06T01-08-42Z-okf-two-tier-rollout-completion.md"
+          ]
+        },
+        {
+          "key": "44e72a088209ecb52138ac60658c05dd83254dc6",
+          "paths": [
+            "knowledge/inbox/2026-08-06-003933-single-source-the-two-tier-cadence-28.md",
+            "knowledge/inbox/2026-08-06T01-08-42Z-okf-two-tier-rollout-completion.md"
+          ]
+        },
+        {
+          "key": "4c9aa397fb1be50adf30724b6b52ec5babf3a7e8",
+          "paths": [
+            "knowledge/inbox/2026-08-06T00-45-37Z-propose-capture-routing-and-curation-trigger-31.md",
+            "knowledge/inbox/2026-08-06T01-08-42Z-okf-two-tier-rollout-completion.md"
+          ]
+        },
+        {
+          "key": "5015ffa3fdef8b89ca76c349aae7cdebd5144842",
+          "paths": [
+            "knowledge/inbox/2026-08-06T01-08-26Z-persist-session-captures-with-a-terminal-guard-29.md",
+            "knowledge/inbox/2026-08-06T01-08-42Z-okf-two-tier-rollout-completion.md"
+          ]
+        },
+        {
+          "key": "e575f34dc720dbfead37fef55827186ecf8c3b4e",
+          "paths": [
+            "knowledge/inbox/2026-08-06T00-43-55Z-harden-tier-1-capture-mechanics-30.md",
+            "knowledge/inbox/2026-08-06T01-08-42Z-okf-two-tier-rollout-completion.md"
+          ]
+        }
+      ],
+      "exact_content_sha256": [],
+      "session_id": [],
+      "title": []
+    },
+    "duplicate_or_noncanonical_tags": {
+      "duplicate_tag_occurrences": 5,
+      "non_lowercase_tag_occurrences": 0,
+      "paths": [
+        "knowledge/inbox/2026-08-06-002348-activate-tier-1-capture-hook-27.md",
+        "knowledge/inbox/2026-08-06-003933-single-source-the-two-tier-cadence-28.md",
+        "knowledge/inbox/2026-08-06T00-43-55Z-harden-tier-1-capture-mechanics-30.md",
+        "knowledge/inbox/2026-08-06T00-45-37Z-propose-capture-routing-and-curation-trigger-31.md",
+        "knowledge/inbox/2026-08-06T01-08-26Z-persist-session-captures-with-a-terminal-guard-29.md"
+      ]
+    },
+    "filename_timestamp_prefix_mismatches": {
+      "count": 2,
+      "paths": [
+        "knowledge/inbox/2026-08-06-002348-activate-tier-1-capture-hook-27.md",
+        "knowledge/inbox/2026-08-06-003933-single-source-the-two-tier-cadence-28.md"
+      ]
+    },
+    "frontmatter_gaps": {
+      "count": 0,
+      "paths": []
+    },
+    "index_integrity": {
+      "dangling_links": [],
+      "duplicate_links": [],
+      "linked_item_count": 8,
+      "status": "valid",
+      "unlisted_files": [],
+      "unprocessed_file_count": 8
+    },
+    "invalid_inbox_type": {
+      "count": 0,
+      "paths": []
+    },
+    "malformed_frontmatter": {
+      "count": 0,
+      "paths": []
+    },
+    "processed": {
+      "age_histogram": {
+        "0-24h": 0,
+        ">24h-7d": 0,
+        ">30d-90d": 2,
+        ">7d-30d": 0,
+        ">90d": 0,
+        "missing-or-invalid": 0
+      },
+      "capture_tier_distribution": {
+        "legacy-unspecified": 2
+      },
+      "count": 2,
+      "maximum_item": {
+        "bytes": 3918,
+        "path": "knowledge/inbox/processed/2026-07-05T12-30-00Z-okf-curation-audit-and-okf-first-protocol.md"
+      },
+      "source_quality_distribution": {
+        "legacy-rich-synthesis": 2
+      },
+      "total_bytes": 7104
+    },
+    "referenced_epic_numbers": [
+      "26"
+    ],
+    "referenced_issue_numbers": [
+      "26",
+      "27",
+      "28",
+      "29",
+      "30",
+      "31"
+    ],
+    "unprocessed": {
+      "age_histogram": {
+        "0-24h": 6,
+        ">24h-7d": 0,
+        ">30d-90d": 0,
+        ">7d-30d": 2,
+        ">90d": 0,
+        "missing-or-invalid": 0
+      },
+      "capture_tier_distribution": {
+        "commit": 5,
+        "legacy-unspecified": 2,
+        "session": 1
+      },
+      "count": 8,
+      "maximum_item": {
+        "bytes": 2938,
+        "path": "knowledge/inbox/2026-07-13T03-35-53Z-skill-governance-and-staged-verification.md"
+      },
+      "source_quality_distribution": {
+        "legacy-rich-synthesis": 2,
+        "tier-1-complete": 5,
+        "tier-2-complete": 1
+      },
+      "total_bytes": 10937
+    }
+  }
+}
