@@ -36,7 +36,7 @@ When you finish a meaningful work session:
 1. Tier 1: the post-commit hook writes one compact `capture_tier: commit` inbox item for each ordinary commit. Commit bodies must state why/how and `Impact:`; Git remains the source for changed files.
 2. Tier 2: at session close, `end-session` writes one `capture_tier: session` synthesis after work is committed. It references commit SHAs and contains only Decisions Made, What Was Deprecated, Lessons Learned, and Current State; it does not repeat Tier 1 captures or include a completion-summary section.
 3. Capture quality checks normalize tags and compact oversized, raw-dump, malformed, or repeated low-signal bodies to a Git reference. An explicit override may retain reviewed content but cannot bypass safe structure or provenance.
-4. Tier 1 and Tier 2 captures are complementary; neither replaces curation. The approved cadence is manual status/triage plus a separately requested bounded run. Do not add schedules, cron/launchd, queues, polling, hook launches, Factory automation, child sessions, automatic retries, or cross-project rollout.
+4. Tier 1 and Tier 2 captures are complementary; neither replaces curation. Manual status/triage and separately requested bounded runs remain the default. A scheduled run is allowed only when a later operator decision names this exact repository and branch and installs the canonical one-session adapter, explicit limits, repository-local kill switch, no-retry ledger, and fail-closed stop policy. Never infer that authority for another repository or use a parent-workspace runner, queue, polling loop, hook launch, or unbounded Factory automation.
 
 ### Curation
 
@@ -52,7 +52,7 @@ installed runner validates and applies them:
 5. Failure, cancellation, or quota exhaustion leaves input and partial output recoverable. Resume is a new explicit request using an unchanged plan; no automatic retry or quota increase is allowed.
 6. The audit merges redundancy, preserves contradictions/history, fixes ambiguous references, and reports AGENTS.md alignment proposals. It never patches AGENTS.md without approval.
 
-Run curation only through the explicit repository-scoped bounded workflow. Reversible archive/compaction requires a reviewed manifest and rollback proof; permanent deletion requires separate path-specific approval.
+Run curation only through the explicit repository-scoped bounded workflow. Scheduled proposal authoring, when separately approved for this repository, is read-only, limited to one actionable item and one model session, and must pass the same check-only and execution envelope without retry. Reversible archive/compaction requires a reviewed manifest and rollback proof; permanent deletion requires separate path-specific approval.
 
 ### Concept Types
 
@@ -77,4 +77,4 @@ Run curation only through the explicit repository-scoped bounded workflow. Rever
 - For legacy projects, concepts reference existing docs via `resource` rather than duplicating content.
 - Retained history is warning-first. New strict typed relationships use stable project-local IDs; unresolved/inferred/proposed/stale knowledge remains visible and is not silently rewritten.
 - Status, lint, query, cadence, and observation commands are repository-local and read-only unless an explicit bounded mutation command is named.
-- No OKF command autonomously edits AGENTS.md, installs a scheduler, starts Factory, traverses a home/parent workspace, or mutates another repository.
+- The installer may distribute an inert scheduled-curation adapter and example profile, but it never enables a schedule. No OKF command autonomously edits AGENTS.md, traverses a home/parent workspace, or mutates another repository.

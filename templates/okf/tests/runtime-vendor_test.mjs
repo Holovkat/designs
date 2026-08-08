@@ -35,6 +35,7 @@ const installedBins = Object.freeze([
   "okf-lint.mjs",
   "okf-query.mjs",
   "okf-run-plan.mjs",
+  "okf-scheduled-curate.mjs",
 ]);
 const installedLibs = Object.freeze([
   "cadence.mjs",
@@ -53,6 +54,7 @@ const installedLibs = Object.freeze([
   "run-lock.mjs",
   "run-plan.mjs",
   "run-report.mjs",
+  "scheduled-curation.mjs",
   "yaml-runtime.mjs",
 ]);
 const installedSchema = Object.freeze([
@@ -118,7 +120,7 @@ function installGuards(parent) {
   const log = join(parent, "install-guards.log");
   mkdirSync(bin);
   writeFileSync(log, "");
-  for (const executable of ["node", "npm", "npx", "curl", "wget"]) {
+  for (const executable of ["node", "npm", "npx", "curl", "wget", "droid"]) {
     const path = join(bin, executable);
     writeFileSync(path, "#!/bin/sh\nprintf '%s\\n' \"$0\" >> \"$OKF_INSTALL_GUARD_LOG\"\nexit 97\n");
     chmodSync(path, 0o755);
@@ -167,7 +169,7 @@ test("installer distributes the complete offline surface and preserves local con
     assert.deepEqual(names(join(target, ".okf", "bin")), installedBins);
     assert.deepEqual(names(join(target, ".okf", "lib")), installedLibs);
     assert.deepEqual(names(join(target, ".okf", "schema")), installedSchema);
-    assert.deepEqual(names(join(target, ".okf", "templates")), ["curation-prompt.md"]);
+    assert.deepEqual(names(join(target, ".okf", "templates")), ["curation-prompt.md", "scheduled-curation-prompt.md", "scheduled-curation.example.json"]);
     assert.deepEqual(names(join(target, ".okf", "agents")), ["okf-curator.md"]);
     assert.deepEqual(names(join(target, ".okf", "review")), ["AGENTS-OKF-SECTION.md"]);
     assert.deepEqual(names(join(target, ".okf", "docs")), ["DEPLOYMENT-RUNBOOK.md", "OKF-STANDARD.md", "epic-26"]);
@@ -192,6 +194,8 @@ test("installer distributes the complete offline surface and preserves local con
       assert.deepEqual(readFileSync(join(target, ".okf", "schema", file)), readFileSync(join(template, "schema", file)));
     }
     assert.deepEqual(readFileSync(join(target, ".okf", "templates", "curation-prompt.md")), readFileSync(join(template, "templates", "curation-prompt.md")));
+    assert.deepEqual(readFileSync(join(target, ".okf", "templates", "scheduled-curation-prompt.md")), readFileSync(join(template, "templates", "scheduled-curation-prompt.md")));
+    assert.deepEqual(readFileSync(join(target, ".okf", "templates", "scheduled-curation.example.json")), readFileSync(join(template, "config", "scheduled-curation.example.json")));
     assert.deepEqual(readFileSync(join(target, ".okf", "agents", "okf-curator.md")), readFileSync(join(template, "agents", "okf-curator.md")));
     assert.deepEqual(readFileSync(join(target, ".okf", "review", "AGENTS-OKF-SECTION.md")), readFileSync(join(template, "AGENTS-OKF-SECTION.md")));
     assertDocumentation(target);
@@ -208,6 +212,8 @@ test("installer distributes the complete offline surface and preserves local con
       join(target, ".okf", "agents", "okf-curator.md"),
       join(target, ".okf", "review", "AGENTS-OKF-SECTION.md"),
       join(target, ".okf", "templates", "curation-prompt.md"),
+      join(target, ".okf", "templates", "scheduled-curation-prompt.md"),
+      join(target, ".okf", "templates", "scheduled-curation.example.json"),
     ]) assert.equal(lstatSync(path).mode & 0o111, 0, `${path} must remain a non-executable review artifact`);
     assert.deepEqual(JSON.parse(readFileSync(join(target, ".okf", "profile.json"), "utf8")), JSON.parse(readFileSync(join(template, "config", "profile.json"), "utf8")));
     assert.deepEqual(JSON.parse(readFileSync(join(target, ".okf", "cadence.json"), "utf8")), JSON.parse(readFileSync(join(template, "config", "cadence.json"), "utf8")));
@@ -268,9 +274,11 @@ test("installer distributes the complete offline surface and preserves local con
     assert.match(unavailableSemantic.stderr, /packaged local parser runtime is missing/);
     renameSync(unavailable, join(target, ".okf"));
 
-    for (const name of ["cron", "crontab", "factory", "launchd", "launch-agent", "scheduler", "queue-consumer"]) {
+    for (const name of ["cron", "crontab", "factory", "launchd", "launch-agent", "queue-consumer"]) {
       assert.equal(filesBelow(target).some((path) => path.toLowerCase().includes(name)), false, `installer emitted autonomous artifact: ${name}`);
     }
+    assert.equal(existsSync(join(target, ".okf", "scheduled-curation.json")), false, "installer activated a scheduled-curation profile");
+    assert.equal(existsSync(join(target, ".okf", "scheduled.lock")), false, "installer created a scheduler lease");
     assert.equal(existsSync(join(target, ".okf", "node_modules")), false);
   } finally {
     rmSync(parent, { recursive: true, force: true });

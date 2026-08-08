@@ -98,14 +98,25 @@ oldest-age metric to 39 days without changing the 120-day ceiling outcome.
 
 ## Decision and reopening conditions
 
-Broader adoption remains stopped. No cron entry, polling loop, Factory session,
-automatic retry, child runtime session, network dependency, or autonomous
-`AGENTS.md` mutation is active or approved. The pre-existing cron-server
-LaunchAgent remains on disk for reversibility, but its launchd label is
-explicitly disabled, it is unloaded, all four configured OKF curator jobs are
-disabled, no server process exists, and the real crontab has zero OKF lines.
-The retained disable evidence binds the exact LaunchAgent, job configuration,
-and crontab hashes observed at closeout.
+### Named pilot reopening — 2026-08-08
+
+The operator subsequently selected `APPROVE` for a bounded scheduled pilot in
+exactly Designs and FMS Mercury. Mercury uses its active `fmsRoadie` Dev
+lineage; protected QA `main` is excluded. The approval requires a new canonical
+one-session adapter, actionable-only single-item selection, exact root/branch/
+revision and runtime pins, serial check-only and execute validation, write-once
+attempt evidence, no automatic retry or push, and kill-switch activation on any
+failure. Pi Extensions and FMS GLM remain disabled, and neither the legacy
+parent-workspace curator nor the unauthenticated cron-management server may be
+used. This is a named pilot, not broader live-project adoption.
+
+Broader adoption remains stopped. Outside the two named pilot profiles, no cron
+entry, polling loop, Factory session, automatic retry, child runtime session,
+network dependency, or autonomous `AGENTS.md` mutation is approved. At Epic
+#26 closeout the pre-existing cron-server LaunchAgent was disabled and unloaded,
+all four legacy jobs were disabled, and the real crontab had zero OKF lines.
+The retained disable evidence binds that exact closeout state; the later pilot
+does not reactivate the server or either unapproved project.
 
 A later operator may reconsider the stop only through a new explicit decision
 that names the project and scope. The review should then require:

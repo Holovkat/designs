@@ -49,7 +49,7 @@ function makeRepo() {
 
   const duplicate = session({ title: "Duplicate", timestamp: "2026-01-31T00:00:00Z", sessionId: "11111111-1111-4111-8111-111111111111", sha });
   const items = {
-    "2026-02-01T00-00-00Z-actionable.md": session({ title: "Actionable", timestamp: "2026-02-01T00:00:00Z", sessionId: "22222222-2222-4222-8222-222222222222", sha }),
+    "2026-02-01T00-00-00Z-actionable.md": session({ title: "Actionable", timestamp: "2026-02-01T00:00:00Z", sessionId: "019fdf95-f1bf-7993-b356-773384f81bee", sha }),
     "duplicate-a.md": duplicate,
     "duplicate-b.md": duplicate,
     "2026-01-31T01-00-00Z-oversized.md": session({ title: "Oversized", timestamp: "2026-01-31T01:00:00Z", sessionId: "33333333-3333-4333-8333-333333333333", sha, body: `# Decisions Made\n\n${"x".repeat(17 * 1024)}\n\n# What Was Deprecated\n\nNothing.\n\n# Lessons Learned\n\nLesson.\n\n# Current State\n\nCurrent.\n` }),
@@ -90,6 +90,16 @@ test("classifies every direct pending category deterministically without exposin
     assert.equal(report.deletion_performed, false);
     assert.ok(!JSON.stringify(report).includes("SECRET-RAW-BODY"));
     assert.equal(git(fixture.root, ["status", "--porcelain"]), before);
+  } finally { fixture.cleanup(); }
+});
+
+test("accepts canonical UUIDv7 session IDs", () => {
+  const fixture = makeRepo();
+  try {
+    const item = byPath(triageInbox(fixture.root, { asOf: "2026-02-01T00:00:00Z" }), "actionable.md");
+    assert.equal(item.identity.session_id, "019fdf95-f1bf-7993-b356-773384f81bee");
+    assert.ok(!item.signals.includes("required-field:session_id"));
+    assert.equal(item.primary_classification, "actionable");
   } finally { fixture.cleanup(); }
 });
 

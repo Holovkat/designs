@@ -2,10 +2,10 @@
 type: State
 id: okf-6a9b0d2e-7f31-4c85-9a26-1d4e8b703c52
 title: OKF System Current State
-description: Current accepted OKF semantic guardrails, bounded curation tooling, manual cadence, distribution, and rollout boundary
+description: Current OKF guardrails, bounded curation tooling, and the named Designs/Mercury scheduled pilot boundary
 resource: templates/okf/OKF-STANDARD.md
-tags: [okf, state, semantic-guardrails, bounded-curation, validation, manual-cadence]
-timestamp: 2026-08-08T11:38:30Z
+tags: [okf, state, semantic-guardrails, bounded-curation, validation, scheduled-pilot]
+timestamp: 2026-08-08T13:18:09Z
 status: active
 ---
 
@@ -95,16 +95,25 @@ remains a separate source-control handoff rather than an inferred mutation.
 
 ## Current Operating Boundary
 
-The approved cadence remains explicit, manual, and repository-scoped. A status
-review cannot launch curation. Each mutating batch requires a separate operator
-request with an exact root, revision, selection, identity, limits, expected
-outcome, and recovery plan.
+On 2026-08-08 the operator explicitly reopened the stopped cadence boundary for
+a bounded pilot in exactly Designs and FMS Mercury. Mercury targets its active
+`fmsRoadie` Dev lineage; protected QA `main`, Pi Extensions, and FMS GLM remain
+disabled. The pilot uses a new repository-local one-session adapter with
+actionable-only selection, exact root/branch/revision and runtime pins,
+write-once attempt evidence, canonical check-only plus execute validation, no
+retry or push, and automatic kill-switch activation on failure. The legacy
+parent-workspace curator and unauthenticated cron-management server are not
+part of the activation.
 
-The pre-existing external cron-server path is also fail-closed: every configured
-OKF curator job is disabled, the unloaded LaunchAgent label is explicitly
-disabled, no cron-server process exists, and the live crontab contains no OKF
-entry. The LaunchAgent file remains in place only as reversible historical
-configuration; it does not grant cadence authority.
+The default cadence remains explicit, manual, and repository-scoped. A status
+review cannot launch curation. The two named pilot profiles carry the separate
+operator request, exact root/branch/revision, actionable selection, identity,
+limits, expected outcome, and recovery policy required for their bounded run.
+
+The pre-existing external cron-server path remains fail-closed: its LaunchAgent
+label is disabled and unloaded and no server process is used. The pilot may add
+only two direct, staggered cron entries after successful monitored runs; that
+does not grant the server API or another project cadence authority.
 
 The E5 cross-project review records **STOP broader live-project adoption**.
 Frozen canaries prove bounded behavior and recovery but do not measure sustained

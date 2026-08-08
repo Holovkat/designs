@@ -1,10 +1,10 @@
 ---
 type: Architecture
 title: OKF Offline Installer Design
-description: Idempotent file-copy installer for the bundle, semantic tools, bounded operations, controls, hooks, viewer, and curator contracts
+description: Idempotent file-copy installer for the bundle, bounded tools including an inert scheduler adapter, controls, hooks, viewer, and contracts
 resource: ./templates/okf/install-okf.sh
 tags: [bash, deployment, installer, offline, okf, setup]
-timestamp: 2026-08-08T00:00:00Z
+timestamp: 2026-08-08T13:18:09Z
 status: active
 issue_refs: [26]
 epic_refs: [26]
@@ -25,9 +25,10 @@ schema/generated validator, accepted `.okf/lib` modules, `.okf/bin` commands,
 and curation prompt template.
 
 The command surface covers lint, status, semantic query, run planning, bounded
-curation/cancellation/resume, triage, reversible archive/rollback, and manual
-cadence status/observation. Installed executables and canonical content are
-verified in a throwaway repository fixture.
+curation/cancellation/resume, triage, reversible archive/rollback, manual
+cadence status/observation, and an inert scheduled-curation adapter plus example
+profile. Installed executables and canonical content are verified in a
+throwaway repository fixture.
 
 # Configuration preservation
 
@@ -40,13 +41,14 @@ silently replacing project-local policy.
 
 Installation is file-copy/configuration work only. It does not run Node/npm,
 invoke any installed command or hook, start curation/archive/cadence, fetch a
-dependency, contact a network, install cron/launchd/service/queue/Factory state,
-or discover another project. The semantic command fails closed when its pinned
-local runtime is unavailable; portable basic search remains usable.
+dependency, contact a network, install an enabled scheduled profile,
+cron/launchd/service/queue/Factory state, or discover another project. The
+semantic command fails closed when its pinned local runtime is unavailable;
+portable basic search remains usable.
 
-The explicit installation action may append the standard OKF section to
-AGENTS.md. Later curation/migration/status operations only report instruction
-alignment proposals and require separate approval to apply them.
+The installer stages the standard OKF section for review but never creates or
+edits `AGENTS.md`. Later curation/migration/status operations only report
+instruction alignment proposals and require separate approval to apply them.
 
 # Hook preservation
 

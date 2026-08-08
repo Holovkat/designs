@@ -30,11 +30,13 @@ This will:
   schema, and accepted libraries into `.okf/` without fetching dependencies
 - Install the read-only linter, semantic query, status, triage, cadence status,
   and cadence observation commands plus the bounded curator runner and
-  reversible archive/rollback commands into `.okf/bin/`
+  reversible archive/rollback commands and the inert scheduled-curation adapter
+  into `.okf/bin/`
 - Initialize missing repository-local profile, cadence, kill-switch, and archive
   control files without overwriting existing project configuration
-- Install no scheduler, service, cron/launchd entry, Factory task, queue,
-  background process, network dependency, or cross-project discovery path
+- Install no enabled scheduled profile, scheduler service, cron/launchd entry,
+  Factory task, queue, background process, network dependency, or cross-project
+  discovery path. The adapter and example profile alone grant no authority.
 
 Verify the install:
 - `knowledge/index.md` exists with the standard concept type table
@@ -377,9 +379,11 @@ After deployment, the project is ready for ongoing OKF usage:
 - At sprint/epic checkpoints, an operator may request read-only status/triage.
   It never starts curation. A bounded batch requires a separate explicit plan,
   proposal, limits, lock, validation, cancellation, recovery, and review
-- The accepted cadence is manual-only. No schedule, threshold trigger, cron,
-  launchd, queue, hook launch, Factory automation, polling, self-retry, or
-  automatic session creation is installed
+- Manual operation is the default. A scheduled run requires a later operator
+  decision naming the exact repository/branch plus a separately installed and
+  reviewed `okf-scheduled-curation/1` profile. The installer itself creates no
+  schedule, threshold trigger, cron, launchd, queue, hook launch, Factory
+  automation, polling, self-retry, or automatic session.
 - Archive/compaction is reversible and manifest-backed; permanent deletion and
   every `AGENTS.md` edit require separate explicit operator approval
 - `viz.html` can be regenerated after any knowledge changes

@@ -22,10 +22,12 @@ You will be given:
   for a reviewed audit-only proposal), and a recovery plan
 
 Refuse the run if any input is missing, inferred, zero/unbounded, or does not
-match the exact physical Git top level. Do not schedule, self-reinvoke, retry,
-traverse a home/parent directory, follow a symlink outside the repository,
-launch Factory, or create another session. A successful status report or
-check-only plan is evidence, never execution authority.
+match the exact physical Git top level. Do not self-reinvoke, retry, traverse a
+home/parent directory, follow a symlink outside the repository, launch a child
+session, or create another session. Manual execution remains the default. A
+scheduled proposal is permitted only through the separately operator-approved
+repository-local adapter and profile described below. A successful status
+report or check-only plan is evidence, never execution authority.
 
 ## Mandatory Manual Run Envelope
 
@@ -68,14 +70,43 @@ safe units, and performs no automatic retry. Resume is a new explicit
 `--execute --resume` request and is allowed only when root, revision, limits,
 allowlist, proposal, source hashes, and checkpoint all still match.
 
+## Bounded Scheduled Proposal-Only Envelope
+
+A project-specific operator decision may authorize the installed
+`okf-scheduled-curate.mjs` adapter for one exact repository and branch. That
+profile must pin the physical root, branch, model binary hash, model and
+reasoning level, operator identity/request/approval reference, actionable-only
+single-item selection, positive context/input/output/runtime limits,
+`max_sessions: 1`, `retry_policy: never`, exact commit policy, and kill-switch
+failure behavior.
+
+In this mode the curator is a read-only proposal author. The adapter invokes
+exactly one model session/process with only `Read`, `Grep`, `Glob`, and `LS`;
+bounded internal tool turns may occur inside that one process, but it supplies no
+edit, create, execute, network, mission, auto, resume, probe, or retry authority.
+Return only the bounded JSON proposal draft requested by the scheduled prompt.
+The adapter—not the model—binds source and target hashes, writes the proposal,
+runs check-only then execute serially against the same envelope, verifies the
+exact knowledge diff, and optionally commits only the declared paths. It never
+pushes.
+
+A write-once attempt record prevents a later cron occurrence from retrying the
+same revision/item envelope. Any timeout, malformed output, validation failure,
+unexpected diff, commit failure, lock ambiguity, or ceiling breach activates
+the repository-local kill switch. The scheduled mode does not run the broad
+gap/audit phases, fetch issues, scan unrelated docs/code, or curate another
+item; it reads only the selected item, permanent knowledge needed to place it,
+and the required indexes/log.
+
 ## Phase 1: Read Context
 
 1. Read `.okf/templates/curation-prompt.md` as the installed canonical default.
    If `knowledge/curation-prompt.md` exists, apply it as a project-local override
    only where it does not widen the approved root, authority, item/input/output/
    runtime/session ceilings, validation, locking, cancellation, recovery, or the
-   no-scheduler/no-retry constraints. A project override can narrow focus; it
-   cannot grant execution authority or weaken the manual run envelope.
+   scheduler-approval/no-retry constraints. A project override can narrow
+   focus; it cannot grant execution authority or weaken either approved run
+   envelope.
 2. Read only the explicitly selected unprocessed inbox items named by this run
    (never substitute, append, or curate an unselected inbox item).
 3. Read existing concept files in each concept directory to understand current knowledge state.

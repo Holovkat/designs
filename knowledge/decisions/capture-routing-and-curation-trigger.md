@@ -23,6 +23,15 @@ would make it continuously noisy. Epic #26 records a prior cron/Factory runaway
 of 57,595 sessions and 6.34 GiB, so this decision must not restore schedules or
 unbounded automation.
 
+## 2026-08-08 Scheduled-Pilot Amendment
+
+The later cadence decision approved a bounded exception for exactly Designs and
+FMS Mercury. It does not change capture persistence or threshold behavior. The
+new adapter consumes at most one triage-`actionable` item, starts one pinned
+read-only proposal session, uses the canonical bounded executor, never retries
+or pushes, and activates the repository kill switch on failure. The legacy
+nightly/every-30-minute runner remains rejected.
+
 # Decision
 
 ## Capture Persistence Owner and Subject Convention

@@ -3,6 +3,17 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-08T13:18:09Z - Bounded Two-Project Scheduler Pilot Approved
+
+- **Approved:** one fail-closed scheduled-curation pilot for Designs and FMS
+  Mercury's `fmsRoadie` Dev lineage; Pi Extensions, FMS GLM, and Mercury QA
+  `main` remain outside the decision.
+- **Required:** one actionable item, one read-only proposal session, explicit
+  limits, exact branch/revision checks, canonical check/execute validation,
+  write-once attempt evidence, no retry, and kill-switch activation on failure.
+- **Rejected:** the legacy broad `curate.sh` implementation and unauthenticated
+  cron-management server remain disabled and are not activation paths.
+
 ## 2026-08-08T11:38:30Z - Epic #26 UUIDv7 Compatibility Evidence Refresh
 
 - **Corrected:** the session-capture schema and generated validator now accept
