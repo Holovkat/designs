@@ -4,7 +4,7 @@ title: Designs Project Content State
 description: Current state of the designs project's own content including templates, guides, UI/UX patterns, infrastructure docs, and skill distribution
 resource: ./README.md
 tags: [designs, state, content, templates, guides, ui-ux, infrastructure, skills, distribution]
-timestamp: 2026-07-13T03:35:53Z
+timestamp: 2026-08-08T08:19:17Z
 status: active
 ---
 
@@ -94,11 +94,14 @@ The designs repository is a documentation-first collection of reusable project-d
 
 - Codex Global Planning Agent Pack (Sprint 1) - 11 issues tracked in implementation checklist
 - Codex Builder Agent Pack (Sprint 2) - 9 issues tracked in implementation checklist
-- OKF system adoption and refinement
+- OKF Epic #26 canonical implementation and evidence are complete; broader
+  live-project adoption is stopped pending a new explicit operator decision.
 
 ## What Is Blocked
 
-- Nothing currently blocked for the designs project content.
+- Broader live-project OKF adoption is intentionally stopped by the Epic #26 E5
+  review. Canonical templates and manual-explicit tooling remain available for
+  a separately approved project-level warning-mode audit.
 
 ## Component Status Summary
 
@@ -137,7 +140,7 @@ The designs repository is a documentation-first collection of reusable project-d
 - [Graphite Stacking for Docs](../decisions/graphite-stacking-for-docs.md): Use stacking workflow for dependent documentation changes
 - [Workflow Skill Canonicalisation](../decisions/skill-canonicalisation.md): Designs is canonical source for workflow skills; SKILL.md canonical over commands; three-layer distribution
 - [OKF-First Protocol](../decisions/okf-first-protocol.md): Knowledge bundle is the first source of truth
-- [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md): Phase 6 Audit and passive nudge cadence
+- [Curation Cadence and First Decision Gate](../decisions/curation-cadence-first-decision-gate.md): explicit manual status review and bounded curation cadence
 
 ## Related Concepts
 

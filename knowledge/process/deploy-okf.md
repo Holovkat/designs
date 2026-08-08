@@ -1,74 +1,54 @@
 ---
 type: Process
 title: Deploy OKF to a Project
-description: Full 8-phase deployment workflow from mechanical install to final verification
+description: Nine-phase warning-first deployment from offline install through bounded verification and canary review
 resource: ./templates/okf/DEPLOYMENT-RUNBOOK.md
 tags: [okf, deployment, runbook, install, workflow]
-timestamp: 2026-06-29T14:30:00Z
+timestamp: 2026-08-08T00:00:00Z
 status: active
+issue_refs: [26]
+epic_refs: [26]
+assertion_state: proposed
+generated_at: 2026-08-08T00:00:00Z
+generated_by: epic-26-implementation
+source_authority: repository-contract
+evidence_refs: [templates/okf/DEPLOYMENT-RUNBOOK.md, templates/okf/install-okf.sh]
 ---
 
-# Deploy OKF to a Project
+# Deployment contract
 
-The OKF deployment runbook defines an 8-phase workflow that any agent can follow to deploy OKF to a project consistently. The full runbook is at `./templates/okf/DEPLOYMENT-RUNBOOK.md`.
+The canonical runbook defines nine phases: mechanical install, legacy seeding,
+epic processing, optional schema diagrams, AGENTS.md alignment review, bounded
+curation, warning-first core-profile adoption, typed viewer generation, and
+combined verification/canary review.
 
-## Prerequisites
+The installer copies the project-local knowledge structure, portable search,
+viewer/generator, quality-aware hook, curator contract, pinned YAML runtime,
+schema/generated validator, accepted libraries/commands, and control templates.
+It preserves existing controls and installs no dependency, runtime process,
+network fetch, schedule, queue, Factory task, or cross-project discovery path.
 
-- The project must be a git repository.
-- `designs/templates/okf/` must be available (the OKF template source).
-- The agent must have read access to the project's existing docs, GitHub issues, and source code.
-- `gh` CLI must be available if the project has GitHub issues/epics.
+# Existing projects
 
-## Phase 1: Mechanical Install
+Existing docs stay in place and concepts reference them through `resource`.
+Retained knowledge is audited in warning mode; new or materially updated records
+may opt into `okf-core/1.0`. A strict-bundle migration requires a manifest and
+rollback proof. AGENTS.md differences are proposals unless the operator has
+explicitly requested the installer to append the standard section.
 
-Run the installer script to create the knowledge directory structure, copy the viewer, generator, and query helper, install the post-commit hook, install the okf-curator droid to `.factory/droids/`, and update AGENTS.md. See [Installer Design](../architecture/installer-design.md).
+# Curation and verification
 
-```bash
-bash <path-to-designs>/templates/okf/install-okf.sh <project-root>
-```
+Curation uses one exact physical Git root/revision, explicit selected sources,
+positive quotas, one lock/session, deterministic proposal, staged strict
+validation, postflight, checkpoints, bounded reports, cancellation, and
+recoverable source handling. Final verification includes parser/schema/linter,
+capture quality, typed viewer/query, runner failure/resume, triage,
+archive/rollback, cadence, runtime/installer, and isolated small/medium/large
+canaries. A successful snapshot is not live rollout authority.
 
-Verify: `knowledge/index.md` exists, `knowledge/log.md` exists, `knowledge/okf-query.sh` is executable, `.githooks/post-commit` is executable, `git config core.hooksPath` returns `.githooks`, `.factory/droids/okf-curator.md` exists.
+# Related concepts
 
-## Phase 2: Seed From Existing Docs
-
-Read the project's existing documentation (AGENTS.md, docs/, docs/design/, docs/agents/, README.md) and create OKF concepts for each significant topic. This establishes the knowledge baseline. See [Seed From Existing Docs](./seed-from-existing-docs.md).
-
-## Phase 3: Process GitHub Epics
-
-List closed epics with `gh issue list --label epic --state closed`, fetch each epic body, and create Process/Domain concepts for recent epics or Deprecation entries for older ones. See [Process GitHub Epics](./process-github-epics.md).
-
-## Phase 4: Create Schema Diagrams
-
-If the project has a database schema, create mermaid ER diagram concepts grouped by domain. See [Create Schema Diagrams](./create-schema-diagrams.md).
-
-## Phase 5: Migrate AGENTS.md
-
-Update the project's AGENTS.md to replace AFFiNE/docs references with OKF references, add the OKF Knowledge Bundle section, and add legacy documentation alignment. See [Migrate AGENTS.md](./migrate-agents-md.md).
-
-## Phase 6: Curation Pass
-
-Read all concepts, add cross-links, check for duplicates, check for missing concepts, move superseded to deprecation, run the audit (redundancy, contradictions, ambiguous references, AGENTS.md alignment), verify index counts, update log.md and state. See [Curation Pass](./curation-pass.md) and [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md).
-
-## Phase 7: Generate Viewer
-
-Generate the self-contained viz.html:
-
-```bash
-node <project-root>/knowledge/generate-viz.js <project-root>/knowledge
-```
-
-Verify the browse tab, graph tab, mermaid rendering, link navigation, and search filtering all work. See [Viz Generator Design](../architecture/viz-generator-design.md).
-
-## Phase 8: Final Verification
-
-Count concepts per directory and verify index counts match. Verify no AFFiNE references in AGENTS.md. Verify no docs/agents/ references in AGENTS.md. Verify the OKF Knowledge Bundle section exists. Verify the post-commit hook is installed. Verify viz.html exists. See [Verify Deployment](./verify-deployment.md).
-
-## Post-Deployment
-
-After deployment, the project is ready for ongoing OKF usage:
-- Agents read `knowledge/` concepts before starting work (OKF-first protocol).
-- Agents write session syntheses to `knowledge/inbox/` before committing.
-- The post-commit hook refreshes the viewer manifest and nudges for curation when the inbox reaches the threshold (default 5).
-- The okf-curator droid processes inbox items into permanent concepts and audits the bundle.
-- `viz.html` can be regenerated after any knowledge changes.
-- `knowledge/okf-query.sh` provides portable concept search.
+- [OKF Curation Pass](./curation-pass.md)
+- [Verify OKF Deployment](./verify-deployment.md)
+- [Curation Cadence and First Decision Gate](../decisions/curation-cadence-first-decision-gate.md)
+- [Bounded Curation Execution Safety](../decisions/bounded-curation-execution-safety.md)

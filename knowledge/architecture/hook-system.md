@@ -1,70 +1,57 @@
 ---
 type: Architecture
-title: Post-Commit Hook System
-description: Manifest-refresh and curation nudge hook; agents write session syntheses to inbox before committing
+title: Post-Commit Tier 1 Capture System
+description: Repository-local quality-guarded hook that writes one compact rationale-bearing Tier 1 record per ordinary commit
 resource: ./templates/okf/post-commit.sh
-tags: [okf, git, hooks, post-commit, manifest, curation-nudge]
-timestamp: 2026-07-05T13:00:00Z
+tags: [capture-tier, git, hooks, inbox, okf, quality]
+timestamp: 2026-08-08T00:00:00Z
 status: active
+issue_refs: [26, 27, 30]
+epic_refs: [26]
+assertion_state: proposed
+generated_at: 2026-08-08T00:00:00Z
+generated_by: epic-26-implementation
+source_authority: repository-source
+evidence_refs: [templates/okf/post-commit.sh, templates/okf/tests/post-commit_test.sh]
 ---
 
-# Post-Commit Hook System
+# Boundary
 
-The OKF post-commit hook is a minimal bash script that runs after each commit. It does NOT write to the knowledge inbox. Its two responsibilities are refreshing the workspace viewer manifest and nudging for curation when the inbox accumulates. Agents are responsible for writing session syntheses to `knowledge/inbox/` BEFORE committing.
+The Bash post-commit hook resolves one Git root and writes one direct Inbox
+record for each ordinary non-merge commit. It skips `okf-capture:` and
+`okf-curation:` terminal commits, deduplicates by exact commit SHA, updates the
+Inbox index/count, and chains one preserved predecessor hook. It does not list
+changed files because Git is canonical.
 
-## Installation
+The record captures safely quoted title/branch/timestamps, full SHA, issue refs,
+unique normalized tags, why/how, impact, `generated_at`, and
+`generated_by: okf-post-commit`. Subject-only messages retain explicit rationale
+or impact gaps.
 
-The hook is installed by `install-okf.sh` into `.githooks/post-commit` in the project root. The installer sets the local `core.hooksPath` to `.githooks` (not global, to avoid conflicts with other projects). See [Installer Design](./installer-design.md).
+# Quality guard
 
-## What It Does
+The hook measures the prospective record against a 16 KiB boundary and detects
+raw credentials/private keys, binary encodings, stack traces, logs, payloads,
+transcripts, database dumps, and bulk source. Unsafe, oversized, malformed, or
+repeated low-signal content becomes a compact Git-reference record with
+machine-readable `x_okf_capture_*` reasons. An explicit environment override may
+retain reviewed content but never bypass safe YAML/Markdown structure, unique
+tags, exact-SHA deduplication, or provenance.
 
-### 1. Guard Conditions
+Warnings expose only stable reason codes, SHA, and output path—not the commit
+body, title, payload, or detected secret. Failure never fails the Git commit.
 
-The hook exits early (exit 0) in several cases:
+# Isolation
 
-- **No knowledge directory:** If `knowledge/` does not exist, the hook does nothing.
-- **Curation commits:** If the commit subject starts with `okf-curation:`, the hook exits to prevent loops (a curation commit triggering the hook, which might trigger another curation).
+The hook canonicalizes the Git top level and writes only through physical,
+non-symlink `knowledge/` and `knowledge/inbox/` directories. Symlinked or
+dangling inbox/root index targets stop capture before any external read or
+write. It has no viewer manifest, parent-workspace generator, curation
+nudge/launch, network, scheduler, Factory, child session, or cross-project
+behavior.
 
-### 2. Manifest Refresh
+# Related concepts
 
-The hook runs the workspace-level `generate-all-viz.js --manifest` script (if it exists and Node is available) to refresh the viewer manifest so the knowledge graph viewer stays current with the latest concept files. This runs silently (output suppressed, failures tolerated).
-
-### 3. Curation Nudge
-
-The hook counts unprocessed inbox items (`.md` files in `knowledge/inbox/` excluding `index.md`) and prints a reminder when the count reaches a configurable threshold:
-
-```
-OKF: <count> unprocessed inbox items in knowledge/inbox/.
-     Run a curation pass: dispatch the okf-curator agent or /okf-curate.
-```
-
-The threshold defaults to 5 and can be overridden with the `OKF_NUDGE_THRESHOLD` environment variable.
-
-## What It Does NOT Do
-
-The hook does NOT write commit metadata to the inbox. The previous design (writing SHA, author, branch, changed files, and issue refs to `knowledge/inbox/`) was deprecated because it generated low-signal noise, created loop risks, and was redundant with agent-written session syntheses. See [Post-Commit Inbox Capture (Deprecated)](../deprecation/post-commit-inbox-capture.md) for the full lessons.
-
-## Capture Responsibility
-
-Agents write session syntheses to `knowledge/inbox/` before committing, using the OKF inbox format (see [Inbox Format](../domain/inbox-format.md)). These syntheses contain:
-
-- What was done (decisions, changes, rationale)
-- Approaches rejected and why
-- What was deprecated
-- Lessons learned
-- Current state
-
-This is far richer than commit metadata alone. The [Post-Commit Capture Model](../decisions/post-commit-capture-model.md) decision documents the rationale for this separation of concerns.
-
-## Curation Pipeline
-
-Inbox items written by agents are processed by the curation agent (see [Curation Pass](../process/curation-pass.md)). The agent reads inbox items, existing concepts, the codebase, and referenced GitHub issues to create or update permanent concept files. The curation nudge in this hook reminds developers when it is time to run a curation pass.
-
-## Edge Cases and `set -e`
-
-The script uses `set -euo pipefail`. Fallbacks handle edge cases:
-
-- `git rev-parse --show-toplevel` falls back to `pwd` if not in a git repo.
-- `git log -1 --format='%s'` falls back to an empty string.
-- The manifest refresh uses `|| true` to tolerate failures (missing script, no Node, etc.).
-- The inbox count uses `find ... 2>/dev/null | wc -l` to tolerate missing directories.
+- [Two-Tier Inbox Capture Cadence](../process/two-tier-inbox-cadence.md)
+- [Pre-Tiered Post-Commit Capture Model](../deprecation/pre-tiered-post-commit-capture-model.md)
+- [Inbox Quality and Retention Policy](../decisions/inbox-quality-and-retention-policy.md)

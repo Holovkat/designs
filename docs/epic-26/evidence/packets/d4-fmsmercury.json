@@ -1,0 +1,48 @@
+{
+  "version": "okf-epic26-canary/1",
+  "scenario": "invalid-then-success",
+  "source": {
+    "root": "/Users/tonyholovka/workspace/fmsmercury",
+    "revision": "d388e4df2af0641a7ea074ea1135d1021fb93094",
+    "selected_inbox": [
+      "knowledge/inbox/2026-08-04-120000-work-request-live-shared-state-architecture.md"
+    ]
+  },
+  "operator": {
+    "identity": "tony-via-codex-2026-08-08",
+    "request": "Run the explicitly selected Epic 26 D4 fmsmercury invalid-then-success canary in a throwaway snapshot with the published limits and retain hash-only evidence."
+  },
+  "run_ids": {
+    "invalid": "epic26-d4-mercury-invalid",
+    "success": "epic26-d4-mercury-success"
+  },
+  "limits": {
+    "max_items": 1,
+    "max_input_bytes": 12288,
+    "max_generated_bytes": 393216,
+    "max_runtime_seconds": 45,
+    "max_sessions": 1
+  },
+  "harness_limits": {
+    "max_snapshot_bytes": 4294967296,
+    "max_disk_growth_bytes": 1048576,
+    "max_report_bytes": 65536,
+    "max_wall_seconds": 180,
+    "max_cpu_milliseconds_per_run": 5000
+  },
+  "curated_concept": {
+    "path": "knowledge/architecture/work-request-live-shared-state.md",
+    "content": "---\ntype: Architecture\ntitle: Work Request Live Shared State\ndescription: Revision-monotonic notify-then-fetch state with always-edit Work Requests and recoverable non-blocking exit saves\ntags: [architecture, canary, fmsmercury, shared-state, work-requests]\ntimestamp: 2026-08-08T00:00:00Z\nstatus: active\nid: okf-26000000-0000-4000-8000-0000000000d4\nassertion_state: verified\ngenerated_at: 2026-08-08T00:00:00Z\ngenerated_by: epic26-bounded-curator\nsource_authority: repository-git\nevidence_refs: [git:d388e4df2af0641a7ea074ea1135d1021fb93094:knowledge/inbox/2026-08-04-120000-work-request-live-shared-state-architecture.md]\nverified_at: 2026-08-08T00:00:00Z\nverification_method: frozen-git-snapshot-source-synthesis\nvalidity_basis: Exact repository capture and its recorded focused verification at the named revision\n---\n\n# Architecture Boundary\n\nEpic26D4SharedState preserves the accepted Mercury model. PowerSync was rejected because its licence, infrastructure, deployment surface, and write model did not address the reproduced client identity defects. Organisation-scoped Supabase Realtime broadcasts only a Work Request identifier and revision; clients then refetch through the authorised read path. A revision-monotonic aggregate store prevents late responses from regressing newer state.\n\n# Editing and Exit Rules\n\nWork Requests are always editable subject to permission and revision compare-and-swap. Draft and Planned are routing vocabulary, never edit gates, and opening a record cannot mutate status. Back navigation never waits for a network write: an immutable exit-save plan continues through a coordinator and a failure remains visible and recoverable.\n\n# Retained Open Decision\n\nCompleted and Cancelled terminal-state editability was still awaiting owner decision at the source revision. A future veto may restore terminal guards only; it must not restore Draft or Planned gating, route-edit sessions, silent save/discard, or lock-unlock mode.\n"
+  },
+  "retrieval": {
+    "semantic": {
+      "terms": ["Epic26D4SharedState"],
+      "assertionStates": ["verified"],
+      "hasEvidence": true,
+      "statuses": ["active"],
+      "validationStatuses": ["strict"]
+    },
+    "portable_terms": ["Epic26D4SharedState"],
+    "portable_decisions_only": false
+  }
+}

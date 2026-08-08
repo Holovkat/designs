@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 import { resolveControlPath } from "./run-guard.mjs";
 
 const LOCK_PATH = ".okf/run.lock";
@@ -37,7 +37,9 @@ export function acquireLock(root, plan, { identity = "operator", now = () => new
     started_at: now(),
     limits: plan.limits,
     phase: "preflight",
-    plan_hash: plan.plan_hash,
+    plan_hash: plan.plan_hash ?? null,
+    operator_request: plan.operator_request,
+    cancellation: Object.freeze({ signals: ["SIGINT", "SIGTERM"], kill_switch: ".okf/KILL_SWITCH" }),
   };
   try {
     writeFileSync(target.full, `${JSON.stringify(body, null, 2)}\n`, { encoding: "utf8", flag: "wx" });
@@ -49,8 +51,25 @@ export function acquireLock(root, plan, { identity = "operator", now = () => new
   }
 }
 
+export function updateLock(root, handle, changes = {}) {
+  if (!handle?.acquired) return false;
+  const target = resolveControlPath(root, LOCK_PATH);
+  if (!existsSync(target.full)) return false;
+  const active = parseLock(target.full);
+  if (active.root !== handle.root || active.run_id !== handle.run_id || active.lock_token !== handle.lock_token) return false;
+  const allowed = {};
+  if (typeof changes.phase === "string" && changes.phase.length > 0) allowed.phase = changes.phase;
+  if (typeof changes.plan_hash === "string" && /^[0-9a-f]{64}$/i.test(changes.plan_hash)) allowed.plan_hash = changes.plan_hash.toLowerCase();
+  if (typeof changes.checkpoint === "string" && changes.checkpoint.length > 0) allowed.checkpoint = changes.checkpoint;
+  const next = { ...active, ...allowed };
+  const temporary = `${target.full}.${handle.lock_token}.tmp`;
+  writeFileSync(temporary, `${JSON.stringify(next, null, 2)}\n`, { encoding: "utf8", flag: "wx" });
+  renameSync(temporary, target.full);
+  return true;
+}
+
 export function releaseLock(root, handle, terminalPath) {
-  if (!handle?.acquired || typeof terminalPath !== "string" || !/^\.okf\/(reports|checkpoints)\//.test(terminalPath)) return false;
+  if (!handle?.acquired || typeof terminalPath !== "string" || !/^\.okf\/(?:reports|checkpoints)\/[a-z0-9][a-z0-9._-]{0,190}\.json$/i.test(terminalPath)) return false;
   const terminal = resolveControlPath(root, terminalPath);
   const target = resolveControlPath(root, LOCK_PATH);
   if (!existsSync(terminal.full) || !existsSync(target.full)) return false;
@@ -59,6 +78,9 @@ export function releaseLock(root, handle, terminalPath) {
   try {
     const record = JSON.parse(readFileSync(terminal.full, "utf8"));
     if (record.root !== active.root || record.run_id !== active.run_id) return false;
+    if (record.lock_token !== active.lock_token) return false;
+    if (terminalPath.includes("/reports/") && !["completed", "cancelled", "quota-exceeded", "blocked", "failed"].includes(record.outcome)) return false;
+    if (terminalPath.includes("/checkpoints/") && !["completed", "cancelled", "quota-exceeded", "blocked", "failed"].includes(record.outcome)) return false;
   } catch {
     return false;
   }

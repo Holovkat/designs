@@ -33,7 +33,7 @@ This proposal constrains a future executor; it does not alter that baseline.
 | The incident consumed 57,595 Factory OKF-curator sessions and about 6.34 GiB. | Epic #26 Current Evidence; the 2026-08-06 audit comment repeats the Phase A0 scope guard. |
 | Factory was launched from `/Users/tonyholovka`, broadly scanned filesystem/session state, and sustained CPU use. | Epic #26 Current Evidence. A3 did not launch Factory or inspect its sessions. |
 | Canonical templates now prohibit schedules, cron, and Factory automation before the First Decision Gate, and require an explicit repository-scoped operator request. | `templates/okf/OKF-STANDARD.md`, `templates/okf/agents/okf-curator.md`, and the local Phase A0 commit history. |
-| The legacy passive-nudge wording in [Curation Audit Phase and Passive Nudge Cadence](./curation-audit-and-nudge.md) and [Post-Commit Capture Model](./post-commit-capture-model.md) is historical, not the current cadence. | The current canonical hook and the 2026-08-06 Epic #26 audit say Tier 1 capture replaced the nudge. A3 does not rewrite those historical concepts. |
+| The retained [Passive Threshold Nudge Curation Cadence](../deprecation/passive-nudge-curation-cadence.md) and [Pre-Tiered Post-Commit Capture Model](../deprecation/pre-tiered-post-commit-capture-model.md) are historical, not the current cadence. | The current canonical hook and Epic #26 evidence show Tier 1 capture replaced the nudge; both superseded models remain available as deprecation records. |
 
 These incident measurements are reported evidence, not values remeasured by
 this task. No other repository was inspected or mutated.
@@ -178,7 +178,9 @@ reports must include:
 - whether any source item, concept, archive, or instruction file was changed.
 
 A report that cannot establish these fields is a failed run. Reports themselves
-are included in the generated-byte ceiling and remain repository-scoped.
+are included in the generated-byte ceiling, remain repository-scoped, and are
+write-once: an explicit retry preserves the prior terminal report and uses a
+separate attempt identity.
 
 ## Resumability and Recovery
 
@@ -229,9 +231,9 @@ repositories; no test may use a home directory, live inbox, cron, or Factory.
 | Item and byte caps | Manifests at, below, and one unit above `max_items`, `max_input_bytes`, and `max_generated_bytes` | Over-limit plan fails before processing; at-limit plan never exceeds any counter or disk-output cap. |
 | Runtime and session caps | Controlled clock reaches deadline; mock requests a second/child session | Deadline checkpoints and terminates; `max_sessions: 1` rejects every additional session and no retry starts. |
 | Cancellation and kill switch | Cancel during a unit; activate the kill switch before and during a run | New runs remain blocked; active work reaches a safe checkpoint, preserves input, reports cancellation, and does not self-restart. |
-| Observability | Completed, blocked, quota-exceeded, cancelled, and failed fixtures | Each bounded report contains root, revision, limits, counters, lock state, checkpoint, terminal reason, and no raw inbox dump. |
+| Observability | Completed, blocked, quota-exceeded, cancelled, failed, and repeated-attempt fixtures | Each bounded report contains root, revision, limits, counters, lock state, checkpoint, terminal reason, and no raw inbox dump; a later attempt cannot overwrite prior terminal evidence. |
 | Deterministic resume | Interrupt after item _n_, then resume with matching and changed source hashes | Matching plan completes without duplicates; changed hashes block resume and require a new explicit plan. |
-| Non-destructive partial failure | Fail postflight after generated output but before persistence | Input remains recoverable, processed state is not advanced, and a manifest identifies partial output; no deletion or `AGENTS.md` write occurs. |
+| Non-destructive partial failure | Fail concept or maintenance postflight, or interrupt after a source move | Inputs and prior outputs are restored, processed state is not advanced, and a manifest identifies retained failed output; no deletion or `AGENTS.md` write occurs. |
 
 # Required Parameters Before Any Execution
 

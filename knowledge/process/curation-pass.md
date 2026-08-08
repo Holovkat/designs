@@ -1,141 +1,74 @@
 ---
 type: Process
-title: OKF Curation Pass
-description: Full curation workflow for processing inbox items, auditing knowledge quality, and maintaining AGENTS.md alignment
+title: OKF Bounded Curation Pass
+description: Explicit proposal-driven workflow with exact-root isolation, quotas, validation, checkpoints, recovery, and approval boundaries
 resource: ./templates/okf/agents/okf-curator.md
-tags: [okf, curation, inbox, maintenance, cross-links, audit]
-timestamp: 2026-07-05T12:00:00Z
+tags: [okf, curation, inbox, validation, recovery, audit]
+timestamp: 2026-08-08T00:00:00Z
 status: active
+issue_refs: [26]
+epic_refs: [26]
+assertion_state: proposed
+generated_at: 2026-08-08T00:00:00Z
+generated_by: epic-26-implementation
+source_authority: repository-contract
+evidence_refs: [templates/okf/agents/okf-curator.md, templates/okf/bin/okf-curate.mjs]
 ---
 
-# OKF Curation Pass
+# Request and plan
 
-Curation transforms inbox items into permanent concept files and maintains the overall quality of the knowledge base. It can be triggered by the `/okf-curate` command, by dispatching the okf-curator agent (canonical contract at `templates/okf/agents/okf-curator.md`, installed to `.factory/droids/` and `.claude/agents/` by the OKF installer), or as Phase 6 of the deployment workflow. The post-commit hook nudges when `knowledge/inbox/` holds 5 or more unprocessed items.
+Status and triage are explicit-root read-only evidence. They never trigger
+curation. A separate operator request names the physical Git root and revision,
+identity/reference, run ID, deterministic selected items and hashes, approved
+context, positive item/input/generated-byte/runtime ceilings, one session,
+expected outcome, cancellation, and recovery.
 
-## Curation Steps
+The curator synthesizes only that bounded packet into an
+`okf-curation-proposal/1`. Every selected source is covered by at least one
+concept output; outputs are uniquely sorted and include all affected type
+indexes, `knowledge/index.md`, `knowledge/inbox/index.md`, and
+`knowledge/log.md`, with source coverage, proposed content, expected target
+hashes, and generated provenance.
 
-### 1. Read All Unprocessed Inbox Items
+# Execution
 
-Read all `.md` files in `knowledge/inbox/` (not in `inbox/processed/`). These are session syntheses written by agents before committing. See [Inbox Format](../domain/inbox-format.md).
+`okf-curate --check-only` proves root/revision/containment, controls, source and
+proposal hashes, deterministic selection, quotas, and legacy preflight without
+mutating. `--execute` acquires one repository-local lock, stages and strictly
+validates concepts plus index/log maintenance, applies/checkpoints the complete
+bounded output set, postflights it, and only then moves selected source records
+to `inbox/processed/`. A stop during finalization restores any moved source and
+rolls every output back to retained recovery paths.
 
-### 2. Read Existing Concept Files
+An active or stale lock, ambiguous kill switch, source/proposal drift, escaping
+path, quota, cancellation, or validation/reporting failure stops the run. Input,
+staged/failed output, checkpoint, report, and backups remain recoverable. Resume
+is one new explicit request with the identical plan, hashes, proposal,
+root/revision, allowlist, and limits; it is idempotent and never self-retries.
+Prior terminal reports are write-once; a later explicit attempt has a separate
+attempt identity.
 
-Read concept files in each directory (`architecture/`, `components/`, `domain/`, `decisions/`, `process/`, `deprecation/`, `state/`) to understand the current knowledge state and avoid duplicates.
+# Knowledge audit
 
-### 3. Read Codebase and Git History
+Within the approved context, the curator consolidates redundancy, distinguishes
+historical/stale/proposed/inferred/verified assertions, preserves contradiction
+and rejected-path lessons, sharpens resources and citations, maintains stable
+typed relationships, updates indexes/log, and reports AGENTS.md alignment as
+proposals. The replacement declares `supersedes` against the retained old
+concept ID. The runner cannot patch AGENTS.md, invoke a network service, create
+a schedule/Factory/child session, archive/delete sources, or traverse a parent
+workspace.
 
-Read relevant source code and git history for additional context. This helps the curation agent understand the actual state of the codebase, not just what the inbox items describe.
+# Archive boundary
 
-### 4. Fetch GitHub Issues
+Archive/compaction is a separate reversible manifest workflow with explicit
+selection, hashes, approval, destination receipts, index snapshots, rollback,
+write-once attempt reports, and no permanent-delete command. Its success does
+not authorize curation or deletion.
 
-Fetch and read GitHub issues referenced by `issue_refs` or `epic_refs` in inbox item frontmatter:
+# Related concepts
 
-```bash
-gh issue view <number> --json body,title,labels,closedAt --jq '.body'
-```
-
-These issues contain rich context: pre-approved directives, acceptance criteria, linked epics, and full reasoning. They are not just short bug fix notes. If an issue has linked epics or sub-issues, fetch those too. Use this context to enrich concepts beyond what the commit message or session synthesis alone provides.
-
-### 5. Create or Update Concepts
-
-For each inbox item, determine which concept(s) to create or update:
-
-| Inbox content | Target directory |
-|---------------|-----------------|
-| Architectural changes | `architecture/` |
-| UI component work | `components/` |
-| Business logic changes | `domain/` |
-| Decisions with rationale | `decisions/` |
-| Workflow/process changes | `process/` |
-| Superseded patterns | `deprecation/` |
-| Current status updates | `state/` |
-
-- **New concepts:** Create with proper frontmatter (type, title, description, tags, resource, timestamp, issue_refs).
-- **Updated concepts:** Merge new information with existing, preserving prior context.
-- **Superseded concepts:** Move the old file to `deprecation/` and add a `supersedes` field.
-
-### 6. Add Cross-Links
-
-Where one concept references another, ensure the body text links to the related concept using relative markdown links (e.g., `[Related](../architecture/viewer-architecture.md)`). See [Link Resolution](../domain/link-resolution.md).
-
-### 7. Check for Duplicates and Missing Concepts
-
-- Merge concepts that cover the same topic.
-- If a topic is referenced but has no concept, create one.
-
-### 8. Move Superseded Concepts
-
-Move any superseded concepts to `deprecation/` with `supersedes` links pointing to the replacement.
-
-### 9. Process Inbox Items
-
-Move processed inbox items to `knowledge/inbox/processed/`.
-
-### 9b. Audit the Bundle
-
-Run on every pass, even with an empty inbox:
-
-- **Redundancy control:** merge concepts that overlap in scope (not just literal duplicates); the merged-away file goes to `deprecation/` with a `supersedes` link.
-- **Contradiction detection:** check concept vs concept, concept vs code reality, and concept vs AGENTS.md. Resolve in favor of verified current reality; formerly-true claims become deprecation lessons.
-- **Ambiguous reference resolution:** every `resource` field and cross-link must resolve; sharpen vague references so agents can follow them without guessing.
-- **AGENTS.md alignment:** report mismatches between AGENTS.md and the knowledge bundle or tooling as precise proposed edits. Apply only on operator approval, then log the change.
-
-### 10. Update Indexes and Log
-
-- Update all `index.md` files with current listings and accurate counts. See [Index Structure](../domain/index-structure.md).
-- Update `knowledge/log.md` with a summary of all changes in reverse chronological order.
-
-### 11. Update State Concept
-
-Ensure the State concept reflects the current project status after all curation.
-
-## Curation Rules
-
-- Never delete a concept file. Move superseded ones to `deprecation/` instead.
-- One concept per file. Do not mix types.
-- Filenames should be slugified versions of the title.
-- Use lowercase, consistent tags across concepts.
-- The `resource` field should point to the most relevant code file, doc, or GitHub issue.
-- Always include `issue_refs` in frontmatter when the concept was derived from or relates to GitHub issues.
-- Synthesize across multiple inbox items when they relate to the same concept.
-- Preserve the reasoning and rationale from inbox items AND GitHub issues, not just the facts.
-- Cross-link related concepts using markdown relative paths.
-
-## Curation Output
-
-The curator reports:
-
-```
-Curation cycle: <ISO timestamp>
-
-GitHub issues fetched:
-- #<number>: <title>
-
-Processed:
-- <inbox filename> -> <action taken>
-
-Created:
-- <concept filepath>
-
-Updated:
-- <concept filepath>
-
-Deprecated:
-- <old filepath> -> <new filepath>
-
-Log entry added to knowledge/log.md
-```
-
-## Triggering Curation
-
-- **Curator droid:** Dispatch the `okf-curator` droid (canonical contract at `templates/okf/agents/okf-curator.md`, installed to `.factory/droids/` and `.claude/agents/`) for a full curation pass.
-- **Post-commit nudge:** The [Hook System](../architecture/hook-system.md) nudges when unprocessed inbox items reach the threshold (default 5).
-- **Deployment Phase 6:** Run as part of the [deployment workflow](./deploy-okf.md).
-- **On demand:** After any significant epic closes, run a curation pass to capture the work.
-
-## Related Concepts
-
-- [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md) - Decision establishing the audit phase and passive nudge cadence
-- [OKF-First Protocol](../decisions/okf-first-protocol.md) - Consumption protocol that relies on audit-clean concepts
-- [Hook System](../architecture/hook-system.md) - The hook that implements the curation nudge
-- [OKF Query Helper](../architecture/okf-query-helper.md) - Portable search tool for querying the bundle
+- [Bounded Curation Execution Safety](../decisions/bounded-curation-execution-safety.md)
+- [Curation Cadence and First Decision Gate](../decisions/curation-cadence-first-decision-gate.md)
+- [Inbox Quality and Retention Policy](../decisions/inbox-quality-and-retention-policy.md)
+- [Deploy OKF to a Project](./deploy-okf.md)

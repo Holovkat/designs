@@ -1,5 +1,6 @@
 ---
 type: Decision
+id: okf-b7e2d4c6-8a10-4f35-9c72-e1d3a5b70984
 title: Capture Routing and Explicit Curation Trigger
 description: Approved dirty-tree routing, loop-guard subjects, and bounded manual curation trigger for the two-tier inbox
 resource: https://github.com/Holovkat/designs/issues/31
@@ -9,6 +10,7 @@ status: active
 issue_refs: [31]
 epic_refs: [26]
 decision_status: operator-approved-2026-08-06
+supersedes: [okf-2a4f6c8e-1b3d-4e75-9a02-c6d8f103b547]
 ---
 
 # Context

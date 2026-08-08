@@ -28,6 +28,9 @@ export function validateRoot(candidate) {
   } catch {
     fail("root-unresolvable", "root cannot be resolved");
   }
+  if (resolve(candidate) !== root) {
+    fail("root-not-physical", "root must name the physical Git worktree path without symlink aliases");
+  }
   const home = realpathSync(homedir());
   if (root === parse(root).root || root === home || root === "/Users") {
     fail("root-forbidden", "root is a forbidden host boundary");
@@ -52,6 +55,29 @@ export function validateRoot(candidate) {
     fail("root-missing-knowledge", "root must contain a knowledge directory");
   }
   return Object.freeze({ root, revision, knowledgeDir });
+}
+
+export function readRevision(root) {
+  try {
+    return execFileSync("git", ["rev-parse", "HEAD"], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim().toLowerCase();
+  } catch {
+    fail("revision-unreadable", "Git revision cannot be read from the approved root");
+  }
+}
+
+export function assertRevision(root, expected) {
+  if (typeof expected !== "string" || !/^[0-9a-f]{40}$/i.test(expected)) {
+    fail("revision-invalid", "an explicit full Git revision is required");
+  }
+  const actual = readRevision(root);
+  if (actual !== expected.toLowerCase()) {
+    fail("revision-mismatch", "root no longer matches the approved Git revision");
+  }
+  return actual;
 }
 
 export function resolveContainedPath(root, path, { optional = false } = {}) {
@@ -82,6 +108,10 @@ export function resolveControlPath(root, path) {
   const rootRelative = posixRelative(root, full);
   if (rootRelative === "" || rootRelative === ".." || rootRelative.startsWith("../") || isAbsolute(rootRelative)) {
     fail("path-escapes-root", "control path escapes the approved root");
+  }
+  if (existsSync(full)) {
+    const existingTarget = resolveContainedPath(root, rootRelative);
+    return Object.freeze({ path: existingTarget.path, full: existingTarget.full });
   }
   let existing = dirname(full);
   while (!existsSync(existing)) existing = dirname(existing);

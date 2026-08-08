@@ -2,11 +2,11 @@
 
 | Title | Description | Tags | Status |
 |-------|-------------|------|--------|
-| [OKF Standard Specification](./okf-standard-spec.md) | The v0.1 specification defining the OKF convention | [okf, standard, specification, frontmatter, concepts] | active |
-| [OKF Viewer Architecture](./viewer-architecture.md) | Single-file HTML viewer with browse and graph tabs, mermaid, link interception | [okf, viewer, html, cytoscape, mermaid, frontend] | active |
-| [Post-Commit Hook System](./hook-system.md) | Manifest-refresh and curation nudge hook; agents write session syntheses to inbox before committing | [okf, git, hooks, post-commit, manifest, curation-nudge] | active |
-| [OKF Installer Design](./installer-design.md) | How install-okf.sh deploys knowledge directory, viewer, query helper, hook, curator droid, and AGENTS.md section | [okf, installer, bash, deployment, setup] | active |
-| [Viz Generator Design](./viz-generator-design.md) | How generate-viz.js embeds concept data into viewer.html to produce viz.html | [okf, viz, generator, nodejs, viewer] | active |
-| [OKF Query Helper](./okf-query-helper.md) | Portable grep-based concept search tool with frontmatter ranking and a decisions/deprecation scope | [okf, query, search, grep, bash, portable, decisions, deprecation] | active |
+| [OKF Standard and Core Profile](./okf-standard-spec.md) | Git-canonical OKF v0.1 with the warning-first machine-checkable okf-core/1.0 semantic application profile | [concepts, frontmatter, okf, semantic-profile, specification, standard] | active |
+| [OKF Typed Viewer Architecture](./viewer-architecture.md) | Browse and graph viewer with stable semantic IDs, typed/inverse edges, Markdown citations, and visible relationship diagnostics | [graph, okf, relationships, semantics, viewer] | active |
+| [Post-Commit Tier 1 Capture System](./hook-system.md) | Repository-local quality-guarded hook that writes one compact rationale-bearing Tier 1 record per ordinary commit | [capture-tier, git, hooks, inbox, okf, quality] | active |
+| [OKF Offline Installer Design](./installer-design.md) | Idempotent file-copy installer for the bundle, semantic tools, bounded operations, controls, hooks, viewer, and curator contracts | [bash, deployment, installer, offline, okf, setup] | active |
+| [Viz Generator Design](./viz-generator-design.md) | Deterministic repository-local generator that parses concepts with the pinned runtime and embeds their semantic model in viz.html | [generator, nodejs, okf, semantics, viewer, viz] | active |
+| [OKF Query Helper](./okf-query-helper.md) | Portable grep fallback plus pinned local semantic queries for typed relationships, assertions, evidence, lifecycle, and validation state | [evidence, lifecycle, okf, query, relationships, search] | active |
 | [DESIGN.md Standard Specification](./design-standard-spec.md) | The DESIGN.md format for describing visual identity to coding agents | [designs, design-md, standard, tokens, yaml, frontend, identity] | active |
 | [Templates Directory Architecture](./templates-architecture.md) | Organisation of the templates directory containing instructional documents, functional design, and UI/UX guidelines | [designs, templates, architecture, directory-structure, organisation] | active |

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,7 +25,9 @@ function git(root, args) {
 
 function makeInbox(items, { kill = { active: false }, index = null } = {}) {
   const parent = mkdtempSync(join(tmpdir(), "okf-inbox-status-"));
-  const root = join(parent, "repo");
+  const createdRoot = join(parent, "repo");
+  mkdirSync(createdRoot, { recursive: true });
+  const root = realpathSync(createdRoot);
   const inbox = join(root, "knowledge", "inbox");
   mkdirSync(inbox, { recursive: true });
   mkdirSync(join(root, ".okf"));

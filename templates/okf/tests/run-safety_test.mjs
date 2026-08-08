@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readKillSwitch, createCancellationToken } from "../lib/run-control.mjs";
+import { readCancellationRequest, readKillSwitch, requestCancellation, createCancellationToken } from "../lib/run-control.mjs";
 import { canResume, markProcessed, readCheckpoint, writeCheckpoint } from "../lib/run-checkpoint.mjs";
 import { resolveContainedPath, RunGuardError, validateRoot } from "../lib/run-guard.mjs";
 import { acquireLock, readLock, releaseLock } from "../lib/run-lock.mjs";
@@ -29,7 +29,9 @@ function git(root, args) {
 
 function makeRepo(files = { "one.md": "# one\n" }) {
   const parent = mkdtempSync(join(tmpdir(), "okf-run-safety-"));
-  const root = join(parent, "repo");
+  const createdRoot = join(parent, "repo");
+  mkdirSync(createdRoot, { recursive: true });
+  const root = realpathSync(createdRoot);
   mkdirSync(join(root, "knowledge", "inbox"), { recursive: true });
   mkdirSync(join(root, ".okf"), { recursive: true });
   mkdirSync(join(root, ".empty-hooks"));
@@ -60,6 +62,7 @@ test("fails closed before root discovery without explicit operator authority", (
   const fixture = makeRepo();
   try {
     expectCode(() => plan(fixture.root, { operator_request: "", trigger: "scheduled" }), "authority-not-explicit");
+    expectCode(() => plan(fixture.root, { operator_request: "x".repeat(1_025) }), "authority-request-too-long");
   } finally { fixture.cleanup(); }
 });
 
@@ -68,21 +71,53 @@ test("requires an exact Git top-level and contained non-symlink paths", () => {
   try {
     assert.match(validateRoot(fixture.root).root, /\/repo$/);
     expectCode(() => validateRoot(join(fixture.root, "knowledge")), "root-not-toplevel");
+    const rootAlias = join(fixture.parent, "repo-alias");
+    symlinkSync(fixture.root, rootAlias);
+    expectCode(() => validateRoot(rootAlias), "root-not-physical");
     expectCode(() => resolveContainedPath(fixture.root, "../outside"), "path-escapes-root");
     expectCode(() => resolveContainedPath(fixture.root, "/etc/passwd"), "path-absolute");
     const outside = join(fixture.parent, "outside.md");
     writeFileSync(outside, "sentinel");
     symlinkSync(outside, join(fixture.root, "knowledge", "inbox", "escape.md"));
     expectCode(() => plan(fixture.root), "path-symlink");
+    unlinkSync(join(fixture.root, "knowledge", "inbox", "escape.md"));
+    symlinkSync(outside, join(fixture.root, ".okf", "run.lock"));
+    expectCode(() => plan(fixture.root), "path-symlink");
   } finally { fixture.cleanup(); }
 });
 
-test("requires every numeric ceiling and rejects selection beyond a cap", () => {
+test("requires every numeric ceiling and deterministically stops selection at the item cap", () => {
   const fixture = makeRepo({ "one.md": "one", "two.md": "two" });
   try {
     expectCode(() => plan(fixture.root, { max_runtime_seconds: 0 }), "limit-invalid");
-    expectCode(() => plan(fixture.root, { max_items: 1 }), "quota-exceeded:items");
+    expectCode(() => plan(fixture.root, { max_sessions: 2 }), "sessions-not-one");
+    const bounded = plan(fixture.root, { max_items: 1 });
+    assert.deepEqual(bounded.items.map((item) => item.path), ["knowledge/inbox/one.md"]);
+    assert.equal(bounded.candidate_count, 2);
+    assert.equal(bounded.selection_truncated, true);
     expectCode(() => plan(fixture.root, { max_input_bytes: 1 }), "quota-exceeded:input-bytes");
+  } finally { fixture.cleanup(); }
+});
+
+test("pins an exact sorted inbox dataset and separates control-input bytes", () => {
+  const fixture = makeRepo({ "one.md": "one", "two.md": "two" });
+  try {
+    const proposalPath = ".okf/proposal.json";
+    writeFileSync(join(fixture.root, proposalPath), JSON.stringify({ proposal: "larger than the selected source" }));
+    const selected = plan(fixture.root, {
+      selected_items: ["knowledge/inbox/two.md"],
+      extra_inputs: [proposalPath],
+      max_items: 1,
+      max_input_bytes: 3,
+      max_generated_bytes: 1_000,
+    });
+    assert.deepEqual(selected.items.map((item) => item.path), ["knowledge/inbox/two.md"]);
+    assert.equal(selected.selection_mode, "explicit");
+    assert.equal(selected.input_bytes, 3);
+    assert.ok(selected.control_input_bytes > selected.input_bytes);
+    expectCode(() => plan(fixture.root, { selected_items: ["knowledge/inbox/two.md", "knowledge/inbox/one.md"] }), "selection-order-invalid");
+    expectCode(() => plan(fixture.root, { selected_items: ["knowledge/inbox/one.md", "knowledge/inbox/two.md"], max_items: 1 }), "quota-exceeded:items");
+    expectCode(() => plan(fixture.root, { selected_items: ["knowledge/inbox/processed/one.md"] }), "selection-path-invalid");
   } finally { fixture.cleanup(); }
 });
 
@@ -97,7 +132,7 @@ test("uses an atomic one-run lock and retains it until a terminal record exists"
     assert.equal(second.code, "lock-exists");
     assert.equal(releaseLock(fixture.root, first, ".okf/reports/missing.json"), false);
     mkdirSync(join(fixture.root, ".okf", "reports"), { recursive: true });
-    writeFileSync(join(fixture.root, ".okf", "reports", "terminal.json"), JSON.stringify({ run_id: currentPlan.run_id, root: currentPlan.root }));
+    writeFileSync(join(fixture.root, ".okf", "reports", "terminal.json"), JSON.stringify({ run_id: currentPlan.run_id, root: currentPlan.root, outcome: "completed", lock_token: first.lock_token }));
     assert.equal(releaseLock(fixture.root, { acquired: true }, ".okf/reports/terminal.json"), false);
     assert.equal(releaseLock(fixture.root, first, ".okf/reports/terminal.json"), true);
     assert.equal(readLock(fixture.root), null);
@@ -118,6 +153,9 @@ test("fails closed for missing, malformed, and active kill-switch state", () => 
     expectCode(() => plan(fixture.root), "kill-switch-active");
     const token = createCancellationToken({ deadlineAt: 5, now: () => 5 });
     assert.equal(token.reason(), "quota-exceeded:runtime");
+    const requested = requestCancellation(fixture.root, "fixture-run", { requestedBy: "operator", requestedAt: "2026-08-06T00:00:00Z", reason: "stop safely" });
+    assert.equal(requested.path, ".okf/cancel/fixture-run.json");
+    assert.equal(readCancellationRequest(fixture.root, "fixture-run").active, true);
   } finally { fixture.cleanup(); }
 });
 
@@ -149,7 +187,7 @@ test("reports terminal state without source content and CLI remains check-only",
     assert.ok(bytes > 0);
     assert.equal(report.mutated.knowledge, false);
     assert.throws(() => buildReport({ content: "secret" }), /report-contains-source/);
-    const result = spawnSync(process.execPath, [cli, "--check-only", "--root", fixture.root, "--revision", git(fixture.root, ["rev-parse", "HEAD"]), "--operator-request", "test", "--max-items", "10", "--max-input-bytes", "10000", "--max-generated-bytes", "10000", "--max-runtime-seconds", "60", "--format", "json"], { encoding: "utf8" });
+    const result = spawnSync(process.execPath, [cli, "--check-only", "--root", fixture.root, "--revision", git(fixture.root, ["rev-parse", "HEAD"]), "--operator-request", "test", "--max-items", "10", "--max-input-bytes", "10000", "--max-generated-bytes", "10000", "--max-runtime-seconds", "60", "--max-sessions", "1", "--format", "json"], { encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
     assert.equal(JSON.parse(result.stdout).check_only, true);
   } finally { fixture.cleanup(); }

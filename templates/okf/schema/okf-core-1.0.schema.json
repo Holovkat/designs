@@ -67,16 +67,28 @@
   "allOf": [
     {
       "if": { "properties": { "type": { "const": "Inbox" } }, "required": ["type"] },
-      "then": { "required": ["capture_tier"] },
+      "then": {
+        "required": ["capture_tier", "generated_at", "generated_by"],
+        "not": {
+          "anyOf": [
+            { "required": ["id"] },
+            { "required": ["depends_on"] },
+            { "required": ["implements"] },
+            { "required": ["supersedes"] },
+            { "required": ["derived_from"] },
+            { "required": ["contradicts"] },
+            { "required": ["blocked_by"] }
+          ]
+        }
+      },
       "else": { "required": ["status"] }
     },
     {
       "if": { "properties": { "type": { "const": "Deprecation" } }, "required": ["type"] },
       "then": {
-        "required": ["deprecated_reason", "deprecated_date", "supersedes"],
+        "required": ["deprecated_reason", "deprecated_date"],
         "properties": {
-          "status": { "const": "deprecated" },
-          "supersedes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/conceptId" } }
+          "status": { "const": "deprecated" }
         }
       }
     },

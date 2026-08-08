@@ -1,15 +1,7 @@
 import { existsSync, lstatSync, readdirSync, readFileSync, realpathSync } from "node:fs";
-import { dirname, relative, resolve, sep } from "node:path";
-import Ajv2020 from "ajv/dist/2020.js";
-import addFormats from "ajv-formats";
-import { fileURLToPath } from "node:url";
+import { relative, resolve, sep } from "node:path";
+import validateSchema from "../schema/okf-core-1.0.validator.mjs";
 import { parseFrontmatter } from "./frontmatter.mjs";
-
-const moduleDir = dirname(fileURLToPath(import.meta.url));
-const schema = JSON.parse(readFileSync(resolve(moduleDir, "../schema/okf-core-1.0.schema.json"), "utf8"));
-const ajv = new Ajv2020({ allErrors: true, strict: false, validateFormats: true });
-addFormats(ajv);
-const validateSchema = ajv.compile(schema);
 
 const TYPE_DIRECTORIES = new Map([
   ["Architecture", "architecture"], ["Component", "components"], ["Domain", "domain"],
@@ -25,6 +17,7 @@ const KNOWN_FIELDS = new Set([
   "validity_basis", "valid_from", "valid_until", "stale_reason", "source_repository", "approval_required", "approval_ref",
 ]);
 const SESSION_HEADINGS = ["Decisions Made", "What Was Deprecated", "Lessons Learned", "Current State"];
+const DEPRECATION_HEADINGS = ["What Was the Issue", "Why It Was Deprecated", "Lessons Learned", "When This Might Be Relevant Again", "What to Watch Out For"];
 
 function sortDiagnostics(items) {
   return items.sort((a, b) =>
@@ -33,7 +26,7 @@ function sortDiagnostics(items) {
 }
 
 function severity(mode, strictSeverity = "error") {
-  return mode === "strict" ? strictSeverity : "warning";
+  return mode === "strict" || mode === "strict-bundle" ? strictSeverity : "warning";
 }
 
 function add(diagnostics, { path, code, message, field = null, mode, strictSeverity = "error", remediation }) {
@@ -81,34 +74,74 @@ function insideRoot(root, candidate) {
   return candidate === root || candidate.startsWith(`${root}${sep}`);
 }
 
+function isMissingPathError(error) {
+  return error?.code === "ENOENT" || error?.code === "ENOTDIR";
+}
+
 function resourceDiagnostic(root, record, diagnostics, mode) {
   const resource = record.frontmatter.resource;
   if (typeof resource !== "string" || resource.length === 0 || /^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(resource)) return;
-  const target = resolve(root, resource);
-  if (!insideRoot(root, target)) {
+  const physicalRoot = realpathSync(root);
+  const target = resolve(physicalRoot, resource);
+  if (!insideRoot(physicalRoot, target)) {
     add(diagnostics, {
       path: record.path, code: "resource-outside-root", field: "resource", mode,
       message: "Repository-local resource resolves outside the selected bundle root.",
       remediation: "Use a repository-root-relative resource or an explicit external URI.",
     });
-  } else if (!existsSync(target)) {
+    return;
+  }
+
+  let physicalTarget;
+  try {
+    // lstat observes a final symlink instead of following it; realpath then
+    // resolves both that link and any linked parent directory for confinement.
+    lstatSync(target);
+    physicalTarget = realpathSync(target);
+  } catch (error) {
+    if (!isMissingPathError(error)) throw error;
     add(diagnostics, {
       path: record.path, code: "resource-missing", field: "resource", mode, strictSeverity: "warning",
       message: "Repository-local resource does not exist at the selected root.",
       remediation: "Correct the root-relative path or omit the optional resource until a source exists.",
+    });
+    return;
+  }
+
+  if (!insideRoot(physicalRoot, physicalTarget)) {
+    add(diagnostics, {
+      path: record.path, code: "resource-outside-root", field: "resource", mode,
+      message: "Repository-local resource resolves outside the selected bundle root.",
+      remediation: "Use a repository-root-relative resource or an explicit external URI.",
     });
   }
 }
 
 function bodyDiagnostics(record, diagnostics, mode) {
   const tier = record.frontmatter.capture_tier;
-  const required = tier === "commit" ? ["Why And How", "Impact"] : tier === "session" ? SESSION_HEADINGS : null;
+  const required = tier === "commit"
+    ? ["Why And How", "Impact"]
+    : tier === "session"
+      ? SESSION_HEADINGS
+      : record.frontmatter.type === "Deprecation"
+        ? DEPRECATION_HEADINGS
+        : null;
   if (!required) return;
-  if (!hasHeadings(headings(record.body), required)) {
+  const actual = headings(record.body);
+  if (!hasHeadings(actual, required)) {
     add(diagnostics, {
       path: record.path, code: "body-headings-missing", field: "body", mode,
-      message: `Capture tier ${tier} is missing required body headings: ${required.join(", ")}.`,
+      message: `${tier ? `Capture tier ${tier}` : `Concept type ${record.frontmatter.type}`} is missing or reordering required body headings: ${required.join(", ")}.`,
       remediation: "Retain the source and add the canonical headings only in a future approved authoring or curation change.",
+    });
+    return;
+  }
+  const repeated = required.filter((heading) => actual.filter((value) => value === heading).length !== 1);
+  if (repeated.length > 0) {
+    add(diagnostics, {
+      path: record.path, code: "body-headings-cardinality", field: "body", mode,
+      message: `Required body headings must appear exactly once: ${repeated.join(", ")}.`,
+      remediation: "Retain history in compatibility mode; correct duplicate canonical sections only in an approved authoring or curation change.",
     });
   }
 }
@@ -129,7 +162,7 @@ function schemaDiagnostics(record, diagnostics, mode) {
   }
 }
 
-function localDiagnostics(root, record, diagnostics, mode) {
+function localDiagnostics(root, record, diagnostics, mode, registeredExtensions) {
   if (!record.parseable) return;
   const expectedDirectory = TYPE_DIRECTORIES.get(record.frontmatter.type);
   const directory = record.relative.split("/")[1];
@@ -141,7 +174,7 @@ function localDiagnostics(root, record, diagnostics, mode) {
     });
   }
   for (const field of Object.keys(record.frontmatter).sort()) {
-    if (!KNOWN_FIELDS.has(field) && !field.startsWith("x_")) {
+    if (!KNOWN_FIELDS.has(field) && !registeredExtensions.has(field) && !field.startsWith("x_")) {
       add(diagnostics, {
         path: record.path, code: "extension-unregistered", field, mode, strictSeverity: "warning",
         message: "Unregistered extension key is preserved but outside the portable profile convention.",
@@ -157,18 +190,38 @@ function localDiagnostics(root, record, diagnostics, mode) {
  * Read-only lint of one explicit repository root. The caller owns root selection
  * and no result changes source files, indexes, hooks, or process state.
  */
-export function lintBundle(bundleRoot, { mode = "legacy" } = {}) {
-  if (!new Set(["strict", "legacy"]).has(mode)) throw new Error("mode must be strict or legacy");
+export function lintBundle(bundleRoot, { mode = "legacy", strictPaths = [], extensions = [] } = {}) {
+  const acceptedModes = new Set(["strict", "legacy", "warning", "strict-new", "strict-bundle"]);
+  if (!acceptedModes.has(mode)) throw new Error("mode must be legacy, warning, strict-new, strict-bundle, or strict");
+  if (!Array.isArray(strictPaths) || strictPaths.some((path) => typeof path !== "string" || !/^knowledge\/(?:architecture|components|domain|decisions|process|deprecation|state|inbox)\/[^/]+\.md$/.test(path))) {
+    throw new Error("strictPaths must contain direct root-relative OKF Markdown records");
+  }
+  if (mode === "strict-new" && strictPaths.length === 0) throw new Error("strict-new mode requires at least one explicit strict path");
+  if (new Set(strictPaths).size !== strictPaths.length) throw new Error("strictPaths must be unique");
+  if (!Array.isArray(extensions) || extensions.some((field) => typeof field !== "string" || !/^[a-z][a-z0-9_]*$/.test(field))) {
+    throw new Error("extensions must be registered lowercase field names");
+  }
+  const registeredExtensions = new Set(extensions);
+  const strictPathSet = new Set(strictPaths);
+  const effectiveMode = (path) => {
+    if (mode === "strict" || mode === "strict-bundle") return "strict";
+    if (mode === "strict-new" && strictPathSet.has(path)) return "strict";
+    return "legacy";
+  };
   const root = realpathSync(bundleRoot);
   const knowledge = resolve(root, "knowledge");
   if (!existsSync(knowledge)) throw new Error(`knowledge directory not found under ${root}`);
+  const knowledgeStat = lstatSync(knowledge);
+  if (knowledgeStat.isSymbolicLink() || !knowledgeStat.isDirectory() || realpathSync(knowledge) !== knowledge) {
+    throw new Error(`knowledge must be a physical directory inside the selected root: ${root}`);
+  }
 
   const diagnostics = [];
   const records = [];
   const { files, skippedSymlinks } = markdownFiles(knowledge, root);
   for (const path of skippedSymlinks.sort()) {
     add(diagnostics, {
-      path, code: "path-symlink-skipped", field: null, mode,
+      path, code: "path-symlink-skipped", field: null, mode: mode === "strict" || mode === "strict-bundle" ? "strict" : "legacy",
       message: "Symlinked path under knowledge was not traversed.",
       remediation: "Keep knowledge content inside the selected root; do not use symlinks to import another filesystem tree.",
     });
@@ -176,22 +229,29 @@ export function lintBundle(bundleRoot, { mode = "legacy" } = {}) {
   for (const file of files) {
     const content = readFileSync(file, "utf8");
     const relativePath = relative(root, file).split(sep).join("/");
+    const recordMode = effectiveMode(relativePath);
     const parsed = parseFrontmatter(content, relativePath);
     const record = { path: relativePath, relative: relativePath, body: parsed.body, frontmatter: parsed.frontmatter, parseable: parsed.diagnostics.length === 0 };
     records.push(record);
     for (const item of parsed.diagnostics) {
       add(diagnostics, {
-        path: relativePath, code: item.code, field: null, mode,
+        path: relativePath, code: item.code, field: null, mode: recordMode,
         message: item.message,
         remediation: "Retain the original file and correct it only through an approved authoring or curation action.",
       });
     }
-    schemaDiagnostics(record, diagnostics, mode);
-    localDiagnostics(root, record, diagnostics, mode);
+    schemaDiagnostics(record, diagnostics, recordMode);
+    localDiagnostics(root, record, diagnostics, recordMode, registeredExtensions);
+  }
+
+  if (mode === "strict-new") {
+    const scannedPaths = new Set(records.map((record) => record.path));
+    const missing = [...strictPathSet].filter((path) => !scannedPaths.has(path));
+    if (missing.length > 0) throw new Error(`strict-new paths were not scanned: ${missing.sort().join(", ")}`);
   }
 
   const ids = new Map();
-  for (const record of records.filter((item) => item.parseable && typeof item.frontmatter.id === "string")) {
+  for (const record of records.filter((item) => item.parseable && item.frontmatter.type !== "Inbox" && typeof item.frontmatter.id === "string")) {
     const paths = ids.get(record.frontmatter.id) ?? [];
     paths.push(record.path);
     ids.set(record.frontmatter.id, paths);
@@ -200,7 +260,7 @@ export function lintBundle(bundleRoot, { mode = "legacy" } = {}) {
     if (paths.length > 1) {
       for (const path of paths) {
         add(diagnostics, {
-          path, code: "identifier-duplicate", field: "id", mode,
+          path, code: "identifier-duplicate", field: "id", mode: effectiveMode(path),
           message: `Stable concept identifier ${id} is duplicated by ${paths.join(", ")}.`,
           remediation: "Do not choose a winner automatically; resolve identity in an operator-reviewed change.",
         });
@@ -215,7 +275,7 @@ export function lintBundle(bundleRoot, { mode = "legacy" } = {}) {
         const targetPaths = ids.get(target);
         if (!targetPaths || targetPaths.length !== 1) {
           add(diagnostics, {
-            path: record.path, code: "relationship-unresolved", field: predicate, mode, strictSeverity: "warning",
+            path: record.path, code: "relationship-unresolved", field: predicate, mode: effectiveMode(record.path), strictSeverity: "warning",
             message: `Relationship target ${target} is not a unique local concept identifier.`,
             remediation: "Keep the literal target and resolve it in a reviewed relationship migration; never fetch or fabricate a target.",
           });
@@ -224,7 +284,15 @@ export function lintBundle(bundleRoot, { mode = "legacy" } = {}) {
     }
   }
 
-  return { root, mode, diagnostics: sortDiagnostics(diagnostics), filesChecked: records.length };
+  return {
+    root,
+    mode,
+    profile: "okf-core/1.0",
+    strictPaths: [...strictPathSet].sort(),
+    extensions: [...registeredExtensions].sort(),
+    diagnostics: sortDiagnostics(diagnostics),
+    filesChecked: records.length,
+  };
 }
 
 export function formatText(result) {

@@ -28,16 +28,13 @@
       "file": "strict-valid/process.json"
     },
     {
+      "file": "strict-valid/relationship-empty.json"
+    },
+    {
       "file": "strict-valid/state.json"
     }
   ],
   "strictInvalid": [
-    {
-      "file": "strict-invalid/deprecation-empty-supersedes.json",
-      "expectedKeywords": [
-        "minItems"
-      ]
-    },
     {
       "file": "strict-invalid/inbox-commit-short-sha.json",
       "expectedKeywords": [
@@ -48,6 +45,12 @@
       "file": "strict-invalid/inbox-session-missing-session-id.json",
       "expectedKeywords": [
         "required"
+      ]
+    },
+    {
+      "file": "strict-invalid/inbox-typed-relationship.json",
+      "expectedKeywords": [
+        "not"
       ]
     },
     {
@@ -66,6 +69,12 @@
       "file": "strict-invalid/relationship-without-id.json",
       "expectedKeywords": [
         "required"
+      ]
+    },
+    {
+      "file": "strict-invalid/relationship-path-target.json",
+      "expectedKeywords": [
+        "pattern"
       ]
     },
     {

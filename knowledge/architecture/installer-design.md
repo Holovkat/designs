@@ -1,73 +1,62 @@
 ---
 type: Architecture
-title: OKF Installer Design
-description: How install-okf.sh deploys the knowledge directory, viewer, query helper, hook, curator droid, and AGENTS.md section
+title: OKF Offline Installer Design
+description: Idempotent file-copy installer for the bundle, semantic tools, bounded operations, controls, hooks, viewer, and curator contracts
 resource: ./templates/okf/install-okf.sh
-tags: [okf, installer, bash, deployment, setup]
-timestamp: 2026-07-05T13:00:00Z
+tags: [bash, deployment, installer, offline, okf, setup]
+timestamp: 2026-08-08T00:00:00Z
 status: active
+issue_refs: [26]
+epic_refs: [26]
+assertion_state: proposed
+generated_at: 2026-08-08T00:00:00Z
+generated_by: epic-26-implementation
+source_authority: repository-source
+evidence_refs: [templates/okf/install-okf.sh, templates/okf/tests/runtime-vendor_test.mjs]
 ---
 
-# OKF Installer Design
+# Installed surfaces
 
-`install-okf.sh` is a bash script that deploys the OKF knowledge bundle into a target project. It is run once per project to create the initial structure and install the post-commit hook.
+`install-okf.sh <target-root>` creates a missing knowledge structure while
+preserving existing concepts; copies the viewer/generator and portable Bash
+query fallback; installs the quality-aware post-commit hook and chained
+predecessor; installs curator contracts; and copies the pinned YAML runtime,
+schema/generated validator, accepted `.okf/lib` modules, `.okf/bin` commands,
+and curation prompt template.
 
-## Usage
+The command surface covers lint, status, semantic query, run planning, bounded
+curation/cancellation/resume, triage, reversible archive/rollback, and manual
+cadence status/observation. Installed executables and canonical content are
+verified in a throwaway repository fixture.
 
-```bash
-bash install-okf.sh <target-project-path>
-```
+# Configuration preservation
 
-The script uses `set -euo pipefail` for strict error handling.
+Source defaults map to `.okf/profile.json`, `.okf/cadence.json`, and
+`.okf/KILL_SWITCH` only when the destination is absent. Reinstall preserves
+existing regular files, custom controls, and symlink presence rather than
+silently replacing project-local policy.
 
-## Step 1: Create Knowledge Directory Structure
+# Runtime and side-effect boundary
 
-The script creates a `knowledge/` directory with subdirectories: `inbox/`, `inbox/processed/`, `architecture/`, `components/`, `domain/`, `decisions/`, `process/`, `deprecation/`, `state/`.
+Installation is file-copy/configuration work only. It does not run Node/npm,
+invoke any installed command or hook, start curation/archive/cadence, fetch a
+dependency, contact a network, install cron/launchd/service/queue/Factory state,
+or discover another project. The semantic command fails closed when its pinned
+local runtime is unavailable; portable basic search remains usable.
 
-If `knowledge/` already exists, the script warns and skips directory creation, preserving existing concepts.
+The explicit installation action may append the standard OKF section to
+AGENTS.md. Later curation/migration/status operations only report instruction
+alignment proposals and require separate approval to apply them.
 
-Template index files are copied from `templates/` if available. The root `index.md` is generated with `sed` substitution for `{{PROJECT_NAME}}` (set to the target directory basename) and `{{DATE}}` (set to the current UTC date). If no templates directory exists, minimal index files are created inline.
+# Hook preservation
 
-## Step 2: Install Viewer, Generator, and Query Helper
+The installer uses local `.githooks/`, chains a non-OKF predecessor as
+`post-commit.pre-okf`, refuses an ambiguous collision, installs the canonical
+hook, makes it executable, and sets repository-local `core.hooksPath`. It does
+not use or change a global hook path.
 
-`viewer.html` and `generate-viz.js` are copied from the script directory into `knowledge/`. The user is told to run `node knowledge/generate-viz.js knowledge/` to generate the self-contained `viz.html`. The `okf-query.sh` portable concept search tool is also copied to `knowledge/okf-query.sh` and made executable. See [OKF Query Helper](./okf-query-helper.md).
+# Related concepts
 
-## Step 2b: Install Curator Droid
-
-The `okf-curator.md` agent contract is copied to `.factory/droids/` in the target project. If a `.claude/` directory exists, it is also copied to `.claude/agents/`. See [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md).
-
-## Step 3: Legacy Documentation Detection
-
-If the target project has a `docs/` directory with markdown files, the script prints guidance about legacy alignment mode: existing docs stay in place, OKF concepts reference them via the `resource` field, and a legacy scan should be run to create reference concepts. See [Legacy Alignment Mode](../decisions/legacy-alignment-mode.md).
-
-## Step 4: Install Post-Commit Hook
-
-The hook is installed to `.githooks/post-commit` in the project root:
-
-1. Create `.githooks/` directory if it does not exist.
-2. If an existing `post-commit` hook is found, back it up to `post-commit.bak`.
-3. Copy `post-commit.sh` to `.githooks/post-commit`.
-4. `chmod +x` the hook to make it executable.
-5. Set **local** `core.hooksPath` to `.githooks` via `git -C "$TARGET" config core.hooksPath .githooks`.
-
-Using local (not global) `core.hooksPath` is deliberate: it prevents conflicts with other projects that may have different hook configurations. If the target is not yet a git repo, the script advises running `git config core.hooksPath .githooks` after `git init`.
-
-See [Hook System](./hook-system.md) for the hook's behaviour.
-
-## Step 5: Update AGENTS.md
-
-The script appends the OKF Knowledge Bundle section from `AGENTS-OKF-SECTION.md` to the project's `AGENTS.md`:
-
-- If `AGENTS.md` exists and already contains "OKF Knowledge Bundle", it is skipped.
-- If `AGENTS.md` exists without the OKF section, the section is appended with a separator.
-- If `AGENTS.md` does not exist, it is created with the OKF section as its content.
-
-See [Migrate AGENTS.md](../process/migrate-agents-md.md) for the full migration process.
-
-## Post-Install Guidance
-
-The script prints next steps: commit the `knowledge/` directory, ensure the post-commit hook is active, agents should read `knowledge/index.md` before work, write session syntheses to `knowledge/inbox/` before committing, and run curation (okf-curator droid) when the hook nudges at 5+ unprocessed inbox items or after any significant epic closes.
-
-## Relationship to Deployment Runbook
-
-The installer handles Phase 1 (Mechanical Install) of the [deployment workflow](../process/deploy-okf.md). The remaining phases (seeding, epic processing, schema diagrams, AGENTS.md migration, curation, viewer generation, verification) are performed by agents following the runbook.
+- [Deploy OKF to a Project](../process/deploy-okf.md)
+- [Post-Commit Tier 1 Capture System](./hook-system.md)
+- [OKF Parser Runtime Distribution](../decisions/okf-parser-runtime-distribution.md)

@@ -20,18 +20,42 @@ bash <path-to-designs>/templates/okf/install-okf.sh <project-root>
 This will:
 - Create `knowledge/` with all subdirectories and template index files
 - Copy `viewer.html` and `generate-viz.js` into `knowledge/`
-- Copy `okf-query.sh` into `knowledge/` (portable concept search)
-- Install the `okf-curator` agent into `.factory/droids/` (and `.claude/agents/` when present)
+- Copy `okf-query.sh` into `knowledge/` as the dependency-free portable search
+- Stage the canonical curator contract at `.okf/agents/okf-curator.md`, the
+  review-only AGENTS proposal at `.okf/review/AGENTS-OKF-SECTION.md`, and the
+  canonical prompt at `.okf/templates/curation-prompt.md`
 - Install `post-commit.sh` into `.githooks/post-commit` and set local `core.hooksPath`
 - Create `knowledge/inbox/` and `knowledge/inbox/processed/`
+- Copy the pinned YAML runtime, shared parser, generated core-profile validator,
+  schema, and accepted libraries into `.okf/` without fetching dependencies
+- Install the read-only linter, semantic query, status, triage, cadence status,
+  and cadence observation commands plus the bounded curator runner and
+  reversible archive/rollback commands into `.okf/bin/`
+- Initialize missing repository-local profile, cadence, kill-switch, and archive
+  control files without overwriting existing project configuration
+- Install no scheduler, service, cron/launchd entry, Factory task, queue,
+  background process, network dependency, or cross-project discovery path
 
 Verify the install:
 - `knowledge/index.md` exists with the standard concept type table
 - `knowledge/log.md` exists
 - `knowledge/okf-query.sh` exists and is executable
-- `.factory/droids/okf-curator.md` exists
+- `.okf/agents/okf-curator.md`, `.okf/review/AGENTS-OKF-SECTION.md`, and
+  `.okf/templates/curation-prompt.md` exist and match their canonical hashes
+- the installer did not create or modify `.factory/`, `.claude/`, or `AGENTS.md`;
+  harness integration remains a separate governed, operator-approved action
 - `.githooks/post-commit` exists and is executable
 - `git config core.hooksPath` returns `.githooks`
+- the resolved active hook is inside this repository, matches the canonical OKF
+  hook, preserves any chained predecessor, and contains no parent-workspace call
+- `.okf/schema/okf-core-1.0.schema.json`, its generated validator, the pinned
+  parser runtime, accepted libraries, and every installed `.okf/bin/` command
+  match their canonical hashes
+- `.okf/profile.json`, `.okf/cadence.json`, and the kill-switch state are
+  parseable, project-local, and preserve pre-existing values on reinstall
+- portable basic search works without loading the semantic runtime
+- no installer step executed Node/npm, a hook, curator, archive, network fetch,
+  scheduled action, or command against another project
 
 ## Phase 2: Seed From Existing Docs
 
@@ -130,37 +154,43 @@ erDiagram
     TABLE_A ||--o{ TABLE_B : "has many"
 ```
 
-## Phase 5: Migrate AGENTS.md
+## Phase 5: Review AGENTS.md alignment
 
-Update the project's `AGENTS.md` to use OKF references instead of docs/AFFiNE references. Apply these specific changes:
+Compare the project's `AGENTS.md` hierarchy with the installed OKF model and
+produce precise proposed edits. The installer may append its standard section
+only as the explicit installation action requested by the operator. A curator,
+status command, migration, or archive workflow must never patch instructions
+autonomously. Apply any later proposal only after explicit operator approval.
 
-### Replace AFFiNE References
+Review these possible changes:
+
+### Propose replacements for AFFiNE references
 - Find any section referencing AFFiNE (project notes, change log, knowledge base).
 - Replace with OKF inbox/curation instructions: write to `knowledge/inbox/`, run `/okf-curate`.
 
-### Update Agent Delegation Section
+### Propose agent delegation alignment
 - Replace `docs/agents/<area>/AGENTS.md` references with `knowledge/process/<agent>.md` concept references.
 - Replace "agent knowledge space under `docs/agents/`" with "OKF concept in `knowledge/process/`".
 - Update specialist curation example paths to point to `knowledge/process/`.
 
-### Update JIT Index Table
+### Propose JIT index alignment
 - Add a `knowledge/` row as the primary knowledge index.
 - Mark `docs/` row as legacy reference.
 - Remove `docs/agents/` row if present.
 
-### Update Specialist Agent Ownership Table
+### Propose specialist ownership alignment
 - Rename "Knowledge space" column to "OKF concept".
 - Point each agent to its `knowledge/process/<agent>.md` concept file.
 - Update "when an agent area is missing" to say: create an OKF concept in `knowledge/process/` using `knowledge/process/agent-space-standard.md`.
 
-### Add Legacy Documentation Alignment
-Add a section explaining:
+### Propose legacy documentation alignment
+Where missing, propose a section explaining:
 - `docs/` files remain as detailed references.
 - OKF concepts in `knowledge/` are the agent-facing entry points.
 - Each concept's `resource` field links to the relevant `docs/` file.
 - When docs and OKF disagree, OKF is current.
 
-### Update Inline References
+### Propose inline-reference alignment
 - Replace `docs/agents/release-process-contract.md` with `knowledge/process/release-process-contract.md`.
 - Replace `docs/design/SPACETIMEDB-V2-REFERENCE.md` with `knowledge/architecture/spacetimedb-v2-reference.md`.
 - Replace other `docs/design/` and `docs/agents/` inline references with their OKF concept equivalents.
@@ -171,8 +201,10 @@ Add a section explaining:
 - Sub-directory `AGENTS.md` files (e.g., `src/AGENTS.md`, `server/AGENTS.md`) are NOT changed.
 - JIT Index entries for `src/`, `spacetimedb/`, `tests/`, etc. are NOT changed.
 
-### Append OKF Section
-If not already present, append the standard OKF Knowledge Bundle section from `templates/okf/AGENTS-OKF-SECTION.md`, customised with:
+### Installation-time OKF section
+If the operator requested installation and the section is absent, the installer
+appends the standard OKF Knowledge Bundle section from
+`templates/okf/AGENTS-OKF-SECTION.md`, customised with:
 - Legacy Documentation Alignment subsection (if the project has existing docs)
 - Agent Onboarding steps
 - After Completing Work instructions
@@ -180,22 +212,73 @@ If not already present, append the standard OKF Knowledge Bundle section from `t
 - Concept Types table
 - Rules
 
+Re-read the applicable AGENTS hierarchy after any approved change and record it
+in Git. A report, diagnostic, curation proposal, or successful canary does not
+supply approval.
+
 ## Phase 6: Curation Pass
 
-After seeding and epic processing, run a curation pass to align everything:
+After seeding and epic processing, plan one bounded curation pass. Do not run a
+curator directly against a live inbox or broaden the selected root.
 
-1. Read all concepts across all directories.
-2. Add cross-links: where one concept references another, ensure the `resource` or body text links to the related concept using relative markdown links (e.g., `[Related](../architecture/spacetimedb-v2-reference.md)`).
-3. Check for duplicates and redundancy: merge concepts that cover the same topic or overlap in scope, moving merged-away files to `deprecation/` with `supersedes` links.
-4. Check for contradictions: concept vs concept, concept vs code reality, concept vs AGENTS.md. Resolve in favor of verified current reality; report AGENTS.md fixes as proposals.
-5. Check for ambiguous references: every `resource` field and cross-link must resolve; sharpen vague ones.
-6. Check for missing concepts: if a topic is referenced but has no concept, create one.
-7. Move any superseded concepts to `deprecation/` with `supersedes` links.
-8. Verify all `index.md` files have accurate concept listings and counts.
-9. Update `log.md` with the curation entry.
-10. Ensure the State concept reflects the current project status after all seeding.
+1. Record the exact physical Git root and full revision.
+2. Run read-only legacy lint, inbox status, and triage. Review the findings; a
+   threshold or classification does not authorize mutation.
+3. Create a run request with the operator reference, deterministic selected
+   items, source hashes, context allowlist, positive item/input/generated-byte/
+   runtime ceilings, `max_sessions: 1`, expected outcome, cancellation path,
+   kill-switch state, and recovery plan.
+4. Generate and review the dry-run plan and deterministic curation proposal.
+   The proposal must cover every selected input and include all concept,
+   affected index, and log outputs with expected old and new hashes.
+5. Start only the installed bounded runner. It must validate the root/revision,
+   lock, proposal, controls, source hashes, and preflight profile before
+   mutation. A missing or ambiguous value fails closed.
+6. The runner stages and validates every concept, index, and log output, applies
+   and postflights the bounded set, then moves selected sources to
+   `knowledge/inbox/processed/`. A stopped finalization restores any moved
+   source and rolls every output back to retained recovery paths; a later
+   explicit attempt cannot overwrite an earlier terminal report.
+7. Review the terminal report for limits, counters, session count, changed and
+   untouched paths, validation status, outcome, reason, and recovery guidance.
+8. Commit only the reviewed output with an `okf-curation:` subject. Curation
+   never patches `AGENTS.md`; alignment findings remain proposals.
 
-## Phase 7: Generate Viewer
+Within that bounded proposal, apply the knowledge rules:
+
+1. Add useful Markdown cross-links and typed stable-ID predicates with explicit
+   direction; retain unresolved and invalid edges as diagnostics.
+2. Merge redundant concepts without losing unique reasoning. Move retained old
+   records to `deprecation/`; the replacement declares `supersedes` against the
+   deprecated stable ID.
+3. Resolve contradictions in favor of verified current evidence, preserving
+   historically true claims and distinguishing lifecycle from assertion state.
+4. Sharpen ambiguous resources and citations without treating a path as proof.
+5. Fill approved gaps, update affected indexes and `log.md`, and keep State
+   concepts evidence-backed.
+6. Treat external evidence and claim authority explicitly; do not promote an
+   unresolved source to `verified`.
+
+## Phase 7: Adopt the core profile
+
+Follow `docs/epic-26/e4-okf-core-migration-guidance.md` for an existing bundle:
+
+1. audit in `legacy`/warning mode without rewriting history;
+2. classify retained differences as retained legacy, fix-on-touch, registered
+   extension, relationship/provenance review, security line-stop, or an
+   explicit migration candidate;
+3. observe a normal capture/session cycle and prove that warnings do not lose a
+   record;
+4. opt new or materially updated records into `strict-new` only after parser,
+   schema, linter, viewer, query, capture, and curator contracts agree; and
+5. use `strict-bundle` only after a reviewed migration manifest and isolated
+   rollback proof.
+
+Return to warning mode through a Git/manifest rollback if contract drift,
+validation loss, or recovery failure appears. Never normalize retained history
+merely to silence warnings.
+
+## Phase 8: Generate Viewer
 
 Generate the self-contained viz.html:
 
@@ -209,12 +292,17 @@ Verify:
 - Open in a browser to verify:
   - Browse tab shows folder tree with all concept directories
   - Graph tab shows the knowledge graph with typed nodes and edges
+  - all six predicates have distinct labels/styles and stable-ID inverse edges
+  - unresolved, invalid, duplicate, self, cycle, and legacy relationship
+    diagnostics remain visible rather than being silently discarded
+  - relative Markdown citations still create navigable backlinks but are not
+    presented as typed assertions
   - Clicking a concept shows its rendered markdown
   - Mermaid diagrams render inline (if any concepts have mermaid code blocks)
   - Relative links in concept bodies navigate within the viewer
   - Search filters work
 
-## Phase 8: Final Verification
+## Phase 9: Final Verification
 
 1. Count concepts per directory and verify `index.md` counts match:
    ```bash
@@ -239,10 +327,11 @@ Verify:
    grep "OKF Knowledge Bundle" AGENTS.md
    ```
 
-5. Verify post-commit hook is installed:
+5. Verify post-commit hook is installed and repository-scoped:
    ```bash
    git config core.hooksPath
    ls -la .githooks/post-commit
+   git rev-parse --show-toplevel
    ```
 
 6. Verify viz.html exists and is non-trivial:
@@ -250,11 +339,49 @@ Verify:
    ls -lh knowledge/viz.html
    ```
 
+7. Run the canonical combined template suite, including schema/parser/linter,
+   hook quality, viewer, semantic query/basic fallback, bounded runner,
+   validation failure/recovery, triage, archive/rollback, cadence observation,
+   runtime packaging, and installer fixtures. Do not claim compatibility if one
+   consumer uses different parser/profile semantics.
+
+8. Exercise capture override, unsafe root/path, lock contention/stale lock,
+   kill switch, quota, cancellation, changed-source resume, staging/postflight
+   failure, archive rollback, and parser-unavailable fallback fixtures. Confirm
+   no raw inbox body or secret appears in warnings/reports.
+
+9. Compare actual pending files with `knowledge/inbox/index.md`; report drift.
+   Status and triage commands must leave the worktree byte-for-byte unchanged.
+
+10. Before any broader adoption decision, run isolated small, medium, and
+    bounded large-backlog canaries with named revisions and numeric limits.
+    Record source preservation, curation usefulness/yield, runtime, generated
+    bytes/disk, session count, failure/recovery, operator intervention, and
+    rollback. A successful snapshot never authorizes live-project mutation.
+
+11. Evaluate the approved manual cadence for a declared observation window
+    using bounded evidence samples. Prove `sessions_max: 1`, no concurrent run,
+    and ceilings for CPU, disk, runtime, generated bytes, and sample count. The
+    observation command must not poll or schedule.
+
 ## Post-Deployment
 
 After deployment, the project is ready for ongoing OKF usage:
 - Agents read `knowledge/` concepts before starting work and check `decisions/` and `deprecation/` before investigating or proposing plans (OKF-first protocol)
-- Agents write session syntheses to `knowledge/inbox/` before committing, including approaches rejected and why
-- The post-commit hook refreshes the viewer manifest and nudges when the inbox reaches 5+ unprocessed items
-- Curation runs via the `okf-curator` agent or `/okf-curate`: it processes inbox items, then audits for redundancy, contradictions, ambiguous references, and AGENTS.md drift (AGENTS.md patches are proposed, applied only on approval)
+- Each ordinary commit creates one compact Tier 1 capture; `end-session` writes
+  one complementary Tier 2 synthesis after the implementation commits and
+  persists the capture-only slice with `okf-capture:`
+- Capture checks compact unsafe raw/oversized/duplicate low-signal content into
+  an auditable Git reference unless an operator explicitly overrides content
+  retention; they never remove the Tier 1 provenance record
+- At sprint/epic checkpoints, an operator may request read-only status/triage.
+  It never starts curation. A bounded batch requires a separate explicit plan,
+  proposal, limits, lock, validation, cancellation, recovery, and review
+- The accepted cadence is manual-only. No schedule, threshold trigger, cron,
+  launchd, queue, hook launch, Factory automation, polling, self-retry, or
+  automatic session creation is installed
+- Archive/compaction is reversible and manifest-backed; permanent deletion and
+  every `AGENTS.md` edit require separate explicit operator approval
 - `viz.html` can be regenerated after any knowledge changes
+- Broader cross-project rollout remains an explicit decision based on measured
+  usefulness, yield, resources, failure rate, and operator intervention

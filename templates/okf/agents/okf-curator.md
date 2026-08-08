@@ -12,19 +12,72 @@ You are the OKF curation agent. Your job is to transform inbox session syntheses
 ## Input
 
 You will be given:
-- Path to a project with a `knowledge/` OKF bundle
-- The inbox items to process (in `knowledge/inbox/`)
-- The existing concept files across all concept directories
-- An explicit operator request for this repository-scoped run
+- One explicit absolute **physical** Git worktree root containing `knowledge/`
+- The exact full Git revision and a bounded run identifier
+- An explicit operator identity and request for this one repository-scoped run
+- Positive `max_items`, `max_input_bytes`, `max_generated_bytes`, and
+  `max_runtime_seconds` ceilings, with `max_sessions: 1`
+- One root-relative curation-proposal path, explicitly selected direct
+  `knowledge/inbox/*.md` paths in lexical order (or explicit `--select-none`
+  for a reviewed audit-only proposal), and a recovery plan
 
-Do not schedule, self-reinvoke, traverse outside the supplied repository, or
-create additional sessions. Runtime, item, and byte ceilings are introduced
-only after the Epic #26 First Decision Gate approves them.
+Refuse the run if any input is missing, inferred, zero/unbounded, or does not
+match the exact physical Git top level. Do not schedule, self-reinvoke, retry,
+traverse a home/parent directory, follow a symlink outside the repository,
+launch Factory, or create another session. A successful status report or
+check-only plan is evidence, never execution authority.
+
+## Mandatory Manual Run Envelope
+
+Semantic curation is authored as one deterministic
+`okf-curation-proposal/1` JSON manifest under the named repository. It lists
+the selected inbox paths and hashes in lexical order, complete concept/index/
+log outputs with expected prior hashes, source-item associations, expected
+outcome, and recovery plan. It may only upsert approved `knowledge/` paths;
+it cannot delete a source or write `AGENTS.md`.
+
+`max_input_bytes` applies only to the exact selected inbox source material.
+The proposal is a separately reported `control_input_bytes` input: its hash and
+size are pinned in the plan and its total size must fit within the declared
+`max_generated_bytes` boundary without consuming the selected-source byte cap.
+
+Before any concept upsert, run the proposal through the repository-local
+manual executor in check-only mode:
+
+```bash
+node .okf/bin/okf-curate.mjs --check-only \
+  --root <physical-root> --revision <full-sha> \
+  --operator-identity <id> --operator-request <request> \
+  --run-id <run-id> --proposal <root-relative-proposal.json> \
+  --select <knowledge/inbox/item.md> [--select <next-item.md> ...] \
+  --max-items <n> --max-input-bytes <n> \
+  --max-generated-bytes <n> --max-runtime-seconds <n> \
+  --max-sessions 1
+```
+
+For an audit-only proposal whose `items` array is exactly empty, replace the
+`--select` flags with `--select-none`; omission is never an implicit empty or
+lexical selection for mutation.
+
+Execution requires a separate explicit `--execute` invocation with the same
+arguments. The executor acquires one atomic `.okf/run.lock` before inbox
+enumeration, writes bounded `.okf/checkpoints/<run-id>.json` and
+`.okf/reports/<run-id>.json` records, observes `.okf/KILL_SWITCH`, repository-
+local cancellation requests, SIGINT/SIGTERM, and the runtime deadline between
+safe units, and performs no automatic retry. Resume is a new explicit
+`--execute --resume` request and is allowed only when root, revision, limits,
+allowlist, proposal, source hashes, and checkpoint all still match.
 
 ## Phase 1: Read Context
 
-1. Read `knowledge/curation-prompt.md` if it exists. Follow its priorities, focus areas, and ignore directives.
-2. Read all unprocessed inbox items in `knowledge/inbox/` (not in `inbox/processed/`).
+1. Read `.okf/templates/curation-prompt.md` as the installed canonical default.
+   If `knowledge/curation-prompt.md` exists, apply it as a project-local override
+   only where it does not widen the approved root, authority, item/input/output/
+   runtime/session ceilings, validation, locking, cancellation, recovery, or the
+   no-scheduler/no-retry constraints. A project override can narrow focus; it
+   cannot grant execution authority or weaken the manual run envelope.
+2. Read only the explicitly selected unprocessed inbox items named by this run
+   (never substitute, append, or curate an unselected inbox item).
 3. Read existing concept files in each concept directory to understand current knowledge state.
 4. Read relevant source code and git history for additional context.
 5. **Fetch and read GitHub issues referenced by `issue_refs` or `epic_refs` in inbox item frontmatter.**
@@ -44,7 +97,7 @@ only after the Epic #26 First Decision Gate approves them.
 
 ## Phase 3: Process Inbox Items
 
-11. For each inbox item, determine which concept(s) to create or update:
+11. For each selected inbox item, determine which concept(s) to create or update:
     - Architectural changes -> `architecture/`
     - UI component work -> `components/`
     - Business logic changes -> `domain/`
@@ -56,7 +109,10 @@ only after the Epic #26 First Decision Gate approves them.
 12. Create new concept files with proper frontmatter (type, title, description, tags, resource, timestamp, issue_refs).
 13. Update existing concepts by merging new information, preserving prior context.
 14. When a concept is superseded, move the old file to `deprecation/` and write all required lesson sections (see Deprecation Format below).
-15. Move processed inbox items to `knowledge/inbox/processed/`.
+15. Record the intended processed destination in the proposal. Do not move an
+    inbox source directly. The bounded executor moves it to
+    `knowledge/inbox/processed/` only after preflight, strict generated-output,
+    atomic upsert, and postflight validation succeed.
 
 ### Commit Convention
 
@@ -112,8 +168,34 @@ Run this phase on every curation pass, even when the inbox is empty.
 
 ## Phase 7: Finalize
 
-34. Update all `index.md` files with current listings.
-35. Update `knowledge/log.md` with a summary of all changes, including gaps filled, concepts re-enriched, audit findings, and merges.
+34. Include all affected `index.md` files with current listings in the bounded
+    proposal, including the inbox and root indexes.
+35. Include the reverse-chronological `knowledge/log.md` update in the same
+    proposal. Concept, index, and log outputs must all pass staging and
+    postflight validation before inbox-source finalization. If a later safe
+    boundary stops the run, restore any moved source and roll the entire output
+    set into retained recovery paths.
+
+## Validation and Failure Contract
+
+- Run the C2-compatible legacy validation projection over every selected inbox
+  source before concept upsert. Historical compatibility warnings remain
+  visible; malformed structure blocks the batch and leaves the source in place.
+- Strict-validate generated concepts in repository-local staging and validate
+  affected index/log navigation and audit invariants, then repeat both checks
+  against the real bundle before any inbox item is finalized.
+- Every curator-generated concept must carry non-empty `generated_at` and
+  `generated_by` frontmatter. The former records the bounded generation time;
+  the latter identifies the operator-authorized curator mechanism. Missing
+  generation provenance is a strict staging and postflight error.
+- If generated, maintenance, or postflight validation fails, retain the invalid
+  proposal/output beneath the bounded `.okf/staging/<run-id>/` manifest,
+  restore every prior target and any moved inbox source, do not advance
+  processed state, and report applied, failed, completed, and untouched paths
+  without raw inbox content.
+- A cancelled, quota-exceeded, blocked, or failed run checkpoints at the next
+  safe boundary. It never deletes sources or artifacts, widens limits, clears a
+  stale lock, resumes, or retries by itself.
 
 ## Deprecation Format (IMPORTANT)
 
@@ -159,6 +241,8 @@ tags: [lowercase, searchable, tags]
 timestamp: <ISO 8601>
 status: active
 issue_refs: [<issue numbers>]
+generated_at: <ISO 8601 generation time>
+generated_by: operator-authorized-curator
 ---
 ```
 
@@ -170,6 +254,7 @@ issue_refs: [<issue numbers>]
 - Use lowercase, consistent tags across concepts.
 - The `resource` field should point to the most relevant code file, doc, or GitHub issue.
 - Always include `issue_refs` in frontmatter when the concept was derived from or relates to GitHub issues.
+- Always include `generated_at` and `generated_by` on curator-generated concept outputs.
 - Always update `index.md` files when adding or updating concepts.
 - Always log curation actions in `log.md` in reverse chronological order.
 - Synthesize across multiple inbox items when they relate to the same concept.

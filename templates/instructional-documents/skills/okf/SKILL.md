@@ -45,14 +45,24 @@ The full step-by-step deployment runbook is at `<designs>/templates/okf/DEPLOYME
 
 When asked to deploy OKF to a project, follow `<designs>/templates/okf/DEPLOYMENT-RUNBOOK.md` in order:
 
-1. **Mechanical Install** — Run `install-okf.sh` to create the knowledge directory structure, viewer, hook, and scripts.
+1. **Mechanical Install** — Run `install-okf.sh` to create the knowledge
+   structure and copy the viewer, hook, pinned offline runtime, schema,
+   validator, commands, curator contract, and repository-local controls. The
+   installer starts no runtime or schedule and preserves existing controls.
 2. **Seed From Existing Docs** — Read AGENTS.md, docs/, docs/design/, docs/agents/ and create 40-80 concepts summarising each significant topic. Use the `resource` field to link back to source docs.
 3. **Process GitHub Epics** — List closed epics with `gh issue list --label epic --state closed`. Recent epics get full concepts; older epics get deprecation entries.
 4. **Create Schema Diagrams** — If the project has a database, group tables by domain and create mermaid erDiagram concepts per domain plus an architecture index.
-5. **Migrate AGENTS.md** — Replace AFFiNE/docs.agents references with OKF knowledge references. Add the OKF Knowledge Bundle section. Add Legacy Documentation Alignment section.
-6. **Curation Pass** — Add cross-links, check for duplicates, verify index counts, update log.md.
-7. **Generate Viewer** — Run `generate-viz.js` to produce self-contained `viz.html`.
-8. **Final Verification** — Verify counts, no AFFiNE references remain, hook is installed, viz.html works.
+5. **Review AGENTS.md Alignment** — Report precise proposals. Only the explicit
+   installation action may append the standard section; later changes require
+   separate operator approval.
+6. **Bounded Curation Pass** — Build and review a deterministic proposal, then
+   use the installed locked/quota-bounded curator with validation and recovery.
+7. **Adopt the Core Profile** — Audit retained history in warning mode and opt
+   new records into `okf-core/1.0` before any reviewed bundle migration.
+8. **Generate Viewer** — Run `generate-viz.js` to produce self-contained
+   `viz.html` with typed edges and visible relationship diagnostics.
+9. **Final Verification** — Run the combined schema/parser/linter/hook/viewer/
+   query/curator/triage/archive/cadence/installer suite and isolated canaries.
 
 Read the runbook for detailed instructions for each phase.
 
@@ -130,9 +140,13 @@ type(scope): subject
 Impact: <what this affects>
 ```
 
-The hook extracts the rationale, impact, commit SHA, branch, and issue
-references. A subject-only commit is captured with explicit gaps so authors can
-correct future commit bodies.
+The hook extracts the rationale, impact, commit SHA, branch, issue references,
+and generated provenance. It normalizes tags and safely quotes dynamic fields.
+Oversized, raw-dump, malformed, or repeated low-signal content becomes a compact
+Git-reference capture; an explicit quality override may retain reviewed content
+but cannot bypass structural safety or one-record-per-commit provenance. A
+subject-only commit is captured with explicit gaps so authors can correct future
+commit bodies.
 
 ### Tier 2: Session Synthesis
 
@@ -147,6 +161,8 @@ title: <what changed, in product terms>
 description: <one line>
 tags: [lowercase, consistent]
 timestamp: <ISO-8601>
+generated_at: <ISO-8601>
+generated_by: end-session
 session_id: <session-uuid>
 commit_sha: [<sha>, <sha>]
 branch: <branch-name>
@@ -168,47 +184,58 @@ Filename format: `<ISO-timestamp-with-dashes>-<slugified-title>.md`.
 
 ## Curation
 
-Curation transforms inbox items into permanent concept files and audits the
-bundle. Run it only through an explicit, repository-scoped operator action via
-the `okf-curator` agent (installed to `.factory/droids/` and `.claude/agents/`
-by the OKF installer), the pi `/okf-curate` command, or the steps below. Do not
-add schedules, cron, Factory automation, or a cross-project rollout before Epic
-#26's First Decision Gate approves bounded execution controls.
+Curation transforms selected inbox items into permanent concept files and
+audits the approved context. Run it only through an explicit, repository-scoped
+operator action via the installed `okf-curator` contract and
+`.okf/bin/okf-curate.mjs`. The approved cadence is manual status/triage plus a
+separately requested batch. Do not add schedules, cron/launchd, queues, polling,
+hook launches, Factory automation, child sessions, automatic retries, or a
+cross-project rollout.
 
 Steps:
 
-1. Read all unprocessed inbox items.
-2. Read existing concept files in relevant directories.
-3. Read the codebase and git history for additional context.
-4. **Fetch and read GitHub issues referenced by `issue_refs` in inbox item frontmatter.**
-   - Use: `gh issue view <number> --json body,title,labels --jq '.body'`
-   - Issues contain rich context: pre-approved directives, acceptance criteria, linked epics, and full reasoning.
-   - Use this context to enrich concepts beyond what the commit message alone provides.
-5. For each inbox item, determine which concept(s) to create or update.
-6. Create new concept files with proper frontmatter (include `issue_refs` when applicable).
-7. Update existing concepts by merging new information.
-8. Move superseded concepts to `deprecation/` with `supersedes` links.
-9. Move processed inbox items to `inbox/processed/`.
-10. Audit the bundle: merge redundant concepts, resolve contradictions
-    (concept vs concept, concept vs code, concept vs AGENTS.md), and fix
-    ambiguous or broken `resource` fields and cross-links.
-11. Report AGENTS.md alignment proposals (current text -> proposed text) and
-    offer to apply them; never patch AGENTS.md without approval.
-12. Update all `index.md` files with current listings.
-13. Update `log.md` with a summary of changes.
+1. Run `.okf/bin/okf-inbox-status.mjs` and
+   `.okf/bin/okf-inbox-triage.mjs` against one explicit physical Git root. The
+   report does not authorize curation.
+2. Record the full revision, exact selected items and hashes, approved context,
+   operator identity/request, run ID, positive item/input/generated-byte/runtime
+   ceilings, `max_sessions: 1`, expected outcome, cancellation, and recovery.
+3. Prepare a deterministic `okf-curation-proposal/1` whose selected items match
+   the dry-run plan and whose outputs include concepts, affected indexes, root
+   index, inbox index, and log with expected hashes and generated provenance.
+4. Run `okf-curate.mjs --check-only`. Resolve every root, control, proposal,
+   source, containment, preflight, and quota block before execution.
+5. Run `okf-curate.mjs --execute` once. It acquires one repository-local lock,
+   stages and strictly validates output, applies/checkpoints safe units,
+   postflights the bundle, and only then moves selected sources to
+   `inbox/processed/`.
+6. If cancelled or interrupted, retain input and recovery evidence. Resume only
+   through a new explicit `--resume` request with the identical plan, hashes,
+   proposal, root/revision, allowlist, and limits. Never clear a stale lock,
+   raise a quota, widen scope, clean up, or self-retry automatically.
+7. Review the bounded terminal report; commit only the reviewed output with an
+   `okf-curation:` subject. AGENTS.md findings remain proposals.
+
+Use `.okf/bin/okf-inbox-archive.mjs` only for a separately reviewed reversible
+archive/compaction manifest. Permanent deletion always requires a distinct,
+path-specific approval.
 
 ## Concept Frontmatter
 
 ```yaml
 ---
-type: Architecture              # REQUIRED
-title: SpacetimeDB Tenant Model  # Recommended
-description: One-line summary     # Recommended
-resource: ./src/db/schema.ts     # Recommended
-tags: [backend, spacetime-db]    # Recommended
-timestamp: 2026-06-29T10:00:00Z # Recommended
+type: Architecture
+id: okf-63a160c2-9a5b-4df9-87b4-40ac8f59ac89
+title: SpacetimeDB Tenant Model
+description: One-line summary
+resource: ./src/db/schema.ts
+tags: [backend, spacetime-db]
+timestamp: 2026-06-29T10:00:00Z
 status: active                   # active | deprecated | in-progress | blocked
-supersedes: [old-pattern.md]     # For deprecation entries
+assertion_state: proposed        # verified | inferred | proposed | historical | stale
+supersedes: [okf-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb]
+generated_at: 2026-06-29T10:00:00Z
+generated_by: okf-curator
 issue_refs: [1503]               # Ticket references
 ---
 ```
@@ -228,10 +255,20 @@ issue_refs: [1503]               # Ticket references
 
 ## Rules
 
-- Never delete a concept file. Move superseded ones to `deprecation/` instead.
+- Git and repository-local Markdown/YAML remain canonical; semantic-web
+  services are not required.
+- `okf-core/1.0` is warning-first for retained history. Strict relationships
+  use stable project-local IDs; `A supersedes B` means A is the replacement.
+- Never delete a concept file. Retain superseded concepts in `deprecation/` and
+  put the `supersedes` predicate on the replacement.
 - Always update `index.md` files when adding or updating concepts.
 - Always log curation actions in `log.md`.
 - Use lowercase tags. Keep tags consistent across concepts.
 - Filenames should be slugified versions of the title.
 - One concept per file. Do not mix types.
 - The `resource` field should point to the most relevant code file or issue.
+- An unresolved relationship, stale/proposed assertion, or warning is not
+  permission to rewrite, archive, delete, or curate.
+- Curator, archive, cadence, and migration operations are exact-root, locked,
+  quota-bounded, cancellable, observable, recoverable, and operator-controlled.
+- Never patch `AGENTS.md` from curation; report proposals for approval.

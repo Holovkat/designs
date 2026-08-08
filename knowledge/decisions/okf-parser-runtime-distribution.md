@@ -36,7 +36,7 @@ separately bounded by the A3/A4/A5 capture and execution controls.
 # Outcome
 
 The runtime package is now recorded under `templates/okf/runtime/` with its
-lockfile, integrity metadata, and fixture proof. C8, C9, and the approved C6
+lockfile, integrity metadata, and fixture proof. C8, C9, and the approved A5/D1 status
 contract may consume it through a narrowly reviewed local path. A deployed
 consumer must fail closed or retain legacy read-only behavior when its packaged
 parser runtime is unavailable; it must not silently substitute an ad-hoc parser

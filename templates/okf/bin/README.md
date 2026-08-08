@@ -1,77 +1,124 @@
-# OKF Local Commands
+# OKF Repository-Local Commands
 
-## `okf-lint.mjs`
+`install-okf.sh` copies every command in this directory to `.okf/bin/`, makes
+it executable, and installs its complete local library/schema/runtime graph.
+Runtime/tool distribution is copy-only: installation does not run these
+commands, install a package, fetch from the network, start a curator, or create
+a schedule. The broader installer still creates the knowledge structure,
+installs the hook, and sets the repository-local Git hook path as documented by
+the deployment runbook. It stages onboarding/curator artifacts under `.okf/`
+for review; it never changes `AGENTS.md` or creates harness/Factory state.
 
-The linter reads one explicitly named repository root and produces deterministic
-frontmatter/profile diagnostics. It uses the C7 parser and C1 schema, but it is
-read-only: it does not change files, indexes, hook state, curation state, or
-any external repository.
+Commands operate only on the named repository/bundle and never discover sibling
+projects. Semantic, status, triage, cadence, archive, and curation commands
+require one explicit physical Git worktree root; bounded mutation additionally
+rejects symlink escapes, ambiguous control state, stale revisions, and
+undeclared writes. Run `node .okf/bin/<command> --help` for the complete
+argument contract.
 
-```bash
-node templates/okf/bin/okf-lint.mjs \
-  --root /path/to/repository \
-  --mode strict \
-  --format json \
-  --fail-on error
-```
+## Read-only diagnostics and search
 
-- `--mode strict` treats profile/parser/type-directory failures as errors.
-- `--mode legacy` emits the same retained-record findings as warnings.
-- `--format text|json` selects deterministic human or machine output.
-- `--fail-on error|none` is the only exit-status control. Warnings alone never
-  make the command nonzero.
+- `okf-lint.mjs` reports strict or legacy-compatible parser, profile,
+  directory/type, resource, relationship, provenance, and body diagnostics.
+  Legacy mode changes errors into retained warnings; neither mode writes.
+- `okf-query.mjs` provides typed relationship, assertion-state, evidence,
+  lifecycle, validation-status, and text selectors. The portable
+  `knowledge/okf-query.sh` wrapper dispatches semantic selectors here only when
+  the packaged runtime is present; basic text and `--decisions` search remain
+  available without Node/runtime.
+- `okf-inbox-status.mjs` reports deterministic count, bytes, age, capture-tier,
+  quality, lock, and kill-switch health without granting execution authority.
+- `okf-inbox-triage.mjs` classifies each direct pending item as malformed,
+  duplicate, oversized, low-signal, provenance-warning, stale,
+  needs-human-review, or actionable. It is read-only and emits hashes and
+  bounded metadata, never raw inbox bodies.
 
-The command checks frontmatter/schema fields, type-directory alignment,
-timestamps/tags through the schema, local relationship target existence,
-repository-local resources, Inbox body headings, and extension naming. It does
-not resolve network resources, infer approvals, auto-fix legacy records, start
-curation, schedule work, or inspect another repository.
+## Bounded curation
 
-## `okf-run-plan.mjs`
+- `okf-run-plan.mjs --check-only` validates an explicit revision and
+  caller-supplied item/input/generated-byte/runtime/session ceilings. A passing
+  plan is evidence, not authority to execute.
+- `okf-curate.mjs --check-only` validates a deterministic proposal and its
+  selected sources. Check, execute, and resume require repeated sorted/unique
+  `--select knowledge/inbox/<direct-item>.md` arguments so the dataset is never
+  inferred. `--execute` is the separately authorized one-session executor; it
+  locks, stages and validates concepts plus indexes/logs, checkpoints, reports,
+  and finalizes sources only after the bounded output set passes postflight.
+  A stopped finalization restores moved sources and rolls outputs into retained
+  recovery paths. `--resume` accepts only its matching durable checkpoint.
+  `--cancel` writes an explicit repository-local cancellation request.
 
-The C4/C5 command is a **check-only** preflight for a future separately approved
-bounded run. It never acquires a lock, writes a report/checkpoint, starts a
-curator, or changes `knowledge/`.
+Proposal authors and curator agents must read
+`.okf/templates/curation-prompt.md`. Execution requires a full revision,
+operator identity/request, run ID, root-relative proposal, and every positive
+numeric ceiling; no defaults are supplied.
 
-```bash
-node templates/okf/bin/okf-run-plan.mjs --check-only \
-  --root /path/to/repository \
-  --revision <full-git-sha> \
-  --operator-request "approved request reference" \
-  --max-items 1 --max-input-bytes 1024 \
-  --max-generated-bytes 1024 --max-runtime-seconds 60
-```
+## Backlog retention
 
-Every limit is an explicit caller-supplied value; the command supplies no
-defaults. It returns `0` only for a permitted read-only plan, `1` for a
-fail-closed block, and `2` for malformed arguments. A passing preflight does
-not authorize a curator, canary, scheduler, or deployment; that authority
-remains governed by
-`knowledge/decisions/bounded-curation-execution-safety.md`.
+- `okf-inbox-archive.mjs plan` emits a read-only, hash-bound dry-run manifest
+  for explicitly selected items.
+- `okf-inbox-archive.mjs apply` requires the reviewed manifest plus an explicit
+  approval reference. It retains immutable snapshots, receipts, rollback
+  records, archived sources, and every prior terminal attempt report;
+  permanent deletion is not implemented.
+- `okf-inbox-archive.mjs rollback` restores only from the exact recorded
+  rollback manifest under the same one-session controls.
 
-## `okf-inbox-status.mjs`
+Archive work uses explicit item/input/generated-byte/runtime/session ceilings
+and the same kill switch, lock, revision, containment, and report contracts as
+bounded curation.
 
-C6 reports the health of one explicitly named inbox. It is advisory and
-read-only: a successful report does not start, recommend, or authorize
-curation.
+## Manual cadence evidence
 
-```bash
-node .okf/bin/okf-inbox-status.mjs \
-  --root /absolute/path/to/repository \
-  --format json
-```
+- `okf-cadence-status.mjs` runs only for an explicit sprint checkpoint, epic
+  close, or manual review and never invokes a curator.
+- `okf-cadence-observe.mjs` validates a bounded observation manifest for CPU,
+  runtime, disk/generated bytes, sessions, concurrency, backlog age, yield,
+  failure recovery, and operator interventions. It records no raw inbox text.
 
-It returns `0` when it produces a report—even when advisory findings, an active
-kill switch, or a lock are present—and `2` only for invalid input or an unsafe/
-unreadable scope. It never acquires a lock, creates a file, follows a symlink,
-uses a network service, invokes a hook/curator, or discovers another root.
+Both commands enforce `manual-explicit`; neither installs cron, launchd,
+Factory tasks, polling, queues, retries, or background sessions.
 
-## Installed parser runtime
+## Repository-local controls
 
-The installer copies the reviewed `yaml@2.8.3` runtime plus the C7 parser to
-`.okf/runtime/` and `.okf/lib/`. It only copies files: it does not run Node,
-`npm install`, a hook, or a curator. The runtime is verified with:
+- `.okf/profile.json` — warning-first `okf-core/1.0` adoption state.
+- `.okf/cadence.json` — explicit manual review only.
+- `.okf/KILL_SWITCH` — fail-closed bounded-run control.
+- `.okf/run.lock`, `.okf/cancel/`, `.okf/checkpoints/`, `.okf/reports/`, and
+  `.okf/staging/` — executor-owned evidence/control paths created only by an
+  explicitly invoked bounded command.
 
-```bash
-npm --prefix templates/okf run test:runtime
-```
+The installer creates only the first three defaults, and only when absent. It
+preserves every existing project-local control on reinstall.
+
+## Governance review artifacts
+
+- `.okf/agents/okf-curator.md` is the canonical repository-local curator
+  contract. Harness integration is a separate governed, operator-approved
+  action; installation does not create `.factory/`, `.claude/agents/`, or any
+  other harness state.
+- `.okf/review/AGENTS-OKF-SECTION.md` is proposed onboarding text for review
+  against the nearest applicable `AGENTS.md`. The installer neither creates nor
+  edits `AGENTS.md`; an operator must explicitly approve the exact patch.
+
+Both artifacts are refreshed from the canonical distribution on reinstall and
+remain non-executable. Project-local controls and an existing `AGENTS.md` remain
+untouched.
+
+## Installed documentation
+
+The installer refreshes this non-executable documentation bundle under
+`.okf/docs/`:
+
+- `OKF-STANDARD.md` — canonical format and operational contract.
+- `DEPLOYMENT-RUNBOOK.md` — governed install, adoption, and verification path.
+- `epic-26/OKF-CORE-MIGRATION-GUIDANCE.md` — warning-first profile adoption,
+  promotion, rollback, and cross-project boundaries.
+- `epic-26/CANARY-HARNESS.md` — operator-facing packet/evidence reference for
+  the accepted D3-D5 source-repository canaries.
+
+The canary harness itself remains test/acceptance tooling in the canonical
+source repository. It is not copied into `.okf/bin/`, `.okf/tests/`, hooks, or
+runtime, and installation never invokes it. Reinstall refreshes each document
+to the canonical byte hash and stable read-only/non-executable mode `0444`
+without changing project-local controls or governance files.

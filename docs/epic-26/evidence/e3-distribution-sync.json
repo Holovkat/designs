@@ -1,0 +1,86 @@
+{
+  "version": "okf-distribution-sync-evidence/1",
+  "observed_at": "2026-08-08T07:49:16Z",
+  "canonical_sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64",
+  "mapping_check": {
+    "command": "scripts/sync-skill-distro.sh --check",
+    "result": "in-sync"
+  },
+  "strict_audit": {
+    "command": "python3 scripts/audit-skills.py --strict",
+    "skills_audited": 63,
+    "errors": 0,
+    "warnings": 0
+  },
+  "copies": [
+    {
+      "role": "canonical-designs",
+      "path": "/Users/tonyholovka/workspace/designs/templates/instructional-documents/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "distro-project",
+      "path": "/Users/tonyholovka/workspace/agent-skill-distro/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "distro-shared",
+      "path": "/Users/tonyholovka/workspace/agent-skill-distro/shared/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "distro-target-claude",
+      "path": "/Users/tonyholovka/workspace/agent-skill-distro/targets/claude/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "distro-target-codex",
+      "path": "/Users/tonyholovka/workspace/agent-skill-distro/targets/codex/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "distro-target-pi",
+      "path": "/Users/tonyholovka/workspace/agent-skill-distro/targets/pi/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "installed-codex",
+      "path": "/Users/tonyholovka/.codex/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "installed-claude",
+      "path": "/Users/tonyholovka/.claude/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "installed-agents",
+      "path": "/Users/tonyholovka/.agents/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    },
+    {
+      "role": "installed-pi",
+      "path": "/Users/tonyholovka/.pi/agent/skills/okf/SKILL.md",
+      "sha256": "e0bb0367dfb795c475565bd39788cb2f78fbcc1ff15a4220e24e694951288a64"
+    }
+  ],
+  "source_control": {
+    "repository": "/Users/tonyholovka/workspace/agent-skill-distro",
+    "branch": "feature/pi-computer-use-adapter",
+    "okf_paths": {
+      "shared/skills/okf/SKILL.md": "modified",
+      "skills/okf/SKILL.md": "untracked"
+    },
+    "durable": false,
+    "boundary": "A separate scoped distro branch and commit require explicit source-control authority; none was inferred during Epic #26 implementation."
+  },
+  "unmanaged_existing_harness_artifacts": [
+    {
+      "path": "/Users/tonyholovka/workspace/pi-extensions/.factory/droids/okf-curator.md",
+      "sha256": "eaec4966f168e06d69e7759f64ee68ebf80afca4a37ad1e0ffc44ce5fb9af640",
+      "canonical_curator_sha256": "654b567c61bec87464a17fc570ac6f5de1217dc26c015b9ed42b5f996eeaee1a",
+      "status": "pre-existing-stale-unmanaged",
+      "action": "not-modified-or-deleted; governed harness integration requires separate operator approval"
+    }
+  ]
+}

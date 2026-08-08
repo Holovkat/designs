@@ -1,0 +1,283 @@
+Epic #26 final OKF suite
+command=npm --prefix templates/okf test
+started_at=2026-08-08T08:13:54Z
+
+
+> okf-template-validation@0.1.0 test
+> npm run test:schema && npm run test:frontmatter && npm run test:lint && npm run test:query && npm run test:viewer && npm run test:inbox-status && npm run test:inbox-triage && npm run test:inbox-archive && npm run test:run-safety && npm run test:curation && npm run test:cadence && npm run test:runtime && npm run test:post-commit
+
+
+> okf-template-validation@0.1.0 test:schema
+> node schema/schema-test.mjs
+
+PASS strict strict-valid/architecture.json: valid
+PASS strict strict-valid/component.json: valid
+PASS strict strict-valid/decision.json: valid
+PASS strict strict-valid/deprecation.json: valid
+PASS strict strict-valid/domain.json: valid
+PASS strict strict-valid/inbox-commit-sha256.json: valid
+PASS strict strict-valid/inbox-commit.json: valid
+PASS strict strict-valid/inbox-session.json: valid
+PASS strict strict-valid/process.json: valid
+PASS strict strict-valid/relationship-empty.json: valid
+PASS strict strict-valid/state.json: valid
+PASS strict strict-invalid/inbox-commit-short-sha.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_at'","params":{"missingProperty":"generated_at"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_by'","params":{"missingProperty":"generated_by"}},{"instancePath":"/commit_sha","keyword":"oneOf","message":"must match exactly one schema in oneOf","params":{"passingSchemas":null}},{"instancePath":"/commit_sha","keyword":"pattern","message":"must match pattern \"^(?:[0-9a-f]{40}|[0-9a-f]{64})$\"","params":{"pattern":"^(?:[0-9a-f]{40}|[0-9a-f]{64})$"}},{"instancePath":"/commit_sha","keyword":"pattern","message":"must match pattern \"^(?:[0-9a-f]{40}|[0-9a-f]{64})$\"","params":{"pattern":"^(?:[0-9a-f]{40}|[0-9a-f]{64})$"}},{"instancePath":"/commit_sha","keyword":"type","message":"must be array","params":{"type":"array"}}]
+PASS strict strict-invalid/inbox-session-missing-session-id.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_at'","params":{"missingProperty":"generated_at"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_by'","params":{"missingProperty":"generated_by"}},{"instancePath":"","keyword":"required","message":"must have required property 'session_id'","params":{"missingProperty":"session_id"}}]
+PASS strict strict-invalid/inbox-typed-relationship.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"not","message":"must NOT be valid","params":{}}]
+PASS strict strict-invalid/missing-title.json: invalid [{"instancePath":"","keyword":"required","message":"must have required property 'title'","params":{"missingProperty":"title"}}]
+PASS strict strict-invalid/non-deprecation-deprecated-status.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"/type","keyword":"const","message":"must be equal to constant","params":{"allowedValue":"Deprecation"}}]
+PASS strict strict-invalid/relationship-without-id.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"required","message":"must have required property 'id'","params":{"missingProperty":"id"}}]
+PASS strict strict-invalid/relationship-path-target.json: invalid [{"instancePath":"/supersedes/0","keyword":"pattern","message":"must match pattern \"^okf-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$\"","params":{"pattern":"^okf-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"}}]
+PASS strict strict-invalid/verified-without-evidence.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"required","message":"must have required property 'evidence_refs'","params":{"missingProperty":"evidence_refs"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_at'","params":{"missingProperty":"generated_at"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_by'","params":{"missingProperty":"generated_by"}},{"instancePath":"","keyword":"required","message":"must have required property 'source_authority'","params":{"missingProperty":"source_authority"}},{"instancePath":"","keyword":"required","message":"must have required property 'validity_basis'","params":{"missingProperty":"validity_basis"}},{"instancePath":"","keyword":"required","message":"must have required property 'verification_method'","params":{"missingProperty":"verification_method"}},{"instancePath":"","keyword":"required","message":"must have required property 'verified_at'","params":{"missingProperty":"verified_at"}}]
+PASS strict legacy-compatible/inbox-missing-capture-tier.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"required","message":"must have required property 'capture_tier'","params":{"missingProperty":"capture_tier"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_at'","params":{"missingProperty":"generated_at"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_by'","params":{"missingProperty":"generated_by"}}]
+WARN legacy legacy-compatible/inbox-missing-capture-tier.json: legacy-unspecified-capture-tier (retained fixture; no rewrite)
+PASS strict legacy-compatible/duplicate-tags.json: invalid [{"instancePath":"/tags","keyword":"uniqueItems","message":"must NOT have duplicate items (items ## 1 and 0 are identical)","params":{"i":0,"j":1}}]
+WARN legacy legacy-compatible/duplicate-tags.json: quality-warning-duplicate-tags (retained fixture; no rewrite)
+PASS strict legacy-compatible/short-sha.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_at'","params":{"missingProperty":"generated_at"}},{"instancePath":"","keyword":"required","message":"must have required property 'generated_by'","params":{"missingProperty":"generated_by"}},{"instancePath":"/commit_sha","keyword":"oneOf","message":"must match exactly one schema in oneOf","params":{"passingSchemas":null}},{"instancePath":"/commit_sha","keyword":"pattern","message":"must match pattern \"^(?:[0-9a-f]{40}|[0-9a-f]{64})$\"","params":{"pattern":"^(?:[0-9a-f]{40}|[0-9a-f]{64})$"}},{"instancePath":"/commit_sha","keyword":"pattern","message":"must match pattern \"^(?:[0-9a-f]{40}|[0-9a-f]{64})$\"","params":{"pattern":"^(?:[0-9a-f]{40}|[0-9a-f]{64})$"}},{"instancePath":"/commit_sha","keyword":"type","message":"must be array","params":{"type":"array"}}]
+WARN legacy legacy-compatible/short-sha.json: provenance-unresolved-short-sha (retained fixture; no rewrite)
+PASS strict legacy-compatible/deprecation-path-supersedes.json: invalid [{"instancePath":"","keyword":"if","message":"must match \"then\" schema","params":{"failingKeyword":"then"}},{"instancePath":"","keyword":"required","message":"must have required property 'id'","params":{"missingProperty":"id"}},{"instancePath":"/supersedes/0","keyword":"pattern","message":"must match pattern \"^okf-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$\"","params":{"pattern":"^okf-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"}}]
+WARN legacy legacy-compatible/deprecation-path-supersedes.json: legacy-replaced-by-ambiguous (retained fixture; no rewrite)
+
+All OKF schema fixtures passed.
+
+> okf-template-validation@0.1.0 test:frontmatter
+> node tests/frontmatter-parser_test.mjs
+
+PASS parses quoted scalars and preserves body bytes
+PASS parses block arrays without normalizing their source
+PASS reports duplicate YAML keys
+PASS reports malformed YAML without changing the body
+PASS rejects YAML aliases before materializing a mapping
+PASS handles a BOM and CRLF envelope
+PASS reports an unclosed envelope
+PASS leaves Markdown without frontmatter unchanged
+PASS preserves a BOM when Markdown has no frontmatter
+
+All frontmatter parser tests passed.
+
+> okf-template-validation@0.1.0 test:lint
+> node tests/linter_test.mjs
+
+PASS strict mode reports deterministic errors and warning-only retained facts
+PASS legacy mode retains the same findings as warnings
+PASS warning and strict-new modes apply the installed compatibility contract
+PASS CLI emits JSON and fails only when error severity is selected
+PASS skips a symlinked directory instead of reading outside the root
+PASS rejects a symlinked top-level knowledge directory without reading its target
+PASS rejects resources escaping through symlinked files and directories while retaining missing-path warnings
+PASS rejects a root without knowledge
+
+All linter tests passed.
+
+> okf-template-validation@0.1.0 test:query
+> node tests/query_test.mjs
+
+PASS typed relationship query supports predicate, target, and reverse target search
+PASS assertion, evidence, and lifecycle selectors use separate controlled fields
+PASS validation status distinguishes strict, retained warnings, and structural nonconformance
+PASS free text and decisions scope retain frontmatter/body search semantics
+PASS semantic JSON output is byte-deterministic
+PASS semantic command requires an explicit absolute Git worktree root
+PASS query skips a symlinked concept instead of reading outside the repository
+PASS semantic query remains offline with only the packaged local runtime
+PASS portable shell fallback works without parser runtime and preserves decisions search
+PASS portable fallback fails closed when semantic selectors cannot load the parser
+PASS all query paths are read-only
+
+All query tests passed.
+
+> okf-template-validation@0.1.0 test:viewer
+> node tests/viewer-relationships_test.mjs
+
+PASS uses the accepted six-predicate vocabulary
+PASS consumes C7 block arrays while keeping stable IDs separate from file paths
+PASS retains Markdown citation edges and Cited by backlinks
+PASS preserves every invalid or unresolved declaration with visible diagnostic data
+PASS renders symmetric contradicts once and marks predicate-specific cycles
+PASS keeps root-relative resources distinct from concept-relative Markdown
+PASS retains legacy read-only flow-array behavior without packaged parser data
+PASS generator embeds C7 results deterministically without acquiring a runtime
+
+All viewer relationship tests passed.
+
+> okf-template-validation@0.1.0 test:inbox-status
+> node tests/inbox-status_test.mjs
+
+PASS reports deterministic mixed pending health without writes or authority
+PASS keeps malformed, legacy, duplicate, and index facts as report data
+PASS reports active controls but never treats them as a status-command failure
+PASS reports missing, stale, and malformed controls without changing status success
+PASS uses advisory boundaries without an execution exit code
+PASS rejects symlink scope and invalid CLI arguments before outside reads
+
+All inbox status tests passed.
+
+> okf-template-validation@0.1.0 test:inbox-triage
+> node tests/inbox-triage_test.mjs
+
+PASS classifies every direct pending category deterministically without exposing bodies
+PASS CLI emits the same direct-only JSON projection and no execution authority
+PASS rejects symlink scope and non-physical roots
+
+All inbox triage tests passed.
+
+> okf-template-validation@0.1.0 test:inbox-archive
+> node tests/inbox-archive_test.mjs
+
+PASS dry-run plan records explicit hashes, provenance, indexes, rollback, and no source changes
+PASS apply archives byte-for-byte with declared rewrites and rollback restores the original state
+PASS apply fails closed on reviewed-source drift without moving or deleting it
+PASS retry preserves the prior terminal report and writes new attempt evidence
+PASS rollback recovers a partially restored archive without duplicating sources
+PASS kill switch blocks archive planning and no permanent-delete option exists
+
+All inbox archive tests passed.
+
+> okf-template-validation@0.1.0 test:run-safety
+> node tests/run-safety_test.mjs
+
+PASS fails closed before root discovery without explicit operator authority
+PASS requires an exact Git top-level and contained non-symlink paths
+PASS requires every numeric ceiling and deterministically stops selection at the item cap
+PASS pins an exact sorted inbox dataset and separates control-input bytes
+PASS uses an atomic one-run lock and retains it until a terminal record exists
+PASS fails closed for missing, malformed, and active kill-switch state
+PASS writes atomic bounded checkpoints and blocks resume on source drift
+PASS reports terminal state without source content and CLI remains check-only
+
+All run-safety tests passed.
+
+> okf-template-validation@0.1.0 test:curation
+> node tests/curation-executor_test.mjs
+
+PASS check-only builds a deterministic plan without lock or mutation
+PASS check-only supports an explicit empty audit dataset without inferred selection
+PASS executor has no scheduler, Factory, child-session, or automatic retry path
+PASS mutation refuses inferred lexical selection
+PASS proposal cannot target AGENTS.md
+PASS executes one locked bounded batch and finalizes only after validation
+PASS retains invalid generated output and never advances the inbox source
+PASS requires generated_at and generated_by on curator concept outputs
+PASS malformed maintenance output fails staging before any live mutation
+PASS legacy scalar commit_sha branch noise stays warning-only while other structural types block
+PASS legacy lowercase inbox metadata remains warning-only but an unknown type blocks
+PASS postflight failure rolls back the concept and reports recoverable partial output
+PASS maintenance write failure rolls back every output before source finalization
+PASS a repeated explicit resume keeps rejected output retained and restores the live target
+PASS explicit resume verifies hashes and completes without duplicating output
+
+All curation-executor tests passed.
+
+> okf-template-validation@0.1.0 test:cadence
+> node tests/cadence_test.mjs
+
+All cadence tests passed.
+
+> okf-template-validation@0.1.0 test:runtime
+> node tests/runtime-vendor_test.mjs
+
+PASS pins the complete yaml artifact in a lockfile and local vendor directory
+PASS the shared parser imports the repository-local runtime
+PASS installer distributes the complete offline surface and preserves local controls
+
+All runtime vendor tests passed.
+
+> okf-template-validation@0.1.0 test:post-commit
+> bash tests/post-commit_test.sh
+
+  PASS  writes one capture
+  PASS  captures the subject as the title
+  PASS  captures why and how
+  PASS  captures the impact trailer
+  PASS  tags as commit tier
+  PASS  writes normalized unique tags
+  PASS  records capture provenance
+  PASS  uses the ISO filename format
+  PASS  inserts index rows before the trailing comment
+  PASS  updates the root Inbox count
+  PASS  omits the changed file list
+  PASS  one capture per commit
+
+OKF: capture quality warning for commit a3c4523 -> knowledge/inbox/2026-08-08T08-14-12Z-tidy-imports.md
+Reasons: low-signal.
+Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
+No captured content is included in this warning.
+
+  PASS  flags a subject-only body
+  PASS  extracts and sorts issue refs
+  PASS  no-op without a knowledge bundle
+  PASS  skips curation commits
+  PASS  skips capture-persistence commits
+  PASS  commit succeeds beside a parent generator
+  PASS  does not invoke the parent-workspace generator
+  PASS  capture still written without a manifest refresh
+
+OKF: capture quality warning for commit a2d08ab -> knowledge/inbox/2026-08-08T08-14-14Z-establish-merge-base.md
+Reasons: low-signal.
+Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
+No captured content is included in this warning.
+
+
+OKF: capture quality warning for commit af85396 -> knowledge/inbox/2026-08-08T08-14-14Z-add-merge-side-change.md
+Reasons: low-signal.
+Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
+No captured content is included in this warning.
+
+
+OKF: capture quality warning for commit 19ad9bf -> knowledge/inbox/2026-08-08T08-14-14Z-add-main-side-change.md
+Reasons: low-signal.
+Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
+No captured content is included in this warning.
+
+Merge made by the 'ort' strategy.
+ feature.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 feature.txt
+  PASS  skips merge commits
+
+OKF: capture quality warning for commit 96c25a4 -> knowledge/inbox/2026-08-08T08-14-15Z-establish-amend-base.md
+Reasons: low-signal.
+Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
+No captured content is included in this warning.
+
+  PASS  deduplicates the built-in okf scope tag
+  PASS  deduplicates amended commits
+  PASS  avoids same-second capture overwrites
+  PASS  prevents duplicate records for one commit SHA
+  PASS  warns when a duplicate SHA is suppressed
+
+OKF: capture quality warning for commit 8ce8fd1 -> knowledge/inbox/2026-08-08T08-14-19Z-repeat-low-signal.md
+Reasons: low-signal.
+Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
+No captured content is included in this warning.
+
+
+OKF: capture quality warning for commit 8f3e068 -> knowledge/inbox/2026-08-08T08-14-19Z-commit-8f3e068-quality-guard.md
+Reasons: low-signal, duplicate-low-signal.
+Unsafe or repeated content was replaced with a Git reference; the source commit was not changed.
+For a reviewed false positive, set OKF_CAPTURE_QUALITY_OVERRIDE=1 before committing.
+Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
+No captured content is included in this warning.
+
+  PASS  preserves Tier 1 provenance for repeated low-signal commits
+  PASS  compacts repeated low-signal content with machine-readable reasons
+  PASS  compacts credential-shaped raw dumps
+  PASS  does not copy raw secrets into captures or warnings
+  PASS  leaves source evidence canonical in Git
+  PASS  records and applies the explicit quality override
+  PASS  override warnings expose reasons without raw content
+  PASS  compacts captures over the 16 KiB boundary
+  PASS  oversized warnings do not echo raw bodies
+  PASS  quotes YAML scalars and normalizes malformed scopes
+  PASS  shared parser accepts capture-time escaped metadata
+  PASS  commit succeeds with a symlinked knowledge directory
+  PASS  does not read through or write through a symlinked knowledge directory
+  PASS  commit succeeds with a symlinked inbox
+  PASS  does not read through or write through a symlinked inbox
+  PASS  does not write a capture or external symlinked inbox index
+  PASS  does not read, replace, or write a symlinked root index target
+
+All tests passed
+
+ended_at=2026-08-08T08:14:23Z
+exit_status=0

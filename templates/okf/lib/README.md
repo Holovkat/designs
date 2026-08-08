@@ -1,67 +1,68 @@
-# OKF Shared Frontmatter Parser
+# OKF Repository-Local Libraries
 
-`frontmatter.mjs` is the C7 read-only YAML envelope parser for future local
-OKF consumers. It loads the exact repository-local `yaml@2.8.3` runtime through
-`yaml-runtime.mjs` and deliberately separates parsing from profile validation.
+These modules are the shared implementation behind `.okf/bin/`. The installer
+copies the complete accepted set to `.okf/lib/` together with the generated
+validator, pinned YAML runtime, curator prompt, canonical curator contract, and
+proposed onboarding review artifact. The latter two live under `.okf/agents/`
+and `.okf/review/`; installation does not mutate a harness or `AGENTS.md`.
+Modules use Node standard library APIs plus the reviewed repository-local
+`yaml@2.8.3` artifact; none may install/fetch a dependency, discover sibling
+repositories, schedule work, or start a command merely by being imported.
 
-## Contract
+The standard, deployment runbook, migration guidance, and operator-facing
+canary reference are distributed separately under `.okf/docs/`. They are
+documentation only and are not imported by these modules.
 
-`parseFrontmatter(content, source?)` returns:
+## Parsing, validation, display, and query
 
-- `frontmatter`: parsed YAML mapping, or `{}` when parsing failed or no envelope
-  exists;
-- `body`: the original Markdown body after the closing delimiter, with its line
-  endings unchanged;
-- `rawFrontmatter`: the unnormalized source between delimiters;
-- `diagnostics`: deterministic, structured envelope/YAML diagnostics; and
-- `hasFrontmatter`: whether an opening envelope existed.
+- `yaml-runtime.mjs` loads only `.okf/runtime/vendor/yaml`.
+- `frontmatter.mjs` safely parses a YAML envelope and returns retained body/raw
+  text plus deterministic diagnostics. Aliases are rejected before materializing
+  a mapping; parsing never rewrites a record.
+- `lint.mjs` applies the generated `okf-core/1.0` validator and repository-local
+  semantic checks in strict or warning-only legacy mode.
+- `query.mjs` provides typed relationship, assertion/evidence, lifecycle, and
+  validation-status selectors for one explicit repository.
 
-The parser accepts valid YAML mappings, including block arrays, for compatibility,
-but rejects aliases before materializing a mapping to avoid alias-expansion risk.
-The `okf-core/1.0` schema separately defines the flat prospective strict subset.
-The parser never rewrites YAML, body Markdown, live knowledge files, or indexes;
-it does not resolve resources or relationships, validate a profile, access the
-network, invoke hooks/curators, or start work.
+The viewer generator consumes the same parser when available. The portable
+shell query path remains intentionally parser-independent for basic text and
+decision/deprecation searches.
 
-## Test
+## Status, triage, and reversible retention
 
-```bash
-npm --prefix templates/okf run test:frontmatter
-```
+- `inbox-status.mjs` produces the bounded aggregate health projection.
+- `inbox-triage.mjs` classifies direct pending items and duplicate groups using
+  metadata/hashes without returning raw body content.
+- `inbox-archive.mjs` builds hash-bound plans and performs separately approved,
+  reversible archive/rollback operations. It does not permanently delete or
+  overwrite a prior terminal attempt report.
 
-The fixtures cover quoted colons, flow arrays, block arrays, duplicate keys,
-malformed YAML, alias rejection, BOM/CRLF envelopes, unclosed envelopes, and body preservation.
-Schema/linter dependencies remain declared but are not installed by this
-repository slice. The parser runtime is different: its reviewed local copy and
-lockfile live under `templates/okf/runtime/`, so an installed parser never
-resolves a host-global package or installs/fetches dependencies at runtime.
+## Bounded-run controls and curation
 
-## C4/C5 run-safety seams
+- `run-guard.mjs` validates the exact physical Git root, full revision, path
+  containment, and allowlist.
+- `run-plan.mjs` requires explicit operator authority and positive item/input/
+  generated-byte/runtime ceilings with `max_sessions: 1`.
+- `run-control.mjs` implements the fail-closed kill switch and explicit
+  cancellation requests.
+- `run-lock.mjs`, `run-checkpoint.mjs`, and `run-report.mjs` provide atomic
+  one-run ownership, deterministic resume evidence, and write-once bounded
+  terminal reports with separately identified explicit attempts.
+- `curation-proposal.mjs` validates exact selected sources and deterministic,
+  hash-bound outputs.
+- `curation-validation.mjs` runs legacy source preflight, strict concept
+  staging/postflight, and index/log navigation and audit checks.
+- `curation-executor.mjs` coordinates one explicitly requested, staged,
+  checkpointed, reportable transaction; it rolls back every concept and
+  maintenance output and restores any moved source if finalization stops.
 
-`run-guard.mjs`, `run-plan.mjs`, `run-control.mjs`, `run-lock.mjs`,
-`run-report.mjs`, and `run-checkpoint.mjs` are Node-standard-library seams for
-future, separately approved bounded curation work. They validate an explicit
-operator plan, exact Git root, contained inputs, caller-supplied positive caps,
-kill-switch state, an atomic lock, bounded evidence, and deterministic resume.
-They provide no curator, executor, scheduler, network client, or mutation of
-`knowledge/`. Numeric limits are deliberately never defaulted.
+There are no numeric defaults. A missing/ambiguous kill switch, incompatible
+revision, live/stale lock, quota breach, cancellation, unreportable terminal
+state, or validation failure stops mutation and leaves recovery evidence.
 
-The fixture-only contract is tested with:
+## Cadence
 
-```bash
-npm --prefix templates/okf run test:run-safety
-```
-
-See `knowledge/decisions/bounded-curation-execution-safety.md` for the governing
-approval boundary; passing these tests is not authority to run a batch or canary.
-
-## C6 inbox status
-
-`inbox-status.mjs` is the C6 deterministic, explicit-root, read-only inbox
-projection. It reuses the C7 parser and C4/C5 read-only root/control readers,
-but it never acquires a lock or writes a run artifact. Its count, age, and size
-signals are advisory only and never grant curation authority.
-
-```bash
-npm --prefix templates/okf run test:inbox-status
-```
+`cadence.mjs` reads only `.okf/cadence.json`, requires an explicit checkpoint
+request, and validates bounded observation manifests. Its contract fixes the
+mode to `manual-explicit` and declares `automatic_execution: false`; it is not
+a scheduler or queue.

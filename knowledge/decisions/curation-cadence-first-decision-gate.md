@@ -1,5 +1,6 @@
 ---
 type: Decision
+id: okf-91c7e4a2-6d3f-4b85-9a10-2f6c8e73d541
 title: Curation Cadence and First Decision Gate
 description: Operator-approved explicit, repository-scoped, operator-requested status review and bounded manual curation model
 resource: https://github.com/Holovkat/designs/issues/26
@@ -9,6 +10,7 @@ status: active
 issue_refs: [26]
 epic_refs: [26]
 decision_status: operator-approved-2026-08-06
+supersedes: [okf-0d7a8c1e-9b4f-4d21-8a3c-7e5f6012b934]
 ---
 
 # Decision Status and Scope

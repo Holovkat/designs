@@ -4,7 +4,7 @@ title: Skill Distribution Sync
 description: Ownership-aware workflow for syncing mapped designs assets into agent-skill-distro and validating distro policy before refreshing installed roots
 resource: ./scripts/sync-skill-distro.sh
 tags: [skills, distribution, sync, agent-skill-distro, cli-roots, canonical, workflow]
-timestamp: 2026-07-13T03:35:53Z
+timestamp: 2026-08-08T06:38:00Z
 status: active
 ---
 
@@ -42,7 +42,11 @@ Before applying, review the reported destinations. The sync is not authority to 
 
 - Project skills from `templates/instructional-documents/skills/` to the distro.
 - The OKF skill to `shared/skills/okf` in the distro and to the managed `workspace-projects/pi-extensions/skills/okf` source.
-- The okf-curator agent contract to `pi-extensions/.factory/droids/` as a full per-harness copy.
+- Only the OKF skill package is distributed to harness skill roots. The curator
+  contract remains canonical in `templates/okf/agents/okf-curator.md`, is staged
+  per repository at `.okf/agents/okf-curator.md` by the OKF installer, and is
+  integrated with a harness only through a separate governed,
+  operator-approved action.
 
 ## Drift Detection
 
