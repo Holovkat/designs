@@ -26,4 +26,7 @@ Session syntheses awaiting curation. Items here are written by agents before com
 | [define read-only inbox status contract #26](./2026-08-06T05-46-50Z-define-read-only-inbox-status-contract-26.md) | 2026-08-06T05:46:50Z | okf, okf | #26 |
 | [ship pinned offline parser runtime #26](./2026-08-06T07-51-03Z-ship-pinned-offline-parser-runtime-26.md) | 2026-08-06T07:51:03Z | okf, okf | #26 |
 | [add read-only inbox status command #26](./2026-08-06T07-59-13Z-add-read-only-inbox-status-command-26.md) | 2026-08-06T07:59:13Z | okf, okf | #26 |
+| [complete semantic guardrails and bounded curation #26](./2026-08-08T11-35-54Z-complete-semantic-guardrails-and-bounded-curation-26.md) | 2026-08-08T11:35:54Z | okf | #26 |
+| [OKF Semantic Guardrails Ready for Governed Merge](./2026-08-08T11-36-10Z-okf-semantic-guardrails-ready-for-merge.md) | 2026-08-08T11:36:10Z | okf, semantic-guardrails, bounded-curation, session | #26 |
+| [accept UUIDv7 session captures #26](./2026-08-08T11-48-12Z-accept-uuidv7-session-captures-26.md) | 2026-08-08T11:48:12Z | okf | #26 |
 <!-- Rows added by agents, removed by curation agent -->
