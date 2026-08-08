@@ -29,4 +29,5 @@ Session syntheses awaiting curation. Items here are written by agents before com
 | [complete semantic guardrails and bounded curation #26](./2026-08-08T11-35-54Z-complete-semantic-guardrails-and-bounded-curation-26.md) | 2026-08-08T11:35:54Z | okf | #26 |
 | [OKF Semantic Guardrails Ready for Governed Merge](./2026-08-08T11-36-10Z-okf-semantic-guardrails-ready-for-merge.md) | 2026-08-08T11:36:10Z | okf, semantic-guardrails, bounded-curation, session | #26 |
 | [accept UUIDv7 session captures #26](./2026-08-08T11-48-12Z-accept-uuidv7-session-captures-26.md) | 2026-08-08T11:48:12Z | okf | #26 |
+| [add bounded scheduled curation pilot](./2026-08-08T13-54-38Z-add-bounded-scheduled-curation-pilot.md) | 2026-08-08T13:54:38Z | okf | — |
 <!-- Rows added by agents, removed by curation agent -->
