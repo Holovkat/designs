@@ -3,6 +3,17 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-08T11:38:30Z - Epic #26 UUIDv7 Compatibility Evidence Refresh
+
+- **Corrected:** the session-capture schema and generated validator now accept
+  the UUIDv7 identifiers emitted by current Codex sessions while preserving the
+  UUID variant and lowercase canonical form checks.
+- **Reran:** D3, D4, D5, and the D7 blocked-control proof against the corrected
+  schema surface; all four passed and the hash-bound observation still reports
+  zero violations.
+- **Observed:** five processed records yielded three strict, retrievable
+  concepts with a 0.6 yield; maxima remained within their declared ceilings.
+
 ## 2026-08-08T08:21:55Z - Epic #26 Final Canary Evidence Refresh
 
 - **Reran:** D3, D4, D5, and the D7 blocked-control proof on their exact frozen

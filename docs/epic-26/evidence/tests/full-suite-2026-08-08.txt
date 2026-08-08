@@ -1,6 +1,6 @@
 Epic #26 final OKF suite
 command=npm --prefix templates/okf test
-started_at=2026-08-08T08:13:54Z
+started_at=2026-08-08T11:46:39Z
 
 
 > okf-template-validation@0.1.0 test
@@ -198,7 +198,7 @@ All runtime vendor tests passed.
   PASS  omits the changed file list
   PASS  one capture per commit
 
-OKF: capture quality warning for commit a3c4523 -> knowledge/inbox/2026-08-08T08-14-12Z-tidy-imports.md
+OKF: capture quality warning for commit 57f7758 -> knowledge/inbox/2026-08-08T11-46-56Z-tidy-imports.md
 Reasons: low-signal.
 Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
 No captured content is included in this warning.
@@ -212,19 +212,19 @@ No captured content is included in this warning.
   PASS  does not invoke the parent-workspace generator
   PASS  capture still written without a manifest refresh
 
-OKF: capture quality warning for commit a2d08ab -> knowledge/inbox/2026-08-08T08-14-14Z-establish-merge-base.md
+OKF: capture quality warning for commit a23bb79 -> knowledge/inbox/2026-08-08T11-46-58Z-establish-merge-base.md
 Reasons: low-signal.
 Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
 No captured content is included in this warning.
 
 
-OKF: capture quality warning for commit af85396 -> knowledge/inbox/2026-08-08T08-14-14Z-add-merge-side-change.md
+OKF: capture quality warning for commit 37252a8 -> knowledge/inbox/2026-08-08T11-46-58Z-add-merge-side-change.md
 Reasons: low-signal.
 Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
 No captured content is included in this warning.
 
 
-OKF: capture quality warning for commit 19ad9bf -> knowledge/inbox/2026-08-08T08-14-14Z-add-main-side-change.md
+OKF: capture quality warning for commit 0b3cbe3 -> knowledge/inbox/2026-08-08T11-46-59Z-add-main-side-change.md
 Reasons: low-signal.
 Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
 No captured content is included in this warning.
@@ -235,7 +235,7 @@ Merge made by the 'ort' strategy.
  create mode 100644 feature.txt
   PASS  skips merge commits
 
-OKF: capture quality warning for commit 96c25a4 -> knowledge/inbox/2026-08-08T08-14-15Z-establish-amend-base.md
+OKF: capture quality warning for commit 53efe31 -> knowledge/inbox/2026-08-08T11-46-59Z-establish-amend-base.md
 Reasons: low-signal.
 Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
 No captured content is included in this warning.
@@ -246,13 +246,13 @@ No captured content is included in this warning.
   PASS  prevents duplicate records for one commit SHA
   PASS  warns when a duplicate SHA is suppressed
 
-OKF: capture quality warning for commit 8ce8fd1 -> knowledge/inbox/2026-08-08T08-14-19Z-repeat-low-signal.md
+OKF: capture quality warning for commit 2b1f011 -> knowledge/inbox/2026-08-08T11-47-03Z-repeat-low-signal.md
 Reasons: low-signal.
 Commit bodies must say why and impact. Format: type(scope): subject; body: <why/how>; Impact: <effect>.
 No captured content is included in this warning.
 
 
-OKF: capture quality warning for commit 8f3e068 -> knowledge/inbox/2026-08-08T08-14-19Z-commit-8f3e068-quality-guard.md
+OKF: capture quality warning for commit 5989269 -> knowledge/inbox/2026-08-08T11-47-04Z-commit-5989269-quality-guard.md
 Reasons: low-signal, duplicate-low-signal.
 Unsafe or repeated content was replaced with a Git reference; the source commit was not changed.
 For a reviewed false positive, set OKF_CAPTURE_QUALITY_OVERRIDE=1 before committing.
@@ -279,5 +279,5 @@ No captured content is included in this warning.
 
 All tests passed
 
-ended_at=2026-08-08T08:14:23Z
+ended_at=2026-08-08T11:47:08Z
 exit_status=0

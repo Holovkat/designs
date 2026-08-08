@@ -4,8 +4,8 @@
   "raw_inbox_content_recorded": false,
   "scenario": "invalid-then-success",
   "packet_sha256": "a4a2b9ae73e93f7b74c162d5997abe2df466a59ed0cf553ac23a2cc1b8a7b936",
-  "started_at": "2026-08-08T08:21:44.529Z",
-  "finished_at": "2026-08-08T08:21:49.271Z",
+  "started_at": "2026-08-08T11:38:19.630Z",
+  "finished_at": "2026-08-08T11:38:24.433Z",
   "source": {
     "root": "/Users/tonyholovka/workspace/fmsmercury",
     "revision": "d388e4df2af0641a7ea074ea1135d1021fb93094",
@@ -25,16 +25,16 @@
       "head": "d388e4df2af0641a7ea074ea1135d1021fb93094",
       "tree": "c06849aba8fa0f04b4484797c4883b300bf3c3f4",
       "status": {
-        "bytes": 4512,
-        "sha256": "637dd3fcb75336115516d9b479c8d619da0f792408c966b7336b2a85da05a695"
+        "bytes": 1800,
+        "sha256": "c0a5002d4b1f4f7db59f81206cee3c3064099f554f7097354725bbf35379aa62"
       },
       "staged_diff": {
         "bytes": 0,
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "worktree_diff": {
-        "bytes": 625238,
-        "sha256": "9b0fb66a0cc4da4c8401adce4a9bd4ca68373b090d466af6a6f2879d8dc444fc"
+        "bytes": 148264,
+        "sha256": "a7a7a6673b286969d253d252de5619c962262ce4045c4feb8c6f42f8afa945a6"
       },
       "local_config": {
         "bytes": 329,
@@ -45,16 +45,16 @@
       "head": "d388e4df2af0641a7ea074ea1135d1021fb93094",
       "tree": "c06849aba8fa0f04b4484797c4883b300bf3c3f4",
       "status": {
-        "bytes": 4512,
-        "sha256": "637dd3fcb75336115516d9b479c8d619da0f792408c966b7336b2a85da05a695"
+        "bytes": 1800,
+        "sha256": "c0a5002d4b1f4f7db59f81206cee3c3064099f554f7097354725bbf35379aa62"
       },
       "staged_diff": {
         "bytes": 0,
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "worktree_diff": {
-        "bytes": 625238,
-        "sha256": "9b0fb66a0cc4da4c8401adce4a9bd4ca68373b090d466af6a6f2879d8dc444fc"
+        "bytes": 148264,
+        "sha256": "a7a7a6673b286969d253d252de5619c962262ce4045c4feb8c6f42f8afa945a6"
       },
       "local_config": {
         "bytes": 329,
@@ -64,11 +64,11 @@
     "live_unchanged": true
   },
   "snapshot": {
-    "root": "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-Ov0ajs/snapshot",
+    "root": "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-S8kzu1/snapshot",
     "retained": false,
     "exact_head": "d388e4df2af0641a7ea074ea1135d1021fb93094",
-    "disk_bytes_baseline": 278655192,
-    "disk_bytes_after": 278794130,
+    "disk_bytes_baseline": 278655720,
+    "disk_bytes_after": 278794658,
     "disk_growth_bytes": 138938,
     "status": {
       "bytes": 17279,
@@ -110,13 +110,13 @@
         {
           "path": "schema",
           "files": 29,
-          "sha256": "e0d291adbab7484a07aae33a7a3e49fca93e928896f5e9eab3834319c8d43e55",
+          "sha256": "478bfc4be7935ecff99a4b937877c00e173a0282bb65ef43c58040c1031361d3",
           "bytes": 100110
         }
       ],
       "installed": {
         "files": 294,
-        "sha256": "a079dbd6741d4da9d1c6041825ab3f10f1409c3c7b38cc23ac5ab0e32f4bbb4a",
+        "sha256": "cc2b37a7937cfd96dc7d615115d375775449d4d693ae725177eb28dcd67a8c4e",
         "bytes": 1052534
       },
       "portable_query_sha256": "221bd6fa4a87d21c89bc8146e2ea1b35556140747086ef1902b200316607deb5"
@@ -172,18 +172,18 @@
       "resume": false,
       "outcome": "failed",
       "reason": "staging-validation-failed",
-      "wall_milliseconds": 194,
-      "cpu_milliseconds": 269,
-      "cpu_user_microseconds": 230115,
-      "cpu_system_microseconds": 38179,
-      "disk_bytes_before": 278655192,
-      "disk_bytes_after": 278724106,
+      "wall_milliseconds": 204,
+      "cpu_milliseconds": 276,
+      "cpu_user_microseconds": 233692,
+      "cpu_system_microseconds": 41910,
+      "disk_bytes_before": 278655720,
+      "disk_bytes_after": 278724634,
       "disk_growth_bytes": 68914,
       "lock_released": true,
       "bounded_report": {
         "path": ".okf/reports/epic26-d4-mercury-invalid.json",
         "bytes": 3951,
-        "sha256": "0cd064d6e1da04997da65c391a739f3d560aeb921f4f0a9aa13f791020506967"
+        "sha256": "e4eef2ba1a72b1e4dc0540ca8334741b85fe1e0efbed2c3b0ea93a5568543514"
       },
       "plan": {
         "selection_mode": "explicit",
@@ -209,18 +209,18 @@
       "resume": false,
       "outcome": "completed",
       "reason": "bounded-curation-complete",
-      "wall_milliseconds": 258,
-      "cpu_milliseconds": 208,
-      "cpu_user_microseconds": 149473,
-      "cpu_system_microseconds": 57706,
-      "disk_bytes_before": 278724106,
-      "disk_bytes_after": 278794130,
+      "wall_milliseconds": 275,
+      "cpu_milliseconds": 223,
+      "cpu_user_microseconds": 156768,
+      "cpu_system_microseconds": 65254,
+      "disk_bytes_before": 278724634,
+      "disk_bytes_after": 278794658,
       "disk_growth_bytes": 70024,
       "lock_released": true,
       "bounded_report": {
         "path": ".okf/reports/epic26-d4-mercury-success.json",
         "bytes": 3848,
-        "sha256": "387c15ae0108aa99d5eb8ff73b4e2efc12bcfebf3efbaebd273636d0daa699ff"
+        "sha256": "608826158da580a56d212bfead0b516f6f810bd0dfdd02c226b9f7ee97fb5b17"
       },
       "plan": {
         "selection_mode": "explicit",
@@ -297,8 +297,8 @@
     "strict_lint": {
       "mode": "strict",
       "files_checked": 347,
-      "diagnostics": 1500,
-      "errors": 1459,
+      "diagnostics": 1474,
+      "errors": 1433,
       "warnings": 41,
       "codes": {
         "error:body-headings-missing": 6,
@@ -307,7 +307,7 @@
         "error:schema-enum": 78,
         "error:schema-if": 190,
         "error:schema-oneOf": 48,
-        "error:schema-pattern": 408,
+        "error:schema-pattern": 382,
         "error:schema-required": 624,
         "error:schema-type": 64,
         "error:type-directory-mismatch": 10,
@@ -316,7 +316,7 @@
         "warning:extension-unregistered": 36,
         "warning:resource-missing": 5
       },
-      "diagnostics_sha256": "6fff97dfa31ae1811693550b856fcd390476305246cb5674cabf111856dabf99",
+      "diagnostics_sha256": "5dde6e9afa34ffbc9bcb81143588e2e07c0a0915977020fae632fcb061e7d00a",
       "concept_diagnostics": 0,
       "concept_diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -325,7 +325,7 @@
         "count": 1,
         "matched_concept": true,
         "paths_sha256": "9fa187565d8015dc56b001fe2b7e4e8b31d0189070736ff57c95aae5a4dffc79",
-        "result_sha256": "1955eea9210403ffd7fa905ef1162415194abff452855bb1cebb55ac4456a445",
+        "result_sha256": "ac4f23aaa79688d2d736c2b666d45e53391ffcc15ea0ffbe70d4b7bb45b7a020",
         "query_sha256": "f7d1fcd781d062c9e6c1e2836e6ce2dbb315e5ad0dbd471585546f2f2a6c5ad6"
       },
       "portable": {
@@ -343,20 +343,20 @@
     "selected_age": {
       "selected_count": 1,
       "timestamp_valid_count": 1,
-      "oldest_seconds": 332504,
-      "newest_seconds": 332504
+      "oldest_seconds": 344299,
+      "newest_seconds": 344299
     },
     "pending_before": {
       "selected_count": 5,
       "timestamp_valid_count": 5,
-      "oldest_seconds": 519150,
-      "newest_seconds": 101989
+      "oldest_seconds": 530945,
+      "newest_seconds": 113784
     },
     "pending_after": {
       "selected_count": 4,
       "timestamp_valid_count": 4,
-      "oldest_seconds": 519153,
-      "newest_seconds": 101992
+      "oldest_seconds": 530948,
+      "newest_seconds": 113787
     }
   },
   "usefulness": {
@@ -366,10 +366,10 @@
     "strict_and_retrievable": true
   },
   "metrics": {
-    "wall_milliseconds": 4742,
-    "cpu_user_microseconds": 604553,
-    "cpu_system_microseconds": 309328,
-    "cpu_milliseconds": 914,
+    "wall_milliseconds": 4803,
+    "cpu_user_microseconds": 621036,
+    "cpu_system_microseconds": 332119,
+    "cpu_milliseconds": 954,
     "executor_invocations": 2,
     "executor_generated_bytes_total": 179141,
     "proposal_control_bytes_total": 127483,
@@ -394,8 +394,8 @@
   },
   "failure": null,
   "report_hashes": {
-    "evidence_payload_sha256": "f4b9d8650e3e195d8dfbb03492a1c5da1533dc8b3a0769cc15dd151718d4016d",
-    "bounded_executor_reports_sha256": "cf845f34cc2544258499590d69e824e0de527058f8f8adcd49d7339587968fbc",
+    "evidence_payload_sha256": "dd54bc89a8cc0112ba5b619ca928ccd32fdf6893b04c4aec9c8a5c9574c5892a",
+    "bounded_executor_reports_sha256": "366c138d265878354352e3d8fcd2ee6aa93053c71219ff58eb8b81dbf0b0c065",
     "proposal_manifest_sha256": "931cf974910cdca8a2537a0c5f8cc27d79fdf3b9ad1cdb100cf3d0655e51264c"
   }
 }

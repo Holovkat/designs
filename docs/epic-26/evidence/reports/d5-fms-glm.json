@@ -4,8 +4,8 @@
   "raw_inbox_content_recorded": false,
   "scenario": "interrupt-resume",
   "packet_sha256": "94d9dcaaa0b0753477a0f6ef8e6b7ebc3cfb2d3aec83411868a4a1427dce2f51",
-  "started_at": "2026-08-08T08:21:49.831Z",
-  "finished_at": "2026-08-08T08:21:53.881Z",
+  "started_at": "2026-08-08T11:38:24.740Z",
+  "finished_at": "2026-08-08T11:38:29.016Z",
   "source": {
     "root": "/Users/tonyholovka/workspace/fms-glm",
     "revision": "c1f9ad46c3f15d34c7b60208121e3834c382e24a",
@@ -74,7 +74,7 @@
     "live_unchanged": true
   },
   "snapshot": {
-    "root": "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-tIr8LI/snapshot",
+    "root": "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-kHJP8S/snapshot",
     "retained": false,
     "exact_head": "c1f9ad46c3f15d34c7b60208121e3834c382e24a",
     "disk_bytes_baseline": 101367115,
@@ -82,7 +82,7 @@
     "disk_growth_bytes": 42601,
     "status": {
       "bytes": 17383,
-      "sha256": "092041082e48f2c30f7c85e2f3a1dcc41de4358b58b4a8f9a23d5f933f674407"
+      "sha256": "aac36d5e23ee3d516ba2119e97258eaa23dcd3474695f44b1c627ff28e945073"
     },
     "instructions_before": {
       "count": 52,
@@ -120,13 +120,13 @@
         {
           "path": "schema",
           "files": 29,
-          "sha256": "e0d291adbab7484a07aae33a7a3e49fca93e928896f5e9eab3834319c8d43e55",
+          "sha256": "478bfc4be7935ecff99a4b937877c00e173a0282bb65ef43c58040c1031361d3",
           "bytes": 100110
         }
       ],
       "installed": {
         "files": 294,
-        "sha256": "a079dbd6741d4da9d1c6041825ab3f10f1409c3c7b38cc23ac5ab0e32f4bbb4a",
+        "sha256": "cc2b37a7937cfd96dc7d615115d375775449d4d693ae725177eb28dcd67a8c4e",
         "bytes": 1052534
       },
       "portable_query_sha256": "221bd6fa4a87d21c89bc8146e2ea1b35556140747086ef1902b200316607deb5"
@@ -174,10 +174,10 @@
       "resume": false,
       "outcome": "failed",
       "reason": "epic26-controlled-interrupt",
-      "wall_milliseconds": 245,
-      "cpu_milliseconds": 260,
-      "cpu_user_microseconds": 204057,
-      "cpu_system_microseconds": 55489,
+      "wall_milliseconds": 254,
+      "cpu_milliseconds": 267,
+      "cpu_user_microseconds": 206789,
+      "cpu_system_microseconds": 59403,
       "disk_bytes_before": 101367115,
       "disk_bytes_after": 101391716,
       "disk_growth_bytes": 24601,
@@ -185,7 +185,7 @@
       "bounded_report": {
         "path": ".okf/reports/epic26-d5-glm-resume.json",
         "bytes": 4230,
-        "sha256": "01504d364eb11e00e9cf20bab68593e4a64e531537b54ac638659b28c3970e17"
+        "sha256": "6dbd8142dbf28a7f9bf4a3d35c173acc6b553415aba8f4fb49ee4225e0dd1789"
       },
       "plan": {
         "selection_mode": "explicit",
@@ -211,18 +211,18 @@
       "resume": true,
       "outcome": "completed",
       "reason": "bounded-curation-complete",
-      "wall_milliseconds": 218,
-      "cpu_milliseconds": 126,
-      "cpu_user_microseconds": 74158,
-      "cpu_system_microseconds": 50998,
+      "wall_milliseconds": 228,
+      "cpu_milliseconds": 132,
+      "cpu_user_microseconds": 76702,
+      "cpu_system_microseconds": 54894,
       "disk_bytes_before": 101391716,
       "disk_bytes_after": 101409716,
       "disk_growth_bytes": 18000,
       "lock_released": true,
       "bounded_report": {
-        "path": ".okf/reports/epic26-d5-glm-resume.attempt-acbcf4ee-00bd-4fc6-aaed-ae35361ec197.json",
+        "path": ".okf/reports/epic26-d5-glm-resume.attempt-0615c67c-7fe1-480a-8869-18b80586789e.json",
         "bytes": 4248,
-        "sha256": "d3db4eb058c26fc87e2a7061441277bab0c44365b21362011572b80f7ef450cd"
+        "sha256": "54330ffab41e45918ceb46463b8b7bbe11b3bf4f4f1e93b1d37608d935c5db12"
       },
       "plan": {
         "selection_mode": "explicit",
@@ -365,7 +365,7 @@
         "count": 1,
         "matched_concept": true,
         "paths_sha256": "7ae915ff0558f87765698560fc0af798b97ea140247807f03979a1b833a17b47",
-        "result_sha256": "ba11da72e27fbeeaa9e62951884fb70cbf49faa4851e7915b083a5062b6778eb",
+        "result_sha256": "b190ff26d60c4e8e6db2b5615e99dd6e1b1676538d8e49530247519ed4e82fc1",
         "query_sha256": "d7d605e9dc6adb151c81dcfcb2450352142ed811c019c29ee61bfb94b10effcc"
       },
       "portable": {
@@ -389,14 +389,14 @@
     "pending_before": {
       "selected_count": 85,
       "timestamp_valid_count": 22,
-      "oldest_seconds": 2533009,
-      "newest_seconds": 1995589
+      "oldest_seconds": 2544804,
+      "newest_seconds": 2007384
     },
     "pending_after": {
       "selected_count": 82,
       "timestamp_valid_count": 22,
-      "oldest_seconds": 2533012,
-      "newest_seconds": 1995592
+      "oldest_seconds": 2544807,
+      "newest_seconds": 2007387
     }
   },
   "usefulness": {
@@ -406,10 +406,10 @@
     "strict_and_retrievable": true
   },
   "metrics": {
-    "wall_milliseconds": 4050,
-    "cpu_user_microseconds": 543965,
-    "cpu_system_microseconds": 400046,
-    "cpu_milliseconds": 945,
+    "wall_milliseconds": 4276,
+    "cpu_user_microseconds": 563960,
+    "cpu_system_microseconds": 432121,
+    "cpu_milliseconds": 997,
     "executor_invocations": 2,
     "executor_generated_bytes_total": 187929,
     "proposal_control_bytes_total": 37516,
@@ -434,8 +434,8 @@
   },
   "failure": null,
   "report_hashes": {
-    "evidence_payload_sha256": "c00a78cdbebc027e67cecbc55a3a64faa10a15d4a1295c91f61a0c0d2fcc6f3c",
-    "bounded_executor_reports_sha256": "3cf6b96441c281bb77127738218367ca1e6d33ad4746cd9c452f0456be2f84a2",
+    "evidence_payload_sha256": "3f06f2459e76952eabf768944be2314210277c4130c350d364567cea278b40d0",
+    "bounded_executor_reports_sha256": "e18da231ce066c525a8975b751505f84418df9b5a07d1cdf6a7caf3e6d1b970c",
     "proposal_manifest_sha256": "b56e8b65fa31e44b09c2bbdf42c374a64a21f021b85e2430c9a44c2615833277"
   }
 }

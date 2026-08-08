@@ -1,7 +1,7 @@
 {
   "version": "okf-cadence-observation-report/1",
-  "started_at": "2026-08-08T08:21:42.829Z",
-  "ended_at": "2026-08-08T08:21:55.448Z",
+  "started_at": "2026-08-08T11:38:18.191Z",
+  "ended_at": "2026-08-08T11:38:30.320Z",
   "sample_count": 4,
   "projects": [
     "/Users/tonyholovka/workspace/designs",
@@ -9,10 +9,10 @@
     "/Users/tonyholovka/workspace/fmsmercury"
   ],
   "snapshot_roots": [
-    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-9SqdpW/snapshot",
-    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-Ov0ajs/snapshot",
-    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-tIr8LI/snapshot",
-    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-control-iH8ORv/snapshot"
+    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-9lp0XV/snapshot",
+    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-S8kzu1/snapshot",
+    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-kHJP8S/snapshot",
+    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-control-emI9VC/snapshot"
   ],
   "scenarios": [
     "blocked-control",
@@ -42,7 +42,7 @@
     "max_inbox_age_days": 120
   },
   "totals": {
-    "cpu_ms": 2546,
+    "cpu_ms": 2652,
     "generated_bytes": 435578,
     "processed_items": 5,
     "useful_concept_changes": 3,

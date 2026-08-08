@@ -5,7 +5,7 @@ title: OKF System Current State
 description: Current accepted OKF semantic guardrails, bounded curation tooling, manual cadence, distribution, and rollout boundary
 resource: templates/okf/OKF-STANDARD.md
 tags: [okf, state, semantic-guardrails, bounded-curation, validation, manual-cadence]
-timestamp: 2026-08-08T08:21:55Z
+timestamp: 2026-08-08T11:38:30Z
 status: active
 ---
 
@@ -31,7 +31,8 @@ external knowledge service is required.
 - Tier 1 post-commit capture with normalized tags, generated provenance, one
   record per ordinary commit, compact Git-reference notices for unsafe or
   repeated content, physical knowledge/inbox/index confinement, and a
-  non-destructive explicit override.
+  non-destructive explicit override; Tier 2 accepts canonical UUIDv7 session
+  identifiers.
 - A typed relationship viewer and semantic query command, both using the pinned
   local parser, while preserving Markdown backlinks and the portable grep
   fallback for basic search.
@@ -64,7 +65,7 @@ curation/cadence/installer/hook suite passed on 2026-08-08. Four isolated Epic
 
 The evidence-bound observation processed five records into three useful
 concepts (`curation_yield = 0.6`) with zero violations. Maxima were 5 seconds
-runtime, 945 ms CPU for one sample, 138,938 bytes disk growth, one session, and
+runtime, 997 ms CPU for one sample, 138,938 bytes disk growth, one session, and
 one concurrent executor; the complete legacy-date audit found a 39-day oldest
 inbox age. Every live source repository fingerprint and every unselected
 snapshot manifest remained unchanged. Version-1 evidence uses a closed field
