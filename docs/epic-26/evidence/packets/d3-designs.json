@@ -1,0 +1,47 @@
+{
+  "version": "okf-epic26-canary/1",
+  "scenario": "normal",
+  "source": {
+    "root": "/Users/tonyholovka/workspace/designs",
+    "revision": "b2efcddd44645bd56d911301ea61456b06f883ff",
+    "selected_inbox": [
+      "knowledge/inbox/2026-08-06T04-07-00Z-record-phase-b-semantic-profile-approval-26.md"
+    ]
+  },
+  "operator": {
+    "identity": "tony-via-codex-2026-08-08",
+    "request": "Run the explicitly selected Epic 26 D3 designs canary in a throwaway snapshot with the published limits and retain hash-only evidence."
+  },
+  "run_ids": {
+    "normal": "epic26-d3-designs"
+  },
+  "limits": {
+    "max_items": 1,
+    "max_input_bytes": 4096,
+    "max_generated_bytes": 262144,
+    "max_runtime_seconds": 30,
+    "max_sessions": 1
+  },
+  "harness_limits": {
+    "max_snapshot_bytes": 4294967296,
+    "max_disk_growth_bytes": 1048576,
+    "max_report_bytes": 65536,
+    "max_wall_seconds": 120,
+    "max_cpu_milliseconds_per_run": 5000
+  },
+  "curated_concept": {
+    "path": "knowledge/decisions/epic-26-portable-semantic-profile.md",
+    "content": "---\ntype: Decision\ntitle: Epic 26 Portable Native Semantic Profile\ndescription: OKF Core 1.0 keeps Markdown YAML and Git canonical while adding local machine-checkable semantics without RDF infrastructure\ntags: [canary, decision, okf, semantic-profile]\ntimestamp: 2026-08-08T00:00:00Z\nstatus: active\nid: okf-26000000-0000-4000-8000-0000000000d3\nassertion_state: verified\ngenerated_at: 2026-08-08T00:00:00Z\ngenerated_by: epic26-bounded-curator\nsource_authority: operator-approval\nevidence_refs: [git:b2efcddd44645bd56d911301ea61456b06f883ff:knowledge/inbox/2026-08-06T04-07-00Z-record-phase-b-semantic-profile-approval-26.md]\nverified_at: 2026-08-08T00:00:00Z\nverification_method: frozen-git-snapshot-and-operator-approval\nvalidity_basis: Exact Phase B approval capture at the named immutable revision\n---\n\n# Decision\n\nEpic26D3PortableProfile records the approved additive profile: repository-local Markdown, YAML, and Git remain canonical; the shared offline parser, schema, linter, viewer, and query helper may add typed semantics. JSON-LD, RDF, SHACL, remote services, and mandatory semantic-web infrastructure remain deferred.\n\n# Consequences\n\nNew strict records can use stable IDs, typed relationships, assertion state, and immutable evidence. Legacy records remain visible in warning mode. Any curation, cadence, archive, canary, or rollout still requires its own bounded operator authority.\n"
+  },
+  "retrieval": {
+    "semantic": {
+      "terms": ["Epic26D3PortableProfile"],
+      "assertionStates": ["verified"],
+      "hasEvidence": true,
+      "statuses": ["active"],
+      "validationStatuses": ["strict"]
+    },
+    "portable_terms": ["Epic26D3PortableProfile"],
+    "portable_decisions_only": true
+  }
+}

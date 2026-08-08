@@ -1,0 +1,328 @@
+{
+  "version": "okf-epic26-canary-evidence/1",
+  "success": true,
+  "raw_inbox_content_recorded": false,
+  "scenario": "normal",
+  "packet_sha256": "738de3d86534a960d81241a605e65aabfb43f3391dc8048288787b18279141a8",
+  "started_at": "2026-08-08T11:38:18.191Z",
+  "finished_at": "2026-08-08T11:38:19.439Z",
+  "source": {
+    "root": "/Users/tonyholovka/workspace/designs",
+    "revision": "b2efcddd44645bd56d911301ea61456b06f883ff",
+    "selected_items": [
+      {
+        "path": "knowledge/inbox/2026-08-06T04-07-00Z-record-phase-b-semantic-profile-approval-26.md",
+        "bytes": 583,
+        "sha256": "370dfad015fd6e0bc362aa81d530f5ff4248232fcff385b163b6f0e8fd4e53d6"
+      }
+    ],
+    "exact_revision_manifest": {
+      "count": 1,
+      "bytes": 583,
+      "sha256": "212a525ee3d6378c09ffdaec51f89f806135594e49c4d2945e38d81f0c047f0d"
+    },
+    "live_before": {
+      "head": "9de0ff985a43681ef6af815bc62fcd5050e52236",
+      "tree": "9eee254319f588d7232770ebbb6942aeceeab183",
+      "status": {
+        "bytes": 8674,
+        "sha256": "39108b96c85aa317fb216cb72686fc2612fa1bc68f109ea165c42fb5f1c57a02"
+      },
+      "staged_diff": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "worktree_diff": {
+        "bytes": 16938,
+        "sha256": "c9067fbf5cde980c948fce327b78fcb55c674d2cbba71a5dfd62f34907aa08c2"
+      },
+      "local_config": {
+        "bytes": 429,
+        "sha256": "103201573980f9703a792b75909dd0b47fb2f4042abc6471982a80053a200738"
+      }
+    },
+    "live_after": {
+      "head": "9de0ff985a43681ef6af815bc62fcd5050e52236",
+      "tree": "9eee254319f588d7232770ebbb6942aeceeab183",
+      "status": {
+        "bytes": 8674,
+        "sha256": "39108b96c85aa317fb216cb72686fc2612fa1bc68f109ea165c42fb5f1c57a02"
+      },
+      "staged_diff": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "worktree_diff": {
+        "bytes": 16938,
+        "sha256": "c9067fbf5cde980c948fce327b78fcb55c674d2cbba71a5dfd62f34907aa08c2"
+      },
+      "local_config": {
+        "bytes": 429,
+        "sha256": "103201573980f9703a792b75909dd0b47fb2f4042abc6471982a80053a200738"
+      }
+    },
+    "live_unchanged": true
+  },
+  "snapshot": {
+    "root": "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-9lp0XV/snapshot",
+    "retained": false,
+    "exact_head": "b2efcddd44645bd56d911301ea61456b06f883ff",
+    "disk_bytes_baseline": 16257887,
+    "disk_bytes_after": 16294464,
+    "disk_growth_bytes": 36577,
+    "status": {
+      "bytes": 3574,
+      "sha256": "0f6dc74e12f341fc24512b2f8d6dcefe1b6ed3e2bb2a66767928cd3f6afbd7f1"
+    },
+    "instructions_before": {
+      "count": 4,
+      "sha256": "35ff6a7189096eef0eb2597411050e1b58581d19f3d158ca716ceabbc2f0e5ae"
+    },
+    "instructions_after": {
+      "count": 4,
+      "sha256": "35ff6a7189096eef0eb2597411050e1b58581d19f3d158ca716ceabbc2f0e5ae"
+    },
+    "instructions_unchanged": true
+  },
+  "controls": {
+    "explicit_operator_identity_sha256": "1b732894d45f668df16cbaf0c9f99d182cc10699438a46ea189e3d483823b99b",
+    "explicit_operator_request_sha256": "6ec186ff3ed11712929ebef643c5040d15f2f9e1fc68c6af2cf16d16177f89e7",
+    "tooling": {
+      "source": [
+        {
+          "path": "bin",
+          "files": 10,
+          "sha256": "97929214983924b2dce0459d86f52e04993ea2dc414445ac54c5f3e362fb1e36",
+          "bytes": 32702
+        },
+        {
+          "path": "lib",
+          "files": 18,
+          "sha256": "d298e7a225c8ef738cf3a9f22a336079b322c7c60a71b6c8b90ffbb8a1bfa01f",
+          "bytes": 233101
+        },
+        {
+          "path": "runtime",
+          "files": 236,
+          "sha256": "cc9648b93485df944334d84218047a87271ec7aa5003a1ca085292c3302c440e",
+          "bytes": 686604
+        },
+        {
+          "path": "schema",
+          "files": 29,
+          "sha256": "478bfc4be7935ecff99a4b937877c00e173a0282bb65ef43c58040c1031361d3",
+          "bytes": 100110
+        }
+      ],
+      "installed": {
+        "files": 294,
+        "sha256": "cc2b37a7937cfd96dc7d615115d375775449d4d693ae725177eb28dcd67a8c4e",
+        "bytes": 1052534
+      },
+      "portable_query_sha256": "221bd6fa4a87d21c89bc8146e2ea1b35556140747086ef1902b200316607deb5"
+    },
+    "network_used": false,
+    "scheduler_used": false,
+    "factory_used": false,
+    "child_runtime_sessions": 0,
+    "automatic_retries": 0,
+    "max_sessions": 1,
+    "max_executor_concurrency_observed": 1,
+    "max_command_concurrency_observed": 1,
+    "command_count": 26
+  },
+  "proposals": {
+    "normal": {
+      "path": ".okf/proposals/epic26-d3-designs.json",
+      "bytes": 30204,
+      "sha256": "903b46ce936ebeef917e2de727bc465fec5e312e85d1018e9a1145a8078e58d1",
+      "output_count": 5,
+      "concept_output_sha256": "d12a5cfb7446db1d4749dfbc83fc1091fa8331c7181886355e06e397be9aafd5",
+      "inbox_index_membership": {
+        "mode": "linked-removal",
+        "selected": [
+          {
+            "name": "2026-08-06T04-07-00Z-record-phase-b-semantic-profile-approval-26.md",
+            "matched_rows": 1
+          }
+        ]
+      }
+    }
+  },
+  "runs": [
+    {
+      "label": "normal",
+      "run_id": "epic26-d3-designs",
+      "resume": false,
+      "outcome": "completed",
+      "reason": "bounded-curation-complete",
+      "wall_milliseconds": 203,
+      "cpu_milliseconds": 166,
+      "cpu_user_microseconds": 121192,
+      "cpu_system_microseconds": 43968,
+      "disk_bytes_before": 16257887,
+      "disk_bytes_after": 16294464,
+      "disk_growth_bytes": 36577,
+      "lock_released": true,
+      "bounded_report": {
+        "path": ".okf/reports/epic26-d3-designs.json",
+        "bytes": 3760,
+        "sha256": "9c60105e73d6c615c35de5c8e8ea0126f8eb391e895271de575f73e07635eced"
+      },
+      "plan": {
+        "selection_mode": "explicit",
+        "input_bytes": 583,
+        "control_input_bytes": 30204,
+        "generated_bytes": 68508,
+        "candidate_count": 1,
+        "selected_count": 1,
+        "sessions_active": 0,
+        "sessions_max": 1,
+        "phase": "completed",
+        "outcome": "completed",
+        "validation": {
+          "preflight_ok": true,
+          "staging_ok": true,
+          "postflight_ok": true
+        }
+      }
+    }
+  ],
+  "recovery_checkpoints": {},
+  "integrity": {
+    "final_selected_retention": {
+      "records": [
+        {
+          "source_path": "knowledge/inbox/2026-08-06T04-07-00Z-record-phase-b-semantic-profile-approval-26.md",
+          "processed_path": "knowledge/inbox/processed/2026-08-06T04-07-00Z-record-phase-b-semantic-profile-approval-26.md",
+          "pending": false,
+          "processed": true,
+          "expected_sha256": "370dfad015fd6e0bc362aa81d530f5ff4248232fcff385b163b6f0e8fd4e53d6",
+          "actual_sha256": "370dfad015fd6e0bc362aa81d530f5ff4248232fcff385b163b6f0e8fd4e53d6",
+          "hash_preserved": true
+        }
+      ],
+      "all_pending": false,
+      "all_processed": true,
+      "manifest_sha256": "24fa115e4d4fc008d5cfedea66d5bc0dcd50ea3257e46c0e993dc0850cf69192"
+    },
+    "unselected_before": {
+      "count": 21,
+      "sha256": "7d79aa6b2ba2d53a69578d459df91906132ec7a6e0e63e1b06ed965b5faaf554"
+    },
+    "unselected_after": {
+      "count": 21,
+      "sha256": "7d79aa6b2ba2d53a69578d459df91906132ec7a6e0e63e1b06ed965b5faaf554"
+    },
+    "unselected_unchanged": true,
+    "maintenance": {
+      "concept_sha256": "d12a5cfb7446db1d4749dfbc83fc1091fa8331c7181886355e06e397be9aafd5",
+      "concept_index_sha256": "faf2446f3a2459adb092edee6e35d1b969fcd272fbfe3c913c6a3257cc4367e2",
+      "inbox_index_sha256": "f45dfb5ba16fb4ef617470355d22befd20529ffae0ebde766dcaf431b87b64d1",
+      "root_index_sha256": "6076ece27732bf975110d9d05eeab5566a884cfe092686b7f8b563d9eaf383f2",
+      "log_sha256": "3a84e2e85299cf6deef3abaaa7a1641efe4d91cc5b786c3ae873a5fb4fa5a956"
+    }
+  },
+  "validation": {
+    "strict_lint": {
+      "mode": "strict",
+      "files_checked": 88,
+      "diagnostics": 114,
+      "errors": 110,
+      "warnings": 4,
+      "codes": {
+        "error:body-headings-missing": 1,
+        "error:resource-outside-root": 1,
+        "error:schema-if": 27,
+        "error:schema-oneOf": 1,
+        "error:schema-pattern": 5,
+        "error:schema-required": 54,
+        "error:schema-type": 1,
+        "error:schema-uniqueItems": 19,
+        "error:yaml-parse-error": 1,
+        "warning:relationship-unresolved": 3,
+        "warning:resource-missing": 1
+      },
+      "diagnostics_sha256": "54424d82330a980e6cbdeb0b5c4dfb157dab2a6537a0f8c0841d3a84c72681e8",
+      "concept_diagnostics": 0,
+      "concept_diagnostics_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "retrieval": {
+      "semantic": {
+        "count": 1,
+        "matched_concept": true,
+        "paths_sha256": "97c6afa8eb8068606d00e634371f0b87a1c7b20b2f3bcce60614e4678e6971df",
+        "result_sha256": "623edb9793ddca38565f4f28686755380f7ea9387a033c304088a39b828eb569",
+        "query_sha256": "e75ea9380063fc13287d1a269d73740d24eec2020dbe952f308f67ef178a6d0b"
+      },
+      "portable": {
+        "exit_status": 0,
+        "matched_concept": true,
+        "stdout_bytes": 390,
+        "stdout_sha256": "8393d6a5478fdd7aedff659e0fddd1dbb551e0502e0bcbe62363811d70803a23",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "terms_sha256": "090f3af3d29a057784195d578ac4168ca85af4de4f412642b27cbf903377d39c"
+      }
+    }
+  },
+  "backlog": {
+    "selected_age": {
+      "selected_count": 1,
+      "timestamp_valid_count": 1,
+      "oldest_seconds": 199878,
+      "newest_seconds": 199878
+    },
+    "pending_before": {
+      "selected_count": 22,
+      "timestamp_valid_count": 22,
+      "oldest_seconds": 2698466,
+      "newest_seconds": 185939
+    },
+    "pending_after": {
+      "selected_count": 21,
+      "timestamp_valid_count": 21,
+      "oldest_seconds": 2698466,
+      "newest_seconds": 185939
+    }
+  },
+  "usefulness": {
+    "useful_concept_changes": 1,
+    "processed_items": 1,
+    "curation_yield": 1,
+    "strict_and_retrievable": true
+  },
+  "metrics": {
+    "wall_milliseconds": 1249,
+    "cpu_user_microseconds": 292916,
+    "cpu_system_microseconds": 190188,
+    "cpu_milliseconds": 484,
+    "executor_invocations": 1,
+    "executor_generated_bytes_total": 68508,
+    "proposal_control_bytes_total": 30204,
+    "max_active_sessions_observed": 1,
+    "max_concurrent_runs_observed": 1
+  },
+  "declared_limits": {
+    "executor": {
+      "max_items": 1,
+      "max_input_bytes": 4096,
+      "max_generated_bytes": 262144,
+      "max_runtime_seconds": 30,
+      "max_sessions": 1
+    },
+    "harness": {
+      "max_snapshot_bytes": 4294967296,
+      "max_disk_growth_bytes": 1048576,
+      "max_report_bytes": 65536,
+      "max_wall_seconds": 120,
+      "max_cpu_milliseconds_per_run": 5000
+    }
+  },
+  "failure": null,
+  "report_hashes": {
+    "evidence_payload_sha256": "306c479cd513ab3bbfb2698810fa97d3db476d3c9745da55383503de43cbf1e2",
+    "bounded_executor_reports_sha256": "4d7cf9d36782e99b5c42d0f5632f3fefc779083ddcc0051891a377faecb13592",
+    "proposal_manifest_sha256": "1c5fc114f7fe06727232b03c78ae6de9407a6625e584e4bf00e6d36bb5f38214"
+  }
+}

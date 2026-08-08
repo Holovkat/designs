@@ -1,0 +1,52 @@
+{
+  "version": "okf-scheduler-disable-evidence/1",
+  "observed_at": "2026-08-08T07:56:34Z",
+  "decision": "manual-explicit",
+  "launch_agent": {
+    "path": "/Users/tonyholovka/Library/LaunchAgents/com.okf.cron-server.plist",
+    "sha256": "f62a589d15f969f1c07ffcae4a6c444963a9807d1aeb30158f2e5ee245c9dc42",
+    "installed": true,
+    "loaded": false,
+    "disabled": true,
+    "run_at_load_in_file": true,
+    "keep_alive_in_file": true
+  },
+  "jobs_config": {
+    "path": "/Users/tonyholovka/workspace/cron-jobs.json",
+    "sha256": "e5eb982edca3556b9b9ca4759170ae0d45890809bfd5ce85c762504f293f42e3",
+    "curator_jobs": [
+      {
+        "id": "fmsmercury-okf-curation",
+        "enabled": false
+      },
+      {
+        "id": "designs-okf-curation",
+        "enabled": false
+      },
+      {
+        "id": "pi-extensions-curate",
+        "enabled": false
+      },
+      {
+        "id": "fms-glm-okf-curation",
+        "enabled": false
+      }
+    ],
+    "all_curator_jobs_disabled": true
+  },
+  "runtime": {
+    "cron_server_processes": 0,
+    "active_okf_crontab_lines": 0,
+    "crontab_sha256": "ef8807a0888f6f49824cd9636b044fe15817ce78093b822a329d5b874a401a8e"
+  },
+  "mutation": {
+    "jobs_changed": [
+      "fmsmercury-okf-curation",
+      "designs-okf-curation",
+      "pi-extensions-curate"
+    ],
+    "launch_agent_label_disabled": "com.okf.cron-server",
+    "files_removed": false,
+    "crontab_rewritten": false
+  }
+}

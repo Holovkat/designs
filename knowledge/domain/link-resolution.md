@@ -1,63 +1,64 @@
 ---
 type: Domain
-title: Link Resolution in OKF
-description: How relative markdown links between concepts are resolved to concept IDs in the viewer
+title: Link and Relationship Resolution in OKF
+description: Separation of stable semantic identifiers, typed relationships, Markdown citations, and resource navigation
 resource: ./templates/okf/viewer.html
-tags: [okf, links, resolution, viewer, navigation]
-timestamp: 2026-06-29T14:30:00Z
+tags: [citations, identifiers, links, navigation, okf, relationships, viewer]
+timestamp: 2026-08-08T00:00:00Z
 status: active
+id: okf-26000000-0000-4000-8000-000000000004
+assertion_state: verified
+generated_at: 2026-08-08T00:00:00Z
+generated_by: codex-epic-26
+source_authority: repository-git
+evidence_refs: [templates/okf/viewer.html, templates/okf/generate-viz.js]
+verified_at: 2026-08-08T00:00:00Z
+verification_method: viewer-and-generator-review
+validity_basis: Current OKF viewer navigation and relationship model
 ---
 
-# Link Resolution in OKF
+# Link and Relationship Resolution in OKF
 
-Concepts link to each other using relative markdown paths (e.g., `../architecture/viewer-architecture.md`). The OKF viewer intercepts clicks on these links and resolves them to concept IDs for in-viewer navigation.
+OKF deliberately keeps three mechanisms separate:
 
-## How Links Are Written
+1. stable `id` values identify concepts across renames and file moves;
+2. typed frontmatter predicates assert semantic relationships by stable ID; and
+3. ordinary Markdown links provide citations and human navigation by path.
 
-In a concept body, links use standard markdown syntax with relative paths:
+File paths remain repository locations, not semantic identities.
 
-```markdown
-See [Viewer Architecture](../architecture/viewer-architecture.md) for details.
-The [Hook System](./hook-system.md) refreshes the viewer manifest and nudges for curation.
-```
+## Typed Relationship Resolution
 
-Links are relative to the concept file's directory, just like normal markdown file links.
+The generator parses accepted YAML with the pinned local runtime and builds an
+ID map. It resolves `depends_on`, `implements`, `supersedes`, `derived_from`,
+`contradicts`, and `blocked_by` values against that map. The viewer renders each
+predicate and its inverse distinctly. Symmetric contradiction edges are
+deduplicated.
 
-## Concept IDs
+Missing targets, invalid target values, duplicate IDs, self-edges, cycles, and
+legacy path-shaped values remain visible diagnostics. They are never silently
+dropped or converted into assertions.
 
-A concept ID is the file path relative to the `knowledge/` root with the `.md` extension stripped. For example:
+## Markdown Citations and Backlinks
 
-| File Path | Concept ID |
-|-----------|------------|
-| `architecture/viewer-architecture.md` | `architecture/viewer-architecture` |
-| `domain/concept-types.md` | `domain/concept-types` |
-| `decisions/legacy-alignment-mode.md` | `decisions/legacy-alignment-mode` |
+Concept bodies use normal relative Markdown links with `.md` extensions. The
+viewer resolves them relative to the source file, normalises `.` and `..`
+segments within the knowledge bundle, and navigates to the matching concept
+file. It separately computes a `Cited by` backlink list. These citations remain
+usable in ordinary Markdown and do not require the target to expose a stable ID.
 
-## Viewer Link Interception
+## Resource Navigation
 
-When a user clicks a `.md` link in a concept body or frontmatter, the viewer's click handler executes this resolution algorithm:
+The optional `resource` field may be a repository-root-relative file, issue, or
+external URI. Root-relative resources are resolved from the project root, not
+from the concept directory. Resource links do not become graph relationships.
 
-1. **Skip external links:** If the href starts with `http` or `#`, let the browser handle it normally.
-2. **Determine base directory:** Take the current concept's ID and extract everything up to and including the last `/`. For example, if the current concept is `domain/concept-types`, the base directory is `domain/`.
-3. **Prepend base:** Combine the base directory with the href. For example, `../architecture/viewer-architecture.md` from `domain/concept-types` becomes `domain/../architecture/viewer-architecture.md`.
-4. **Normalise `../`:** Repeatedly replace `[^/]+/\.\./` (a directory name followed by `../`) with nothing. This resolves parent directory references. For example, `domain/../architecture/viewer-architecture.md` becomes `architecture/viewer-architecture.md`.
-5. **Remove `./`:** Replace `/./` with `/` and strip leading `./`.
-6. **Strip `.md`:** Remove the `.md` extension to produce the concept ID. For example, `architecture/viewer-architecture.md` becomes `architecture/viewer-architecture`.
-7. **Look up concept:** Find the concept with the matching ID in the loaded concepts array.
-8. **Display:** If found, show the target concept in the same detail panel and select its node in the graph view.
+## Compatibility
 
-## Link Extraction for Graph Edges
+Legacy concepts without stable IDs remain browsable through an explicit
+fallback identity derived from their file location. The viewer marks that mode;
+new strict concepts use stable IDs. This preserves gradual adoption without
+making legacy path identity the semantic contract.
 
-The viewer also extracts links during concept processing (not just on click). The `extractLinks` function scans the markdown body for `[text](path.md)` patterns, resolves the target path using the same normalisation logic, and creates graph edges. Links that resolve to non-existent concept IDs are silently dropped (no broken edges in the graph).
-
-## Backlinks
-
-After processing all concepts, the viewer computes backlinks: for each concept, which other concepts link to it. Backlinks are displayed in the detail panel as a "Cited by" section. Clicking a backlink navigates to the citing concept.
-
-## Best Practices
-
-- Use relative paths from the current concept's directory, consistent with standard markdown.
-- Always include the `.md` extension in link targets so they work in normal markdown renderers too.
-- Link to concepts that provide context for the current topic. Cross-linking enriches the knowledge graph.
-- Avoid linking to `index.md` files; link to specific concepts instead.
-- The curation agent adds cross-links during [curation passes](../process/curation-pass.md).
+See [Viewer Architecture](../architecture/viewer-architecture.md) and
+[OKF Semantic Query Helper](../architecture/okf-query-helper.md).

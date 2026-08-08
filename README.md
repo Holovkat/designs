@@ -19,7 +19,7 @@ This repository is documentation-first. The README is the GitHub index. The deta
 | [Skill governance](templates/instructional-documents/skill-governance.md) | Ownership boundaries, deterministic audit and quarantine policy, and staged T1-T5 verification. |
 | [UI/UX guidelines](templates/ui-ux-guidelines/) | Design-token and interface-pattern references. |
 | [OKF system](templates/okf/) | Open Knowledge Format standard, viewer, installer, post-commit hook, and deployment runbook. Install with `install-session-workflows.sh --with-okf`. |
-| [OKF knowledge bundle](knowledge/) | Self-documenting OKF knowledge base (54 concepts) covering the OKF standard, viewer, deployment process, and designs project content. View in any browser with `knowledge/viz.html`. |
+| [OKF knowledge bundle](knowledge/) | Self-documenting OKF knowledge base (63 concepts) covering the OKF standard, viewer, deployment process, and designs project content. View in any browser with `knowledge/viz.html`. |
 
 ## Planning Decomposition
 

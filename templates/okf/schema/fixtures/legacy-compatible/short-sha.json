@@ -1,0 +1,13 @@
+{
+  "branch": "main",
+  "capture_tier": "commit",
+  "commit_sha": "ecb76f8",
+  "description": "Legacy cross-repository reference",
+  "tags": [
+    "fixture",
+    "legacy"
+  ],
+  "timestamp": "2026-07-08T06:03:52Z",
+  "title": "Historical short SHA",
+  "type": "Inbox"
+}

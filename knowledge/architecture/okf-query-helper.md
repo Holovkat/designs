@@ -1,82 +1,45 @@
 ---
 type: Architecture
 title: OKF Query Helper
-description: Portable grep-based concept search tool with frontmatter ranking and a decisions/deprecation scope for prior and rejected paths
+description: Portable grep fallback plus pinned local semantic queries for typed relationships, assertions, evidence, lifecycle, and validation state
 resource: ./templates/okf/okf-query.sh
-tags: [okf, query, search, grep, bash, portable, decisions, deprecation]
-timestamp: 2026-07-05T13:00:00Z
+tags: [evidence, lifecycle, okf, query, relationships, search]
+timestamp: 2026-08-08T00:00:00Z
 status: active
+issue_refs: [26]
+epic_refs: [26]
+assertion_state: proposed
+generated_at: 2026-08-08T00:00:00Z
+generated_by: epic-26-implementation
+source_authority: repository-source
+evidence_refs: [templates/okf/okf-query.sh, templates/okf/bin/okf-query.mjs, templates/okf/tests/query_test.mjs]
 ---
 
-# OKF Query Helper
+# Portable path
 
-`okf-query.sh` is a portable bash script that searches the OKF knowledge bundle by term. It is installed to `knowledge/okf-query.sh` by the OKF installer and can be run by any agent harness, CLI, or human developer. It requires only bash, grep, and find (no Node, no Python, no external dependencies).
+`knowledge/okf-query.sh <terms>` and `--decisions` use only shell search tools,
+rank frontmatter before body matches, and remain available without `.okf` or a
+Node parser. This is the minimum OKF-first discovery path.
 
-## Usage
+# Semantic path
 
-```bash
-# Search all concept types by term(s)
-knowledge/okf-query.sh <term> [<term> ...]
+Installed `.okf/bin/okf-query.mjs` requires one explicit physical Git root and
+the pinned C7 parser. It supports predicate/target and related-to queries,
+assertion state, evidence presence/reference, lifecycle/status, and validation
+status (`strict`, `legacy-compatible`, or retained nonconformant), with
+deterministic text or JSON.
 
-# Search only decisions/ and deprecation/ (prior and rejected paths)
-knowledge/okf-query.sh --decisions <term> [<term> ...]
-```
+The query surface distinguishes stored predicates, derived inverse matches,
+Markdown citations, unresolved targets, lifecycle, assertion, and validation.
+It reads only contained regular files, rejects escaping symlinks, uses no
+network, and never mutates, validates into compliance, starts curation, or
+turns a result into execution authority.
 
-## Output Format
+If the local semantic runtime is missing, semantic filters fail closed with
+guidance while basic/decision search continues through the portable path.
 
-One block per matching concept:
+# Related concepts
 
-```
-----------------------------------------
-title:  <title>
-type:   <type>   status: <status>
-desc:   <description>
-tags:   <tags>
-path:   <relative-path>   (matched: frontmatter|body)
-```
-
-## Ranking
-
-Results are ranked in two passes:
-
-1. **Frontmatter matches (higher priority):** The script extracts the YAML frontmatter block and checks whether the pattern matches the title, tags, or description. Frontmatter matches are printed first.
-2. **Body matches (lower priority):** The script then checks the full file body. Body-only matches (not already matched by frontmatter) are printed second.
-
-A `seen` array prevents duplicate entries when a file matches in both passes.
-
-## Scope Modes
-
-- **Default:** Searches `architecture/`, `components/`, `domain/`, `decisions/`, `process/`, `deprecation/`, `state/`.
-- **`--decisions`:** Searches only `decisions/` and `deprecation/`. This supports the [OKF-First Protocol](../decisions/okf-first-protocol.md) rule: "Before proposing a plan, check `decisions/` and `deprecation/` for paths already taken or rejected."
-
-## Knowledge Root Resolution
-
-The script resolves the knowledge root by checking:
-
-1. Whether the script's own directory has an `index.md` and an `inbox/` directory (i.e., the script lives inside `knowledge/`).
-2. Whether `./knowledge` exists (i.e., the script is run from the repo root).
-
-This makes it portable across projects and install locations.
-
-## Pattern Construction
-
-Multiple search terms are joined with `|` (OR) and passed to `grep -qiE` (case-insensitive extended regex). This allows searching for multiple related terms in one invocation.
-
-## Frontmatter Field Extraction
-
-The `frontmatter_field` helper uses awk to parse the YAML frontmatter block (between `---` delimiters) and extract a specific field value. It handles the `field: value` format and trims whitespace.
-
-## Design Constraints
-
-- **No dependencies beyond bash, grep, find, awk:** The script must work on any Unix-like system without installing anything. This is why it uses grep rather than a YAML parser.
-- **Index files excluded:** `find -name '*.md' ! -name 'index.md'` ensures index files are not treated as concepts.
-- **Sorted output:** `find ... | sort` ensures deterministic output ordering.
-- **Fail-safe:** `set -euo pipefail` with fallbacks for missing directories and empty results. Prints a helpful message when no concepts match.
-
-## Installation
-
-The installer (`install-okf.sh`) copies `okf-query.sh` from `templates/okf/` to `knowledge/okf-query.sh` and makes it executable. See [Installer Design](./installer-design.md).
-
-## Relationship to OKF-First Protocol
-
-The query helper is the tool that makes the [OKF-First Protocol](../decisions/okf-first-protocol.md) practical. Rule 1 ("query before investigating") and Rule 2 ("check decisions and deprecation before planning") both rely on being able to search the bundle quickly. The `--decisions` scope directly supports Rule 2.
+- [OKF-First Protocol](../decisions/okf-first-protocol.md)
+- [OKF Typed Viewer Architecture](./viewer-architecture.md)
+- [OKF Semantic Profile](../decisions/semantic-profile-and-semantic-web-scope.md)

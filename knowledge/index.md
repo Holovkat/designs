@@ -1,6 +1,6 @@
 # Designs Knowledge Index
 
-> Last updated: 2026-07-05
+> Last updated: 2026-08-08
 > OKF Version: 0.1
 
 ## Concept Groups
@@ -10,14 +10,14 @@
 | [Architecture](./architecture/index.md) | 8 | System structure, design standards, token schemas, tooling |
 | [Components](./components/index.md) | 5 | UI component, form, data display, interactive, and layout patterns |
 | [Domain](./domain/index.md) | 7 | OKF domain knowledge and designs design domain rules |
-| [Decisions](./decisions/index.md) | 8 | Architectural decisions and rationale |
-| [Process](./process/index.md) | 23 | OKF workflows and designs project processes |
-| [Deprecation](./deprecation/index.md) | 2 | Superseded patterns with lessons |
+| [Decisions](./decisions/index.md) | 13 | Architectural decisions and rationale |
+| [Process](./process/index.md) | 24 | OKF workflows and designs project processes |
+| [Deprecation](./deprecation/index.md) | 4 | Superseded patterns with lessons |
 | [State](./state/index.md) | 2 | Current state of OKF system and designs project content |
-| [Inbox](./inbox/index.md) | 2 | Items awaiting curation |
+| [Inbox](./inbox/index.md) | 25 | Items awaiting curation |
 
 ## Quick Links
 
 - [Update Log](./log.md)
-- [Knowledge Graph Viewer](./viewer.html) (open in Chrome)
+- [Knowledge Graph Viewer](./viz.html) (open in a browser)
 - [OKF Standard](https://github.com/holovkat/designs/blob/main/templates/okf/OKF-STANDARD.md)

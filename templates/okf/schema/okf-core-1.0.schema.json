@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OKF Core Application Profile 1.0",
+  "description": "Strict frontmatter contract for newly authored or materially updated OKF records. Historical records are evaluated in compatibility mode by the fixture runner and are never rewritten by this schema.",
+  "type": "object",
+  "required": ["type", "title", "description", "tags", "timestamp"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["Architecture", "Component", "Domain", "Decision", "Process", "Deprecation", "State", "Inbox"]
+    },
+    "title": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$" },
+    "description": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$" },
+    "resource": { "type": "string", "minLength": 1 },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9]+([./-][a-z0-9]+)*$" }
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "status": { "type": "string", "enum": ["active", "deprecated", "in-progress", "blocked"] },
+    "issue_refs": { "$ref": "#/$defs/positiveIntegerSet" },
+    "epic_refs": { "$ref": "#/$defs/positiveIntegerSet" },
+    "id": { "$ref": "#/$defs/conceptId" },
+    "depends_on": { "$ref": "#/$defs/conceptIdSet" },
+    "implements": { "$ref": "#/$defs/conceptIdSet" },
+    "supersedes": { "$ref": "#/$defs/conceptIdSet" },
+    "derived_from": { "$ref": "#/$defs/conceptIdSet" },
+    "contradicts": { "$ref": "#/$defs/conceptIdSet" },
+    "blocked_by": { "$ref": "#/$defs/conceptIdSet" },
+    "decision_status": { "type": "string", "minLength": 1 },
+    "deprecated_reason": { "type": "string", "minLength": 1 },
+    "deprecated_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "capture_tier": { "type": "string", "enum": ["commit", "session"] },
+    "commit_sha": {
+      "oneOf": [
+        { "$ref": "#/$defs/fullGitObjectId" },
+        { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/fullGitObjectId" } }
+      ]
+    },
+    "branch": { "type": "string", "minLength": 1 },
+    "session_id": { "$ref": "#/$defs/uuid" },
+    "rationale_missing": { "type": "boolean" },
+    "impact_missing": { "type": "boolean" },
+    "assertion_state": { "type": "string", "enum": ["verified", "inferred", "proposed", "historical", "stale"] },
+    "generated_at": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+    "generated_by": { "type": "string", "minLength": 1 },
+    "source_authority": {
+      "type": "string",
+      "enum": ["repository-git", "repository-contract", "repository-source", "operator-approval", "tracker-record", "external-primary", "reported-secondary"]
+    },
+    "evidence_refs": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "verified_at": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+    "verification_method": { "type": "string", "minLength": 1 },
+    "validity_basis": { "type": "string", "minLength": 1 },
+    "valid_from": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+    "valid_until": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+    "stale_reason": { "type": "string", "minLength": 1 },
+    "source_repository": { "type": "string", "minLength": 1 },
+    "approval_required": { "type": "boolean" },
+    "approval_ref": { "type": "string", "minLength": 1 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "Inbox" } }, "required": ["type"] },
+      "then": {
+        "required": ["capture_tier", "generated_at", "generated_by"],
+        "not": {
+          "anyOf": [
+            { "required": ["id"] },
+            { "required": ["depends_on"] },
+            { "required": ["implements"] },
+            { "required": ["supersedes"] },
+            { "required": ["derived_from"] },
+            { "required": ["contradicts"] },
+            { "required": ["blocked_by"] }
+          ]
+        }
+      },
+      "else": { "required": ["status"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "Deprecation" } }, "required": ["type"] },
+      "then": {
+        "required": ["deprecated_reason", "deprecated_date"],
+        "properties": {
+          "status": { "const": "deprecated" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "deprecated" } }, "required": ["status"] },
+      "then": { "properties": { "type": { "const": "Deprecation" } } }
+    },
+    {
+      "if": { "properties": { "capture_tier": { "const": "commit" } }, "required": ["capture_tier"] },
+      "then": {
+        "properties": { "type": { "const": "Inbox" }, "commit_sha": { "$ref": "#/$defs/fullGitObjectId" } },
+        "required": ["branch", "commit_sha"],
+        "not": { "required": ["session_id"] }
+      }
+    },
+    {
+      "if": { "properties": { "capture_tier": { "const": "session" } }, "required": ["capture_tier"] },
+      "then": {
+        "properties": {
+          "type": { "const": "Inbox" },
+          "commit_sha": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/fullGitObjectId" } }
+        },
+        "required": ["branch", "commit_sha", "session_id"]
+      }
+    },
+    {
+      "if": {
+        "anyOf": [
+          { "required": ["depends_on"] }, { "required": ["implements"] }, { "required": ["supersedes"] },
+          { "required": ["derived_from"] }, { "required": ["contradicts"] }, { "required": ["blocked_by"] }
+        ]
+      },
+      "then": { "required": ["id"] }
+    },
+    {
+      "if": { "properties": { "assertion_state": { "const": "verified" } }, "required": ["assertion_state"] },
+      "then": { "required": ["generated_at", "generated_by", "source_authority", "evidence_refs", "verified_at", "verification_method", "validity_basis"] }
+    },
+    {
+      "if": { "properties": { "assertion_state": { "const": "inferred" } }, "required": ["assertion_state"] },
+      "then": { "required": ["evidence_refs"] }
+    },
+    {
+      "if": { "properties": { "assertion_state": { "const": "stale" } }, "required": ["assertion_state"] },
+      "then": { "required": ["stale_reason"] }
+    },
+    {
+      "if": { "required": ["generated_at"] },
+      "then": { "required": ["generated_by"] }
+    },
+    {
+      "if": { "required": ["valid_until"] },
+      "then": { "required": ["valid_from"] }
+    }
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "positiveIntegerSet": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "integer", "minimum": 1 }
+    },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "conceptId": {
+      "type": "string",
+      "pattern": "^okf-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "conceptIdSet": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/conceptId" }
+    },
+    "fullGitObjectId": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    }
+  }
+}

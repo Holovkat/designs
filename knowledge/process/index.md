@@ -2,13 +2,14 @@
 
 | Title | Description | Tags | Status |
 |-------|-------------|------|--------|
-| [Deploy OKF to a Project](./deploy-okf.md) | Full 8-phase deployment workflow from mechanical install to final verification | [okf, deployment, runbook, install, workflow] | active |
+| [Two-Tier Inbox Capture Cadence](./two-tier-inbox-cadence.md) | Complementary quality-guarded commit and session captures with explicit manual status and bounded curation | [okf, inbox, capture-tier, post-commit, session-synthesis, curation] | active |
+| [Deploy OKF to a Project](./deploy-okf.md) | Nine-phase warning-first deployment from offline install through bounded verification and canary review | [okf, deployment, runbook, install, workflow] | active |
 | [Seed Knowledge From Existing Docs](./seed-from-existing-docs.md) | How to create OKF concepts from a project's existing documentation | [okf, seeding, docs, legacy, concepts] | active |
 | [Process GitHub Epics](./process-github-epics.md) | How to convert closed GitHub epics into OKF knowledge entries | [okf, github, epics, issues, gh-cli] | active |
 | [Create Schema Diagrams](./create-schema-diagrams.md) | How to create mermaid ER diagram concepts from database schema sources | [okf, schema, mermaid, er-diagram, database] | active |
 | [Migrate AGENTS.md to OKF](./migrate-agents-md.md) | How to update a project's AGENTS.md to use OKF references | [okf, agents-md, migration, affine, legacy] | active |
-| [OKF Curation Pass](./curation-pass.md) | Full curation workflow for processing inbox items, auditing knowledge quality, and maintaining AGENTS.md alignment | [okf, curation, inbox, maintenance, cross-links, audit] | active |
-| [Verify OKF Deployment](./verify-deployment.md) | Verification checklist for confirming a complete OKF deployment | [okf, verification, deployment, quality-check] | active |
+| [OKF Bounded Curation Pass](./curation-pass.md) | Explicit proposal-driven workflow with exact-root isolation, quotas, validation, checkpoints, recovery, and approval boundaries | [okf, curation, inbox, validation, recovery, audit] | active |
+| [Verify OKF Deployment](./verify-deployment.md) | Combined profile, capture, semantic-tooling, curator, archive, cadence, installer, and canary verification | [okf, verification, deployment, canary, recovery] | active |
 | [GitHub Workflow Guide](./github-workflow.md) | Graphite-style stacking workflow with squash merge, branch chaining, and force-with-lease rebasing | [designs, github, workflow, graphite, stacking, squash-merge, git] | active |
 | [Deployment Guide](./deployment-guide.md) | Dual-environment deployment with Vercel for production demos and Dokku on Hetzner for UAT testing | [designs, deployment, vercel, dokku, hetzner, docker, ci-cd] | active |
 | [Planning Decomposition Workflow](./planning-decomposition.md) | Converting user requests or issues into issue-ready specifications through planning orchestrators | [designs, planning, decomposition, orchestrator, requirements, workflow] | active |

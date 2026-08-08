@@ -1,0 +1,15 @@
+{
+  "deprecated_date": "2026-08-06",
+  "deprecated_reason": "A fixture models prospective strict deprecation metadata",
+  "description": "A strict fixture for the OKF application profile",
+  "id": "okf-63a160c2-9a5b-4df9-87b4-40ac8f59ac89",
+  "resource": "templates/okf/OKF-STANDARD.md",
+  "status": "deprecated",
+  "tags": [
+    "okf",
+    "fixture"
+  ],
+  "timestamp": "2026-08-06T04:10:00Z",
+  "title": "Fixture Deprecation",
+  "type": "Deprecation"
+}

@@ -6,9 +6,9 @@ The Open Knowledge Format (OKF) defines a convention for maintaining project kno
 
 1. **Git is canonical.** All knowledge lives in markdown files committed to the project repo. No external system is the source of truth.
 2. **Agents read first.** Before starting work, agents read the OKF bundle to understand current state, architecture, and prior decisions.
-3. **Two-phase capture.** Agents write lightweight session syntheses to an inbox before committing. A curation pass later upserts permanent concept files with full context.
+3. **Two-tier capture.** The post-commit hook writes one compact Tier 1 commit capture; `end-session` writes one complementary Tier 2 session synthesis after committed work. A later, explicit curation pass upserts permanent concept files with full context.
 4. **Progressive disclosure.** Index files at each level provide summaries. Agents read the index, then drill into specific concepts only when relevant.
-5. **Deprecation is explicit.** When a concept is superseded, the old file is moved to `deprecation/` with a `supersedes` link, not deleted.
+5. **Deprecation is explicit.** When a concept is superseded, the old record is retained in `deprecation/`; the replacement declares the typed `supersedes` relationship. Knowledge is not silently deleted.
 
 ## Directory Structure
 
@@ -82,7 +82,7 @@ branch: codex/issue-1503         # Branch context
 ---
 ```
 
-### Required Fields
+### OKF v0.1 baseline fields
 
 - `type` - must be one of the eight concept types
 
@@ -96,51 +96,317 @@ branch: codex/issue-1503         # Branch context
 
 ### Extension Fields
 
-Any additional YAML fields are allowed. Common extensions:
+Any additional YAML fields are retained for v0.1 compatibility. Common legacy
+extensions include:
 - `status` - lifecycle state of the concept
-- `supersedes` - array of filenames this concept replaces (used in deprecation/)
+- `supersedes` - historically an array of paths; under `okf-core/1.0` it is a
+  typed relationship from a replacement concept to stable concept IDs
 - `issue_refs` / `epic_refs` - ticket references for traceability
 - `session_id` / `commit_sha` / `branch` - provenance for inbox items
 
+## OKF Core 1.0 application profile
+
+`okf-core/1.0` is the machine-checkable application profile for new or
+materially updated records. It is additive to OKF v0.1: Git and repository-local
+Markdown/YAML remain canonical, unknown fields are preserved, and retained
+history is audited before it is enforced. The versioned schema is installed at
+`.okf/schema/okf-core-1.0.schema.json`; the generated dependency-free validator,
+shared YAML parser, and linter must use the same schema semantics.
+
+### Compatibility levels
+
+| Level | Meaning |
+|---|---|
+| `legacy` | Parse retained history and report profile differences as warnings; never rewrite it. |
+| `warning` | Apply the full prospective profile and capture-quality policy as diagnostics without enforcing the whole bundle. This is the installer default. |
+| `strict-new` | Require new or materially updated records to satisfy `okf-core/1.0`; untouched history remains warning-only. |
+| `strict-bundle` | Require every active record to conform, only after a reviewed migration manifest and rollback proof. |
+
+Promotion is repository-local and operator-controlled. An audit, warning, or
+successful canary in one project never promotes another project.
+
+### Strict portable record shape
+
+The strict profile requires `type`, `title`, `description`, `tags`, `timestamp`,
+and `status`, with conditional fields for Inbox, Deprecation, and verified
+records. Tags are unique lowercase strings and timestamps are UTC ISO-8601.
+Core scalars are one-line values and core collections are flow arrays. New
+portable extension names use `x_<owner>_<name>`; established project-local
+fields remain available as retained extensions until deliberately registered.
+
+Permanent concepts that declare semantic relationships use an opaque stable ID
+of the form `okf-<lowercase-uuidv4>`. The ID survives a file rename, move, or
+deprecation. Paths continue to serve navigation and are not semantic identity.
+
+The controlled relationship predicates are:
+
+| Predicate | Direction |
+|---|---|
+| `depends_on` | this concept requires the target |
+| `implements` | this concept realizes the target |
+| `supersedes` | this concept replaces the target |
+| `derived_from` | this concept was derived from the target |
+| `contradicts` | this concept conflicts with the target |
+| `blocked_by` | this concept cannot progress because of the target |
+
+Each target is a project-local stable ID. Unresolved, invalid, duplicate,
+self-referential, and legacy path-valued relationships remain visible
+diagnostics; consumers must not fabricate, fetch, drop, or silently redirect a
+target. Markdown links remain ordinary citations and viewer backlinks rather
+than being promoted automatically into typed relationships.
+
+### Lifecycle, assertion, provenance, and evidence
+
+`status` describes record lifecycle. `assertion_state` separately describes the
+claim state and is one of `verified`, `inferred`, `proposed`, `historical`, or
+`stale`; missing state on retained history is `legacy-unspecified`, not a sixth
+stored value. Governance fields such as `decision_status` remain separate.
+
+The portable provenance surface is flat and record-level: `generated_at`,
+`generated_by`, `source_authority`, `source_repository`, `evidence_refs`,
+`verified_at`, `verification_method`, `validity_basis`, `valid_from`,
+`valid_until`, and `stale_reason`. Source authority is claim-scoped. A local
+`resource` supplies context but is not proof, a stable ID, or an external
+authority. Unresolved external evidence is retained and classified rather than
+promoted or erased.
+
+Validation must distinguish parser/profile errors from lifecycle and knowledge
+states. `proposed`, `inferred`, `historical`, `stale`, or an unresolved
+relationship is not by itself malformed. A `verified` assertion must carry the
+profile's required verification evidence.
+
+### External vocabulary mapping boundary
+
+DCMI terms describe generic metadata, PROV-O describes optional provenance
+projection, and SKOS is limited to deliberately governed code lists. schema.org
+is an optional consumer mapping. FOAF and DBpedia are not core dependencies.
+JSON-LD/RDF export and SHACL remain deferred: OKF installs no remote context,
+RDF store, graph service, reasoner, or semantic-web runtime. Any future export
+must be deterministic, offline, use a pinned local context and an approved
+namespace/identity policy, and remain a projection from canonical Markdown/YAML.
+
+### Validation contract
+
+- `okf-lint` accepts one explicit repository root and operates read-only.
+- Warning/legacy mode preserves retained records; strict mode is for opted-in
+  new or migrated records.
+- Capture checks prevent unsafe new accumulation while retaining one auditable
+  Tier 1 record per ordinary commit and providing an explicit non-destructive
+  operator override.
+- Curator preflight validates selected source material before mutation. Staged
+  outputs and final bundle state are validated before a source is finalized as
+  processed. Invalid output and original input remain recoverable.
+- The linter, viewer, query helper, capture path, and curator share the accepted
+  parser/profile semantics. Contract drift is a line-stop for enforcement.
+
 ## Inbox Item Format
 
-Inbox items are session syntheses written at commit time. They use the same frontmatter as permanent concepts but with `type: Inbox`:
+The bundle takes two kinds of write, and they must never restate each other.
+
+### Tier 1: Commit Capture
+
+One compact item per commit, written by the repository's post-commit hook from
+the commit message body. It records **why** the change was made, **how** it was
+approached, and **what it impacts**. It does not list changed files: git already
+holds that, and a file list carries no knowledge value.
+
+The hook cannot infer intent, so the rationale comes from the commit message
+body. Commit bodies must state why and impact, not only what:
+
+```
+type(scope): subject
+
+<why and how>
+
+Impact: <what this affects>
+```
+
+The hook nudges when a commit body is only a subject line.
+
+Tier 1 frontmatter:
 
 ```yaml
 ---
 type: Inbox
-title: Session 2026-06-29 - Route geometry QA fixes
-description: Session synthesis for route geometry work
-tags: [mobile, routing, qa]
-timestamp: 2026-06-29T10:00:00Z
-session_id: 6acfd15b-bdf5-4b4b-9c1b-daff51ff57c0
-commit_sha: 5449a3d2
-branch: codex/issue-1503
-issue_refs: [1503]
-epic_refs: [1495]
+title: <subject without type/scope prefix>
+description: Commit capture for <short-sha>
+tags: [project, scope]
+timestamp: <ISO-8601>
+commit_sha: <full-sha>
+branch: <branch>
+issue_refs: [<n>]
+capture_tier: commit
 ---
+```
 
-# What Was Done
-Summary of work completed in this session.
+Body:
 
+```markdown
+# Why And How
+
+<rationale from commit body>
+
+# Impact
+
+<impact from commit body, or "Not recorded" when missing>
+```
+
+### Tier 2: Session Synthesis
+
+One item per session, written once at session close, after the work is
+committed, owned by the `end-session` skill. It records only what the individual
+commit captures cannot: decisions and their rationale, what was deprecated or
+superseded, lessons about the product or workflow, and the resulting state. It
+references the session's commit SHAs instead of restating their captures.
+
+Never per task. Never per fix. Never mid-session.
+
+Tier 2 frontmatter:
+
+```yaml
+---
+type: Inbox
+title: <what changed, in product terms>
+description: <one line>
+tags: [lowercase, consistent]
+timestamp: <ISO-8601>
+session_id: <session-uuid>
+commit_sha: [<sha>, <sha>]
+branch: <branch-name>
+issue_refs: [<n>]
+epic_refs: [<n>]
+capture_tier: session
+---
+```
+
+Body:
+
+```markdown
 # Decisions Made
-Architectural or product decisions and their rationale.
+Decisions and their rationale.
 
 # What Was Deprecated
-Patterns, components, or approaches that were removed or superseded.
+Patterns or approaches removed or superseded.
 
 # Lessons Learned
-Insights gained during the work.
+Insights about the product, business logic, or workflow.
 
 # Current State
-What works now, what's in progress, what's blocked.
+What works now, what is in progress, what is blocked.
 ```
+
+There is deliberately no completion-summary section. The commit captures already
+hold that context.
+
+### Capture Persistence
+
+At session close, `end-session` stages pending Tier 1 captures and their index
+rows with the one Tier 2 synthesis, then commits only those files as
+`okf-capture: persist session captures`. The post-commit hook skips both
+`okf-capture:` and `okf-curation:` subjects so this terminal persistence commit
+does not create another Tier 1 item. Curators use
+`okf-curation: <bounded batch summary>` for concept commits.
+
+At a sprint checkpoint or epic close, an operator may run a repository-scoped
+inbox-status check and explicitly request one bounded curation batch. Count,
+age, and size inform that decision only; they never start curation, scheduling,
+or session creation.
+
+### Capture quality and retention
+
+The capture path applies the accepted warning-first quality policy to new Tier
+1 records. The initial item review boundary is 16 KiB. Raw logs, transcripts,
+command output, generated manifests, source copies, secrets, and other bulk
+payloads are not duplicated into the inbox; a compact notice points to the Git
+commit that remains canonical. Tags and stable deduplication keys are normalized
+before writing. Dynamic YAML and Markdown values are escaped so commit text
+cannot corrupt the record envelope.
+
+Quality classification never authorizes deletion. Low-signal, malformed,
+oversized, repeated, stale, or unresolved-provenance history remains visible to
+the triage command. An explicit operator override may retain reviewed content,
+but must not disable structural escaping, unique-tag normalization, provenance,
+or the one-record-per-ordinary-commit invariant.
+
+Age at or above 30 days, load at or above 10 pending items, load at or above
+16 KiB, and any quality finding are review signals only. They do not enqueue,
+schedule, notify repeatedly, launch a curator, or create a session.
+
+Unprocessed captures remain source material. Processed captures remain an audit
+trail in `knowledge/inbox/processed/`. Reversible archive/compaction requires an
+operator-reviewed manifest that records selected paths and hashes, root and Git
+revision, classifications, destinations and hashes, approval, reason, rollback
+steps, and rollback proof. Permanent deletion requires a separate explicit
+path-by-path approval and is outside normal OKF operation.
+
+## Bounded curation operating model
+
+The approved cadence is manual and explicit. At a coherent checkpoint, an
+operator may request a read-only status or triage report for one named
+repository. A curator run is a separate request with one exact physical Git
+root and revision, a deterministic proposal and ordered item set, positive
+item/input-byte/generated-byte/runtime ceilings, `max_sessions: 1`, expected
+outcome, cancellation path, and recovery plan. No default quota supplies
+authority.
+
+Every mutating run must:
+
+1. prove the supplied root is exactly the physical Git top level and contains
+   `knowledge/`, rejecting `/`, a home directory, `/Users`, parent workspaces,
+   `..`, absolute selections, and escaping symlinks;
+2. validate the revision, allowlist, proposal, selected input hashes, control
+   files, and preflight profile findings before mutation;
+3. acquire one atomic repository-local lock and create no child, replacement,
+   Factory, or background session;
+4. check the repository-local kill switch, cancellation state, runtime, item,
+   input-byte, generated-byte, and session ceilings at safe boundaries;
+5. stage every deterministic concept, index, and log output; validate concepts
+   plus maintenance navigation/audit invariants; apply and postflight the whole
+   bounded output set before moving any selected source into
+   `inbox/processed/`; if any later safe-boundary check fails, restore moved
+   sources and roll all outputs back to retained recovery paths;
+6. emit a write-once bounded report containing root/revision, request, limits, counters,
+   item identifiers, lock/checkpoint state, validation summary, changed paths,
+   terminal outcome, reason, and recovery instruction without copying raw inbox
+   bodies; and
+7. leave source input and invalid/partial output recoverable. Resume requires a
+   new explicit request and matching plan, root, revision, allowlist, source
+   hashes, proposal, and ceilings.
+
+A live or stale lock, active/ambiguous kill switch, missing authority, changed
+input, quota breach, validation failure, unreportable state, or concurrent
+mutation fails closed. Locks are never silently cleared; quotas are never
+raised automatically; failures never self-retry or widen the selection.
+A later explicit attempt must retain the earlier terminal report and write
+separately identifiable attempt evidence.
+
+The installed cadence command reports the selected manual policy and control
+state. It never invokes the runner. The observation command evaluates an
+explicit bounded evidence manifest; it does not poll, sleep, schedule, read raw
+knowledge content, or mutate the bundle. No cron, launchd, queue consumer,
+timer, polling loop, hook trigger, Factory action, or self-reinvocation is part
+of the approved model.
+
+### Recovery and rollback
+
+Activate the kill switch to block new runs, retain reports/checkpoints/lock and
+staged recovery evidence, and use Git plus the exact proposal or archive
+manifest to restore affected paths. Then return the profile to warning mode and
+rerun the parser, linter, status, and portable search checks. Do not treat
+cleanup, artifact deletion, stale-lock removal, quota expansion, or automatic
+resume as recovery.
+
+`AGENTS.md` comparison remains report-and-approve. A curator may describe a
+precise proposed instruction change, but no OKF command may patch an instruction
+file autonomously.
 
 ## Deprecation Concept Format
 
 Deprecation is not deletion. A deprecated concept captures what was learned from the old approach so that future agents and developers can make informed decisions about whether to re-adopt it. Deprecation means "not right for this purpose right now", not "this was wrong".
 
-Deprecated concepts use the same frontmatter as other concepts, plus:
+Deprecated concepts use the same frontmatter as other concepts, plus. In the
+strict profile the active replacement declares `supersedes: [<deprecated-id>]`;
+the deprecated record does not reverse that predicate:
 
 ```yaml
 ---
@@ -151,7 +417,6 @@ resource: ./src/routing/old-engine.ts
 tags: [routing, deprecated, geometry]
 timestamp: 2026-06-29T14:00:00Z
 status: deprecated
-supersedes: [new-routing-pipeline.md]
 deprecated_reason: Could not handle real-time geometry updates
 deprecated_date: 2026-06-29
 ---
@@ -214,6 +479,10 @@ The root `index.md` lists all concept groups with counts:
 | [Inbox](./inbox/index.md) | 3 | Items awaiting curation |
 ```
 
+The post-commit hook updates the root `Inbox` count immediately after writing a
+Tier 1 capture. Curation updates the remaining group counts when it changes
+permanent concepts; neither operation needs a schedule.
+
 ## Log File Format
 
 The root `log.md` records knowledge updates in reverse chronological order:
@@ -253,21 +522,35 @@ Example `curation-prompt.md`:
 - Auto-generated API docs in `docs/api/` - too low-level for concepts
 ```
 
-If no `curation-prompt.md` exists, the curator uses default behavior (process all inbox items, scan all docs, cover all concept types equally).
+If no `curation-prompt.md` exists, the curator uses the default priorities only
+within the explicitly approved item and path allowlist. It must not turn absence
+of a prompt into an unbounded inbox, documentation, codebase, or host scan.
 
 ## Curation Rules
+
+These synthesis rules describe what a curator may propose. They do not bypass
+the bounded operating model. The curator first writes a deterministic proposal
+for the exact dry-run plan; the executor validates, stages, applies, checkpoints,
+postflights, and finalizes that proposal. External issue or source evidence may
+be gathered only when separately authorized during proposal preparation, and
+must be represented by bounded references rather than making network access a
+runtime requirement.
 
 ### Phase 1: Read Context
 
 1. Read `knowledge/curation-prompt.md` if it exists. Follow its priorities and focus areas.
-2. Read all unprocessed inbox items in `knowledge/inbox/`.
-3. Read existing concept files across all concept directories.
-4. **Fetch and read GitHub issues referenced by `issue_refs` in inbox item frontmatter** (using `gh issue view`). These issues contain pre-approved directives, acceptance criteria, linked epics, and full reasoning that enriches the curated concepts beyond commit messages alone.
+2. Read only the selected, hash-pinned inbox items in the approved run plan.
+3. Read existing concept and source files in the approved repository-local
+   context allowlist.
+4. Follow bounded evidence references already supplied to the proposal. A
+   ticket reference provides context; it is not automatic execution authority.
 
 ### Phase 2: Gap Detection
 
-5. Scan `docs/`, `docs/design/`, `docs/agents/`, and other documentation directories for significant docs that have no corresponding OKF concept (check `resource` fields).
-6. Scan the codebase for significant modules, services, or patterns that have no architectural or domain concept.
+5. Review approved documentation paths for significant docs that have no
+   corresponding OKF concept (check `resource` fields).
+6. Review approved code paths for significant modules, services, or patterns
+   that have no architectural or domain concept.
 7. Check for concepts whose `resource` field points to a file that no longer exists (stale references).
 8. Check for concepts whose `status` is `in-progress` or `blocked` that may have been resolved by recent work.
 9. Produce a gap list: docs without concepts, stale references, missing coverage areas.
@@ -278,7 +561,9 @@ If no `curation-prompt.md` exists, the curator uses default behavior (process al
 11. New concepts get a filename matching the slugified title.
 12. Updated concepts get new content merged with existing, preserving prior context.
 13. When a concept is superseded, move the old file to `deprecation/` with all required lesson sections (see Deprecation Concept Format above). The deprecation entry must capture what was learned, not just what was replaced.
-14. After curation, processed inbox items move to `inbox/processed/`.
+14. A selected inbox item moves to `inbox/processed/` only after its output is
+    staged, applied, checkpointed, and passes postflight validation. A partial
+    failure does not advance processed state.
 
 ### Phase 4: Fill Gaps
 
@@ -305,8 +590,10 @@ Run this phase on every curation pass, even when the inbox is empty.
 
 ### Phase 7: Finalize
 
-24. Update all `index.md` files with current listings.
-25. Update `knowledge/log.md` with a summary of all changes made in this curation cycle, including gaps filled, concepts re-enriched, and audit findings.
+24. Include all affected `index.md` files with current listings in the validated
+    proposal.
+25. Include the bounded `knowledge/log.md` entry in the same proposal, recording
+    gaps filled, concepts re-enriched, audit findings, and selected source IDs.
 
 ## Legacy Alignment Mode
 
@@ -353,7 +640,8 @@ status: active
 
 ### Legacy Scan
 
-When initializing OKF on a legacy project, the install script or curation agent should:
+When initializing OKF on a legacy project, a separately authorized bounded
+seeding or curation plan should:
 
 1. Scan `docs/`, `docs/design/`, `docs/agents/`, and any other documentation directories.
 2. For each significant doc, create a concept in the appropriate type directory.
@@ -372,11 +660,19 @@ When an agent starts work on a project with an OKF bundle:
 3. Read `knowledge/deprecation/index.md` to understand what has been superseded.
 4. Read concept files relevant to the work area (identified by tags and titles).
 5. Before investigating or proposing a plan, check `decisions/` and `deprecation/` for paths already taken or rejected (use `knowledge/okf-query.sh` when installed). Cite concepts instead of re-deriving answers.
-6. After completing work, write a session synthesis to `knowledge/inbox/` before committing, including approaches rejected and why. The post-commit hook refreshes the viewer manifest and nudges when the inbox reaches the curation threshold (default 5 items).
+6. Tier 1 is automatic: the post-commit hook writes one compact `capture_tier: commit` item for each ordinary commit. Commit bodies must state why/how and `Impact:`.
+7. Tier 2 is written once at session close by `end-session`, after work is committed. It references the session commit SHAs and records only decisions, deprecations, lessons, and current state.
+8. Curation is an explicit, repository-scoped, bounded operator action. The
+   accepted cadence is manual status/triage plus a separately requested run;
+   no schedule, cron, launchd, queue, polling loop, hook launch, Factory
+   automation, or automatic retry is installed.
 
 ## Versioning
 
 - `log.md` tracks knowledge evolution at the bundle level.
 - Git history provides full diff tracking for every concept file.
-- The `supersedes` field links deprecated concepts to their replacements.
+- The stable-ID `supersedes` predicate points from a replacement concept to the
+  concept it replaces; retained path-valued history is reported as ambiguous.
 - The OKF standard version is recorded in the root `index.md`.
+- The optional application-profile version and enforcement level are recorded
+  in repository-local `.okf` configuration and promotion evidence.

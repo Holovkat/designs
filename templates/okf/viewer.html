@@ -45,48 +45,76 @@ nav button.active { color: #f0f6fc; background: #21262d; font-weight: 600; }
 .tree-file .file-status { font-size: 10px; color: #f85149; margin-left: 4px; }
 
 /* Detail panel (shared between browse and graph) */
-#detail { overflow-y: auto; flex: 1; background: #0d1117; }
-#detail .empty { display: flex; align-items: center; justify-content: center; height: 100%; color: #484f58; font-size: 14px; }
-#detail .content { padding: 24px 32px; }
-#detail h2 { font-size: 22px; margin-bottom: 8px; color: #f0f6fc; }
-#detail .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-#detail .badge { font-size: 11px; padding: 2px 8px; border-radius: 12px; background: #21262d; border: 1px solid #30363d; }
-#detail .badge.type { font-weight: 600; }
-#detail .badge.type[data-type="Architecture"] { color: #58a6ff; border-color: #58a6ff44; }
-#detail .badge.type[data-type="Component"] { color: #f778ba; border-color: #f778ba44; }
-#detail .badge.type[data-type="Domain"] { color: #7ee787; border-color: #7ee78744; }
-#detail .badge.type[data-type="Decision"] { color: #d29922; border-color: #d2992244; }
-#detail .badge.type[data-type="Process"] { color: #bc8cff; border-color: #bc8cff44; }
-#detail .badge.type[data-type="Deprecation"] { color: #f85149; border-color: #f8514944; }
-#detail .badge.type[data-type="State"] { color: #79c0ff; border-color: #79c0ff44; }
-#detail .badge.type[data-type="Inbox"] { color: #ffa657; border-color: #ffa65744; }
-#detail .badge.status { color: #8b949e; }
-#detail .badge.status.deprecated { color: #f85149; }
-#detail .frontmatter { font-size: 12px; color: #8b949e; margin-bottom: 14px; font-family: monospace; }
-#detail .frontmatter div { margin-bottom: 2px; }
-#detail .body { font-size: 14px; line-height: 1.7; color: #c9d1d9; }
-#detail .body h1 { font-size: 22px; margin: 20px 0 10px; color: #f0f6fc; }
-#detail .body h2 { font-size: 18px; margin: 18px 0 8px; color: #f0f6fc; }
-#detail .body h3 { font-size: 15px; margin: 14px 0 6px; color: #f0f6fc; }
-#detail .body p { margin-bottom: 10px; }
-#detail .body ul, #detail .body ol { margin: 10px 0 10px 24px; }
-#detail .body li { margin-bottom: 4px; }
-#detail .body code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
-#detail .body pre { background: #0d1117; border: 1px solid #30363d; padding: 14px; border-radius: 6px; overflow-x: auto; margin: 10px 0; }
-#detail .body pre code { background: none; padding: 0; }
-#detail .body a { color: #58a6ff; text-decoration: none; }
-#detail .body a:hover { text-decoration: underline; }
-#detail .body table { border-collapse: collapse; margin: 10px 0; width: 100%; }
-#detail .body th, #detail .body td { border: 1px solid #30363d; padding: 6px 10px; text-align: left; font-size: 13px; }
-#detail .body th { background: #21262d; }
-#detail .backlinks { margin-top: 20px; padding-top: 14px; border-top: 1px solid #30363d; }
-#detail .backlinks h3 { font-size: 13px; color: #8b949e; margin-bottom: 6px; }
-#detail .backlinks a { display: block; font-size: 13px; color: #58a6ff; text-decoration: none; padding: 3px 0; cursor: pointer; }
-#detail .backlinks a:hover { text-decoration: underline; }
+.detail-panel { overflow-y: auto; flex: 1; background: #0d1117; }
+.detail-panel .empty { display: flex; align-items: center; justify-content: center; height: 100%; color: #484f58; font-size: 14px; }
+.detail-panel .content { padding: 24px 32px; }
+.detail-panel h2 { font-size: 22px; margin-bottom: 8px; color: #f0f6fc; }
+.detail-panel .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.detail-panel .badge { font-size: 11px; padding: 2px 8px; border-radius: 12px; background: #21262d; border: 1px solid #30363d; }
+.detail-panel .badge.type { font-weight: 600; }
+.detail-panel .badge.type[data-type="Architecture"] { color: #58a6ff; border-color: #58a6ff44; }
+.detail-panel .badge.type[data-type="Component"] { color: #f778ba; border-color: #f778ba44; }
+.detail-panel .badge.type[data-type="Domain"] { color: #7ee787; border-color: #7ee78744; }
+.detail-panel .badge.type[data-type="Decision"] { color: #d29922; border-color: #d2992244; }
+.detail-panel .badge.type[data-type="Process"] { color: #bc8cff; border-color: #bc8cff44; }
+.detail-panel .badge.type[data-type="Deprecation"] { color: #f85149; border-color: #f8514944; }
+.detail-panel .badge.type[data-type="State"] { color: #79c0ff; border-color: #79c0ff44; }
+.detail-panel .badge.type[data-type="Inbox"] { color: #ffa657; border-color: #ffa65744; }
+.detail-panel .badge.status { color: #8b949e; }
+.detail-panel .badge.status.deprecated { color: #f85149; }
+.detail-panel .frontmatter { font-size: 12px; color: #8b949e; margin-bottom: 14px; font-family: monospace; }
+.detail-panel .frontmatter div { margin-bottom: 2px; }
+.detail-panel .body { font-size: 14px; line-height: 1.7; color: #c9d1d9; }
+.detail-panel .body h1 { font-size: 22px; margin: 20px 0 10px; color: #f0f6fc; }
+.detail-panel .body h2 { font-size: 18px; margin: 18px 0 8px; color: #f0f6fc; }
+.detail-panel .body h3 { font-size: 15px; margin: 14px 0 6px; color: #f0f6fc; }
+.detail-panel .body p { margin-bottom: 10px; }
+.detail-panel .body ul, .detail-panel .body ol { margin: 10px 0 10px 24px; }
+.detail-panel .body li { margin-bottom: 4px; }
+.detail-panel .body code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+.detail-panel .body pre { background: #0d1117; border: 1px solid #30363d; padding: 14px; border-radius: 6px; overflow-x: auto; margin: 10px 0; }
+.detail-panel .body pre code { background: none; padding: 0; }
+.detail-panel .body a { color: #58a6ff; text-decoration: none; }
+.detail-panel .body a:hover { text-decoration: underline; }
+.detail-panel .body table { border-collapse: collapse; margin: 10px 0; width: 100%; }
+.detail-panel .body th, .detail-panel .body td { border: 1px solid #30363d; padding: 6px 10px; text-align: left; font-size: 13px; }
+.detail-panel .body th { background: #21262d; }
+.detail-panel .backlinks { margin-top: 20px; padding-top: 14px; border-top: 1px solid #30363d; }
+.detail-panel .backlinks h3 { font-size: 13px; color: #8b949e; margin-bottom: 6px; }
+.detail-panel .backlinks a { display: block; font-size: 13px; color: #58a6ff; text-decoration: none; padding: 3px 0; cursor: pointer; }
+.detail-panel .backlinks a:hover { text-decoration: underline; }
+.detail-panel .relationships { margin-top: 20px; padding-top: 14px; border-top: 1px solid #30363d; }
+.detail-panel .relationships h3 { font-size: 13px; color: #8b949e; margin-bottom: 8px; }
+.detail-panel .relationship-entry { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 8px; align-items: start; padding: 5px 0; font-size: 12px; }
+.detail-panel .relationship-entry .predicate { font-family: monospace; font-weight: 600; }
+.detail-panel .relationship-entry a { color: #58a6ff; text-decoration: none; cursor: pointer; }
+.detail-panel .relationship-entry a:hover { text-decoration: underline; }
+.detail-panel .relationship-entry code { color: #8b949e; overflow-wrap: anywhere; }
+.detail-panel .relationship-entry.warning { color: #d29922; }
+.detail-panel .relationship-entry.invalid { color: #f85149; }
+.detail-panel .identity-note { color: #8b949e; }
+
+/* Typed relationship diagnostics */
+#warnings-panel { display: none; flex-shrink: 0; max-height: 180px; overflow: auto; background: #2d1f08; border-bottom: 1px solid #9e6a03; }
+#warnings-panel.visible { display: block; }
+#warnings-panel summary { position: sticky; top: 0; padding: 8px 20px; cursor: pointer; background: #2d1f08; color: #e3b341; font-size: 12px; font-weight: 600; z-index: 1; }
+#warnings-list { padding: 0 20px 8px; }
+.warning-row { width: 100%; display: grid; grid-template-columns: minmax(180px, 280px) 116px minmax(120px, 1fr) minmax(180px, 1fr); gap: 8px; padding: 5px 0; border: 0; border-top: 1px solid #9e6a0333; background: none; color: #c9d1d9; text-align: left; font-size: 11px; cursor: pointer; }
+.warning-row:hover { background: #9e6a031a; }
+.warning-row .warning-code { color: #e3b341; font-family: monospace; }
+.warning-row .warning-target { color: #8b949e; font-family: monospace; overflow-wrap: anywhere; }
+.warning-row .warning-source-id { display: block; color: #8b949e; font-family: monospace; overflow-wrap: anywhere; }
 
 /* Graph view */
 #graph-view { flex-direction: row; }
-#cy { flex: 1; background: #0d1117; }
+#graph-canvas { position: relative; flex: 1; min-width: 0; }
+#cy { position: absolute; inset: 0; background: #0d1117; }
+#cy .empty { display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px; color: #8b949e; text-align: center; }
+#graph-legend { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: flex; flex-wrap: wrap; gap: 6px 10px; max-width: calc(100% - 24px); padding: 7px 10px; background: #161b22e8; border: 1px solid #30363d; border-radius: 6px; font-size: 10px; color: #8b949e; pointer-events: none; }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-line { width: 20px; border-top: 2px solid var(--edge-color); }
+.legend-line.dashed { border-top-style: dashed; }
+.legend-line.dotted { border-top-style: dotted; }
 #graph-detail { width: 480px; background: #161b22; border-left: 1px solid #30363d; overflow-y: auto; flex-shrink: 0; }
 #graph-detail .empty { display: flex; align-items: center; justify-content: center; height: 100%; color: #484f58; font-size: 14px; }
 .filter-btn { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 3px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
@@ -119,17 +147,25 @@ nav button.active { color: #f0f6fc; background: #21262d; font-weight: 600; }
 </div>
 </header>
 
+<details id="warnings-panel">
+<summary id="warnings-summary">Relationship diagnostics</summary>
+<div id="warnings-list"></div>
+</details>
+
 <div id="browse-view" class="active">
 <div id="sidebar">
 <div class="tree-header">Knowledge Bundle</div>
 <div id="tree"></div>
 </div>
-<div id="detail"><div class="empty">Select a concept from the tree</div></div>
+<div id="detail" class="detail-panel"><div class="empty">Select a concept from the tree</div></div>
 </div>
 
 <div id="graph-view">
+<div id="graph-canvas">
 <div id="cy"></div>
-<div id="graph-detail"><div class="empty">Click a node to view details</div></div>
+<div id="graph-legend"></div>
+</div>
+<div id="graph-detail" class="detail-panel"><div class="empty">Click a node to view details</div></div>
 </div>
 
 <div id="loading">Loading...</div>
@@ -142,21 +178,36 @@ const TYPE_COLORS = {
   State: '#79c0ff', Inbox: '#ffa657', unknown: '#8b949e'
 };
 const DIR_ORDER = ['architecture','components','domain','decisions','process','deprecation','state','inbox'];
+const RELATIONSHIP_DEFINITIONS = Object.freeze({
+  depends_on: { inverse: 'required_by', color: '#58a6ff', lineStyle: 'solid', cycle: 'invalid' },
+  implements: { inverse: 'implemented_by', color: '#3fb950', lineStyle: 'solid', cycle: 'invalid' },
+  supersedes: { inverse: 'superseded_by', color: '#f778ba', lineStyle: 'solid', cycle: 'invalid' },
+  derived_from: { inverse: 'source_for', color: '#bc8cff', lineStyle: 'dashed', cycle: 'invalid' },
+  contradicts: { inverse: 'contradicts', color: '#f85149', lineStyle: 'dashed', symmetric: true },
+  blocked_by: { inverse: 'blocks', color: '#d29922', lineStyle: 'dotted', cycle: 'warning' }
+});
+const RELATIONSHIP_PREDICATES = Object.keys(RELATIONSHIP_DEFINITIONS);
+const STABLE_ID_PATTERN = /^okf-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const PERMANENT_TYPES = new Set(['Architecture', 'Component', 'Domain', 'Decision', 'Process', 'Deprecation', 'State']);
 
-mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose', flowchart: { useMaxWidth: true }, er: { useMaxWidth: true } });
+if (typeof mermaid !== 'undefined') {
+  mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose', flowchart: { useMaxWidth: true }, er: { useMaxWidth: true } });
+}
 
 let allConcepts = [];
 let allLinks = [];
+let allWarnings = [];
 let cy = null;
 let activeFilters = new Set();
 let __OKF_DATA__ = null;
 let currentView = 'browse';
 
-function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  if (!match) return { frontmatter: {}, body: content };
+function legacyParseFrontmatter(content) {
+  const text = content.startsWith('\uFEFF') ? content.slice(1) : content;
+  const match = text.match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n([\s\S]*)$/);
+  if (!match) return { frontmatter: {}, body: content, diagnostics: [], parser: 'legacy' };
   const yaml = match[1], body = match[2], fm = {};
-  for (const line of yaml.split('\n')) {
+  for (const line of yaml.split(/\r?\n/)) {
     const m = line.match(/^(\w+):\s*(.*)$/);
     if (!m) continue;
     const key = m[1]; let value = m[2].trim();
@@ -165,70 +216,282 @@ function parseFrontmatter(content) {
       fm[key] = inner ? inner.split(',').map(s => s.trim().replace(/^["']|["']$/g, '')) : [];
     } else { fm[key] = value.replace(/^["']|["']$/g, ''); }
   }
-  return { frontmatter: fm, body };
+  return { frontmatter: fm, body, diagnostics: [], parser: 'legacy' };
+}
+
+function parsedEnvelope(item) {
+  const parsed = item.parsed;
+  if (parsed && parsed.parser === 'okf-c7' && parsed.frontmatter && !Array.isArray(parsed.frontmatter) &&
+      typeof parsed.frontmatter === 'object' && typeof parsed.body === 'string' && Array.isArray(parsed.diagnostics)) {
+    return { frontmatter: parsed.frontmatter, body: parsed.body, diagnostics: parsed.diagnostics, parser: 'okf-c7' };
+  }
+  return legacyParseFrontmatter(item.content);
+}
+
+function normalizeFilepath(filepath) {
+  return String(filepath || '').replace(/\\/g, '/').replace(/^\.\//, '');
+}
+
+function pathToId(filepath) { return normalizeFilepath(filepath).replace(/\.md$/, ''); }
+
+function resolveMarkdownPath(href, sourceFilepath) {
+  if (!href || /^(?:[a-z]+:|#|\/)/i.test(href)) return null;
+  const cleanHref = href.split('#')[0].split('?')[0];
+  if (!cleanHref.endsWith('.md')) return null;
+  const source = normalizeFilepath(sourceFilepath);
+  const base = source.includes('/') ? source.split('/').slice(0, -1) : [];
+  const resolved = [...base];
+  for (const part of cleanHref.split('/')) {
+    if (!part || part === '.') continue;
+    if (part === '..') {
+      if (resolved.length === 0) return null;
+      resolved.pop();
+    } else {
+      resolved.push(part);
+    }
+  }
+  return pathToId(resolved.join('/'));
 }
 
 function extractLinks(body, basePath) {
   const links = [];
-  const regex = /\[([^\]]+)\]\(([^)]+\.md)\)/g;
+  const regex = /\[([^\]]+)\]\(([^)]+\.md(?:#[^)\s]+)?)\)/g;
   let match;
   while ((match = regex.exec(body)) !== null) {
-    let target = match[2];
-    if (target.startsWith('http')) continue;
-    const baseDir = basePath.includes('/') ? basePath.split('/').slice(0, -1).join('/') : '';
-    if (target.startsWith('./')) target = target.slice(2);
-    if (target.startsWith('../')) {
-      const parts = (baseDir ? baseDir.split('/') : []).concat(target.split('/'));
-      const resolved = [];
-      for (const p of parts) { if (p === '..') resolved.pop(); else if (p !== '.' && p !== '') resolved.push(p); }
-      target = resolved.join('/');
-    } else if (baseDir) { target = baseDir + '/' + target; }
-    links.push({ label: match[1], target });
+    const targetPathId = resolveMarkdownPath(match[2], basePath);
+    if (targetPathId) links.push({ label: match[1], href: match[2], targetPathId });
   }
   return links;
 }
 
-function slugToId(fp) { return fp.replace(/\.md$/, ''); }
-
 function getConceptType(fp, fm) {
-  if (fm.type) return fm.type;
-  for (const d of DIR_ORDER) { if (fp.includes(d + '/')) return d.charAt(0).toUpperCase() + d.slice(1); }
+  if (typeof fm.type === 'string' && fm.type) return fm.type;
+  const directory = normalizeFilepath(fp).split('/')[0];
+  if (DIR_ORDER.includes(directory)) return directory.charAt(0).toUpperCase() + directory.slice(1);
   return 'unknown';
 }
 
 function buildConcept(item) {
-  const { frontmatter, body } = parseFrontmatter(item.content);
-  const type = getConceptType(item.filepath, frontmatter);
-  const id = slugToId(item.filepath);
-  const links = extractLinks(body, item.filepath);
+  const filepath = normalizeFilepath(item.filepath);
+  const { frontmatter, body, diagnostics, parser } = parsedEnvelope(item);
+  const type = getConceptType(filepath, frontmatter);
+  const pathId = pathToId(filepath);
+  const rawStableId = frontmatter.id;
+  const stableId = typeof rawStableId === 'string' ? rawStableId : '';
+  const hasStableIdField = Object.prototype.hasOwnProperty.call(frontmatter, 'id');
+  const links = extractLinks(body, filepath);
   return {
-    id, filepath: item.filepath, filename: item.filepath.split('/').pop(),
-    frontmatter, body, type, links, backlinks: [],
-    title: frontmatter.title || item.filepath.replace(/\.md$/, '').replace(/-/g, ' '),
-    description: frontmatter.description || '',
-    tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : [],
-    status: frontmatter.status || 'active',
-    resource: frontmatter.resource || '',
+    id: pathId, pathId, filepath, filename: filepath.split('/').pop(), graphId: '',
+    stableId, rawStableId, hasStableIdField, identityState: stableId ? 'unchecked' : 'legacy',
+    frontmatter, body, type, links, backlinks: [], typedOutbound: [], typedInbound: [],
+    title: typeof frontmatter.title === 'string' && frontmatter.title ? frontmatter.title : pathId.replace(/-/g, ' '),
+    description: typeof frontmatter.description === 'string' ? frontmatter.description : '',
+    tags: Array.isArray(frontmatter.tags) ? frontmatter.tags.filter(tag => typeof tag === 'string') : [],
+    status: typeof frontmatter.status === 'string' && frontmatter.status ? frontmatter.status : 'active',
+    resource: typeof frontmatter.resource === 'string' ? frontmatter.resource : '',
     issueRefs: Array.isArray(frontmatter.issue_refs) ? frontmatter.issue_refs : [],
+    parser, parserDiagnostics: diagnostics,
+    parserFailure: item.parserFailure || null,
   };
 }
 
-function processConcepts(items) {
-  allConcepts = items.map(buildConcept);
-  const conceptIds = new Set(allConcepts.map(c => c.id));
-  allLinks = [];
-  const backlinks = new Map();
-  for (const c of allConcepts) {
-    for (const link of c.links) {
-      const tid = slugToId(link.target);
-      if (conceptIds.has(tid)) {
-        allLinks.push({ source: c.id, target: tid });
-        if (!backlinks.has(tid)) backlinks.set(tid, []);
-        backlinks.get(tid).push(c.id);
+function literalValue(value) {
+  if (typeof value === 'string') return value;
+  try { return JSON.stringify(value); } catch { return String(value); }
+}
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function conceptMatchesSearch(concept, search) {
+  if (!search) return true;
+  const relationshipText = concept.typedOutbound.map(relation => `${relation.predicate} ${relation.targetLiteral}`).join(' ');
+  return concept.title.toLowerCase().includes(search) || concept.pathId.toLowerCase().includes(search) ||
+    concept.stableId.toLowerCase().includes(search) || concept.tags.some(tag => tag.toLowerCase().includes(search)) ||
+    concept.description.toLowerCase().includes(search) || relationshipText.toLowerCase().includes(search);
+}
+
+function relationshipWarning(code, source, predicate, target, message, severity = 'warning') {
+  return {
+    code, severity, sourcePath: source.filepath, sourceId: source.stableId || '(missing)',
+    predicate: predicate || '', target: target == null ? '' : literalValue(target), message
+  };
+}
+
+function cycleComponents(relations) {
+  const adjacency = new Map();
+  const nodes = new Set();
+  for (const relation of relations) {
+    nodes.add(relation.sourceStableId); nodes.add(relation.targetStableId);
+    if (!adjacency.has(relation.sourceStableId)) adjacency.set(relation.sourceStableId, []);
+    adjacency.get(relation.sourceStableId).push(relation.targetStableId);
+  }
+  for (const targets of adjacency.values()) targets.sort();
+
+  let index = 0;
+  const stack = [], onStack = new Set(), indices = new Map(), low = new Map(), components = [];
+  function visit(node) {
+    indices.set(node, index); low.set(node, index); index += 1;
+    stack.push(node); onStack.add(node);
+    for (const target of adjacency.get(node) || []) {
+      if (!indices.has(target)) { visit(target); low.set(node, Math.min(low.get(node), low.get(target))); }
+      else if (onStack.has(target)) low.set(node, Math.min(low.get(node), indices.get(target)));
+    }
+    if (low.get(node) === indices.get(node)) {
+      const component = [];
+      let member;
+      do { member = stack.pop(); onStack.delete(member); component.push(member); } while (member !== node);
+      if (component.length > 1) components.push(component.sort());
+    }
+  }
+  for (const node of [...nodes].sort()) if (!indices.has(node)) visit(node);
+  return components.sort((left, right) => left[0].localeCompare(right[0]));
+}
+
+function analyseConceptItems(items) {
+  const concepts = items.map(buildConcept).sort((left, right) => left.filepath.localeCompare(right.filepath));
+  const warnings = [];
+  const typedRelationships = [];
+  const graphTypedRelationships = [];
+  const pathMap = new Map(concepts.map(concept => [concept.pathId, concept]));
+  const stableIdMap = new Map();
+  for (const concept of concepts) {
+    if (concept.stableId && STABLE_ID_PATTERN.test(concept.stableId)) {
+      if (!stableIdMap.has(concept.stableId)) stableIdMap.set(concept.stableId, []);
+      stableIdMap.get(concept.stableId).push(concept);
+    }
+  }
+
+  for (const concept of concepts) {
+    if (!concept.hasStableIdField) {
+      concept.identityState = 'legacy';
+      if (PERMANENT_TYPES.has(concept.type)) {
+        warnings.push(relationshipWarning('missing-stable-id', concept, 'id', '', 'Legacy concepts remain readable by filepath but cannot be typed relationship targets.', 'compatibility'));
+      }
+    }
+    else if (typeof concept.rawStableId !== 'string' || !STABLE_ID_PATTERN.test(concept.stableId)) {
+      concept.identityState = 'invalid';
+      warnings.push(relationshipWarning('invalid-stable-id', concept, 'id', concept.rawStableId, 'Stable IDs must match the okf-<lowercase-uuidv4> profile shape.', 'error'));
+    } else if ((stableIdMap.get(concept.stableId) || []).length > 1) {
+      concept.identityState = 'duplicate';
+      warnings.push(relationshipWarning('duplicate-stable-id', concept, 'id', concept.stableId, 'This stable ID occurs in more than one concept; references to it are ambiguous.', 'error'));
+    } else concept.identityState = 'valid';
+    concept.graphId = concept.identityState === 'valid' ? concept.stableId : `path:${concept.pathId}`;
+
+    for (const diagnostic of concept.parserDiagnostics) {
+      warnings.push(relationshipWarning(diagnostic.code || 'frontmatter-parse-error', concept, '', '', diagnostic.message || 'Frontmatter could not be parsed by the C7 parser.', 'error'));
+    }
+    if (concept.parserFailure) {
+      warnings.push(relationshipWarning(concept.parserFailure.code || 'c7-parser-failure', concept, '', '', concept.parserFailure.message || 'The C7 parser failed; legacy read-only parsing was retained.', 'error'));
+    }
+  }
+
+  for (const source of concepts) {
+    for (const predicate of RELATIONSHIP_PREDICATES) {
+      if (!Object.prototype.hasOwnProperty.call(source.frontmatter, predicate)) continue;
+      const value = source.frontmatter[predicate];
+      if (!Array.isArray(value)) {
+        const relation = { predicate, inverse: RELATIONSHIP_DEFINITIONS[predicate].inverse, source, sourcePath: source.filepath, sourceStableId: source.stableId, targetLiteral: literalValue(value), targetStableId: '', target: null, state: 'invalid', resolution: 'relationship-not-array' };
+        source.typedOutbound.push(relation); typedRelationships.push(relation);
+        warnings.push(relationshipWarning('relationship-not-array', source, predicate, value, 'Typed relationship fields must be YAML arrays.', 'error'));
+        continue;
+      }
+
+      const seenTargets = new Set();
+      for (const targetValue of value) {
+        const targetLiteral = literalValue(targetValue);
+        const relation = { predicate, inverse: RELATIONSHIP_DEFINITIONS[predicate].inverse, source, sourcePath: source.filepath, sourceStableId: source.stableId, targetLiteral, targetStableId: typeof targetValue === 'string' ? targetValue : '', target: null, state: 'unresolved', resolution: '' };
+        source.typedOutbound.push(relation); typedRelationships.push(relation);
+
+        let code = '', message = '';
+        if (typeof targetValue !== 'string' || !STABLE_ID_PATTERN.test(targetValue)) {
+          code = predicate === 'supersedes' && typeof targetValue === 'string' && /[/.]/.test(targetValue) ? 'legacy-supersedes-ambiguous' : 'invalid-relationship-target';
+          message = code === 'legacy-supersedes-ambiguous' ? 'Path-valued legacy supersedes data is retained but cannot be resolved as a typed edge.' : 'Relationship targets must be project-local OKF stable IDs.';
+        } else if (seenTargets.has(targetValue)) {
+          code = 'duplicate-relationship-target'; message = 'The same target is declared more than once for this predicate.';
+        } else if (!PERMANENT_TYPES.has(source.type) || source.identityState !== 'valid') {
+          code = 'invalid-relationship-source'; message = 'A typed edge requires one unique, valid stable ID on its source concept.';
+        } else if (targetValue === source.stableId) {
+          code = 'self-relationship'; message = 'Self-edges are invalid for OKF typed relationships.';
+        } else {
+          const matches = stableIdMap.get(targetValue) || [];
+          if (matches.length === 0) { code = 'unresolved-relationship-target'; message = 'No concept in this bundle declares this target ID.'; }
+          else if (matches.length > 1) { code = 'ambiguous-relationship-target'; message = 'More than one concept declares this target ID.'; }
+          else if (!PERMANENT_TYPES.has(matches[0].type)) { code = 'invalid-relationship-target-type'; message = 'Inbox records are not permanent concept relationship targets.'; }
+          else {
+            relation.target = matches[0]; relation.state = 'resolved'; relation.resolution = 'resolved';
+          }
+        }
+        seenTargets.add(typeof targetValue === 'string' ? targetValue : targetLiteral);
+        if (code) {
+          const legacyWarning = code === 'legacy-supersedes-ambiguous';
+          relation.state = legacyWarning ? 'warning' : 'invalid'; relation.resolution = code;
+          warnings.push(relationshipWarning(code, source, predicate, targetValue, message, legacyWarning ? 'warning' : 'error'));
+        }
       }
     }
   }
-  for (const c of allConcepts) c.backlinks = backlinks.get(c.id) || [];
+
+  const contradictionPairs = new Map();
+  for (const relation of typedRelationships.filter(item => item.state === 'resolved')) {
+    if (relation.predicate === 'contradicts') {
+      const pair = [relation.sourceStableId, relation.targetStableId].sort().join('|');
+      if (contradictionPairs.has(pair)) {
+        relation.state = 'warning'; relation.resolution = 'redundant-symmetric-relationship';
+        warnings.push(relationshipWarning('redundant-symmetric-relationship', relation.source, relation.predicate, relation.targetStableId, 'contradicts is symmetric; the reverse declaration is redundant.', 'warning'));
+        continue;
+      }
+      contradictionPairs.set(pair, relation);
+    }
+    graphTypedRelationships.push(relation);
+  }
+
+  for (const predicate of RELATIONSHIP_PREDICATES.filter(name => RELATIONSHIP_DEFINITIONS[name].cycle)) {
+    const relations = graphTypedRelationships.filter(relation => relation.predicate === predicate);
+    for (const component of cycleComponents(relations)) {
+      const members = new Set(component);
+      for (const relation of relations.filter(item => members.has(item.sourceStableId) && members.has(item.targetStableId))) {
+        const isInvalid = RELATIONSHIP_DEFINITIONS[predicate].cycle === 'invalid';
+        relation.state = isInvalid ? 'invalid' : 'warning';
+        relation.resolution = isInvalid ? 'invalid-cycle' : 'blocked-by-cycle';
+        warnings.push(relationshipWarning(relation.resolution, relation.source, predicate, relation.targetStableId, `Cycle includes ${component.join(' -> ')}.`, isInvalid ? 'error' : 'warning'));
+      }
+    }
+  }
+
+  for (const relation of graphTypedRelationships) relation.target.typedInbound.push(relation);
+
+  const markdownLinks = [];
+  const backlinks = new Map();
+  for (const concept of concepts) {
+    for (const link of concept.links) {
+      const target = pathMap.get(link.targetPathId);
+      if (target) {
+        markdownLinks.push({ kind: 'citation', source: concept.graphId, target: target.graphId, sourceConcept: concept, targetConcept: target });
+        if (!backlinks.has(target.pathId)) backlinks.set(target.pathId, []);
+        backlinks.get(target.pathId).push(concept.pathId);
+      }
+    }
+  }
+  for (const concept of concepts) concept.backlinks = [...new Set(backlinks.get(concept.pathId) || [])].sort();
+
+  const predicateOrder = new Map(RELATIONSHIP_PREDICATES.map((predicate, index) => [predicate, index]));
+  warnings.sort((left, right) => left.sourcePath.localeCompare(right.sourcePath) ||
+    (predicateOrder.get(left.predicate) ?? 99) - (predicateOrder.get(right.predicate) ?? 99) ||
+    left.target.localeCompare(right.target) || left.code.localeCompare(right.code));
+  const typedLinks = graphTypedRelationships.map(relation => ({ kind: 'typed', source: relation.source.graphId, target: relation.target.graphId, relation }));
+  return { concepts, links: [...markdownLinks, ...typedLinks], warnings, typedRelationships };
+}
+
+function processConcepts(items) {
+  const analysis = analyseConceptItems(items);
+  allConcepts = analysis.concepts;
+  allLinks = analysis.links;
+  allWarnings = analysis.warnings;
+  return analysis;
 }
 
 async function readDirectory(dirHandle, prefix = '') {
@@ -257,9 +520,51 @@ function onDataLoaded() {
   renderTree();
   renderGraph();
   renderFilters();
-  document.getElementById('stats').textContent = `${allConcepts.length} concepts | ${allLinks.length} links`;
+  renderWarnings();
+  renderGraphLegend();
+  const citationCount = allLinks.filter(link => link.kind === 'citation').length;
+  const typedCount = allLinks.filter(link => link.kind === 'typed').length;
+  document.getElementById('stats').textContent = `${allConcepts.length} concepts | ${citationCount} citations | ${typedCount} typed edges${allWarnings.length ? ` | ${allWarnings.length} warnings` : ''}`;
   document.getElementById('folder-btn').textContent = allConcepts.length + ' loaded';
   document.getElementById('folder-btn').disabled = true;
+}
+
+function renderWarnings() {
+  const panel = document.getElementById('warnings-panel');
+  const list = document.getElementById('warnings-list');
+  const summary = document.getElementById('warnings-summary');
+  panel.classList.toggle('visible', allWarnings.length > 0);
+  if (allWarnings.length === 0) { list.innerHTML = ''; return; }
+  const errors = allWarnings.filter(warning => warning.severity === 'error').length;
+  panel.open = errors > 0;
+  summary.textContent = `Relationship and parser diagnostics (${allWarnings.length}; ${errors} invalid)`;
+  list.innerHTML = allWarnings.map((warning, index) => `<button class="warning-row" data-warning-index="${index}">
+    <span>${escapeHtml(warning.sourcePath)}<span class="warning-source-id">${escapeHtml(warning.sourceId)}</span></span>
+    <span class="warning-code">${escapeHtml(warning.predicate || warning.code)}</span>
+    <span class="warning-target">${escapeHtml(warning.target || '(no target)')}</span>
+    <span><span class="warning-code">${escapeHtml(warning.code)}</span> — ${escapeHtml(warning.message)}</span>
+  </button>`).join('');
+  list.querySelectorAll('.warning-row').forEach(button => {
+    button.onclick = () => {
+      const warning = allWarnings[Number(button.dataset.warningIndex)];
+      const concept = allConcepts.find(candidate => candidate.filepath === warning.sourcePath);
+      if (!concept) return;
+      const panelId = currentView === 'graph' ? 'graph-detail' : 'detail';
+      showDetail(concept, panelId);
+      if (cy) cy.getElementById(concept.graphId).select();
+    };
+  });
+}
+
+function renderGraphLegend() {
+  const legend = document.getElementById('graph-legend');
+  legend.innerHTML = [
+    `<span class="legend-item"><span class="legend-line" style="--edge-color:#484f58"></span>citation</span>`,
+    ...RELATIONSHIP_PREDICATES.map(predicate => {
+      const definition = RELATIONSHIP_DEFINITIONS[predicate];
+      return `<span class="legend-item"><span class="legend-line ${definition.lineStyle}" style="--edge-color:${definition.color}"></span>${predicate}</span>`;
+    })
+  ].join('');
 }
 
 /* ---- Folder Tree ---- */
@@ -274,11 +579,7 @@ function renderTree() {
   }
   const search = document.getElementById('search').value.toLowerCase();
   for (const dir of DIR_ORDER) {
-    const concepts = (grouped[dir] || []).filter(c => {
-      if (!search) return true;
-      return c.title.toLowerCase().includes(search) || c.id.toLowerCase().includes(search) ||
-        c.tags.some(t => t.toLowerCase().includes(search)) || (c.description && c.description.toLowerCase().includes(search));
-    });
+    const concepts = (grouped[dir] || []).filter(concept => conceptMatchesSearch(concept, search));
     if (concepts.length === 0) continue;
     const typeLabel = dir.charAt(0).toUpperCase() + dir.slice(1);
     const color = TYPE_COLORS[typeLabel] || '#8b949e';
@@ -296,9 +597,12 @@ function renderTree() {
     for (const c of concepts.sort((a, b) => a.title.localeCompare(b.title))) {
       const fEl = document.createElement('div');
       fEl.className = 'tree-file';
-      fEl.dataset.id = c.id;
+      fEl.dataset.id = c.graphId;
       fEl.textContent = c.title;
-      if (c.status === 'deprecated') fEl.innerHTML += '<span class="file-status">○</span>';
+      if (c.status === 'deprecated') {
+        const marker = document.createElement('span');
+        marker.className = 'file-status'; marker.textContent = '○'; fEl.appendChild(marker);
+      }
       fEl.onclick = () => {
         document.querySelectorAll('.tree-file').forEach(e => e.classList.remove('active'));
         fEl.classList.add('active');
@@ -312,64 +616,95 @@ function renderTree() {
 }
 
 /* ---- Detail Panel ---- */
+function resourceLink(resource) {
+  if (!resource) return { href: '', conceptPathId: '' };
+  if (/^(?:[a-z]+:|#|\/)/i.test(resource)) return { href: resource, conceptPathId: '' };
+  const rootRelative = resource.replace(/^\.\//, '');
+  const conceptPathId = rootRelative.startsWith('knowledge/') && rootRelative.endsWith('.md')
+    ? pathToId(rootRelative.slice('knowledge/'.length)) : '';
+  return { href: `../${rootRelative}`, conceptPathId };
+}
+
+function relationshipEntry(relation, inverse = false) {
+  const label = inverse ? relation.inverse : relation.predicate;
+  const related = inverse ? relation.source : relation.target;
+  const stateClass = relation.state === 'resolved' ? '' : relation.state;
+  const relatedHtml = related
+    ? `<a data-path-id="${escapeHtml(related.pathId)}">${escapeHtml(related.title)}</a> <code>${escapeHtml(related.stableId || related.pathId)}</code>`
+    : `<code>${escapeHtml(relation.targetLiteral || '(missing)')}</code>`;
+  const diagnostic = relation.state === 'resolved' ? '' : ` <span>(${escapeHtml(relation.resolution)})</span>`;
+  return `<div class="relationship-entry ${stateClass}"><span class="predicate">${escapeHtml(label)}</span><span>${relatedHtml}${diagnostic}</span></div>`;
+}
+
+function typedRelationshipHtml(concept) {
+  const outbound = concept.typedOutbound.length
+    ? `<div class="relationships"><h3>Typed relationships (${concept.typedOutbound.length})</h3>${concept.typedOutbound.map(relation => relationshipEntry(relation)).join('')}</div>` : '';
+  const inbound = concept.typedInbound.length
+    ? `<div class="relationships"><h3>Typed backlinks (${concept.typedInbound.length})</h3>${concept.typedInbound.map(relation => relationshipEntry(relation, true)).join('')}</div>` : '';
+  return outbound + inbound;
+}
+
 function showDetail(concept, targetId) {
   const el = document.getElementById(targetId);
   const fm = concept.frontmatter;
   const fmLines = [];
-  if (fm.resource) fmLines.push(`<div>resource: <a href="${fm.resource}" target="_blank">${fm.resource}</a></div>`);
-  if (fm.timestamp) fmLines.push(`<div>timestamp: ${fm.timestamp}</div>`);
-  if (concept.issueRefs.length) fmLines.push(`<div>issue_refs: [${concept.issueRefs.join(', ')}]</div>`);
-  if (fm.supersedes && Array.isArray(fm.supersedes) && fm.supersedes.length) fmLines.push(`<div>supersedes: [${fm.supersedes.join(', ')}]</div>`);
+  if (concept.stableId) fmLines.push(`<div>id: ${escapeHtml(concept.stableId)}</div>`);
+  else fmLines.push('<div class="identity-note">id: legacy filepath identity (typed targets cannot resolve to this alias)</div>');
+  if (fm.resource) {
+    const resolvedResource = resourceLink(concept.resource);
+    fmLines.push(`<div>resource: <a href="${escapeHtml(resolvedResource.href)}"${resolvedResource.conceptPathId ? ` data-concept-path="${escapeHtml(resolvedResource.conceptPathId)}"` : ' target="_blank" rel="noopener"'}>${escapeHtml(concept.resource)}</a></div>`);
+  }
+  if (fm.timestamp) fmLines.push(`<div>timestamp: ${escapeHtml(literalValue(fm.timestamp))}</div>`);
+  if (concept.issueRefs.length) fmLines.push(`<div>issue_refs: [${concept.issueRefs.map(escapeHtml).join(', ')}]</div>`);
 
-  const badges = [`<span class="badge type" data-type="${concept.type}">${concept.type}</span>`];
+  const badges = [`<span class="badge type" data-type="${escapeHtml(concept.type)}">${escapeHtml(concept.type)}</span>`];
   if (concept.status && concept.status !== 'active')
-    badges.push(`<span class="badge status ${concept.status === 'deprecated' ? 'deprecated' : ''}">${concept.status}</span>`);
-  if (concept.tags.length) badges.push(...concept.tags.map(t => `<span class="badge">${t}</span>`));
+    badges.push(`<span class="badge status ${concept.status === 'deprecated' ? 'deprecated' : ''}">${escapeHtml(concept.status)}</span>`);
+  if (concept.identityState !== 'valid') badges.push(`<span class="badge status ${concept.identityState === 'invalid' || concept.identityState === 'duplicate' ? 'deprecated' : ''}">${escapeHtml(concept.identityState)} identity</span>`);
+  if (concept.parser === 'legacy') badges.push('<span class="badge status">legacy parser fallback</span>');
+  if (concept.tags.length) badges.push(...concept.tags.map(tag => `<span class="badge">${escapeHtml(tag)}</span>`));
 
   const backlinkHtml = concept.backlinks.length ? `
     <div class="backlinks"><h3>Cited by (${concept.backlinks.length})</h3>
-    ${concept.backlinks.map(id => { const c = allConcepts.find(x => x.id === id); return c ? `<a data-id="${id}">${c.title}</a>` : ''; }).join('')}
+    ${concept.backlinks.map(pathId => { const citedBy = allConcepts.find(candidate => candidate.pathId === pathId); return citedBy ? `<a data-path-id="${escapeHtml(pathId)}">${escapeHtml(citedBy.title)}</a>` : ''; }).join('')}
     </div>` : '';
 
+  const conceptWarnings = allWarnings.filter(warning => warning.sourcePath === concept.filepath);
+  const diagnosticHtml = conceptWarnings.length ? `<div class="relationships"><h3>Diagnostics (${conceptWarnings.length})</h3>${conceptWarnings.map(warning =>
+    `<div class="relationship-entry ${warning.severity === 'error' ? 'invalid' : 'warning'}"><span class="predicate">${escapeHtml(warning.code)}</span><span>${escapeHtml(warning.message)}${warning.target ? ` <code>${escapeHtml(warning.target)}</code>` : ''}</span></div>`).join('')}</div>` : '';
+
+  const renderedBody = typeof marked !== 'undefined' ? marked.parse(concept.body) : `<pre>${escapeHtml(concept.body)}</pre>`;
+
   el.innerHTML = `<div class="content">
-    <h2>${concept.title}</h2>
+    <h2>${escapeHtml(concept.title)}</h2>
     <div class="meta">${badges.join('')}</div>
     ${fmLines.length ? `<div class="frontmatter">${fmLines.join('')}</div>` : ''}
-    <div class="body">${marked.parse(concept.body)}</div>
+    <div class="body">${renderedBody}</div>
+    ${typedRelationshipHtml(concept)}
     ${backlinkHtml}
+    ${diagnosticHtml}
   </div>`;
 
-  // Attach backlink click handlers first (before mermaid, which can throw)
-  el.querySelectorAll('.backlinks a').forEach(a => {
+  // Attach relationship/backlink click handlers first (before mermaid, which can throw).
+  el.querySelectorAll('[data-path-id], [data-concept-path]').forEach(a => {
     a.onclick = (e) => {
       e.preventDefault();
-      const c = allConcepts.find(x => x.id === a.dataset.id);
-      if (c) { showDetail(c, targetId); if (cy) cy.getElementById(c.id).select(); }
+      const pathId = a.dataset.pathId || a.dataset.conceptPath;
+      const related = allConcepts.find(candidate => candidate.pathId === pathId);
+      if (related) { showDetail(related, targetId); if (cy) cy.getElementById(related.graphId).select(); }
     };
   });
 
-  // Intercept relative .md links in body and frontmatter
-  el.querySelectorAll('.body a[href], .frontmatter a[href]').forEach(a => {
+  // Markdown remains filepath-relative navigation and is independent of stable IDs.
+  el.querySelectorAll('.body a[href]').forEach(a => {
     const href = a.getAttribute('href');
-    if (!href || href.startsWith('http') || href.startsWith('#')) return;
+    const resolvedPathId = resolveMarkdownPath(href, concept.filepath);
+    const related = allConcepts.find(candidate => candidate.pathId === resolvedPathId);
+    if (!related) return;
     a.onclick = (e) => {
       e.preventDefault();
-      // Resolve relative path from current concept's directory
-      const baseDir = concept.id.includes('/') ? concept.id.substring(0, concept.id.lastIndexOf('/') + 1) : '';
-      let resolved = baseDir + href;
-      // Normalise path segments
-      while (resolved.includes('../')) {
-        resolved = resolved.replace(/[^/]+\/\.\.\//, '');
-      }
-      resolved = resolved.replace(/\/\.\//g, '/');
-      resolved = resolved.replace(/^\.\//, '');
-      // Strip .md extension to match concept IDs
-      resolved = resolved.replace(/\.md$/, '');
-      const target = allConcepts.find(x => x.id === resolved);
-      if (target) {
-        showDetail(target, targetId);
-        if (cy) cy.getElementById(target.id).select();
-      }
+      showDetail(related, targetId);
+      if (cy) cy.getElementById(related.graphId).select();
     };
   });
 
@@ -397,8 +732,24 @@ function showDetail(concept, targetId) {
 
 /* ---- Graph ---- */
 function renderGraph() {
-  const nodes = allConcepts.map(c => ({ data: { id: c.id, label: c.title.length > 28 ? c.title.slice(0, 26) + '..' : c.title, type: c.type, color: TYPE_COLORS[c.type] || '#8b949e', concept: c } }));
-  const edges = allLinks.map((l, i) => ({ data: { id: 'e' + i, source: l.source, target: l.target } }));
+  if (typeof cytoscape === 'undefined') {
+    document.getElementById('cy').innerHTML = '<div class="empty">Graph runtime unavailable. Browse, Markdown backlinks, typed relationships, and diagnostics remain readable.</div>';
+    cy = null;
+    return;
+  }
+  const nodes = allConcepts.map(concept => ({ data: {
+    id: concept.graphId, label: concept.title.length > 28 ? concept.title.slice(0, 26) + '..' : concept.title,
+    type: concept.type, color: TYPE_COLORS[concept.type] || '#8b949e', concept
+  } }));
+  const edges = allLinks.map((link, index) => {
+    const relation = link.relation;
+    const definition = relation ? RELATIONSHIP_DEFINITIONS[relation.predicate] : null;
+    return { data: {
+      id: `edge:${index}`, source: link.source, target: link.target, kind: link.kind,
+      predicate: relation ? relation.predicate : 'citation', state: relation ? relation.state : 'resolved',
+      color: definition ? definition.color : '#484f58', lineStyle: definition ? definition.lineStyle : 'solid'
+    } };
+  });
   if (cy) cy.destroy();
   cy = cytoscape({
     container: document.getElementById('cy'),
@@ -406,7 +757,11 @@ function renderGraph() {
     style: [
       { selector: 'node', style: { 'background-color': 'data(color)', 'label': 'data(label)', 'color': '#c9d1d9', 'font-size': '10px', 'text-valign': 'bottom', 'text-halign': 'center', 'text-margin-y': 4, 'width': 22, 'height': 22, 'border-width': 2, 'border-color': '#21262d', 'text-wrap': 'ellipsis', 'text-max-width': '120px' }},
       { selector: 'node:selected', style: { 'border-width': 3, 'border-color': '#f0f6fc', 'width': 28, 'height': 28 }},
-      { selector: 'edge', style: { 'width': 1, 'line-color': '#30363d', 'target-arrow-color': '#30363d', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier', 'arrow-scale': 0.6 }},
+      { selector: 'edge', style: { 'width': 1, 'line-color': 'data(color)', 'target-arrow-color': 'data(color)', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier', 'arrow-scale': 0.6, 'line-style': 'data(lineStyle)' }},
+      { selector: 'edge[kind = "typed"]', style: { 'width': 2, 'label': 'data(predicate)', 'font-size': '8px', 'color': '#8b949e', 'text-background-color': '#0d1117', 'text-background-opacity': 0.85, 'text-background-padding': 2, 'text-rotation': 'autorotate' }},
+      { selector: 'edge[predicate = "contradicts"]', style: { 'target-arrow-shape': 'none' }},
+      { selector: 'edge[state = "invalid"]', style: { 'line-color': '#f85149', 'target-arrow-color': '#f85149', 'line-style': 'dashed', 'width': 3 }},
+      { selector: 'edge[state = "warning"]', style: { 'line-color': '#d29922', 'target-arrow-color': '#d29922', 'width': 3 }},
       { selector: '.deprecated', style: { 'border-style': 'dashed', 'opacity': 0.5 }}
     ],
     layout: { name: 'cose', animate: true, padding: 40, idealEdgeLength: 80, nodeRepulsion: 8000 }
@@ -436,7 +791,7 @@ function applyFilters() {
   cy.nodes().forEach(n => {
     const c = n.data('concept');
     const tm = activeFilters.size === 0 || activeFilters.has(c.type);
-    const sm = !s || c.title.toLowerCase().includes(s) || c.id.toLowerCase().includes(s) || c.tags.some(t => t.toLowerCase().includes(s));
+    const sm = conceptMatchesSearch(c, s);
     n.style('display', (tm && sm) ? 'element' : 'none');
   });
   cy.edges().forEach(e => {
@@ -454,46 +809,52 @@ function switchView(view) {
   if (view === 'graph' && cy) cy.resize();
   if (view === 'browse') renderTree();
 }
-document.getElementById('nav-browse').onclick = () => switchView('browse');
-document.getElementById('nav-graph').onclick = () => switchView('graph');
-
-/* ---- Search ---- */
-document.getElementById('search').oninput = () => {
-  if (currentView === 'browse') renderTree();
-  else applyFilters();
-};
-
-/* ---- Folder picker ---- */
-document.getElementById('folder-btn').onclick = async () => {
-  try { await loadFolder(await window.showDirectoryPicker()); }
-  catch (err) { if (err.name !== 'AbortError') alert('Error: ' + err.message); }
-};
 
 /* ---- Auto-load embedded data ---- */
 function loadEmbeddedData() {
   if (typeof __OKF_DATA__ !== 'undefined' && __OKF_DATA__ && Array.isArray(__OKF_DATA__)) {
-    processConcepts(__OKF_DATA__.map(item => ({ filepath: item.filepath, content: item.content })));
+    processConcepts(__OKF_DATA__);
     onDataLoaded();
   }
 }
-loadEmbeddedData();
 
-/* ---- Drag and drop ---- */
-let dragCounter = 0;
-window.addEventListener('dragenter', (e) => { e.preventDefault(); dragCounter++; document.getElementById('drop-zone').style.display = 'flex'; });
-window.addEventListener('dragleave', (e) => { e.preventDefault(); dragCounter--; if (dragCounter === 0) document.getElementById('drop-zone').style.display = 'none'; });
-window.addEventListener('dragover', (e) => e.preventDefault());
-window.addEventListener('drop', async (e) => {
-  e.preventDefault(); dragCounter = 0;
-  document.getElementById('drop-zone').style.display = 'none';
-  const items = e.dataTransfer.items;
-  if (items && items.length > 0 && items[0].webkitGetAsEntry) {
-    const entry = items[0].webkitGetAsEntry();
-    if (entry.isDirectory) {
-      try { const handle = await entry.getFilesystemHandle?.(); if (handle) await loadFolder(handle); } catch {}
+function initializeViewer() {
+  document.getElementById('nav-browse').onclick = () => switchView('browse');
+  document.getElementById('nav-graph').onclick = () => switchView('graph');
+  document.getElementById('search').oninput = () => {
+    if (currentView === 'browse') renderTree();
+    else applyFilters();
+  };
+  document.getElementById('folder-btn').onclick = async () => {
+    try { await loadFolder(await window.showDirectoryPicker()); }
+    catch (err) { if (err.name !== 'AbortError') alert('Error: ' + err.message); }
+  };
+
+  let dragCounter = 0;
+  window.addEventListener('dragenter', (event) => { event.preventDefault(); dragCounter++; document.getElementById('drop-zone').style.display = 'flex'; });
+  window.addEventListener('dragleave', (event) => { event.preventDefault(); dragCounter--; if (dragCounter === 0) document.getElementById('drop-zone').style.display = 'none'; });
+  window.addEventListener('dragover', (event) => event.preventDefault());
+  window.addEventListener('drop', async (event) => {
+    event.preventDefault(); dragCounter = 0;
+    document.getElementById('drop-zone').style.display = 'none';
+    const items = event.dataTransfer.items;
+    if (items && items.length > 0 && items[0].webkitGetAsEntry) {
+      const entry = items[0].webkitGetAsEntry();
+      if (entry.isDirectory) {
+        try { const handle = await entry.getFilesystemHandle?.(); if (handle) await loadFolder(handle); } catch {}
+      }
     }
-  }
+  });
+  loadEmbeddedData();
+}
+
+// Deterministic, DOM-free seam used by the fixture test. It is not a mutating API.
+globalThis.__OKF_VIEWER_TEST__ = Object.freeze({
+  analyseConceptItems, legacyParseFrontmatter, resolveMarkdownPath, resourceLink,
+  relationshipPredicates: [...RELATIONSHIP_PREDICATES]
 });
+
+if (typeof document !== 'undefined' && typeof window !== 'undefined') initializeViewer();
 </script>
 </body>
 </html>

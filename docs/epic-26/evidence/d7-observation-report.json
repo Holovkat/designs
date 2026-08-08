@@ -1,0 +1,73 @@
+{
+  "version": "okf-cadence-observation-report/1",
+  "started_at": "2026-08-08T11:38:18.191Z",
+  "ended_at": "2026-08-08T11:38:30.320Z",
+  "sample_count": 4,
+  "projects": [
+    "/Users/tonyholovka/workspace/designs",
+    "/Users/tonyholovka/workspace/fms-glm",
+    "/Users/tonyholovka/workspace/fmsmercury"
+  ],
+  "snapshot_roots": [
+    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-9lp0XV/snapshot",
+    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-S8kzu1/snapshot",
+    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-canary-kHJP8S/snapshot",
+    "/private/var/folders/x6/h2cbk_8n44d3dmwv6yv212dm0000gn/T/okf-epic26-control-emI9VC/snapshot"
+  ],
+  "scenarios": [
+    "blocked-control",
+    "interrupt-resume",
+    "invalid-then-success",
+    "normal"
+  ],
+  "required_projects": [
+    "/Users/tonyholovka/workspace/designs",
+    "/Users/tonyholovka/workspace/fms-glm",
+    "/Users/tonyholovka/workspace/fmsmercury"
+  ],
+  "required_scenarios": [
+    "blocked-control",
+    "interrupt-resume",
+    "invalid-then-success",
+    "normal"
+  ],
+  "limits": {
+    "min_samples": 4,
+    "max_runtime_seconds": 60,
+    "max_cpu_ms": 5000,
+    "max_disk_growth_bytes": 1048576,
+    "max_generated_bytes": 524288,
+    "max_sessions": 1,
+    "max_concurrent_runs": 1,
+    "max_inbox_age_days": 120
+  },
+  "totals": {
+    "cpu_ms": 2652,
+    "generated_bytes": 435578,
+    "processed_items": 5,
+    "useful_concept_changes": 3,
+    "operator_interventions": 7,
+    "recovered_failures": 1
+  },
+  "maxima": {
+    "runtime_seconds": 5,
+    "disk_growth_bytes": 138938,
+    "sessions": 1,
+    "concurrent_runs": 1,
+    "inbox_oldest_age_days": 39
+  },
+  "outcomes": {
+    "blocked": 1,
+    "cancelled": 0,
+    "completed": 3,
+    "failed": 0,
+    "quota-exceeded": 0
+  },
+  "curation_yield": 0.6,
+  "violations": [],
+  "passed": true,
+  "automatic_execution_observed": false,
+  "concurrency_bounded": true,
+  "failures_recovered": true,
+  "raw_inbox_content_recorded": false
+}

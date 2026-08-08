@@ -1,95 +1,98 @@
 ---
 type: Domain
 title: OKF Inbox Format
-description: Session synthesis format for inbox items with frontmatter and body sections
+description: Complementary Tier 1 commit capture and Tier 2 session synthesis records awaiting bounded curation
 resource: ./templates/okf/OKF-STANDARD.md
-tags: [okf, inbox, session-synthesis, format, capture]
-timestamp: 2026-07-05T13:00:00Z
+tags: [capture, inbox, okf, session-synthesis, tier-one, tier-two]
+timestamp: 2026-08-08T00:00:00Z
 status: active
+id: okf-26000000-0000-4000-8000-000000000001
+assertion_state: verified
+generated_at: 2026-08-08T00:00:00Z
+generated_by: codex-epic-26
+source_authority: repository-git
+evidence_refs: [templates/okf/OKF-STANDARD.md, templates/okf/post-commit.sh]
+verified_at: 2026-08-08T00:00:00Z
+verification_method: specification-and-hook-review
+validity_basis: Current canonical capture contract for the designs repository
 ---
 
 # OKF Inbox Format
 
-Inbox items are session syntheses written by agents before committing. They use the same frontmatter as permanent concepts but with `type: Inbox`. They serve as staging material for the curation agent.
+Inbox records are immutable staging material for a separately requested,
+repository-scoped curation run. Two capture tiers are intentionally
+complementary: Tier 1 records ordinary commits compactly and Tier 2 records the
+durable decisions and lessons from a meaningful session. Neither tier launches
+curation, and neither is a substitute for curation.
 
-## Source of Inbox Items
+## Common Frontmatter
 
-Inbox items are written by agents. After a meaningful work session, an agent writes a full session synthesis to `knowledge/inbox/` BEFORE committing, using the OKF inbox format (or manually). The synthesis captures richer context than commit metadata alone: decisions, rationale, approaches rejected, lessons learned, and current state.
+Both tiers use `type: Inbox` and strict-profile records include `title`,
+`description`, unique lowercase `tags`, an RFC 3339 UTC `timestamp`,
+`capture_tier`, `generated_at`, and `generated_by`. They may also carry
+repository, branch, issue, and epic provenance. Inbox records do not declare a
+durable concept `id` or typed semantic relationships.
 
-> **Note:** The post-commit hook previously wrote lightweight commit metadata stubs to the inbox. This was deprecated because the stubs were low-signal and redundant with agent-written syntheses. The hook now only refreshes the viewer manifest and nudges for curation. See [Post-Commit Inbox Capture (Deprecated)](../deprecation/post-commit-inbox-capture.md) and [Hook System](../architecture/hook-system.md).
+`commit_sha` uses full immutable Git identifiers: a string for Tier 1 and a
+non-empty array for Tier 2. Legacy short SHAs and records without a tier remain
+retained and auditable in warning mode; they are not silently rewritten.
 
-## Frontmatter
+## Tier 1 Commit Capture
 
-```yaml
----
-type: Inbox
-title: Session 2026-06-29 - Route geometry QA fixes
-description: Session synthesis for route geometry work
-tags: [mobile, routing, qa]
-timestamp: 2026-06-29T10:00:00Z
-session_id: 6acfd15b-bdf5-4b4b-9c1b-daff51ff57c0
-commit_sha: 5449a3d2
-branch: codex/issue-1503
-issue_refs: [1503]
-epic_refs: [1495]
----
+The repository-local post-commit hook writes one `capture_tier: commit` record
+after each ordinary commit. It deduplicates the exact commit SHA, normalises
+tags, escapes dynamic YAML/Markdown fields, and replaces oversized or raw-dump
+content with a compact Git reference. The source commit remains canonical.
+
+Tier 1 bodies contain exactly these top-level sections in order:
+
+```markdown
+# Why And How
+
+Why the commit was needed and how it was implemented.
+
+# Impact
+
+The practical effect, risk, or follow-up.
 ```
 
-### Key Fields
+A merge commit is not ordinary capture input. Capture warnings are non-fatal
+and do not disclose the rejected body. The explicit quality override may retain
+reviewed body content, but cannot reintroduce malformed YAML or duplicate tags.
 
-- `type`: Always `Inbox` for inbox items.
-- `title`: Descriptive title for the session.
-- `description`: One-line summary.
-- `tags`: Lowercase, relevant tags for the work area.
-- `timestamp`: ISO 8601 datetime.
-- `session_id`: UUID of the agent session.
-- `commit_sha`: Short git SHA (optional, when the session produced a specific commit).
-- `branch`: Branch name.
-- `issue_refs`: GitHub issue numbers referenced by the work.
-- `epic_refs`: Epic issue numbers.
+## Tier 2 Session Synthesis
 
-Not all fields are present in every item. Agent-written items typically have `session_id`, `branch`, and optionally `commit_sha` and `issue_refs`.
+At the close of a meaningful session, the `end-session` workflow writes one
+`capture_tier: session` synthesis after the work is committed. It references
+the relevant full commit SHAs and has a UUID `session_id`. It records only
+knowledge that remains useful beyond the Tier 1 records and does not repeat a
+completion summary or file-by-file diff.
 
-## Body Sections
+Tier 2 bodies contain exactly these top-level sections in order:
 
-Agent-written session syntheses follow this structure:
+```markdown
+# Decisions Made
 
-### What Was Done
-Summary of work completed in this session. What was built, fixed, or changed.
+# What Was Deprecated
 
-### Decisions Made
-Architectural or product decisions and their rationale. Why a particular approach was chosen over alternatives.
+# Lessons Learned
 
-### What Was Deprecated
-Patterns, components, or approaches that were removed or superseded during the session.
-
-### Lessons Learned
-Insights gained during the work. Things that would help future agents avoid mistakes or work more effectively.
-
-### Current State
-What works now, what is in progress, what is blocked. A snapshot of the situation after the session.
-
-All inbox items are agent-written and follow the full body structure above.
-
-## Filename Format
-
-`<ISO-timestamp-with-dashes>-<slugified-title>.md`
-
-The timestamp has colons and periods replaced with dashes, truncated to 19 characters. The slug is the title lowercased with non-alphanumeric characters replaced by hyphens, truncated to 50 characters.
-
-Examples:
-- `2026-06-29T10-00-00-route-geometry-qa-fixes.md`
-- `2026-07-05T11-00-00Z-skill-effectiveness-review-and-canonicalisation.md`
+# Current State
+```
 
 ## Lifecycle
 
-1. **Written:** By an agent to `knowledge/inbox/` before committing.
-2. **Awaiting curation:** Listed in `inbox/index.md`.
-3. **Processed:** The curation agent reads the item, creates or updates permanent concepts, then moves the item to `knowledge/inbox/processed/`.
-4. **Archived:** Processed items remain in `inbox/processed/` for audit trail purposes.
+1. A capture is written directly under `knowledge/inbox/` and indexed.
+2. Read-only status and triage may classify it without execution authority.
+3. An explicit bounded curator proposal covers selected sources by path, size,
+   and hash; validation must pass before finalisation.
+4. Successful curation moves each source byte-for-byte to
+   `knowledge/inbox/processed/` only after strict concept and maintenance
+   postflight validation. A stopped finalisation restores moved sources and the
+   prior output set before emitting terminal evidence.
+5. Operator-reviewed archive operations are manifest-backed and reversible;
+   no OKF path performs automatic permanent deletion.
 
-See [Curation Pass](../process/curation-pass.md) for the full curation workflow.
-
-## Content Focus
-
-Inbox items are about the product, business logic, and application state, not just code diffs. The session synthesis should capture the full context so that another agent reading it knows exactly the current state of play. This is what makes the curation agent effective: it has rich material to work from, not just commit messages.
+See [Two-Tier Inbox Capture Cadence](../process/two-tier-inbox-cadence.md),
+[Hook System](../architecture/hook-system.md), and
+[Curation Pass](../process/curation-pass.md).

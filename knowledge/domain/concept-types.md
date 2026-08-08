@@ -1,56 +1,58 @@
 ---
 type: Domain
 title: OKF Concept Types
-description: The 8 concept types and when to use each one
+description: Eight OKF record types, their directories, and their strict lifecycle responsibilities
 resource: ./templates/okf/OKF-STANDARD.md
-tags: [okf, concepts, types, taxonomy]
-timestamp: 2026-07-05T13:00:00Z
+tags: [concepts, okf, taxonomy, types]
+timestamp: 2026-08-08T00:00:00Z
 status: active
+id: okf-26000000-0000-4000-8000-000000000003
+assertion_state: verified
+generated_at: 2026-08-08T00:00:00Z
+generated_by: codex-epic-26
+source_authority: repository-git
+evidence_refs: [templates/okf/OKF-STANDARD.md]
+verified_at: 2026-08-08T00:00:00Z
+verification_method: specification-review
+validity_basis: Current OKF Core 1.0 type contract
 ---
 
 # OKF Concept Types
 
-OKF defines eight concept types, each mapping to a directory in the `knowledge/` bundle. The `type` field in frontmatter determines which directory a concept belongs to.
+OKF defines eight record types. Each permanent concept has one stable purpose
+and lives in the matching directory.
 
-## Type Table
+| Type | Directory | Use |
+|---|---|---|
+| `Architecture` | `architecture/` | System structure, data models, infrastructure, and technical boundaries |
+| `Component` | `components/` | User-facing components and interaction behaviour |
+| `Domain` | `domain/` | Business entities, rules, vocabulary, and domain workflows |
+| `Decision` | `decisions/` | A choice, rationale, alternatives, and consequences |
+| `Process` | `process/` | Human or agent workflows, runbooks, gates, and operating procedures |
+| `Deprecation` | `deprecation/` | Retained history for a superseded concept or approach, including replacement and lessons |
+| `State` | `state/` | A dated current-state snapshot and its evidence boundary |
+| `Inbox` | `inbox/` | Tier 1 commit captures and Tier 2 session syntheses awaiting bounded curation |
 
-| Type | Directory | Use For |
-|------|-----------|---------|
-| `Architecture` | `architecture/` | How the system is structured: data models, provider hierarchy, infrastructure |
-| `Component` | `components/` | UI components and their behavior: interaction patterns, HUD layouts |
-| `Domain` | `domain/` | Business logic and domain knowledge: entities, workflows, rules |
-| `Decision` | `decisions/` | Architectural decisions and rationale: trade-offs, why a choice was made |
-| `Process` | `process/` | How workflows operate: sprint flow, deployment gates, runbooks, agent definitions |
-| `Deprecation` | `deprecation/` | What was removed or superseded and why, with `supersedes` links to replacements |
-| `State` | `state/` | Current state of play: what works, what is in progress, what is blocked |
-| `Inbox` | `inbox/` | Staging items awaiting curation: session syntheses written at commit time |
+## Selection Rules
 
-## Choosing a Type
+- Prefer Decision when the durable value is why a choice was made; prefer
+  Architecture when it is the resulting structure.
+- Prefer Domain for problem-space rules and Process for how people or agents
+  perform work.
+- Prefer Component for visible interaction behaviour and Architecture for the
+  supporting system boundary.
+- State records are evidence-backed snapshots and should be refreshed or
+  superseded when facts change.
+- Never delete a superseded permanent concept. Retain it as Deprecation and
+  point `supersedes` from the new replacement's stable ID to the older ID.
 
-- **Architecture vs Component:** Architecture covers system structure and data models. Component covers UI-level behaviour and interaction patterns. If it is about how the system is built underneath, use Architecture. If it is about what the user sees and interacts with, use Component.
-- **Domain vs Architecture:** Domain covers business rules, entities, and workflows. Architecture covers technical structure. If it is about the problem space, use Domain. If it is about the solution space, use Architecture.
-- **Decision vs Architecture:** Decision records why a choice was made, with trade-offs and alternatives. Architecture describes what the system looks like. A concept can be both, but OKF prefers one concept per file. If the rationale is the main value, use Decision. If the structure description is the main value, use Architecture.
-- **Process vs Domain:** Process describes how workflows operate (sprint flow, deployment steps). Domain describes business logic and rules. If it is about how agents or humans work, use Process. If it is about the business domain, use Domain.
-- **State vs others:** State is a snapshot of the current situation. It changes frequently. Other types are more stable. There is typically one State concept per project, updated during curation passes.
-- **Deprecation:** Used when a concept is superseded. The old file is moved to `deprecation/` with a `supersedes` field pointing to the replacement. Never delete a concept file; always deprecate it.
-- **Inbox:** Temporary staging type. Inbox items are written by agents after sessions (before committing). They are processed by the curation agent into permanent concepts and then moved to `inbox/processed/`. See [Inbox Format](./inbox-format.md).
+## Inbox Is Staging, Not a Permanent Concept Type
 
-## Examples
+Tier 1 records are written after ordinary commits by the non-blocking local
+hook. Tier 2 records are written after committed work at session close. They
+have different exact body contracts and are complementary. A successful,
+validated bounded run moves selected sources to `inbox/processed/`; an archive
+remains manifest-backed and reversible.
 
-| Topic | Type | Rationale |
-|-------|------|-----------|
-| SpacetimeDB tenant data model | Architecture | System structure, data model |
-| Chat-lane UI component | Component | UI behaviour |
-| Route geometry calculation rules | Domain | Business logic |
-| Choice of SpacetimeDB over Postgres | Decision | Rationale and trade-offs |
-| Deployment gate workflow | Process | How work flows through gates |
-| Old routing engine replaced by new pipeline | Deprecation | Superseded pattern |
-| Current sprint status | State | What works, in progress, blocked |
-| Session synthesis from a commit | Inbox | Awaiting curation |
-
-## Rules
-
-- One concept per file. Do not mix types.
-- The `type` field is required in frontmatter.
-- Filenames should be slugified versions of the title.
-- Use the correct directory for each type. The curation agent enforces this.
+See [OKF Inbox Format](./inbox-format.md) and
+[OKF Frontmatter Schema](./frontmatter-schema.md).

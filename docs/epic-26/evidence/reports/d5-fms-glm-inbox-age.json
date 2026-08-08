@@ -1,0 +1,31 @@
+{
+  "version": "okf-inbox-age-evidence/1",
+  "project_root": "/Users/tonyholovka/workspace/fms-glm",
+  "revision": "c1f9ad46c3f15d34c7b60208121e3834c382e24a",
+  "observed_at": "2026-08-08T11:38:29.016Z",
+  "direct_inbox_manifest": {
+    "count": 85,
+    "bytes": 10100,
+    "sha256": "eb7a2118a35f1e8cf2bc17aff7322adc5e817851078db5e987686b4c6b1c5d60"
+  },
+  "date_derivations": {
+    "timestamp": 22,
+    "legacy_date": 59,
+    "filename": 4,
+    "undated": 0
+  },
+  "oldest": {
+    "path": "knowledge/inbox/2026-07-01-mqtt-cancellation-and-qa-deploy-order.md",
+    "timestamp": "2026-07-01T00:00:00.000Z",
+    "method": "legacy_date",
+    "age_seconds": 3325109,
+    "age_days_ceil": 39
+  },
+  "newest": {
+    "path": "knowledge/inbox/2026-07-16-itinerary-pdf-long-metadata-collision-repair.md",
+    "timestamp": "2026-07-16T06:02:00.000Z",
+    "method": "timestamp",
+    "age_seconds": 2007389
+  },
+  "raw_inbox_content_recorded": false
+}

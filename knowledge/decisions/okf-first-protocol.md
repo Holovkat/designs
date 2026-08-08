@@ -50,6 +50,6 @@ Establish an OKF-First Protocol in agent onboarding (AGENTS.md, AGENTS-OKF-SECTI
 ## Related Concepts
 
 - [OKF Query Helper](../architecture/okf-query-helper.md) - The portable search tool for querying the bundle
-- [Curation Audit and Nudge](./curation-audit-and-nudge.md) - The audit phase that catches contradictions the protocol relies on
+- [Curation Pass](../process/curation-pass.md) - The bounded audit and validation workflow that catches contradictions the protocol relies on
 - [Curation Pass](../process/curation-pass.md) - The curation workflow that processes inbox items into concepts
 - [OKF Inbox Format](../domain/inbox-format.md) - Where rejected approaches are recorded before curation

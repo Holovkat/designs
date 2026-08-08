@@ -4,15 +4,24 @@
 # Usage: ./install-okf.sh <target-project-path>
 #
 # What it does:
-#   1. Creates knowledge/ directory with OKF v0.1 structure
-#   2. Installs the post-commit hook
-#   3. Appends OKF section to AGENTS.md (or creates it)
+#   1. Creates the repository-local knowledge/ bundle
+#   2. Copies the complete pinned, offline OKF command/runtime surface
+#   3. Installs the post-commit hook
+#   4. Stages the curator contract and proposed AGENTS.md section under .okf/
+#
+# Runtime/tool distribution is copy-only. The installer never runs Node/npm,
+# fetches a dependency, starts a curator, installs a scheduler, or overwrites
+# repository-local controls. It does not create harness state or change
+# AGENTS.md; those remain explicit operator-reviewed actions.
 #
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATES_DIR="${SCRIPT_DIR}/templates"
 STANDARD_PATH="${SCRIPT_DIR}/OKF-STANDARD.md"
+RUNBOOK_PATH="${SCRIPT_DIR}/DEPLOYMENT-RUNBOOK.md"
+MIGRATION_GUIDANCE_PATH="${SCRIPT_DIR}/../../docs/epic-26/e4-okf-core-migration-guidance.md"
+CANARY_GUIDANCE_PATH="${SCRIPT_DIR}/tests/epic26-canary-README.md"
 HOOK_SCRIPT="${SCRIPT_DIR}/post-commit.sh"
 AGENTS_SECTION="${SCRIPT_DIR}/AGENTS-OKF-SECTION.md"
 
@@ -20,7 +29,7 @@ if [ $# -lt 1 ]; then
 	echo "Usage: $0 <target-project-path>"
 	echo ""
 	echo "  Deploys the OKF knowledge bundle into the target project."
-	echo "  Creates knowledge/ directory, installs post-commit hook, and updates AGENTS.md."
+	echo "  Creates knowledge/, installs the repository hook, and stages review artifacts under .okf/."
 	exit 1
 fi
 
@@ -30,6 +39,72 @@ if [ ! -d "$TARGET" ]; then
 	echo "Error: target directory does not exist: $TARGET"
 	exit 1
 fi
+
+OKF_LIB_FILES=(
+	"cadence.mjs"
+	"curation-executor.mjs"
+	"curation-proposal.mjs"
+	"curation-validation.mjs"
+	"frontmatter.mjs"
+	"inbox-archive.mjs"
+	"inbox-status.mjs"
+	"inbox-triage.mjs"
+	"lint.mjs"
+	"query.mjs"
+	"run-checkpoint.mjs"
+	"run-control.mjs"
+	"run-guard.mjs"
+	"run-lock.mjs"
+	"run-plan.mjs"
+	"run-report.mjs"
+	"yaml-runtime.mjs"
+)
+OKF_BIN_FILES=(
+	"okf-cadence-observe.mjs"
+	"okf-cadence-status.mjs"
+	"okf-curate.mjs"
+	"okf-inbox-archive.mjs"
+	"okf-inbox-status.mjs"
+	"okf-inbox-triage.mjs"
+	"okf-lint.mjs"
+	"okf-query.mjs"
+	"okf-run-plan.mjs"
+)
+OKF_SCHEMA_FILES=(
+	"okf-core-1.0.schema.json"
+	"okf-core-1.0.validator.mjs"
+)
+
+require_source_file() {
+	if [ ! -f "$1" ]; then
+		echo "Error: required OKF distribution asset is missing: $1" >&2
+		exit 1
+	fi
+}
+
+# Fail before changing the target when the source package is incomplete.
+for required in \
+	"$STANDARD_PATH" "$RUNBOOK_PATH" "$MIGRATION_GUIDANCE_PATH" "$CANARY_GUIDANCE_PATH" \
+	"$HOOK_SCRIPT" "$AGENTS_SECTION" \
+	"${SCRIPT_DIR}/viewer.html" "${SCRIPT_DIR}/generate-viz.js" \
+	"${SCRIPT_DIR}/okf-query.sh" "${SCRIPT_DIR}/agents/okf-curator.md" \
+	"${SCRIPT_DIR}/templates/curation-prompt.md" \
+	"${SCRIPT_DIR}/runtime/package.json" "${SCRIPT_DIR}/runtime/package-lock.json" \
+	"${SCRIPT_DIR}/runtime/vendor/yaml/package.json"; do
+	require_source_file "$required"
+done
+for filename in "${OKF_LIB_FILES[@]}"; do
+	require_source_file "${SCRIPT_DIR}/lib/${filename}"
+done
+for filename in "${OKF_BIN_FILES[@]}"; do
+	require_source_file "${SCRIPT_DIR}/bin/${filename}"
+done
+for filename in "${OKF_SCHEMA_FILES[@]}"; do
+	require_source_file "${SCRIPT_DIR}/schema/${filename}"
+done
+for filename in profile.json cadence.json kill-switch.json; do
+	require_source_file "${SCRIPT_DIR}/config/${filename}"
+done
 
 TARGET_NAME="$(basename "$TARGET")"
 KNOWLEDGE_DIR="${TARGET}/knowledge"
@@ -126,18 +201,82 @@ if [ -f "$QUERY_SRC" ]; then
 	echo "Installed knowledge/okf-query.sh (portable concept search)"
 fi
 
-# 1d. Install the curator agent for each harness present (or create the default Factory location)
-CURATOR_SRC="${SCRIPT_DIR}/agents/okf-curator.md"
-if [ -f "$CURATOR_SRC" ]; then
-	mkdir -p "${TARGET}/.factory/droids"
-	cp "$CURATOR_SRC" "${TARGET}/.factory/droids/okf-curator.md"
-	echo "Installed okf-curator droid to .factory/droids/"
-	if [ -d "${TARGET}/.claude" ]; then
-		mkdir -p "${TARGET}/.claude/agents"
-		cp "$CURATOR_SRC" "${TARGET}/.claude/agents/okf-curator.md"
-		echo "Installed okf-curator agent to .claude/agents/"
+# 1d. Install the pinned local runtime and the complete accepted command set.
+# This is a file copy only: it never runs npm, Node, a hook, or a curator.
+RUNTIME_SRC="${SCRIPT_DIR}/runtime"
+RUNTIME_DEST="${TARGET}/.okf/runtime"
+LIB_DEST="${TARGET}/.okf/lib"
+BIN_DEST="${TARGET}/.okf/bin"
+SCHEMA_DEST="${TARGET}/.okf/schema"
+CURATION_TEMPLATE_DEST="${TARGET}/.okf/templates"
+AGENT_DEST="${TARGET}/.okf/agents"
+REVIEW_DEST="${TARGET}/.okf/review"
+DOCS_DEST="${TARGET}/.okf/docs"
+EPIC_DOCS_DEST="${DOCS_DEST}/epic-26"
+for protected_path in "${TARGET}/.okf" "$DOCS_DEST" "$EPIC_DOCS_DEST"; do
+	if [ -L "$protected_path" ]; then
+		echo "Error: refusing to install through symlinked repository-local path: $protected_path" >&2
+		exit 1
 	fi
-fi
+done
+mkdir -p "$RUNTIME_DEST" "$LIB_DEST" "$BIN_DEST" "$SCHEMA_DEST" "$CURATION_TEMPLATE_DEST" "$AGENT_DEST" "$REVIEW_DEST" "$EPIC_DOCS_DEST"
+cp -R "${RUNTIME_SRC}/." "$RUNTIME_DEST/"
+for filename in "${OKF_LIB_FILES[@]}"; do
+	cp "${SCRIPT_DIR}/lib/${filename}" "${LIB_DEST}/${filename}"
+done
+for filename in "${OKF_BIN_FILES[@]}"; do
+	cp "${SCRIPT_DIR}/bin/${filename}" "${BIN_DEST}/${filename}"
+	chmod +x "${BIN_DEST}/${filename}"
+done
+for filename in "${OKF_SCHEMA_FILES[@]}"; do
+	cp "${SCRIPT_DIR}/schema/${filename}" "${SCHEMA_DEST}/${filename}"
+done
+cp "${SCRIPT_DIR}/templates/curation-prompt.md" "${CURATION_TEMPLATE_DEST}/curation-prompt.md"
+cp "${SCRIPT_DIR}/agents/okf-curator.md" "${AGENT_DEST}/okf-curator.md"
+cp "$AGENTS_SECTION" "${REVIEW_DEST}/AGENTS-OKF-SECTION.md"
+chmod 0644 \
+	"${CURATION_TEMPLATE_DEST}/curation-prompt.md" \
+	"${AGENT_DEST}/okf-curator.md" \
+	"${REVIEW_DEST}/AGENTS-OKF-SECTION.md"
+
+install_readonly_document() {
+	local source="$1"
+	local destination="$2"
+	if [ -L "$destination" ]; then
+		echo "Error: refusing to replace symlinked OKF documentation: $destination" >&2
+		exit 1
+	fi
+	if [ -e "$destination" ]; then
+		chmod u+w "$destination"
+	fi
+	cp "$source" "$destination"
+	chmod 0444 "$destination"
+}
+install_readonly_document "$STANDARD_PATH" "${DOCS_DEST}/OKF-STANDARD.md"
+install_readonly_document "$RUNBOOK_PATH" "${DOCS_DEST}/DEPLOYMENT-RUNBOOK.md"
+install_readonly_document "$MIGRATION_GUIDANCE_PATH" "${EPIC_DOCS_DEST}/OKF-CORE-MIGRATION-GUIDANCE.md"
+install_readonly_document "$CANARY_GUIDANCE_PATH" "${EPIC_DOCS_DEST}/CANARY-HARNESS.md"
+echo "Installed complete pinned OKF runtime and command surface (offline; not executed)"
+echo "Staged canonical curator contract at .okf/agents/okf-curator.md"
+echo "Staged proposed onboarding text at .okf/review/AGENTS-OKF-SECTION.md"
+echo "Installed canonical documentation under .okf/docs/ (read-only guidance; non-executable)"
+echo "  Epic #26 canary guidance is operator reference only; the canary harness was not installed or executed"
+
+# 1e. Install safe defaults without replacing repository-local operator state.
+install_control_default() {
+	local source_name="$1"
+	local destination_name="$2"
+	local destination="${TARGET}/.okf/${destination_name}"
+	if [ -e "$destination" ] || [ -L "$destination" ]; then
+		echo "  Preserved existing .okf/${destination_name}"
+	else
+		cp "${SCRIPT_DIR}/config/${source_name}" "$destination"
+		echo "  Installed default .okf/${destination_name}"
+	fi
+}
+install_control_default "profile.json" "profile.json"
+install_control_default "cadence.json" "cadence.json"
+install_control_default "kill-switch.json" "KILL_SWITCH"
 
 # 1b. Detect legacy documentation and advise
 DOCS_DIR="${TARGET}/docs"
@@ -150,7 +289,7 @@ if [ -d "$DOCS_DIR" ]; then
 		echo "  - Existing docs stay in place (not moved)"
 		echo "  - OKF concepts in knowledge/ reference them via the 'resource' field"
 		echo "  - Run a legacy scan to create concepts from existing docs:"
-		echo "    Use /okf-curate or dispatch the okf-curator droid with:"
+		echo "    Review .okf/agents/okf-curator.md, integrate it only through an approved harness workflow, then request:"
 		echo "    'Scan docs/ and create OKF concepts that reference existing documentation'"
 		echo ""
 	fi
@@ -165,9 +304,20 @@ echo "Installing post-commit hook..."
 
 mkdir -p "$GITHOOKS_DIR"
 HOOK_TARGET="${GITHOOKS_DIR}/post-commit"
+CHAINED_HOOK="${GITHOOKS_DIR}/post-commit.pre-okf"
 if [ -f "$HOOK_TARGET" ]; then
-	echo "  Existing post-commit hook found, backing up to post-commit.bak"
-	mv "$HOOK_TARGET" "${HOOK_TARGET}.bak"
+	if grep -q "OKF post-commit hook" "$HOOK_TARGET"; then
+		echo "  Existing OKF post-commit hook found; preserving its chained hook."
+	else
+		if [ -e "$CHAINED_HOOK" ]; then
+			echo "Error: cannot preserve ${HOOK_TARGET}; ${CHAINED_HOOK} already exists."
+			echo "  Reconcile the chained hook manually rather than clobbering either hook."
+			exit 1
+		fi
+		echo "  Existing post-commit hook found; chaining it as post-commit.pre-okf"
+		mv "$HOOK_TARGET" "$CHAINED_HOOK"
+		chmod +x "$CHAINED_HOOK"
+	fi
 fi
 cp "$HOOK_SCRIPT" "$HOOK_TARGET"
 chmod +x "$HOOK_TARGET"
@@ -181,33 +331,18 @@ else
 	echo "  Note: not a git repo yet. Run 'git config core.hooksPath .githooks' after git init."
 fi
 
-# 3. Update AGENTS.md
-AGENTS_FILE="${TARGET}/AGENTS.md"
-
-echo "Updating AGENTS.md..."
-
-if [ -f "$AGENTS_FILE" ]; then
-	if grep -q "OKF Knowledge Bundle" "$AGENTS_FILE"; then
-		echo "  AGENTS.md already has OKF section, skipping."
-	else
-		echo "" >> "$AGENTS_FILE"
-		echo "---" >> "$AGENTS_FILE"
-		echo "" >> "$AGENTS_FILE"
-		cat "$AGENTS_SECTION" >> "$AGENTS_FILE"
-		echo "  OKF section appended to AGENTS.md"
-	fi
-else
-	cat "$AGENTS_SECTION" > "$AGENTS_FILE"
-	echo "  AGENTS.md created with OKF section"
-fi
-
 echo ""
 echo "OKF installation complete."
 echo ""
 echo "Next steps:"
-echo "  1. Commit the knowledge/ directory to git"
+echo "  1. Review the installed knowledge/, .okf/, and hook artifacts; commit only the intended files"
 echo "  2. Ensure the post-commit hook is active (git config core.hooksPath .githooks)"
 echo "  3. Agents should read knowledge/index.md before starting work"
-echo "  4. Use /okf-capture (or write inbox items directly) after sessions"
-echo "  5. Run curation (okf-curator agent or /okf-curate) when the hook nudges"
-echo "     at 5+ unprocessed inbox items, or after any significant epic closes"
+echo "  4. Commit bodies must state why/how and Impact:; the hook writes Tier 1 captures automatically"
+echo "  5. At session close, end-session writes one complementary Tier 2 synthesis after work is committed"
+echo "  6. Run curation only through an explicit repository-scoped operator action until an approved bounded cadence exists"
+echo "  7. Review .okf/review/AGENTS-OKF-SECTION.md against the nearest AGENTS.md"
+echo "     Apply any AGENTS.md change only after explicit operator approval; installation leaves it untouched"
+echo "  8. Integrate .okf/agents/okf-curator.md with a harness only through its governed, operator-approved workflow"
+echo "  9. Use .okf/docs/ as the installed standard/runbook/migration reference"
+echo "     The canary document describes a source-repository operator tool; its harness is deliberately not distributed"

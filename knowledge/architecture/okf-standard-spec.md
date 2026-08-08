@@ -1,61 +1,65 @@
 ---
 type: Architecture
-title: OKF Standard Specification
-description: The v0.1 specification defining the Open Knowledge Format convention
+title: OKF Standard and Core Profile
+description: Git-canonical OKF v0.1 with the warning-first machine-checkable okf-core/1.0 semantic application profile
 resource: ./templates/okf/OKF-STANDARD.md
-tags: [okf, standard, specification, frontmatter, concepts]
-timestamp: 2026-07-05T13:00:00Z
+tags: [concepts, frontmatter, okf, semantic-profile, specification, standard]
+timestamp: 2026-08-08T00:00:00Z
 status: active
+issue_refs: [26]
+epic_refs: [26]
+assertion_state: proposed
+generated_at: 2026-08-08T00:00:00Z
+generated_by: epic-26-implementation
+source_authority: repository-contract
+evidence_refs: [templates/okf/OKF-STANDARD.md, templates/okf/schema/okf-core-1.0.schema.json]
 ---
 
-# OKF Standard v0.1
+# Canonical representation
 
-The Open Knowledge Format (OKF) defines a convention for maintaining project knowledge as markdown files with structured frontmatter, stored in git alongside code. It is designed so that AI agents can read project knowledge before starting work and capture session context after completing work.
+OKF remains repository-local Markdown with YAML frontmatter under Git. The v0.1
+directory/type convention, indexes, log, progressive disclosure, explicit
+deprecation, OKF-first consumption, and two-tier capture remain the authoring
+model. An external graph, RDF store, JSON-LD processor, SHACL engine, remote
+context, or network service is not required.
 
-## Design Principles
+# Core 1.0 profile
 
-1. **Git is canonical.** All knowledge lives in markdown files committed to the project repo. No external system is the source of truth.
-2. **Agents read first (OKF-First Protocol).** Before starting work, agents query the OKF bundle to understand current state, architecture, and prior decisions. See [OKF-First Protocol](../decisions/okf-first-protocol.md).
-3. **Two-phase capture.** Agents write session syntheses to an inbox before committing. A curation pass later upserts permanent concept files with full context. The post-commit hook refreshes the viewer manifest and nudges for curation.
-4. **Progressive disclosure.** Index files at each level provide summaries. Agents read the index, then drill into specific concepts only when relevant.
-5. **Deprecation is explicit.** When a concept is superseded, the old file is moved to `deprecation/` with a `supersedes` link, not deleted.
+`okf-core/1.0` adds a versioned schema and shared parser/linter semantics for new
+or materially updated records. It requires descriptive metadata, controlled
+type/lifecycle/tags/timestamps, conditional Inbox/Deprecation/provenance fields,
+stable project-local IDs for typed edges, and controlled predicates
+`depends_on`, `implements`, `supersedes`, `derived_from`, `contradicts`, and
+`blocked_by`.
 
-## Directory Structure
+Assertion state (`verified`, `inferred`, `proposed`, `historical`, `stale`) is
+separate from lifecycle and governance. Flat provenance/evidence fields record
+generation, authority, verification, validity, and staleness. Paths remain
+navigation/context rather than semantic identity or proof.
 
-Each project repo gets a `knowledge/` directory with subdirectories for each concept type: `inbox/`, `architecture/`, `components/`, `domain/`, `decisions/`, `process/`, `deprecation/`, and `state/`. Each subdirectory has its own `index.md`. The root has `index.md` and `log.md`.
+# Compatibility and validation
 
-## Concept Types
+Retained history is audited in warning/legacy mode and never normalized merely
+to silence findings. `strict-new` applies to new/updated records through author,
+capture, and curator staging gates; `strict-bundle` requires a reviewed
+migration manifest and rollback proof. Unknown fields are preserved and new
+portable extensions use `x_<owner>_<name>`.
 
-Eight types map to directories: Architecture, Component, Domain, Decision, Process, Deprecation, State, and Inbox. The `type` field in frontmatter determines which directory a concept belongs to. See [Concept Types](../domain/concept-types.md) for details.
+Unresolved/invalid relationships, legacy path-valued `supersedes`, assertion
+states, and malformed profile records remain distinguishable. `A supersedes B`
+means A replaces B; the old record stays in `deprecation/` and consumers derive
+`superseded_by`.
 
-## Frontmatter
+# Operations
 
-All OKF files use YAML frontmatter. The only required field is `type`. Recommended fields include `title`, `description`, `resource`, `tags`, and `timestamp`. Extension fields include `status`, `supersedes`, `issue_refs`, `epic_refs`, `session_id`, `commit_sha`, and `branch`. See [Frontmatter Schema](../domain/frontmatter-schema.md) for the full specification.
+Capture quality is compact/reference-first for unsafe raw or oversized content.
+Curation and archive are explicit-root, locked, quota-bounded, validated,
+cancellable, observable, resumable, and recoverable. The approved cadence is
+manual status/triage plus a separately requested batch; thresholds and warnings
+never create execution authority.
 
-## Key Rules
+# Related concepts
 
-- Never delete concept files. Move superseded ones to `deprecation/` instead.
-- Always update `index.md` files when adding, updating, or removing concepts.
-- One concept per file. Do not mix topics or types.
-- Use lowercase, consistent tags across all concepts.
-- The `resource` field should point to the relevant code file, issue, or existing doc.
-- For legacy projects, concepts reference existing docs via `resource` rather than duplicating content. See [Legacy Alignment Mode](../decisions/legacy-alignment-mode.md).
-
-## Curation
-
-The curation agent reads all unprocessed inbox items, existing concept files, the codebase, and GitHub issues referenced by `issue_refs`. It creates or updates concept files, moves superseded concepts to `deprecation/`, processes inbox items, and updates all indexes and `log.md`. See [Curation Pass](../process/curation-pass.md).
-
-## Agent Onboarding
-
-1. Read `knowledge/index.md` for an overview of all concept groups.
-2. Read `knowledge/state/index.md` for the current state of play.
-3. Read `knowledge/deprecation/index.md` to understand what has been superseded.
-4. Read concept files relevant to the work area (identified by tags and titles).
-5. After completing work, agents write a session synthesis to `knowledge/inbox/` before committing. The post-commit hook refreshes the viewer manifest and nudges for curation.
-
-## Versioning
-
-- `log.md` tracks knowledge evolution at the bundle level.
-- Git history provides full diff tracking for every concept file.
-- The `supersedes` field links deprecated concepts to their replacements.
-- The OKF standard version is recorded in the root `index.md`.
+- [OKF Semantic Profile and Semantic-Web Scope](../decisions/semantic-profile-and-semantic-web-scope.md)
+- [OKF Bounded Curation Pass](../process/curation-pass.md)
+- [Post-Commit Tier 1 Capture System](./hook-system.md)

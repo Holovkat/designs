@@ -1,84 +1,126 @@
 ---
 type: State
+id: okf-6a9b0d2e-7f31-4c85-9a26-1d4e8b703c52
 title: OKF System Current State
-description: Current state of the OKF system including all components, tooling, protocols, and deployments
-resource: ./templates/okf/OKF-STANDARD.md
-tags: [okf, state, status, v0.1, okf-first, curation-audit]
-timestamp: 2026-07-05T13:00:00Z
+description: Current accepted OKF semantic guardrails, bounded curation tooling, manual cadence, distribution, and rollout boundary
+resource: templates/okf/OKF-STANDARD.md
+tags: [okf, state, semantic-guardrails, bounded-curation, validation, manual-cadence]
+timestamp: 2026-08-08T11:38:30Z
 status: active
 ---
 
 # OKF System Current State
 
-## Version
+## Canonical Model
 
-OKF Standard v0.1. The standard is defined in `OKF-STANDARD.md` and deployed via the `DEPLOYMENT-RUNBOOK.md`.
+OKF remains a repository-local Markdown/YAML knowledge system with Git as the
+canonical history. The accepted `okf-core/1.0` application profile is additive:
+existing bundles can be audited in warning mode, while new or curated outputs
+can opt into strict enforcement. JSON-LD/RDF/SHACL remain deferred and no
+external knowledge service is required.
 
-## What Works
+## Accepted Tooling
 
-### Core Standard
-- OKF Standard v0.1 specification is complete: directory structure, concept types, frontmatter schema, inbox format, index format, log format, curation rules (7 phases including Phase 6 Audit), legacy alignment mode, OKF-first protocol, agent onboarding.
-- 8 concept types defined: Architecture, Component, Domain, Decision, Process, Deprecation, State, Inbox.
+- A versioned JSON Schema, generated local validator, shared pinned YAML parser,
+  warning/strict migration modes, extension rules, stable concept IDs, six typed
+  relationship predicates, provenance, evidence, and assertion-state fields.
+- A linter that checks schema, frontmatter, directory/type alignment, body
+  sections, resources, relationship resolution, controlled lifecycle values,
+  project extensions, and physical confinement for both bundle roots and
+  existing local resource targets without rewriting retained records.
+- Tier 1 post-commit capture with normalized tags, generated provenance, one
+  record per ordinary commit, compact Git-reference notices for unsafe or
+  repeated content, physical knowledge/inbox/index confinement, and a
+  non-destructive explicit override; Tier 2 accepts canonical UUIDv7 session
+  identifiers.
+- A typed relationship viewer and semantic query command, both using the pinned
+  local parser, while preserving Markdown backlinks and the portable grep
+  fallback for basic search.
+- Read-only inbox status and triage commands plus a reversible archive workflow
+  with reviewed manifests, byte-preserving moves, receipts, exact index
+  snapshots, rollback, write-once attempt reports, and no permanent-delete path.
+- A repository-scoped curator with explicit sorted selection, item/input/control/
+  generated/runtime/session ceilings, physical-root confinement, locking, kill
+  switch, cancellation, checkpoints, deterministic planning, recoverable
+  staging, strict concept plus maintenance validation, transactional rollback,
+  and explicit resume.
+- A manual-explicit cadence status/observer. It never starts the curator,
+  schedules work, polls, retries, or grants execution authority.
 
-### Tooling
-- **install-okf.sh:** Installer script that creates the knowledge directory structure, copies viewer, generator, and query helper, installs the post-commit hook to `.githooks/`, installs the okf-curator droid to `.factory/droids/` (and `.claude/agents/` when present), sets local `core.hooksPath`, and appends the OKF section to AGENTS.md.
-- **post-commit.sh:** Manifest-refresh and curation nudge hook. Does NOT write to the inbox. Refreshes the workspace viewer manifest and nudges for curation when unprocessed inbox items reach a configurable threshold (default 5). See [Hook System](../architecture/hook-system.md).
-- **generate-viz.js:** Node.js script that reads all `.md` concept files and embeds them as JSON into `viewer.html` to produce a self-contained `viz.html`.
-- **viewer.html:** Single-file HTML viewer with two tabs (Browse with folder tree + detail, Graph with Cytoscape.js), mermaid.js rendering, link interception, search filtering, and drag-and-drop folder loading.
-- **okf-query.sh:** Portable grep-based concept search tool with frontmatter ranking and a `--decisions` scope for prior and rejected paths. Installed to `knowledge/okf-query.sh`. See [OKF Query Helper](../architecture/okf-query-helper.md).
-- **okf.ts:** Pi extension providing `/okf-status`, `/okf-query`, `/okf-capture`, `/okf-curate`, and `/okf-init` commands.
-- **SKILL.md:** Agent skill definition for working with OKF bundles, including onboarding, OKF-first protocol, inbox writing, and curation instructions. Distributed via agent-skill-distro. See [Workflow Skill Canonicalisation](../decisions/skill-canonicalisation.md).
-- **okf-curator droid:** Dedicated curation agent (canonical contract at `templates/okf/agents/okf-curator.md`) that processes inbox items into permanent concept files, fetches GitHub issues for context, and audits the bundle for redundancy, contradictions, ambiguous references, and AGENTS.md alignment. See [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md).
+## Verification State
 
-### Documentation
-- **OKF-STANDARD.md:** The complete standard specification.
-- **DEPLOYMENT-RUNBOOK.md:** 8-phase deployment workflow.
-- **AGENTS-OKF-SECTION.md:** Template for the AGENTS.md OKF section.
-- **Template index files:** Templates for root index, subdirectory indexes, log, and inbox index.
+The complete schema/parser/linter/query/viewer/status/triage/archive/run-safety/
+curation/cadence/installer/hook suite passed on 2026-08-08. Four isolated Epic
+#26 samples also passed:
 
-### Deployments
-- **fms-glm:** OKF deployed with 144 concepts. This is the primary production deployment.
-- **designs/ (this bundle):** OKF system's own self-knowledge bundle, documenting how OKF works and how to deploy it.
+- D3 `designs`: one selected record produced one strict, retrievable concept.
+- D4 `fmsmercury`: deliberately invalid output stopped at staging and retained
+  its source; a new reviewed run completed.
+- D5 `fms-glm`: a controlled interruption after one source move restored the
+  pending source and bounded output set; explicit resume completed without
+  duplication and preserved all three inputs.
+- D7 control: an active repository-local kill switch blocked an identical
+  check-only request, restoration was byte-identical, and the request was then
+  permitted without starting a curator.
 
-## What Is In Progress
+The evidence-bound observation processed five records into three useful
+concepts (`curation_yield = 0.6`) with zero violations. Maxima were 5 seconds
+runtime, 997 ms CPU for one sample, 138,938 bytes disk growth, one session, and
+one concurrent executor; the complete legacy-date audit found a 39-day oldest
+inbox age. Every live source repository fingerprint and every unselected
+snapshot manifest remained unchanged. Version-1 evidence uses a closed field
+vocabulary, so an unexpected short or nested string cannot bypass the raw
+inbox-content boundary.
 
-- Broader adoption across additional projects.
-- Refinement of curation workflows based on usage feedback.
-- Potential enhancements to the viewer (additional graph layouts, export features).
+The generated 87-record viewer was also exercised in Chromium against its exact
+SHA-256. It visibly rendered all six predicate legend entries, two typed graph
+edges, relationship details and target navigation, 56 diagnostic rows, the
+interactive graph canvas, and eight type filters without console, page, or
+request failures.
 
-## Protocols and Decisions
+## Distribution State
 
-- [OKF-First Protocol](../decisions/okf-first-protocol.md): Knowledge bundle is the first source of truth; query before investigating, check decisions and deprecation before planning.
-- [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md): Phase 6 Audit (redundancy, contradictions, ambiguous refs, AGENTS.md alignment) runs on every curation pass; passive nudge at threshold 5.
-- [Workflow Skill Canonicalisation](../decisions/skill-canonicalisation.md): Designs repo is canonical source for workflow skills; three-layer distribution via agent-skill-distro.
+`templates/okf/install-okf.sh` distributes the accepted offline command/library/
+schema/runtime/viewer/hook/curator surface, read-only canonical documentation,
+repository-local control defaults, the curator contract, and an `AGENTS.md`
+review proposal. It preserves existing project-local controls and instructions,
+does not install the operational canary harness, and does not create a scheduler
+or Factory/Claude harness.
 
-## What Is Blocked
+The canonical OKF skill is synchronized through `agent-skill-distro`; shared,
+Codex, Claude, Pi, Agents, and installed copies matched the canonical SHA-256 on
+2026-08-08. The distribution audit reported zero skill errors or warnings. The
+external distro was already dirty on an unrelated branch, so its scoped commit
+remains a separate source-control handoff rather than an inferred mutation.
 
-- Nothing currently blocked.
+## Current Operating Boundary
 
-## Component Status Summary
+The approved cadence remains explicit, manual, and repository-scoped. A status
+review cannot launch curation. Each mutating batch requires a separate operator
+request with an exact root, revision, selection, identity, limits, expected
+outcome, and recovery plan.
 
-| Component | Status | Location |
-|-----------|--------|----------|
-| OKF Standard v0.1 | Complete | `templates/okf/OKF-STANDARD.md` |
-| Deployment Runbook | Complete | `templates/okf/DEPLOYMENT-RUNBOOK.md` |
-| Installer | Complete | `templates/okf/install-okf.sh` |
-| Post-commit Hook | Complete (manifest + nudge) | `templates/okf/post-commit.sh` |
-| Viz Generator | Complete | `templates/okf/generate-viz.js` |
-| Viewer | Complete | `templates/okf/viewer.html` |
-| Query Helper | Complete | `templates/okf/okf-query.sh` |
-| Pi Extension | Complete | `pi-extensions/extensions/okf.ts` |
-| Agent Skill | Complete | `pi-extensions/skills/okf/SKILL.md` |
-| Curator Droid | Complete | `templates/okf/agents/okf-curator.md` |
-| AGENTS Section Template | Complete | `templates/okf/AGENTS-OKF-SECTION.md` |
-| fms-glm deployment | Deployed (144 concepts) | `fms-glm/knowledge/` |
-| Self-knowledge bundle | Deployed (this bundle) | `designs/knowledge/` |
+The pre-existing external cron-server path is also fail-closed: every configured
+OKF curator job is disabled, the unloaded LaunchAgent label is explicitly
+disabled, no cron-server process exists, and the live crontab contains no OKF
+entry. The LaunchAgent file remains in place only as reversible historical
+configuration; it does not grant cadence authority.
 
-## Key Decisions
+The E5 cross-project review records **STOP broader live-project adoption**.
+Frozen canaries prove bounded behavior and recovery but do not measure sustained
+post-adoption inbox growth. No live external bundle, schedule, profile mode,
+`AGENTS.md`, or deployment was changed by the canaries. A future project rollout
+requires its own warning-mode audit and explicit operator decision.
 
-- [Legacy Alignment Mode](../decisions/legacy-alignment-mode.md): Existing docs stay in place; OKF concepts reference them.
-- [Post-Commit Capture Model](../decisions/post-commit-capture-model.md): Agents write syntheses before committing; hook refreshes manifest and nudges; curation is separate.
-- [Per-Project Bundles](../decisions/per-project-bundles.md): Each project has its own knowledge/ directory in git.
-- [OKF-First Protocol](../decisions/okf-first-protocol.md): Knowledge bundle is the first source of truth; query before investigating.
-- [Curation Audit and Nudge](../decisions/curation-audit-and-nudge.md): Phase 6 Audit on every pass; passive nudge at threshold 5.
-- [Workflow Skill Canonicalisation](../decisions/skill-canonicalisation.md): Designs is canonical source; three-layer distribution via agent-skill-distro.
+## Related Concepts and Evidence
+
+- [Curation Cadence and First Decision Gate](../decisions/curation-cadence-first-decision-gate.md)
+- [Bounded Curation Execution Safety Requirements](../decisions/bounded-curation-execution-safety.md)
+- [Capture Routing and Explicit Curation Trigger](../decisions/capture-routing-and-curation-trigger.md)
+- [Two-Tier Inbox Capture Cadence](../process/two-tier-inbox-cadence.md)
+- [Epic #26 D7 Observation Report](../../docs/epic-26/evidence/d7-observation-report.json)
+- [Epic #26 E3 Distribution Sync Evidence](../../docs/epic-26/evidence/e3-distribution-sync.json)
+- [Epic #26 External Scheduler Disable Evidence](../../docs/epic-26/evidence/e5-scheduler-disable.json)
+- [Epic #26 C8 Real-Browser Viewer Evidence](../../docs/epic-26/evidence/c8-browser-viewer.json)
+- [Epic #26 Final Test Transcript](../../docs/epic-26/evidence/tests/full-suite-2026-08-08.txt)
+- [Epic #26 E5 Rollout Review](../../docs/epic-26/e5-cross-project-rollout-review.md)

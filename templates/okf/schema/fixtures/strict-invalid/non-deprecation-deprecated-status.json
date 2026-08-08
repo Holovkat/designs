@@ -1,0 +1,12 @@
+{
+  "description": "Synthetic invalid fixture for profile coverage",
+  "resource": "templates/okf/OKF-STANDARD.md",
+  "status": "deprecated",
+  "tags": [
+    "fixture",
+    "okf"
+  ],
+  "timestamp": "2026-08-06T04:10:00Z",
+  "title": "Invalid fixture",
+  "type": "Decision"
+}

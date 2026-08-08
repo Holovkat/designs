@@ -1,0 +1,49 @@
+{
+  "version": "okf-epic26-canary/1",
+  "scenario": "interrupt-resume",
+  "source": {
+    "root": "/Users/tonyholovka/workspace/fms-glm",
+    "revision": "c1f9ad46c3f15d34c7b60208121e3834c382e24a",
+    "selected_inbox": [
+      "knowledge/inbox/2026-07-10-work-assignments-planned-request-toggle-restoration.md",
+      "knowledge/inbox/2026-07-10-work-assignments-route-scroll-reveal.md",
+      "knowledge/inbox/2026-07-10-work-assignments-scrollbar-stable-gutter.md"
+    ]
+  },
+  "operator": {
+    "identity": "tony-via-codex-2026-08-08",
+    "request": "Run the explicitly selected Epic 26 D5 fms-glm interrupt-resume canary in a throwaway snapshot with the published limits and retain hash-only evidence."
+  },
+  "run_ids": {
+    "interrupt": "epic26-d5-glm-resume"
+  },
+  "limits": {
+    "max_items": 3,
+    "max_input_bytes": 8192,
+    "max_generated_bytes": 524288,
+    "max_runtime_seconds": 60,
+    "max_sessions": 1
+  },
+  "harness_limits": {
+    "max_snapshot_bytes": 4294967296,
+    "max_disk_growth_bytes": 1048576,
+    "max_report_bytes": 65536,
+    "max_wall_seconds": 180,
+    "max_cpu_milliseconds_per_run": 5000
+  },
+  "curated_concept": {
+    "path": "knowledge/components/work-assignments-map-and-scroll-behaviour.md",
+    "content": "---\ntype: Component\ntitle: Work Assignments Map and Scroll Behaviour\ndescription: Shared reveal-without-reflow scrollbars and an opt-in planned-request map layer for Work Assignments\ntags: [canary, component, fms-glm, operations-control, work-assignments]\ntimestamp: 2026-08-08T00:00:00Z\nstatus: active\nid: okf-26000000-0000-4000-8000-0000000000d5\nassertion_state: verified\ngenerated_at: 2026-08-08T00:00:00Z\ngenerated_by: epic26-bounded-curator\nsource_authority: repository-git\nevidence_refs: [git:c1f9ad46c3f15d34c7b60208121e3834c382e24a:knowledge/inbox/2026-07-10-work-assignments-planned-request-toggle-restoration.md, git:c1f9ad46c3f15d34c7b60208121e3834c382e24a:knowledge/inbox/2026-07-10-work-assignments-route-scroll-reveal.md, git:c1f9ad46c3f15d34c7b60208121e3834c382e24a:knowledge/inbox/2026-07-10-work-assignments-scrollbar-stable-gutter.md]\nverified_at: 2026-08-08T00:00:00Z\nverification_method: frozen-git-snapshot-consolidation\nvalidity_basis: Three exact repository captures with focused test build typecheck and lint evidence at the named revision\n---\n\n# Behaviour\n\nEpic26D5Assignments consolidates three related Work Assignments records. Both the left route-detail and right work-request panels use one local scroll-reveal helper: idle scrollbars remain hidden, interaction reveals them for 950 milliseconds, and a stable gutter plus shared padding prevents the revealed scrollbar from changing content width.\n\nAllocated requests are hidden from the map by default. The existing Operations Control footer exposes Show planned for cross-route reassignment; enabled planned markers use a muted colour and route badge, and the routed-request set spans route stops across all service dates.\n\n# Evidence Boundary\n\nFocused component tests, typecheck, lint, and build passed in the source records. Authenticated WorkOS browser UAT remained pending and no QA or production deployment was performed, so this concept does not claim hosted acceptance.\n"
+  },
+  "retrieval": {
+    "semantic": {
+      "terms": ["Epic26D5Assignments"],
+      "assertionStates": ["verified"],
+      "hasEvidence": true,
+      "statuses": ["active"],
+      "validationStatuses": ["strict"]
+    },
+    "portable_terms": ["Epic26D5Assignments"],
+    "portable_decisions_only": false
+  }
+}

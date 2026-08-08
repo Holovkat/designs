@@ -1,0 +1,12 @@
+#!/bin/sh
+# Keep JMRI's workspace index current when core.hooksPath is .githooks.
+# The managed helper remains in .git/hooks, outside Git's active hook path.
+
+GIT_DIR=$(git rev-parse --absolute-git-dir 2>/dev/null) || exit 0
+MCP_INDEX_SYNC="$GIT_DIR/hooks/mcp-index-sync"
+
+if [ -x "$MCP_INDEX_SYNC" ]; then
+  "$MCP_INDEX_SYNC" "post-commit" "$@" || true
+fi
+
+exit 0

@@ -1,0 +1,26 @@
+{
+  "name": "okf-template-validation",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Fixture validation for the OKF core application profile",
+  "scripts": {
+    "test": "npm run test:schema && npm run test:frontmatter && npm run test:lint && npm run test:query && npm run test:viewer && npm run test:inbox-status && npm run test:inbox-triage && npm run test:inbox-archive && npm run test:run-safety && npm run test:curation && npm run test:cadence && npm run test:runtime && npm run test:post-commit",
+    "test:cadence": "node tests/cadence_test.mjs",
+    "test:curation": "node tests/curation-executor_test.mjs",
+    "test:frontmatter": "node tests/frontmatter-parser_test.mjs",
+    "test:inbox-archive": "node tests/inbox-archive_test.mjs",
+    "test:inbox-status": "node tests/inbox-status_test.mjs",
+    "test:inbox-triage": "node tests/inbox-triage_test.mjs",
+    "test:lint": "node tests/linter_test.mjs",
+    "test:post-commit": "bash tests/post-commit_test.sh",
+    "test:query": "node tests/query_test.mjs",
+    "test:run-safety": "node tests/run-safety_test.mjs",
+    "test:runtime": "node tests/runtime-vendor_test.mjs",
+    "test:schema": "node schema/schema-test.mjs",
+    "test:viewer": "node tests/viewer-relationships_test.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.18.0",
+    "ajv-formats": "3.0.1"
+  }
+}

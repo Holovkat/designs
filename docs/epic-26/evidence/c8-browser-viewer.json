@@ -1,0 +1,80 @@
+{
+  "version": "okf-c8-browser-evidence/1",
+  "observed_at": "2026-08-08T08:26:09Z",
+  "source": {
+    "path": "knowledge/viz.html",
+    "sha256": "6a574a79d2dfdccfa5125d4db72a1758186851fe5af3014266efc4055f16bd3a",
+    "bytes": 617250
+  },
+  "browser": {
+    "engine": "Chromium",
+    "version": "147.0.7727.15",
+    "headless": true,
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    }
+  },
+  "loaded_bundle": {
+    "title": "OKF Knowledge Viewer",
+    "stats": "87 concepts | 213 citations | 2 typed edges | 56 warnings",
+    "embedded_records": 87,
+    "rendered_tree_rows": 87,
+    "citations": 213,
+    "typed_graph_edges": 2,
+    "typed_declarations": 4,
+    "warnings": 56,
+    "invalid_warnings": 2
+  },
+  "typed_relationships": {
+    "predicates": [
+      "depends_on",
+      "implements",
+      "supersedes",
+      "derived_from",
+      "contradicts",
+      "blocked_by"
+    ],
+    "legend": [
+      "citation",
+      "depends_on",
+      "implements",
+      "supersedes",
+      "derived_from",
+      "contradicts",
+      "blocked_by"
+    ],
+    "selected_concept": "Capture Routing and Explicit Curation Trigger",
+    "selected_heading": "Typed relationships (1)",
+    "selected_rows": 1,
+    "selected_links": 1,
+    "clicked_target": "Pre-Tiered Post-Commit Capture Model",
+    "navigated_title": "Pre-Tiered Post-Commit Capture Model"
+  },
+  "diagnostics": {
+    "summary": "Relationship and parser diagnostics (56; 2 invalid)",
+    "rendered_rows": 56
+  },
+  "graph": {
+    "active": true,
+    "runtime_available": true,
+    "canvas_count": 3,
+    "legend_items": 7,
+    "filter_buttons": 8,
+    "fallback_message": ""
+  },
+  "runtime_errors": {
+    "console": [],
+    "page": [],
+    "failed_requests": []
+  },
+  "assertions": {
+    "all_embedded_records_rendered": true,
+    "all_six_predicates_visible": true,
+    "typed_relationship_visible": true,
+    "typed_target_navigation_worked": true,
+    "diagnostics_visible": true,
+    "graph_rendered": true,
+    "no_runtime_error": true
+  }
+}

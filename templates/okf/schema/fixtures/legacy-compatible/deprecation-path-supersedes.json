@@ -1,0 +1,17 @@
+{
+  "deprecated_date": "2026-07-05",
+  "deprecated_reason": "Historical field direction",
+  "description": "A strict fixture for the OKF application profile",
+  "resource": "templates/okf/OKF-STANDARD.md",
+  "status": "deprecated",
+  "supersedes": [
+    "../decisions/current-pattern.md"
+  ],
+  "tags": [
+    "okf",
+    "fixture"
+  ],
+  "timestamp": "2026-08-06T04:10:00Z",
+  "title": "Historical replacement direction",
+  "type": "Deprecation"
+}
