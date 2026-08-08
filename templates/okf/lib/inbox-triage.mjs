@@ -158,7 +158,7 @@ function inspectRecord(root, path, asOf) {
   if (tier === "session") {
     if (!hasHeadings(parsed.body, SESSION_HEADINGS)) signals.add("required-body-headings:session");
     if (!Array.isArray(frontmatter.commit_sha) || frontmatter.commit_sha.length === 0) signals.add("required-field:commit_sha");
-    if (!nonEmptyString(frontmatter.session_id) || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(frontmatter.session_id)) signals.add("required-field:session_id");
+    if (!nonEmptyString(frontmatter.session_id) || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(frontmatter.session_id)) signals.add("required-field:session_id");
   }
 
   const commitShas = strings(frontmatter.commit_sha);

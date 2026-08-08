@@ -1,10 +1,10 @@
 ---
 type: Process
 title: Two-Tier Inbox Capture Cadence
-description: Complementary quality-guarded commit and session captures with explicit manual status and bounded curation
+description: Complementary quality-guarded captures with manual defaults and a named bounded scheduled-curation exception
 resource: ./templates/okf/OKF-STANDARD.md
-tags: [okf, inbox, capture-tier, post-commit, session-synthesis, curation]
-timestamp: 2026-08-08T00:00:00Z
+tags: [okf, inbox, capture-tier, post-commit, session-synthesis, curation, scheduled-pilot]
+timestamp: 2026-08-08T13:18:09Z
 status: active
 issue_refs: [28]
 epic_refs: [26]
@@ -38,13 +38,14 @@ Tier 1 and the distributed `end-session` Tier 2 workflow are both implemented.
 
 # Curation Cadence Boundary
 
-Curation is an explicit, repository-scoped operator action. The
-former five-item post-commit nudge was removed because per-commit capture would
-make it continuously noisy. No scheduler, cron/launchd entry, hook launch,
-queue, polling, Factory/child session, automatic retry, or cross-project rollout
-is part of the approved cadence. An operator may request read-only status or
-triage, then separately request one exact-root, locked, quota-bounded,
-validated, resumable batch.
+Curation is an explicit, repository-scoped operator action. The former five-
+item post-commit nudge remains removed because per-commit capture would make it
+continuously noisy. Manual status/triage and a separately requested exact-root,
+locked, quota-bounded batch are the default. A later operator decision may
+approve the canonical scheduled adapter for one named repository and branch;
+that exception is one actionable item, one read-only proposal session, no
+retry, and fail-closed kill-switch handling. It never restores a hook launch,
+queue, polling loop, parent-workspace runner, or broad rollout.
 
 # Related Sources
 

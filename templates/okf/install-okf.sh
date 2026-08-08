@@ -57,6 +57,7 @@ OKF_LIB_FILES=(
 	"run-lock.mjs"
 	"run-plan.mjs"
 	"run-report.mjs"
+	"scheduled-curation.mjs"
 	"yaml-runtime.mjs"
 )
 OKF_BIN_FILES=(
@@ -69,6 +70,7 @@ OKF_BIN_FILES=(
 	"okf-lint.mjs"
 	"okf-query.mjs"
 	"okf-run-plan.mjs"
+	"okf-scheduled-curate.mjs"
 )
 OKF_SCHEMA_FILES=(
 	"okf-core-1.0.schema.json"
@@ -89,6 +91,8 @@ for required in \
 	"${SCRIPT_DIR}/viewer.html" "${SCRIPT_DIR}/generate-viz.js" \
 	"${SCRIPT_DIR}/okf-query.sh" "${SCRIPT_DIR}/agents/okf-curator.md" \
 	"${SCRIPT_DIR}/templates/curation-prompt.md" \
+	"${SCRIPT_DIR}/templates/scheduled-curation-prompt.md" \
+	"${SCRIPT_DIR}/config/scheduled-curation.example.json" \
 	"${SCRIPT_DIR}/runtime/package.json" "${SCRIPT_DIR}/runtime/package-lock.json" \
 	"${SCRIPT_DIR}/runtime/vendor/yaml/package.json"; do
 	require_source_file "$required"
@@ -232,10 +236,14 @@ for filename in "${OKF_SCHEMA_FILES[@]}"; do
 	cp "${SCRIPT_DIR}/schema/${filename}" "${SCHEMA_DEST}/${filename}"
 done
 cp "${SCRIPT_DIR}/templates/curation-prompt.md" "${CURATION_TEMPLATE_DEST}/curation-prompt.md"
+cp "${SCRIPT_DIR}/templates/scheduled-curation-prompt.md" "${CURATION_TEMPLATE_DEST}/scheduled-curation-prompt.md"
+cp "${SCRIPT_DIR}/config/scheduled-curation.example.json" "${CURATION_TEMPLATE_DEST}/scheduled-curation.example.json"
 cp "${SCRIPT_DIR}/agents/okf-curator.md" "${AGENT_DEST}/okf-curator.md"
 cp "$AGENTS_SECTION" "${REVIEW_DEST}/AGENTS-OKF-SECTION.md"
 chmod 0644 \
 	"${CURATION_TEMPLATE_DEST}/curation-prompt.md" \
+	"${CURATION_TEMPLATE_DEST}/scheduled-curation-prompt.md" \
+	"${CURATION_TEMPLATE_DEST}/scheduled-curation.example.json" \
 	"${AGENT_DEST}/okf-curator.md" \
 	"${REVIEW_DEST}/AGENTS-OKF-SECTION.md"
 

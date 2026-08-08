@@ -75,19 +75,19 @@ When you finish a meaningful work session:
 2. Update nearest, parent, or child `AGENTS.md` files only when durable contracts or indexes changed.
 3. Tier 1: the post-commit hook writes one compact `capture_tier: commit` inbox item for each ordinary commit. Commit bodies must state why/how and `Impact:`; Git remains the source for changed files.
 4. Tier 2: at session close, `end-session` writes one `capture_tier: session` synthesis after work is committed. It references commit SHAs and contains only Decisions Made, What Was Deprecated, Lessons Learned, and Current State; it does not repeat Tier 1 captures or include a completion-summary section.
-5. Tier 1 and Tier 2 captures are complementary; neither replaces curation. Do not add schedules, cron, Factory automation, or a cross-project rollout before Epic #26's First Decision Gate.
+5. Tier 1 and Tier 2 captures are complementary; neither replaces curation. Scheduled curation is prohibited unless a later operator decision names the exact repository, branch, limits, proposal mechanism, stop policy, and observation boundary. The 2026-08-08 pilot approval covers only Designs and FMS Mercury; it does not authorize another project or the legacy parent-workspace runner.
 
 ### Curation
 
 The curation agent (`okf-curator`, canonical contract at `templates/okf/agents/okf-curator.md`) processes inbox items into permanent concept files:
 
-1. Reads all unprocessed inbox items plus existing concepts and codebase context.
+1. Reads only the explicitly selected inbox item(s), relevant existing concepts, and bounded repository context.
 2. Creates or updates concept files in the appropriate directory.
 3. Moves superseded concepts to `knowledge/deprecation/`.
 4. Audits the bundle: merges redundant concepts, resolves contradictions, fixes ambiguous references, and reports AGENTS.md alignment proposals (applied only on approval).
 5. Updates all `index.md` files and `knowledge/log.md`.
 
-Run curation only through an explicit, repository-scoped operator action until Epic #26's First Decision Gate approves a bounded cadence; the former five-item hook nudge is removed.
+Run curation through the explicit, repository-scoped bounded workflow. A scheduled run additionally requires the canonical one-session adapter, repository-local approval profile and kill switch, exact branch/revision checks, actionable-only selection, no retry, and fail-closed monitoring. The 2026-08-08 pilot is limited to Designs and FMS Mercury; Pi Extensions, FMS GLM, the legacy `curate.sh` implementation, and the cron-management server remain outside the approval.
 
 ### Concept Types
 

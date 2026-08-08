@@ -383,9 +383,13 @@ separately identifiable attempt evidence.
 The installed cadence command reports the selected manual policy and control
 state. It never invokes the runner. The observation command evaluates an
 explicit bounded evidence manifest; it does not poll, sleep, schedule, read raw
-knowledge content, or mutate the bundle. No cron, launchd, queue consumer,
-timer, polling loop, hook trigger, Factory action, or self-reinvocation is part
-of the approved model.
+knowledge content, or mutate the bundle. Manual execution is the default. A
+later operator decision may authorize the separate scheduled-curation adapter
+for one exact repository and branch, with one actionable item, one pinned read-
+only proposal session, explicit limits, a write-once attempt, no retry, and
+kill-switch stop behavior. The installer distributes only an inert adapter and
+example; it creates no cron, launchd, queue consumer, timer, polling loop, hook
+trigger, Factory action, or self-reinvocation.
 
 ### Recovery and rollback
 
@@ -662,10 +666,12 @@ When an agent starts work on a project with an OKF bundle:
 5. Before investigating or proposing a plan, check `decisions/` and `deprecation/` for paths already taken or rejected (use `knowledge/okf-query.sh` when installed). Cite concepts instead of re-deriving answers.
 6. Tier 1 is automatic: the post-commit hook writes one compact `capture_tier: commit` item for each ordinary commit. Commit bodies must state why/how and `Impact:`.
 7. Tier 2 is written once at session close by `end-session`, after work is committed. It references the session commit SHAs and records only decisions, deprecations, lessons, and current state.
-8. Curation is an explicit, repository-scoped, bounded operator action. The
-   accepted cadence is manual status/triage plus a separately requested run;
-   no schedule, cron, launchd, queue, polling loop, hook launch, Factory
-   automation, or automatic retry is installed.
+8. Curation is an explicit, repository-scoped, bounded operator action. Manual
+   status/triage plus a separately requested run is the default. A scheduled
+   run requires a later named repository/branch decision and an enabled,
+   reviewed `okf-scheduled-curation/1` profile; the installer does not create a
+   schedule, cron, launchd, queue, polling loop, hook launch, Factory
+   automation, or automatic retry.
 
 ## Versioning
 

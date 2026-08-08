@@ -2,23 +2,50 @@
 type: Decision
 id: okf-91c7e4a2-6d3f-4b85-9a10-2f6c8e73d541
 title: Curation Cadence and First Decision Gate
-description: Operator-approved explicit, repository-scoped, operator-requested status review and bounded manual curation model
+description: Operator-approved manual default with a later bounded scheduled pilot for Designs and FMS Mercury only
 resource: https://github.com/Holovkat/designs/issues/26
-tags: [okf, curation, cadence, safety, operator-approval]
+tags: [okf, curation, cadence, safety, operator-approval, scheduled-pilot]
 timestamp: 2026-08-06T03:19:40Z
 status: active
 issue_refs: [26]
 epic_refs: [26]
-decision_status: operator-approved-2026-08-06
+decision_status: operator-approved-bounded-pilot-2026-08-08
 supersedes: [okf-0d7a8c1e-9b4f-4d21-8a3c-7e5f6012b934]
 ---
 
 # Decision Status and Scope
 
+## Named Pilot Reopening — 2026-08-08
+
+The operator explicitly reopened the stopped cadence boundary for exactly two
+projects: Designs and FMS Mercury. The Mercury target is its active Dev lineage,
+`fmsRoadie`; protected `main` remains the QA boundary and is not a scheduler
+target. Pi Extensions and FMS GLM remain disabled.
+
+This approval is deliberately narrower than the former automation. Each project
+may run at most one actionable direct inbox item in one read-only proposal-
+authoring session, followed serially by the canonical check-only and bounded
+executor paths. The job must pin its physical root, branch, revision, runtime,
+model binary, selected hash, positive limits, operator request, and recovery
+policy. It never probes or retries a model, scans sibling projects, clears a
+stale lock, truncates the knowledge log, stages broad paths, pushes a commit, or
+refreshes a parent-workspace viewer.
+
+A write-once attempt record prevents the same revision/item envelope from being
+retried by later cron firings. Any timeout, invalid proposal, failed validation,
+unexpected diff, commit failure, lock ambiguity, or ceiling breach activates
+the repository kill switch and blocks subsequent runs. The unauthenticated
+cron-management server stays disabled; only two staggered direct jobs may be
+installed after one successful monitored run per project.
+
+The manual-explicit model below remains the default and the historical Epic #26
+decision. This named pilot is not general cross-project rollout authority.
+
 The operator approved this Epic #26 A5 decision on 2026-08-06. It selects the
-current operating model and the First Decision Gate boundary. It does not enable
-a scheduler, cron, launchd job, Factory task, curator run, canary, hook
-deployment, cross-project rollout, archive, deletion, or `AGENTS.md` patch.
+manual operating model and the First Decision Gate boundary. The later named
+pilot above supersedes only the no-scheduler clause for Designs and FMS Mercury;
+it does not authorize another project, deployment, archive, deletion, or
+unrelated `AGENTS.md` change.
 
 # Evidence and Constraints
 
@@ -161,8 +188,9 @@ inbox count to its index.
 
 # Rejected Paths
 
-- Any cron, launchd, Factory, polling, queue-consumer, self-reinvoking, or
-  automatic retry cadence.
+- Any legacy or unbounded cron, launchd, Factory, polling, queue-consumer,
+  self-reinvoking, or automatic retry cadence; the named bounded adapter is the
+  sole pilot exception.
 - Automatic curation because a count, age, size, duplicate, or malformed-item
   threshold is met.
 - A global or parent-workspace hook path, manifest scan, or viewer refresh.
@@ -175,5 +203,7 @@ The A1 P0 hook-isolation finding is remediated by `20acf25` and its parent-
 generator fixture. The approved gate permits Phase B design work. Each scoped
 Phase C implementation packet still needs an accepted Phase B contract, and
 D3 planning still needs its separate named dataset, numeric ceilings, success
-metrics, and stop/rollback approval. The gate does not permit a scheduler,
-broad rollout, or automatic curation.
+metrics, and stop/rollback approval. The original gate did not permit a
+scheduler, broad rollout, or automatic curation. The 2026-08-08 operator
+decision now permits only the bounded two-project pilot described above;
+broader rollout remains stopped.

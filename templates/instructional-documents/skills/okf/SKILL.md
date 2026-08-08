@@ -187,10 +187,13 @@ Filename format: `<ISO-timestamp-with-dashes>-<slugified-title>.md`.
 Curation transforms selected inbox items into permanent concept files and
 audits the approved context. Run it only through an explicit, repository-scoped
 operator action via the installed `okf-curator` contract and
-`.okf/bin/okf-curate.mjs`. The approved cadence is manual status/triage plus a
-separately requested batch. Do not add schedules, cron/launchd, queues, polling,
-hook launches, Factory automation, child sessions, automatic retries, or a
-cross-project rollout.
+`.okf/bin/okf-curate.mjs`. Manual status/triage plus a separately requested
+batch remains the default. Scheduled proposal authoring is allowed only when a
+later operator decision names the exact repository and branch and installs an
+enabled `okf-scheduled-curation/1` profile for the canonical one-session
+adapter. Never infer that authority for another repository or use a parent-
+workspace runner, queue, polling loop, hook launch, child session, automatic
+retry, or unbounded Factory automation.
 
 Steps:
 
