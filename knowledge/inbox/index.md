@@ -34,4 +34,5 @@ Session syntheses awaiting curation. Items here are written by agents before com
 | [scale compact context for Mercury](./2026-08-09T01-20-56Z-scale-compact-context-for-mercury.md) | 2026-08-09T01:20:56Z | okf | — |
 | [enforce fix-on-touch concept integrity](./2026-08-09T11-30-57Z-enforce-fix-on-touch-concept-integrity.md) | 2026-08-09T11:30:57Z | okf | #42 |
 | [Strict Fix-on-Touch Concept Integrity](./2026-08-09T11-31-21Z-strict-fix-on-touch-integrity.md) | 2026-08-09T11:31:21Z | okf, fix-on-touch, integrity, session | #42 |
+| [implement Epic 37 knowledge workflow](./2026-08-09T23-04-05Z-implement-epic-37-knowledge-workflow.md) | 2026-08-09T23:04:05Z | okf | — |
 <!-- Rows added by agents, removed by curation agent -->
