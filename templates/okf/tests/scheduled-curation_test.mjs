@@ -8,6 +8,7 @@ import {
   mkdtempSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   realpathSync,
   renameSync,
   rmSync,
@@ -18,6 +19,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildScheduledSubprocessEnv,
+  inspectScheduledContext,
   runScheduledCuration,
   validateScheduledConfig,
 } from "../lib/scheduled-curation.mjs";
@@ -145,11 +147,15 @@ function makeRepo(options = {}) {
   mkdirSync(createdRoot, { recursive: true });
   const root = realpathSync(createdRoot);
   mkdirSync(join(root, "knowledge", "inbox", "processed"), { recursive: true });
-  mkdirSync(join(root, "knowledge", "decisions"), { recursive: true });
+  for (const directory of ["architecture", "components", "domain", "decisions", "deprecation", "process", "state"]) {
+    mkdirSync(join(root, "knowledge", directory), { recursive: true });
+    writeFileSync(join(root, "knowledge", directory, "index.md"), `# ${directory}\n`);
+  }
   mkdirSync(join(root, ".okf", "templates"), { recursive: true });
   mkdirSync(join(root, ".okf", "agents"), { recursive: true });
   mkdirSync(join(root, ".okf", "bin"), { recursive: true });
   mkdirSync(join(root, ".okf", "config"), { recursive: true });
+  mkdirSync(join(root, ".okf", "schema"), { recursive: true });
   mkdirSync(join(root, ".empty-hooks"));
   const binary = join(root, ".okf", "bin", "fake-droid");
   writeFileSync(binary, "#!/bin/sh\nexit 99\n");
@@ -158,6 +164,7 @@ function makeRepo(options = {}) {
   writeFileSync(join(root, ".okf", "templates", "scheduled-curation-prompt.md"), readFileSync(scheduledPrompt));
   writeFileSync(join(root, ".okf", "templates", "curation-prompt.md"), "# Fixture curation focus\n");
   writeFileSync(join(root, ".okf", "agents", "okf-curator.md"), "# Fixture curator contract\n");
+  writeFileSync(join(root, ".okf", "schema", "okf-core-1.0.schema.json"), "{}\n");
   writeFileSync(join(root, "knowledge", "index.md"), "# Knowledge\n\n- [Decisions](./decisions/index.md)\n- [Inbox](./inbox/index.md)\n");
   writeFileSync(join(root, "knowledge", "decisions", "index.md"), "# Decisions\n");
   writeFileSync(join(root, "knowledge", "inbox", "index.md"), "# Inbox\n");
@@ -217,13 +224,21 @@ function draftFor(fixture) {
   };
 }
 
-function modelSuccess(fixture, calls, { assertSnapshot = null } = {}) {
+function contextPackFromRequest(request) {
+  const prompt = request.args.at(-1);
+  const match = prompt.match(/<!-- OKF_CONTEXT_PACK_BEGIN -->\s*```json\s*([\s\S]*?)\s*```\s*<!-- OKF_CONTEXT_PACK_END -->/);
+  assert.ok(match, "inline context pack marker is missing");
+  return JSON.parse(match[1]);
+}
+
+function modelSuccess(fixture, calls, { assertContext = null } = {}) {
   return async (request) => {
     calls.push(request);
     assert.notEqual(request.cwd, fixture.root);
-    assert.ok(existsSync(join(request.cwd, fixture.sourcePath)));
-    assert.equal(existsSync(join(request.cwd, "unrelated.txt")), false);
-    assertSnapshot?.(request);
+    assert.deepEqual(readdirSync(request.cwd), []);
+    const contextPack = contextPackFromRequest(request);
+    assert.ok(contextPack.documents.some(({ path }) => path === fixture.sourcePath));
+    assertContext?.(contextPack, request);
     const raw = JSON.stringify(draftFor(fixture));
     return {
       status: 0,
@@ -354,7 +369,21 @@ await test("runs one model session, identical serial curator envelopes, exact st
     assert.ok(!modelCalls[0].args.includes("--auto"));
     assert.ok(!modelCalls[0].args.includes("--mission"));
     assert.ok(!modelCalls[0].args.includes("--session-id"));
-    assert.equal(modelCalls[0].args[modelCalls[0].args.indexOf("--enabled-tools") + 1], "Read,Grep,Glob,LS");
+    assert.equal(modelCalls[0].args[modelCalls[0].args.indexOf("--enabled-tools") + 1], "TodoWrite");
+    for (const forbidden of ["Read", "Grep", "Glob", "LS", "Execute", "FetchUrl", "WebSearch"]) {
+      assert.ok(!modelCalls[0].args.includes(forbidden));
+    }
+    assert.equal(result.context.policy, "okf-selected-relevant-context/1");
+    assert.ok(result.context.files > 0);
+    assert.equal(result.context.manifest.length, result.context.files);
+    assert.ok(result.context.source_bytes > 0);
+    assert.ok(result.context.serialized_bytes > result.context.source_bytes);
+    assert.ok(result.context.instruction_bytes > 0);
+    assert.ok(result.context.prompt_bytes > 0);
+    assert.equal(result.context.total_bytes, result.context.prompt_bytes);
+    assert.ok(result.context.total_bytes <= fixture.config.limits.max_context_bytes);
+    assert.equal(result.context.model_input_tokens, null);
+    assert.doesNotMatch(JSON.stringify(result), /Use one bounded scheduled fixture\./);
     const add = gitCalls.find((args) => args[0] === "add");
     assert.deepEqual(add.slice(add.indexOf("--") + 1), result.changed_paths);
     assert.ok(!gitCalls.some((args) => args[0] === "push"));
@@ -366,6 +395,62 @@ await test("runs one model session, identical serial curator envelopes, exact st
     assert.equal(JSON.parse(readFileSync(join(fixture.root, result.proposal.path), "utf8")).run_id, result.run_id);
     assert.ok(!reportText.includes("Use one bounded fixture attempt."));
     assert.ok(!reportText.includes("Ready for fixture curation."));
+  } finally { fixture.cleanup(); }
+});
+
+await test("one selected item cannot expand into multiple concept outputs", async () => {
+  const fixture = makeRepo();
+  let modelCalls = 0;
+  let executorCalls = 0;
+  try {
+    const result = await runScheduledCuration({ root: fixture.root, configPath: fixture.configPath }, {
+      ...fixedClock(),
+      model: async () => {
+        modelCalls += 1;
+        const draft = draftFor(fixture);
+        draft.outputs.push({
+          path: "knowledge/process/second-concept.md",
+          content: conceptText().replace("type: Decision", "type: Process").replace("Scheduled Fixture Knowledge", "Second Concept"),
+        });
+        const raw = JSON.stringify(draft);
+        return {
+          status: 0,
+          wall_ms: 5,
+          stdout: JSON.stringify({ type: "result", is_error: false, duration_ms: 4, num_turns: 1, result: raw }),
+          stderr: "",
+        };
+      },
+      executor: async () => { executorCalls += 1; throw new Error("unexpected"); },
+    });
+    assert.equal(result.outcome, "failed");
+    assert.equal(result.reason, "model-concept-count-invalid");
+    assert.equal(modelCalls, 1);
+    assert.equal(executorCalls, 0);
+  } finally { fixture.cleanup(); }
+});
+
+await test("maintenance outputs cannot smuggle concept replacements", async () => {
+  const fixture = makeRepo();
+  let executorCalls = 0;
+  try {
+    const result = await runScheduledCuration({ root: fixture.root, configPath: fixture.configPath }, {
+      ...fixedClock(),
+      model: async () => {
+        const draft = draftFor(fixture);
+        draft.outputs.find(({ path }) => path === "knowledge/log.md").replaces_path = "knowledge/decisions/fixture-related-concept.md";
+        const raw = JSON.stringify(draft);
+        return {
+          status: 0,
+          wall_ms: 5,
+          stdout: JSON.stringify({ type: "result", is_error: false, duration_ms: 4, num_turns: 1, result: raw }),
+          stderr: "",
+        };
+      },
+      executor: async () => { executorCalls += 1; throw new Error("unexpected"); },
+    });
+    assert.equal(result.outcome, "failed");
+    assert.equal(result.reason, "model-replacement-invalid");
+    assert.equal(executorCalls, 0);
   } finally { fixture.cleanup(); }
 });
 
@@ -434,12 +519,129 @@ await test("an empty actionable set is a no-action result without a session or l
   } finally { fixture.cleanup(); }
 });
 
-await test("snapshot plus prompt context cap stops before the model and activates the kill switch", async () => {
+await test("inline context contains only selected, maintenance, catalog, and relevant concept content", async () => {
+  const fixture = makeRepo();
+  let modelCalls = 0;
+  let modelRoot = null;
+  try {
+    writeFileSync(join(fixture.root, "knowledge", "viz.html"), "v".repeat(300 * 1024));
+    writeFileSync(join(fixture.root, "knowledge", "viewer.html"), "viewer\n");
+    writeFileSync(join(fixture.root, "knowledge", "generate-viz.js"), "generator\n");
+    writeFileSync(join(fixture.root, "knowledge", "okf-query.sh"), "query\n");
+    writeFileSync(join(fixture.root, "knowledge", ".DS_Store"), "metadata\n");
+    writeFileSync(join(fixture.root, "knowledge", "unrelated-root.md"), "unrelated root Markdown\n");
+    writeFileSync(join(fixture.root, "knowledge", "inbox", "zz-unselected.md"), "unselected pending record\n");
+    writeFileSync(join(fixture.root, "knowledge", "inbox", "processed", "old-record.md"), "processed raw record\n");
+    writeFileSync(join(fixture.root, "knowledge", "decisions", "matching-fixture.md"), `---
+type: Decision
+title: Bounded Scheduled Fixture
+description: Relevant bounded fixture safety decision
+tags: [bounded, fixture, safety]
+---
+
+MATCHED-BODY-SENTINEL
+`);
+    writeFileSync(join(fixture.root, "knowledge", "process", "unmatched-payments.md"), `---
+type: Process
+title: Payment Reconciliation
+description: A finance ledger procedure
+tags: [finance, payments, okf, curation]
+---
+
+UNMATCHED-BODY-SENTINEL
+`);
+    git(fixture.root, ["add", "knowledge"]);
+    git(fixture.root, ["commit", "-qm", "add context boundary fixtures"]);
+    const firstPreview = inspectScheduledContext(fixture.root, fixture.sourcePath);
+    const secondPreview = inspectScheduledContext(fixture.root, fixture.sourcePath);
+    assert.deepEqual(firstPreview, secondPreview);
+    assert.ok(firstPreview.maximum_total_bytes <= fixture.config.limits.max_context_bytes);
+    assert.ok(firstPreview.manifest.some(({ path, role }) => path === "knowledge/decisions/matching-fixture.md" && role === "relevant-concept"));
+    assert.ok(!firstPreview.manifest.some(({ path }) => path === "knowledge/process/unmatched-payments.md"));
+    const result = await runScheduledCuration({ root: fixture.root, configPath: fixture.configPath }, {
+      ...fixedClock(),
+      model: async (request) => {
+        modelCalls += 1;
+        modelRoot = request.cwd;
+        assert.deepEqual(readdirSync(request.cwd), []);
+        const contextPack = contextPackFromRequest(request);
+        const paths = new Set(contextPack.documents.map(({ path }) => path));
+        for (const required of [
+          fixture.sourcePath,
+          "knowledge/index.md",
+          "knowledge/log.md",
+          "knowledge/inbox/index.md",
+          "knowledge/decisions/index.md",
+          ".okf/templates/curation-prompt.md",
+          ".okf/schema/okf-core-1.0.schema.json",
+          ".okf/context/concept-catalog.json",
+          "knowledge/decisions/matching-fixture.md",
+        ]) assert.ok(paths.has(required), required);
+        for (const excluded of [
+          "knowledge/viz.html",
+          "knowledge/viewer.html",
+          "knowledge/generate-viz.js",
+          "knowledge/okf-query.sh",
+          "knowledge/.DS_Store",
+          "knowledge/unrelated-root.md",
+          "knowledge/inbox/zz-unselected.md",
+          "knowledge/inbox/processed/old-record.md",
+          "knowledge/process/unmatched-payments.md",
+          fixture.configPath,
+          ".okf/agents/okf-curator.md",
+          ".okf/templates/scheduled-curation-prompt.md",
+        ]) assert.equal(paths.has(excluded), false, excluded);
+        const prompt = request.args.at(-1);
+        assert.match(prompt, /MATCHED-BODY-SENTINEL/);
+        assert.doesNotMatch(prompt, /UNMATCHED-BODY-SENTINEL|unselected pending record|processed raw record|v{100}/);
+        const catalogDocument = contextPack.documents.find(({ path }) => path === ".okf/context/concept-catalog.json");
+        const catalog = JSON.parse(catalogDocument.content);
+        assert.ok(catalog.concepts.some(({ path }) => path === "knowledge/process/unmatched-payments.md"));
+        return { status: 1, timed_out: true, code: "command-timeout", wall_ms: 10_001, stdout: "", stderr: "" };
+      },
+    });
+    assert.equal(result.outcome, "failed");
+    assert.equal(result.reason, "model-timeout");
+    assert.equal(modelCalls, 1);
+    assert.equal(existsSync(modelRoot), false);
+    assert.ok(result.context.total_bytes < fixture.config.limits.max_context_bytes);
+  } finally { fixture.cleanup(); }
+});
+
+await test("ambiguous relevant-concept cutoff fails before Droid instead of widening context", async () => {
   const fixture = makeRepo();
   let modelCalls = 0;
   try {
-    writeFileSync(join(fixture.root, "knowledge", "context-sentinel.md"), "x".repeat(260 * 1024));
-    git(fixture.root, ["add", "knowledge/context-sentinel.md"]);
+    for (let index = 0; index < 13; index += 1) {
+      writeFileSync(join(fixture.root, "knowledge", "decisions", `tied-${String(index).padStart(2, "0")}.md`), `---
+type: Decision
+title: Bounded Scheduled Fixture Signal
+description: Relevant bounded fixture safety signal
+tags: [bounded, fixture, safety]
+---
+
+Same relevance score.
+`);
+    }
+    git(fixture.root, ["add", "knowledge/decisions"]);
+    git(fixture.root, ["commit", "-qm", "add ambiguous relevance fixtures"]);
+    const result = await runScheduledCuration({ root: fixture.root, configPath: fixture.configPath }, {
+      ...fixedClock(),
+      model: async () => { modelCalls += 1; throw new Error("unexpected"); },
+    });
+    assert.equal(result.outcome, "failed");
+    assert.equal(result.reason, "context-relevance-ambiguous");
+    assert.equal(modelCalls, 0);
+    assert.equal(JSON.parse(readFileSync(join(fixture.root, ".okf", "KILL_SWITCH"), "utf8")).active, true);
+  } finally { fixture.cleanup(); }
+});
+
+await test("inline prompt context cap stops before the model and activates the kill switch", async () => {
+  const fixture = makeRepo();
+  let modelCalls = 0;
+  try {
+    writeFileSync(join(fixture.root, "knowledge", "log.md"), `# Log\n\n${"x".repeat(260 * 1024)}`);
+    git(fixture.root, ["add", "knowledge/log.md"]);
     git(fixture.root, ["commit", "-qm", "large committed context fixture"]);
     const result = await runScheduledCuration({ root: fixture.root, configPath: fixture.configPath }, {
       ...fixedClock(),
@@ -493,7 +695,7 @@ await test("unexpected knowledge diff stops before staging and activates the kil
   } finally { fixture.cleanup(); }
 });
 
-await test("approved unrelated dirty work is absent from the snapshot and byte-identical after commit", async () => {
+await test("approved unrelated dirty work is absent from inline context and byte-identical after commit", async () => {
   const fixture = makeRepo({ allowUnrelated: true });
   const modelCalls = [];
   const executorCalls = [];

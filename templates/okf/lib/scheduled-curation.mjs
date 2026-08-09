@@ -22,10 +22,11 @@ import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { processedPathFor } from "./curation-proposal.mjs";
+import { parseFrontmatter } from "./frontmatter.mjs";
 import { triageInbox } from "./inbox-triage.mjs";
 import { readKillSwitch } from "./run-control.mjs";
 import { canonicalJson } from "./run-plan.mjs";
-import { assertRevision, resolveContainedPath, resolveControlPath, validateRoot } from "./run-guard.mjs";
+import { assertRevision, buildPathAllowlist, resolveContainedPath, resolveControlPath, validateRoot } from "./run-guard.mjs";
 
 const CONFIG_VERSION = "okf-scheduled-curation/1";
 const DRAFT_VERSION = "okf-scheduled-curation-draft/1";
@@ -35,6 +36,39 @@ const LEASE_VERSION = "okf-scheduled-curation-lease/1";
 const SCHEDULED_ROOT = ".okf/scheduled-curation";
 const OUTER_LEASE_PATH = `${SCHEDULED_ROOT}/outer.lock`;
 const PROMPT_PATH = ".okf/templates/scheduled-curation-prompt.md";
+const CONTEXT_POLICY_VERSION = "okf-selected-relevant-context/1";
+const CATALOG_VERSION = "okf-concept-catalog/1";
+const CATALOG_PATH = ".okf/context/concept-catalog.json";
+const PERMANENT_KNOWLEDGE_DIRECTORIES = Object.freeze([
+  "architecture",
+  "components",
+  "domain",
+  "decisions",
+  "deprecation",
+  "process",
+  "state",
+]);
+const REQUIRED_CONTEXT_FILES = Object.freeze([
+  "knowledge/index.md",
+  "knowledge/log.md",
+  "knowledge/inbox/index.md",
+  ...PERMANENT_KNOWLEDGE_DIRECTORIES.map((directory) => `knowledge/${directory}/index.md`),
+  ".okf/templates/curation-prompt.md",
+  ".okf/schema/okf-core-1.0.schema.json",
+]);
+const MAX_RELEVANT_CONCEPTS = 12;
+const MAX_RELEVANT_CONCEPT_BYTES = 96 * 1024;
+const MAX_CONTEXT_FILES = 26;
+const MAX_CATALOG_BYTES = 64 * 1024;
+const MAX_RENDERED_PROMPT_BYTES = 8 * 1024;
+const GENERIC_RELEVANCE_TOKENS = new Set([
+  "about", "after", "again", "against", "also", "among", "another", "before", "being", "between",
+  "both", "complete", "completed", "concept", "curation", "current", "each", "every", "file", "files",
+  "from", "have", "into", "knowledge", "made", "make", "more", "most", "other", "project", "same",
+  "should", "state", "system", "than", "that", "their", "then", "there", "these", "this", "those",
+  "through", "under", "update", "updated", "using", "when", "where", "which", "while", "with", "work",
+  "would", "okf",
+]);
 const MAX_CONFIG_BYTES = 64 * 1024;
 const MAX_ATTEMPT_REPORT_BYTES = 64 * 1024;
 const PROCESS_KILL_GRACE_MS = 250;
@@ -459,7 +493,7 @@ function directInboxBounds(root, maximumBytes) {
     const stat = lstatSync(target.full);
     bytes += stat.size;
     count += 1;
-    if (bytes > maximumBytes || count > maximumBytes) fail("triage-context-exceeded", "pending inbox exceeds the bounded triage context");
+    if (bytes > maximumBytes) fail("triage-context-exceeded", "pending inbox exceeds the bounded triage context");
   }
   return Object.freeze({ count, bytes });
 }
@@ -473,74 +507,333 @@ function assertPinnedBinary(generator) {
   if (sha256File(physical) !== generator.binary_sha256) fail("droid-binary-hash-mismatch", "pinned Droid binary hash changed");
 }
 
-function copyRegular(source, destination) {
-  const stat = lstatSync(source);
-  if (!stat.isFile() || stat.isSymbolicLink()) fail("snapshot-source-invalid", "snapshot sources must be regular non-symlink files");
-  mkdirSync(dirname(destination), { recursive: true });
-  writeOnceDurable(destination, readFileSync(source), 0o400);
-  chmodSync(destination, 0o400);
-  return Object.freeze({ bytes: stat.size, sha256: sha256File(source) });
+function stringValues(value) {
+  if (typeof value === "string" || typeof value === "number") return [String(value)];
+  if (Array.isArray(value)) return value.flatMap((item) => stringValues(item));
+  return [];
 }
 
-function copyTree(source, destination, manifest, prefix) {
-  const stat = lstatSync(source);
-  if (!stat.isDirectory() || stat.isSymbolicLink()) fail("snapshot-source-invalid", "snapshot directory must be non-symlink");
-  mkdirSync(destination, { recursive: true });
-  for (const entry of readdirSync(source, { withFileTypes: true }).sort((left, right) => compare(left.name, right.name))) {
-    if (entry.isSymbolicLink()) fail("snapshot-source-symlink", "snapshot refuses symlink content");
-    const sourcePath = join(source, entry.name);
-    const destinationPath = join(destination, entry.name);
-    const relativePath = `${prefix}/${entry.name}`;
-    if (entry.isDirectory()) copyTree(sourcePath, destinationPath, manifest, relativePath);
-    else if (entry.isFile()) manifest.push(Object.freeze({ path: relativePath, ...copyRegular(sourcePath, destinationPath) }));
-    else fail("snapshot-source-invalid", "snapshot refuses special files");
-  }
-  chmodSync(destination, 0o500);
+function metadataString(value) {
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
 }
 
-function createReadOnlySnapshot(root, configPath) {
-  const physical = realpathSync(mkdtempSync(join(tmpdir(), "okf-scheduled-")));
-  const manifest = [];
-  copyTree(resolve(root, "knowledge"), resolve(physical, "knowledge"), manifest, "knowledge");
-  const inputs = [configPath, ".okf/agents/okf-curator.md", ".okf/templates/curation-prompt.md", PROMPT_PATH];
-  for (const path of [...new Set(inputs)].sort(compare)) {
-    const target = resolveContainedPath(root, path, { optional: true });
-    if (!target.exists) {
-      if (path === PROMPT_PATH) fail("scheduled-prompt-missing", "installed scheduled-curation prompt is required");
-      continue;
+function metadataArray(value) {
+  return Object.freeze([...new Set(stringValues(value).map((item) => item.trim()).filter(Boolean))].sort(compare));
+}
+
+function relevanceTokens(...values) {
+  const tokens = new Set();
+  const source = values.flatMap((value) => stringValues(value)).join(" ").toLowerCase();
+  for (const token of source.match(/[a-z][a-z0-9-]{2,}/g) ?? []) {
+    for (const candidate of [token, ...token.split("-")]) {
+      if (candidate.length >= 3 && !GENERIC_RELEVANCE_TOKENS.has(candidate)) tokens.add(candidate);
     }
-    manifest.push(Object.freeze({ path, ...copyRegular(target.full, resolve(physical, path)) }));
   }
-  const ordered = manifest.sort((left, right) => compare(left.path, right.path));
-  chmodSync(physical, 0o500);
+  return tokens;
+}
+
+function intersectCount(left, right) {
+  let count = 0;
+  for (const value of left) if (right.has(value)) count += 1;
+  return count;
+}
+
+function normalizedReference(value) {
+  return String(value).trim().replace(/^\.\//, "").replace(/#.*$/, "");
+}
+
+function frontmatterReferences(frontmatter) {
+  const values = [frontmatter.id, frontmatter.resource, frontmatter.evidence_refs];
+  for (const field of ["blocked_by", "contradicts", "depends_on", "derived_from", "implements", "supersedes"]) {
+    values.push(frontmatter[field]);
+  }
+  return new Set(values.flatMap((value) => stringValues(value)).map(normalizedReference).filter(Boolean));
+}
+
+function selectedReferences(frontmatter, body) {
+  const result = frontmatterReferences(frontmatter);
+  for (const match of body.matchAll(/\]\(([^)]+)\)/g)) result.add(normalizedReference(match[1]));
+  for (const match of body.matchAll(/\bknowledge\/(?:architecture|components|domain|decisions|deprecation|process|state)\/[a-z0-9._-]+\.md\b/gi)) {
+    result.add(normalizedReference(match[0]));
+  }
+  return result;
+}
+
+function conceptCatalogEntry(path, parsed) {
+  const frontmatter = parsed.frontmatter;
   return Object.freeze({
-    root: physical,
-    manifest_sha256: sha256(canonicalJson(ordered)),
-    bytes: ordered.reduce((total, item) => total + item.bytes, 0),
-    files: ordered.length,
+    path,
+    parseable: parsed.diagnostics.length === 0 && parsed.hasFrontmatter,
+    type: metadataString(frontmatter.type),
+    id: metadataString(frontmatter.id),
+    title: metadataString(frontmatter.title),
+    description: metadataString(frontmatter.description),
+    tags: metadataArray(frontmatter.tags),
+    resource: metadataString(frontmatter.resource),
+    status: metadataString(frontmatter.status),
+    assertion_state: metadataString(frontmatter.assertion_state),
+    issue_refs: metadataArray(frontmatter.issue_refs),
+    epic_refs: metadataArray(frontmatter.epic_refs),
   });
 }
 
-function removeReadOnlySnapshot(path) {
-  if (!path || !existsSync(path)) return;
-  const makeRemovable = (target) => {
-    const stat = lstatSync(target);
-    if (stat.isDirectory() && !stat.isSymbolicLink()) {
-      chmodSync(target, 0o700);
-      for (const entry of readdirSync(target)) makeRemovable(join(target, entry));
-    } else if (!stat.isSymbolicLink()) {
-      chmodSync(target, 0o600);
+function permanentConceptRecords(root) {
+  const records = [];
+  for (const directory of PERMANENT_KNOWLEDGE_DIRECTORIES) {
+    const parent = resolveContainedPath(root, `knowledge/${directory}`);
+    const parentStat = lstatSync(parent.full);
+    if (!parentStat.isDirectory() || parentStat.isSymbolicLink()) fail("context-source-invalid", "concept directory must be non-symlink");
+    for (const entry of readdirSync(parent.full, { withFileTypes: true }).sort((left, right) => compare(left.name, right.name))) {
+      if (entry.isSymbolicLink()) fail("context-source-symlink", "context refuses symlink content");
+      if (!entry.isFile() || !entry.name.endsWith(".md") || entry.name === "index.md") continue;
+      const path = `knowledge/${directory}/${entry.name}`;
+      if (!CONCEPT_PATH.test(path)) fail("context-concept-path-invalid", "permanent concept path is outside the direct allowlist");
+      const target = resolveContainedPath(root, path);
+      const stat = lstatSync(target.full);
+      const content = readFileSync(target.full, "utf8");
+      const parsed = parseFrontmatter(content, path);
+      records.push(Object.freeze({
+        path,
+        stat,
+        content,
+        parsed,
+        catalog: conceptCatalogEntry(path, parsed),
+      }));
     }
-  };
-  makeRemovable(path);
+  }
+  return records.sort((left, right) => compare(left.path, right.path));
+}
+
+function scoreRelevantConcept(selected, record) {
+  if (!record.catalog.parseable) return null;
+  const candidate = record.parsed.frontmatter;
+  const selectedTokens = relevanceTokens(
+    selected.frontmatter.title,
+    selected.frontmatter.description,
+    selected.frontmatter.tags,
+    selected.body,
+  );
+  const titleTokens = relevanceTokens(candidate.title);
+  const descriptionTokens = relevanceTokens(candidate.description);
+  const tagTokens = relevanceTokens(candidate.tags);
+  const resourceTokens = relevanceTokens(candidate.resource, candidate.evidence_refs);
+  const allCandidateTokens = new Set([...titleTokens, ...descriptionTokens, ...tagTokens, ...resourceTokens]);
+  const titleOverlap = intersectCount(selectedTokens, titleTokens);
+  const descriptionOverlap = intersectCount(selectedTokens, descriptionTokens);
+  const tagOverlap = intersectCount(selectedTokens, tagTokens);
+  const resourceOverlap = intersectCount(selectedTokens, resourceTokens);
+  const totalOverlap = intersectCount(selectedTokens, allCandidateTokens);
+
+  const selectedIssueRefs = new Set(metadataArray(selected.frontmatter.issue_refs));
+  const selectedEpicRefs = new Set(metadataArray(selected.frontmatter.epic_refs));
+  const referenceMatches = intersectCount(selectedIssueRefs, new Set(record.catalog.issue_refs))
+    + intersectCount(selectedEpicRefs, new Set(record.catalog.epic_refs));
+  const explicitReferences = selectedReferences(selected.frontmatter, selected.body);
+  const candidateReferences = frontmatterReferences(candidate);
+  candidateReferences.add(record.path);
+  const explicit = intersectCount(explicitReferences, candidateReferences) > 0;
+  if (!explicit && totalOverlap < 2 && !(referenceMatches > 0 && totalOverlap > 0)) return null;
+
+  const score = (explicit ? 100_000 : 0)
+    + titleOverlap * 1_000
+    + tagOverlap * 500
+    + descriptionOverlap * 100
+    + resourceOverlap * 20
+    + referenceMatches * 50
+    + totalOverlap;
+  const reasons = [];
+  if (explicit) reasons.push("explicit-reference");
+  if (referenceMatches > 0) reasons.push("issue-or-epic-reference");
+  if (totalOverlap > 0) reasons.push("meaningful-token-overlap");
+  return Object.freeze({ record, score, explicit, reasons: Object.freeze(reasons) });
+}
+
+function roleForRequired(path) {
+  if (path === ".okf/schema/okf-core-1.0.schema.json") return "schema";
+  if (path === ".okf/templates/curation-prompt.md") return "curation-focus";
+  return "maintenance";
+}
+
+function buildContextPlan(root, selectedPath) {
+  if (typeof selectedPath !== "string"
+    || !/^knowledge\/inbox\/[^/]+\.md$/.test(selectedPath)
+    || selectedPath === "knowledge/inbox/index.md") {
+    fail("context-selected-invalid", "context requires one direct selected inbox Markdown file");
+  }
+  const selectedTarget = resolveContainedPath(root, selectedPath);
+  const selectedContent = readFileSync(selectedTarget.full, "utf8");
+  const selected = parseFrontmatter(selectedContent, selectedPath);
+  if (selected.diagnostics.length > 0 || !selected.hasFrontmatter) {
+    fail("context-selected-invalid", "selected inbox item must have parseable frontmatter");
+  }
+  const records = permanentConceptRecords(root);
+  const catalog = Object.freeze({
+    version: CATALOG_VERSION,
+    selected_path: selectedPath,
+    concepts: Object.freeze(records.map((record) => record.catalog)),
+  });
+  const catalogContent = `${canonicalJson(catalog)}\n`;
+  const catalogBytes = textBytes(catalogContent);
+  if (catalogBytes > MAX_CATALOG_BYTES) fail("context-catalog-exceeded", "compact concept catalog exceeds its fixed byte ceiling");
+
+  const candidates = records
+    .map((record) => scoreRelevantConcept(selected, record))
+    .filter(Boolean)
+    .sort((left, right) => right.score - left.score || compare(left.record.path, right.record.path));
+  if (candidates.length > MAX_RELEVANT_CONCEPTS
+    && candidates[MAX_RELEVANT_CONCEPTS - 1].score === candidates[MAX_RELEVANT_CONCEPTS].score) {
+    fail("context-relevance-ambiguous", "relevant concept tie exceeds the fixed full-body file ceiling");
+  }
+
+  const included = [];
+  let includedBytes = 0;
+  for (const candidate of candidates.slice(0, MAX_RELEVANT_CONCEPTS)) {
+    if (includedBytes + candidate.record.stat.size > MAX_RELEVANT_CONCEPT_BYTES) {
+      fail("context-relevance-budget-exceeded", "relevant concept bodies exceed their fixed byte ceiling");
+    }
+    included.push(candidate);
+    includedBytes += candidate.record.stat.size;
+  }
+  if (candidates.some((candidate) => candidate.explicit && !included.includes(candidate))) {
+    fail("context-relevance-budget-exceeded", "an explicitly referenced concept did not fit the fixed full-body ceiling");
+  }
+
+  const required = buildPathAllowlist(root, [...REQUIRED_CONTEXT_FILES, selectedPath]);
+  const contextFiles = required.length + included.length + 1;
+  if (contextFiles > MAX_CONTEXT_FILES) fail("context-file-count-exceeded", "context exceeds its fixed file ceiling");
+  const selectionReceipt = candidates.map((candidate) => ({
+    path: candidate.record.path,
+    score: candidate.score,
+    reasons: candidate.reasons,
+    included: included.includes(candidate),
+  }));
+  return Object.freeze({
+    required,
+    selectedPath,
+    catalogContent,
+    catalogBytes,
+    records,
+    included,
+    relevance: Object.freeze({
+      catalog_concepts: records.length,
+      catalog_bytes: catalogBytes,
+      candidate_concepts: candidates.length,
+      included_concepts: included.length,
+      included_concept_bytes: includedBytes,
+      omitted_concepts: records.length - included.length,
+      selection_sha256: sha256(canonicalJson(selectionReceipt)),
+    }),
+  });
+}
+
+function contextRoleSummary(manifest) {
+  const roles = {};
+  for (const item of manifest) {
+    const current = roles[item.role] ?? { files: 0, bytes: 0 };
+    roles[item.role] = { files: current.files + 1, bytes: current.bytes + item.bytes };
+  }
+  return Object.freeze(Object.fromEntries(Object.entries(roles)
+    .sort(([left], [right]) => compare(left, right))
+    .map(([role, value]) => [role, Object.freeze(value)])));
+}
+
+function contextDocument(root, path, role) {
+  const target = resolveContainedPath(root, path);
+  const before = lstatSync(target.full);
+  if (!before.isFile() || before.isSymbolicLink()) fail("context-source-invalid", "context sources must be regular non-symlink files");
+  const content = readFileSync(target.full);
+  const after = lstatSync(target.full);
+  if (!after.isFile() || after.isSymbolicLink() || before.dev !== after.dev || before.ino !== after.ino || after.size !== content.length) {
+    fail("context-source-drift", "context source changed while it was read");
+  }
+  return Object.freeze({ path, role, bytes: content.length, sha256: sha256(content), content: content.toString("utf8") });
+}
+
+function buildInlineContextPack(root, selectedPath) {
+  const plan = buildContextPlan(root, selectedPath);
+  const documents = [];
+  for (const path of plan.required) {
+    const role = path === plan.selectedPath ? "selected" : roleForRequired(path);
+    documents.push(contextDocument(root, path, role));
+  }
+  for (const candidate of plan.included) {
+    const path = candidate.record.path;
+    const content = Buffer.from(candidate.record.content, "utf8");
+    documents.push(Object.freeze({ path, role: "relevant-concept", bytes: content.length, sha256: sha256(content), content: candidate.record.content }));
+  }
+  const catalogContent = Buffer.from(plan.catalogContent, "utf8");
+  documents.push(Object.freeze({
+    path: CATALOG_PATH,
+    role: "concept-catalog",
+    bytes: catalogContent.length,
+    sha256: sha256(catalogContent),
+    content: plan.catalogContent,
+  }));
+  const ordered = documents.sort((left, right) => compare(left.path, right.path));
+  const manifest = Object.freeze(ordered.map(({ path, role, bytes, sha256: fileHash }) => Object.freeze({ path, role, bytes, sha256: fileHash })));
+  const pack = Object.freeze({
+    version: CONTEXT_POLICY_VERSION,
+    documents: Object.freeze(ordered.map(({ path, role, content }) => Object.freeze({ path, role, content }))),
+  });
+  const raw = canonicalJson(pack);
+  return Object.freeze({
+    policy: CONTEXT_POLICY_VERSION,
+    raw,
+    serialized_bytes: textBytes(raw),
+    source_bytes: manifest.reduce((total, item) => total + item.bytes, 0),
+    files: manifest.length,
+    manifest,
+    manifest_sha256: sha256(canonicalJson(manifest)),
+    roles: contextRoleSummary(manifest),
+    relevance: plan.relevance,
+  });
+}
+
+/** Inspect the exact relevant-only source allowlist without invoking Droid or creating control artifacts. */
+export function inspectScheduledContext(rootInput, selectedPath) {
+  const root = validateRoot(rootInput).root;
+  const contextPack = buildInlineContextPack(root, selectedPath);
+  return Object.freeze({
+    policy: contextPack.policy,
+    root,
+    selected_path: selectedPath,
+    manifest_sha256: contextPack.manifest_sha256,
+    manifest: contextPack.manifest,
+    files: contextPack.files,
+    source_bytes: contextPack.source_bytes,
+    serialized_bytes: contextPack.serialized_bytes,
+    maximum_instruction_bytes: MAX_RENDERED_PROMPT_BYTES,
+    maximum_total_bytes: contextPack.serialized_bytes + MAX_RENDERED_PROMPT_BYTES,
+    roles: contextPack.roles,
+    relevance: contextPack.relevance,
+  });
+}
+
+function createEmptyModelRoot() {
+  const physical = realpathSync(mkdtempSync(join(tmpdir(), "okf-scheduled-model-")));
+  chmodSync(physical, 0o500);
+  return physical;
+}
+
+function removeModelRoot(path) {
+  if (!path || !existsSync(path)) return;
+  chmodSync(path, 0o700);
   rmSync(path, { recursive: true, force: true });
 }
 
-function renderPrompt(template, envelope, maximumBytes) {
-  const marker = "{{SCHEDULED_ENVELOPE_JSON}}";
-  if (template.split(marker).length !== 2) fail("scheduled-prompt-invalid", "scheduled prompt must contain exactly one envelope marker");
-  const prompt = template.replace(marker, JSON.stringify(envelope, null, 2));
+function renderPrompt(template, envelope, contextPack, maximumBytes) {
+  const envelopeMarker = "{{SCHEDULED_ENVELOPE_JSON}}";
+  const contextMarker = "{{CONTEXT_PACK_JSON}}";
+  if (template.split(envelopeMarker).length !== 2 || template.split(contextMarker).length !== 2) {
+    fail("scheduled-prompt-invalid", "scheduled prompt must contain exactly one envelope and context marker");
+  }
+  const prompt = template
+    .replace(envelopeMarker, JSON.stringify(envelope, null, 2))
+    .replace(contextMarker, contextPack.raw);
   if (textBytes(prompt) > maximumBytes) fail("model-context-exceeded", "rendered model prompt exceeds max_context_bytes");
+  if (textBytes(prompt) - contextPack.serialized_bytes > MAX_RENDERED_PROMPT_BYTES) {
+    fail("scheduled-prompt-too-large", "scheduled instructions and envelope exceed their fixed byte ceiling");
+  }
   return prompt;
 }
 
@@ -549,7 +842,7 @@ function modelArgs(config, prompt) {
     "exec", "-o", "json", "--disable-builtin-skills",
     "--model", config.generator.model,
     "--reasoning-effort", config.generator.reasoning,
-    "--enabled-tools", "Read,Grep,Glob,LS",
+    "--enabled-tools", "TodoWrite",
     "--cwd", ".",
     prompt,
   ]);
@@ -588,7 +881,7 @@ function outputKind(path) {
 
 function validateDraft(value) {
   exactObject(value, ["version", "outputs"], [], "model draft");
-  if (value.version !== DRAFT_VERSION || !Array.isArray(value.outputs) || value.outputs.length === 0 || value.outputs.length > 64) {
+  if (value.version !== DRAFT_VERSION || !Array.isArray(value.outputs) || value.outputs.length === 0 || value.outputs.length > 6) {
     fail("model-draft-invalid", `model draft must be ${DRAFT_VERSION} with outputs`);
   }
   const outputs = value.outputs.map((output) => {
@@ -596,8 +889,12 @@ function validateDraft(value) {
     if (typeof output.path !== "string" || !outputKind(output.path)) fail("model-output-path-invalid", "model output path is outside canonical curation paths");
     if (typeof output.content !== "string" || output.content.length === 0) fail("model-output-content-invalid", "model output content must be non-empty");
     if (output.replaces_path != null) {
-      if (typeof output.replaces_path !== "string" || !CONCEPT_PATH.test(output.replaces_path) || output.replaces_path.endsWith("/index.md") || output.replaces_path === output.path) {
-        fail("model-replacement-invalid", "replacement path must name a different permanent concept");
+      if (outputKind(output.path) !== "concept"
+        || typeof output.replaces_path !== "string"
+        || !CONCEPT_PATH.test(output.replaces_path)
+        || output.replaces_path.endsWith("/index.md")
+        || output.replaces_path === output.path) {
+        fail("model-replacement-invalid", "only the concept output may replace a different permanent concept");
       }
     }
     return { path: output.path, content: output.content, ...(output.replaces_path ? { replaces_path: output.replaces_path } : {}) };
@@ -605,6 +902,40 @@ function validateDraft(value) {
   if (outputs.some((output, index) => index > 0 && output.path === outputs[index - 1].path)) fail("model-output-duplicate", "model output paths must be unique");
   if (!outputs.some(({ path }) => outputKind(path) === "concept")) fail("model-concept-missing", "one selected item requires a concept output");
   return Object.freeze(outputs.map(Object.freeze));
+}
+
+function validateScheduledDraftScope(root, outputs, contextPack) {
+  const concepts = outputs.filter(({ path }) => outputKind(path) === "concept");
+  if (concepts.length !== 1) fail("model-concept-count-invalid", "one selected item permits exactly one concept output");
+  const relevant = new Set(contextPack.manifest
+    .filter(({ role }) => role === "relevant-concept")
+    .map(({ path }) => path));
+  for (const output of outputs) {
+    if (output.replaces_path && (outputKind(output.path) !== "concept" || !relevant.has(output.replaces_path))) {
+      fail("model-replacement-outside-context", "every replacement must come from the relevant full-body context");
+    }
+  }
+  const concept = concepts[0];
+  const existing = resolveContainedPath(root, concept.path, { optional: true });
+  if (existing.exists && !relevant.has(concept.path)) {
+    fail("model-concept-outside-context", "an existing concept output must be present in the relevant full-body context");
+  }
+  const affectedTypes = new Set([concept.path.split("/")[1]]);
+  if (concept.replaces_path) affectedTypes.add(concept.replaces_path.split("/")[1]);
+  const requiredMaintenance = new Set([
+    "knowledge/index.md",
+    "knowledge/inbox/index.md",
+    "knowledge/log.md",
+    ...[...affectedTypes].map((type) => `knowledge/${type}/index.md`),
+  ]);
+  const actualMaintenance = new Set(outputs
+    .filter(({ path }) => outputKind(path) === "maintenance")
+    .map(({ path }) => path));
+  if (actualMaintenance.size !== requiredMaintenance.size
+    || [...requiredMaintenance].some((path) => !actualMaintenance.has(path))) {
+    fail("model-maintenance-scope-invalid", "model outputs must contain only the exact maintenance paths affected by one concept");
+  }
+  return outputs;
 }
 
 function targetHash(root, path, { required = false } = {}) {
@@ -863,6 +1194,7 @@ function buildReport(state, outcome, reason, endedAt, wallMs, killSwitchActivate
     operator: state.operator ?? null,
     selected: state.selected ?? null,
     limits: state.limits ?? null,
+    context: state.context ?? null,
     started_at: state.started_at,
     ended_at: endedAt,
     wall_ms: wallMs,
@@ -911,7 +1243,7 @@ export async function runScheduledCuration({ root: rootInput, configPath }, deps
   let root = null;
   let config = null;
   let lease = null;
-  let snapshot = null;
+  let modelRoot = null;
   let markerCreated = false;
   const remaining = () => {
     if (!config) return 10_000;
@@ -965,6 +1297,7 @@ export async function runScheduledCuration({ root: rootInput, configPath }, deps
     const promptTarget = resolveContainedPath(root, PROMPT_PATH);
     const promptTemplate = readFileSync(promptTarget.full, "utf8");
     const promptHash = sha256(promptTemplate);
+    const contextPack = buildInlineContextPack(root, item.path);
     const keyBody = {
       version: CONFIG_VERSION,
       root,
@@ -972,6 +1305,7 @@ export async function runScheduledCuration({ root: rootInput, configPath }, deps
       branch: initial.branch,
       config_sha256: configFile.sha256,
       prompt_sha256: promptHash,
+      context_manifest_sha256: contextPack.manifest_sha256,
       outside_status_sha256: outsideHash,
       selected: state.selected,
       generator: config.generator,
@@ -984,6 +1318,7 @@ export async function runScheduledCuration({ root: rootInput, configPath }, deps
     state.run_id = runId;
     const evidence = {
       root, revision: initial.revision, branch: initial.branch, config_sha256: configFile.sha256, prompt_sha256: promptHash,
+      context_manifest_sha256: contextPack.manifest_sha256,
       selected: state.selected,
       generator: { binary_sha256: config.generator.binary_sha256, model: config.generator.model, reasoning: config.generator.reasoning },
     };
@@ -991,10 +1326,11 @@ export async function runScheduledCuration({ root: rootInput, configPath }, deps
     markerCreated = true;
     await inspectGitState(root, config, git, remaining(), { lease });
 
-    snapshot = createReadOnlySnapshot(root, configFile.target.path);
+    modelRoot = createEmptyModelRoot();
     const promptEnvelope = {
       version: "okf-scheduled-curation-envelope/1",
-      snapshot_root: snapshot.root,
+      context_policy: contextPack.policy,
+      context_manifest_sha256: contextPack.manifest_sha256,
       repository_root_sha256: sha256(root),
       revision: initial.revision,
       branch: initial.branch,
@@ -1004,16 +1340,31 @@ export async function runScheduledCuration({ root: rootInput, configPath }, deps
       recovery_plan: config.recovery_plan,
       limits: { max_context_bytes: config.limits.max_context_bytes, max_model_output_bytes: config.limits.max_model_output_bytes },
     };
-    const prompt = renderPrompt(promptTemplate, promptEnvelope, config.limits.max_context_bytes);
-    if (snapshot.bytes + textBytes(prompt) > config.limits.max_context_bytes) {
-      fail("model-context-exceeded", "read-only snapshot plus rendered prompt exceeds max_context_bytes");
-    }
+    const prompt = renderPrompt(promptTemplate, promptEnvelope, contextPack, config.limits.max_context_bytes);
+    const promptBytes = textBytes(prompt);
+    state.context = Object.freeze({
+      policy: contextPack.policy,
+      manifest_sha256: contextPack.manifest_sha256,
+      manifest: contextPack.manifest,
+      files: contextPack.files,
+      source_bytes: contextPack.source_bytes,
+      serialized_bytes: contextPack.serialized_bytes,
+      instruction_bytes: promptBytes - contextPack.serialized_bytes,
+      prompt_bytes: promptBytes,
+      total_bytes: promptBytes,
+      ceiling_bytes: config.limits.max_context_bytes,
+      utilization_basis_points: Math.ceil(promptBytes * 10_000 / config.limits.max_context_bytes),
+      roles: contextPack.roles,
+      relevance: contextPack.relevance,
+      model_input_tokens: null,
+      model_input_tokens_status: "unavailable",
+    });
     const args = modelArgs(config, prompt);
     const modelStarted = now();
     const modelResult = normalizeResult(await model({
       binary: config.generator.binary,
       args,
-      cwd: snapshot.root,
+      cwd: modelRoot,
       timeoutMs: Math.min(config.limits.max_model_runtime_seconds * 1000, remaining()),
       maxOutputBytes: config.limits.max_model_output_bytes,
     }));
@@ -1028,12 +1379,12 @@ export async function runScheduledCuration({ root: rootInput, configPath }, deps
       wrapper_sha256: sha256(modelResult.stdout),
       output_sha256: sha256(parsedModel.raw),
       output_bytes: textBytes(parsedModel.raw),
-      snapshot_manifest_sha256: snapshot.manifest_sha256,
+      context_manifest_sha256: contextPack.manifest_sha256,
     });
-    removeReadOnlySnapshot(snapshot.root);
-    snapshot = null;
+    removeModelRoot(modelRoot);
+    modelRoot = null;
 
-    const draftOutputs = validateDraft(parsedModel.draft);
+    const draftOutputs = validateScheduledDraftScope(root, validateDraft(parsedModel.draft), contextPack);
     const beforeProposal = await inspectGitState(root, config, git, remaining(), { lease });
     if (beforeProposal.revision !== initial.revision || sha256(await outsideStatus(git, root, remaining())) !== outsideHash) {
       fail("worktree-drift", "repository state changed during proposal generation");
@@ -1149,7 +1500,7 @@ export async function runScheduledCuration({ root: rootInput, configPath }, deps
     }
     return failed.report;
   } finally {
-    if (snapshot?.root && existsSync(snapshot.root)) removeReadOnlySnapshot(snapshot.root);
+    if (modelRoot && existsSync(modelRoot)) removeModelRoot(modelRoot);
   }
 }
 

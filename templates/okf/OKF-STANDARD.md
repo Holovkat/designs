@@ -672,6 +672,19 @@ When an agent starts work on a project with an OKF bundle:
    reviewed `okf-scheduled-curation/1` profile; the installer does not create a
    schedule, cron, launchd, queue, polling loop, hook launch, Factory
    automation, or automatic retry.
+   The proposal model receives one inline `okf-selected-relevant-context/1`
+   pack: the selected inbox item, required indexes and log, local schema,
+   curation focus, a metadata-only concept catalog, and no more than twelve
+   deterministically relevant concept bodies. The recommended profile is
+   192 KiB total input, at most 26 manifest entries, 96 KiB of relevant concept
+   bodies, and 8 KiB of instructions/envelope. It receives no filesystem,
+   network, or execution tool. Unselected/processed inbox records, unmatched
+   concept bodies, generated viewer/query assets, configuration, filesystem
+   metadata, and other non-Markdown files are absent. The terminal report binds
+   the exact path/role/byte/hash manifest without retaining raw context.
+   One selected item permits exactly one new concept or one update/replacement
+   already present as full relevant context, plus only its exact maintenance
+   outputs.
 
 ## Versioning
 

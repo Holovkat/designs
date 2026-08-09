@@ -3,6 +3,20 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-09T00:31:44Z - Scheduled Context Overexposure Remediated
+
+- **Corrected:** the proposal adapter no longer exposes the complete
+  `knowledge/` tree or an all-permanent-Markdown snapshot to Droid.
+- **Bounded:** one inline relevant-only pack now contains the selected item,
+  required maintenance/schema/focus files, a metadata-only catalog, and at most
+  twelve matched concept bodies; the recommended full-prompt ceiling is
+  192 KiB rather than the Designs pilot's former 2 MiB ceiling.
+- **Confined:** file, shell, web, and search tools are absent from the model
+  session; the terminal report binds the exact raw-free context manifest and
+  measured prompt bytes.
+- **Verified:** the live Designs preview is at most 162,437 bytes across 26
+  manifest entries, and the complete OKF regression suite passes.
+
 ## 2026-08-08T13:18:09Z - Bounded Two-Project Scheduler Pilot Approved
 
 - **Approved:** one fail-closed scheduled-curation pilot for Designs and FMS

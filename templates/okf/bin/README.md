@@ -61,6 +61,20 @@ numeric ceiling; no defaults are supplied.
 - It selects at most one actionable direct inbox item, invokes one pinned model
   turn with read-only tools to author a proposal draft, then serially runs the
   canonical check-only and executor paths against the same hash-bound envelope.
+- Its model input is one inline relevant-only pack: the selected direct inbox
+  item, root/type/inbox indexes, the knowledge log, local core schema, curation
+  focus, a metadata-only concept catalog, and at most twelve deterministically
+  relevant concept bodies under a separate 96 KiB ceiling. The recommended
+  profile caps the full prompt at 192 KiB, 26 manifest entries, and 8 KiB of
+  instructions/envelope. The model receives
+  no filesystem, network, or execution tool. Unselected/processed inbox
+  records, unmatched concept bodies, generated viewer/query assets,
+  configuration, filesystem metadata, and other non-Markdown knowledge files
+  are absent. Reports retain the exact path/role/byte/hash manifest, prompt byte
+  count, and selection hashes—not raw context.
+- One selected item permits exactly one new concept or one update/replacement
+  whose prior full body was included, plus only root/inbox/log and affected type
+  maintenance outputs.
 - A write-once attempt record prevents automatic retry. It never probes a
   model, creates a child session, scans sibling repositories, stages broad
   paths, pushes a commit, or silently clears a lock. A timeout, invalid output,
