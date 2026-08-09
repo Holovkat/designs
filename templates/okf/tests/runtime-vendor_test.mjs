@@ -225,6 +225,7 @@ test("installer distributes the complete offline surface and preserves local con
     assert.equal(existsSync(join(target, ".okf", "bin", "epic26-canary-harness.mjs")), false);
     assert.deepEqual(readFileSync(join(target, "knowledge", "viewer.html")), readFileSync(join(template, "viewer.html")));
     assert.deepEqual(readFileSync(join(target, "knowledge", "generate-viz.js")), readFileSync(join(template, "generate-viz.js")));
+    assertCopiedTree(join(template, "viewer-assets"), join(target, "knowledge", "viewer-assets"));
     assert.deepEqual(readFileSync(join(target, "knowledge", "okf-query.sh")), readFileSync(join(template, "okf-query.sh")));
     assert.deepEqual(readFileSync(join(target, ".githooks", "post-commit")), readFileSync(join(template, "post-commit.sh")));
     assert.equal(existsSync(join(target, "AGENTS.md")), false, "installer created AGENTS.md without operator approval");

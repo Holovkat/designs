@@ -11,6 +11,8 @@ import { parseFrontmatter } from "../lib/frontmatter.mjs";
 const testDir = dirname(fileURLToPath(import.meta.url));
 const okfDir = resolve(testDir, "..");
 const viewerPath = join(okfDir, "viewer.html");
+const viewerAppPath = join(okfDir, "viewer-assets", "okf-viewer.js");
+const viewerAssetsPath = join(okfDir, "viewer-assets");
 const generatorPath = join(okfDir, "generate-viz.js");
 const fixtureKnowledge = join(testDir, "viewer-fixtures", "knowledge");
 let failures = 0;
@@ -51,11 +53,8 @@ function readConcepts(directory, prefix = "") {
 }
 
 function loadViewerTestApi() {
-  const html = readFileSync(viewerPath, "utf8");
-  const inlineScript = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/);
-  assert.ok(inlineScript, "viewer inline script not found");
   const context = vm.createContext({ console });
-  vm.runInContext(inlineScript[1], context, { filename: "viewer-inline.js" });
+  vm.runInContext(readFileSync(viewerAppPath, "utf8"), context, { filename: "okf-viewer.js" });
   assert.ok(context.__OKF_VIEWER_TEST__, "viewer test API was not exposed");
   return context.__OKF_VIEWER_TEST__;
 }
@@ -154,6 +153,7 @@ test("generator embeds C7 results deterministically without acquiring a runtime"
     const knowledgeDir = join(tempRoot, "knowledge");
     cpSync(fixtureKnowledge, knowledgeDir, { recursive: true });
     copyFileSync(viewerPath, join(knowledgeDir, "viewer.html"));
+    cpSync(viewerAssetsPath, join(knowledgeDir, "viewer-assets"), { recursive: true });
 
     const first = spawnSync(process.execPath, [generatorPath, knowledgeDir], { encoding: "utf8" });
     assert.equal(first.status, 0, first.stderr);

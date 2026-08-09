@@ -1,0 +1,47 @@
+{
+  "schema": "okf-viewer-assets/1",
+  "offline": true,
+  "assets": [
+    {
+      "file": "cytoscape-3.30.4.min.js",
+      "version": "3.30.4",
+      "license": "MIT",
+      "sha256": "1bb5340e549511e111b31e5684872c949ad33d40ea5dba0ad8e7d90c62c7b3b9",
+      "source": "https://cdn.jsdelivr.net/npm/cytoscape@3.30.4/dist/cytoscape.min.js"
+    },
+    {
+      "file": "marked-12.0.2.min.js",
+      "version": "12.0.2",
+      "license": "MIT",
+      "sha256": "15fabce5b65898b32b03f5ed25e9f891a729ad4c0d6d877110a7744aa847a894",
+      "source": "https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"
+    },
+    {
+      "file": "dompurify-3.2.6.min.js",
+      "version": "3.2.6",
+      "license": "Apache-2.0 OR MPL-2.0",
+      "sha256": "fc42f9bf6f37e0df85e1a20ee4045983f89c1d04914f50c1113d8c4afe3a1bcb",
+      "source": "https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"
+    },
+    {
+      "file": "mermaid-11.4.1.min.js",
+      "version": "11.4.1",
+      "license": "MIT",
+      "sha256": "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e",
+      "source": "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"
+    },
+    {
+      "file": "okf-viewer.js",
+      "version": "repository-local",
+      "license": "repository-local",
+      "sha256": "d796d6c911819f0b72b31c029e3ff275163600e4408ecce34edde73c984794b7",
+      "source": "templates/okf/viewer-assets/okf-viewer.js"
+    }
+  ],
+  "licenses": [
+    "licenses/CYTOSCAPE-LICENSE.txt",
+    "licenses/DOMPURIFY-LICENSE.txt",
+    "licenses/MARKED-LICENSE.txt",
+    "licenses/MERMAID-LICENSE.txt"
+  ]
+}

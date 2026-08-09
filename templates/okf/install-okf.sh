@@ -77,6 +77,18 @@ OKF_SCHEMA_FILES=(
 	"okf-knowledge-change-1.schema.json"
 	"okf-knowledge-change-1.validator.mjs"
 )
+OKF_VIEWER_ASSET_FILES=(
+	"manifest.json"
+	"cytoscape-3.30.4.min.js"
+	"marked-12.0.2.min.js"
+	"dompurify-3.2.6.min.js"
+	"mermaid-11.4.1.min.js"
+	"okf-viewer.js"
+	"licenses/CYTOSCAPE-LICENSE.txt"
+	"licenses/DOMPURIFY-LICENSE.txt"
+	"licenses/MARKED-LICENSE.txt"
+	"licenses/MERMAID-LICENSE.txt"
+)
 
 require_source_file() {
 	if [ ! -f "$1" ]; then
@@ -104,6 +116,9 @@ for filename in "${OKF_BIN_FILES[@]}"; do
 done
 for filename in "${OKF_SCHEMA_FILES[@]}"; do
 	require_source_file "${SCRIPT_DIR}/schema/${filename}"
+done
+for filename in "${OKF_VIEWER_ASSET_FILES[@]}"; do
+	require_source_file "${SCRIPT_DIR}/viewer-assets/${filename}"
 done
 for filename in profile.json cadence.json kill-switch.json; do
 	require_source_file "${SCRIPT_DIR}/config/${filename}"
@@ -189,10 +204,19 @@ VIEWER_SRC="${SCRIPT_DIR}/viewer.html"
 GENERATOR_SRC="${SCRIPT_DIR}/generate-viz.js"
 VIEWER_DEST="${KNOWLEDGE_DIR}/viewer.html"
 GENERATOR_DEST="${KNOWLEDGE_DIR}/generate-viz.js"
+VIEWER_ASSET_DEST="${KNOWLEDGE_DIR}/viewer-assets"
+if [ -L "$VIEWER_ASSET_DEST" ]; then
+	echo "Error: refusing to install through symlinked viewer asset path: $VIEWER_ASSET_DEST" >&2
+	exit 1
+fi
 if [ -f "$VIEWER_SRC" ]; then
 	cp "$VIEWER_SRC" "$VIEWER_DEST"
 	cp "$GENERATOR_SRC" "$GENERATOR_DEST"
-	echo "Installed viewer.html and generate-viz.js"
+	mkdir -p "$VIEWER_ASSET_DEST"
+	cp -R "${SCRIPT_DIR}/viewer-assets/." "$VIEWER_ASSET_DEST/"
+	find "$VIEWER_ASSET_DEST" -type d -exec chmod 0755 {} +
+	find "$VIEWER_ASSET_DEST" -type f -exec chmod 0644 {} +
+	echo "Installed viewer.html, generate-viz.js, and pinned offline viewer assets"
 	echo "  Run 'node knowledge/generate-viz.js knowledge/' to generate a self-contained viz.html"
 fi
 
