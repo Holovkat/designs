@@ -32,4 +32,6 @@ Session syntheses awaiting curation. Items here are written by agents before com
 | [add bounded scheduled curation pilot](./2026-08-08T13-54-38Z-add-bounded-scheduled-curation-pilot.md) | 2026-08-08T13:54:38Z | okf | — |
 | [compact scheduled curation context](./2026-08-09T00-40-58Z-compact-scheduled-curation-context.md) | 2026-08-09T00:40:58Z | okf | — |
 | [scale compact context for Mercury](./2026-08-09T01-20-56Z-scale-compact-context-for-mercury.md) | 2026-08-09T01:20:56Z | okf | — |
+| [enforce fix-on-touch concept integrity](./2026-08-09T11-30-57Z-enforce-fix-on-touch-concept-integrity.md) | 2026-08-09T11:30:57Z | okf | #42 |
+| [Strict Fix-on-Touch Concept Integrity](./2026-08-09T11-31-21Z-strict-fix-on-touch-integrity.md) | 2026-08-09T11:31:21Z | okf, fix-on-touch, integrity, session | #42 |
 <!-- Rows added by agents, removed by curation agent -->
