@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Fixture validation for the OKF core application profile",
   "scripts": {
-    "test": "npm run test:schema && npm run test:knowledge-change && npm run test:frontmatter && npm run test:lint && npm run test:query && npm run test:viewer && npm run test:viewer-security && npm run test:viewer-browser && npm run test:inbox-status && npm run test:inbox-triage && npm run test:inbox-archive && npm run test:run-safety && npm run test:curation && npm run test:cadence && npm run test:runtime && npm run test:post-commit",
+    "test": "npm run test:schema && npm run test:knowledge-change && npm run test:session-closeout && npm run test:installer && npm run test:retrieval && npm run test:prime-canary && npm run test:frontmatter && npm run test:lint && npm run test:query && npm run test:viewer && npm run test:viewer-security && npm run test:viewer-browser && npm run test:inbox-status && npm run test:inbox-triage && npm run test:inbox-archive && npm run test:run-safety && npm run test:curation && npm run test:cadence && npm run test:runtime && npm run test:post-commit",
     "test:cadence": "node tests/cadence_test.mjs",
     "test:curation": "node tests/curation-executor_test.mjs",
     "test:frontmatter": "node tests/frontmatter-parser_test.mjs",
@@ -19,6 +19,10 @@
     "test:schema": "node schema/schema-test.mjs",
     "test:viewer": "node tests/viewer-relationships_test.mjs",
     "test:knowledge-change": "node tests/knowledge-change-set_test.mjs",
+    "test:session-closeout": "node tests/session-closeout_test.mjs",
+    "test:installer": "node tests/install-okf_test.mjs",
+    "test:retrieval": "node tests/retrieval-index_test.mjs",
+    "test:prime-canary": "node tests/prime-canary_test.mjs",
     "test:viewer-security": "node tests/viewer-security_test.mjs",
     "test:viewer-browser": "node tests/viewer-browser_test.mjs"
   },

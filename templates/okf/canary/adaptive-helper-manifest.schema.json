@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openknowledgeformat.org/schema/okf-adaptive-helper-manifest-1.schema.json",
+  "title": "OKF Adaptive Helper Manifest 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "run_id", "helper_id", "sandbox_executable", "node_path", "network", "package_install", "promotion", "inputs", "limits"],
+  "properties": {
+    "version": { "const": "okf-adaptive-helper-manifest/1" },
+    "run_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,95}$" },
+    "helper_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,95}$" },
+    "sandbox_executable": { "type": "string", "minLength": 1 },
+    "node_path": { "type": "string", "minLength": 1 },
+    "network": { "const": "none" },
+    "package_install": { "const": "denied" },
+    "promotion": { "const": "denied" },
+    "inputs": {
+      "type": "array", "minItems": 1, "maxItems": 64,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["name", "path", "sha256"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,95}$" },
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "limits": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_runtime_ms", "max_output_bytes", "max_disk_bytes", "max_source_bytes", "max_processes"],
+      "properties": {
+        "max_runtime_ms": { "type": "integer", "minimum": 1 },
+        "max_output_bytes": { "type": "integer", "minimum": 1 },
+        "max_disk_bytes": { "type": "integer", "minimum": 1 },
+        "max_source_bytes": { "type": "integer", "minimum": 1 },
+        "max_processes": { "const": 1 }
+      }
+    }
+  }
+}

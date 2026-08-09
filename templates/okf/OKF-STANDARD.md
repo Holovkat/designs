@@ -387,8 +387,17 @@ hold that context.
 
 ### Capture Persistence
 
-At session close, `end-session` stages pending Tier 1 captures and their index
-rows with the one Tier 2 synthesis, then commits only those files as
+At session close, `end-session` passes the one authored sidecar to the installed
+`okf-session-closeout.mjs` command. Its default mode validates and prints the
+exact plan; `--write` transactionally creates the generated Tier 2 Markdown and
+canonical `.change.json` pair plus the inbox/root index updates. It validates
+the physical Git root, branch/head, clean index, explicit capture-selection
+manifest hash, each capture identity, and unrelated dirty paths. An identical
+replay is idempotent. It never applies the proposed concept operations or starts
+curation.
+
+`end-session` then stages pending Tier 1 captures, the Tier 2 Markdown/sidecar
+pair, and their index rows, and commits only those files as
 `okf-capture: persist session captures`. The post-commit hook skips both
 `okf-capture:` and `okf-curation:` subjects so this terminal persistence commit
 does not create another Tier 1 item. Curators use
@@ -398,6 +407,21 @@ At a sprint checkpoint or epic close, an operator may run a repository-scoped
 inbox-status check and explicitly request one bounded curation batch. Count,
 age, and size inform that decision only; they never start curation, scheduling,
 or session creation.
+
+### Disposable Retrieval Projection
+
+`okf-retrieval.mjs build` may create one revision-bound derived index under
+`.okf/cache/`. The projection is byte-deterministic from permanent concepts and
+valid Knowledge Change Set sidecars, binds both Git revision and an exact
+knowledge-tree SHA-256, labels uncommitted source state explicitly, includes
+diagnostics for malformed or unsupported records, and can be deleted and
+rebuilt without knowledge loss.
+`query` exposes bounded exact-ID, keyword, metadata, lifecycle/assertion,
+evidence, and forward/reverse relationship navigation. A revision mismatch is
+explicit and blocks a current-result claim. The projection has no concept write,
+curation, lifecycle, assertion-promotion, scheduling, or external-service
+authority. Vector indexing remains absent unless later measured evidence and
+approval establish a retrieval gap.
 
 ### Capture quality and retention
 

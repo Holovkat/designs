@@ -11,52 +11,107 @@ Step-by-step guide for deploying the Open Knowledge Format (OKF) to a project. A
 
 ## Phase 1: Mechanical Install
 
-Run the installer to deploy viewer, hook, templates, and scripts:
+Resolve and verify the one exact physical Git worktree root before installation.
+The supplied argument must already be an absolute physical path: a relative
+path, symlink alias, non-root child, parent workspace, non-Git directory, or
+symlinked `.git` control path is rejected.
 
 ```bash
-bash <path-to-designs>/templates/okf/install-okf.sh <project-root>
+PROJECT_ROOT="$(cd <project-root> && pwd -P)"
+GIT_TOP="$(git -C "$PROJECT_ROOT" rev-parse --show-toplevel)"
+test "$(cd "$GIT_TOP" && pwd -P)" = "$PROJECT_ROOT"
+git -C "$PROJECT_ROOT" rev-parse --absolute-git-dir
+git -C "$PROJECT_ROOT" rev-parse --path-format=absolute --git-common-dir
 ```
 
-This will:
-- Create `knowledge/` with all subdirectories and template index files
-- Copy `viewer.html` and `generate-viz.js` into `knowledge/`
-- Copy `okf-query.sh` into `knowledge/` as the dependency-free portable search
+Perform the complete preflight as a dry run, review its manifest, and only then
+run the same installer without `--dry-run`:
+
+```bash
+bash <path-to-designs>/templates/okf/install-okf.sh --dry-run "$PROJECT_ROOT"
+bash <path-to-designs>/templates/okf/install-okf.sh "$PROJECT_ROOT"
+```
+
+The `OKF_INSTALL_MANIFEST_V1` dry-run output identifies the physical root, Git
+directory/common directory, effective hook configuration and origin, resolved
+active hook target, chaining decision, every directory and file action, desired
+mode, backup/rollback disposition, and canonical source. Dry-run stages sources
+only in an external temporary directory and makes no target or Git-configuration
+change. Any missing/unreadable/symlinked source, target conflict, unsafe parent
+component, ambiguous hook chain, unsupported target type, or unwritable planned
+parent blocks the operation before the first target mutation.
+
+The transactional apply will:
+
+- Create a missing `knowledge/` structure and initial indexes while preserving
+  every existing concept and existing bundle index on reinstall.
+- Copy `viewer.html`, `generate-viz.js`, and executable `okf-query.sh` into
+  `knowledge/`.
 - Stage the canonical curator contract at `.okf/agents/okf-curator.md`, the
   review-only AGENTS proposal at `.okf/review/AGENTS-OKF-SECTION.md`, and the
-  canonical prompt at `.okf/templates/curation-prompt.md`
-- Install `post-commit.sh` into `.githooks/post-commit` and set local `core.hooksPath`
-- Create `knowledge/inbox/` and `knowledge/inbox/processed/`
-- Copy the pinned YAML runtime, shared parser, generated core-profile validator,
-  schema, and accepted libraries into `.okf/` without fetching dependencies
-- Install the read-only linter, semantic query, status, triage, cadence status,
-  and cadence observation commands plus the bounded manual curator runner and
-  reversible archive/rollback commands into `.okf/bin/`
-- Initialize missing repository-local profile, cadence, kill-switch, and archive
-  control files without overwriting existing project configuration
-- Install no scheduled adapter/profile/prompt, dispatcher, scheduler service,
-  cron/launchd entry, Factory task, queue, background process, network
-  dependency, or cross-project discovery path.
+  canonical prompt at `.okf/templates/curation-prompt.md`.
+- Copy the pinned YAML runtime, shared parser, generated core-profile and
+  knowledge-change validators, accepted libraries, read-only commands, bounded
+  curator runner, reversible archive/rollback commands, and pinned offline
+  viewer assets without fetching or executing dependencies.
+- Initialize only missing `.okf/profile.json`, `.okf/cadence.json`, and
+  `.okf/KILL_SWITCH` controls. Existing regular files or symlinks at those exact
+  preserve-only control paths remain untouched.
+- Resolve the effective hook directory with
+  `git rev-parse --path-format=absolute --git-path hooks` and leave
+  `core.hooksPath` byte-for-byte/config-origin unchanged. This supports default
+  Git hooks, relative `.githooks`, Husky-style paths, absolute paths, and the
+  common Git directory used by linked worktrees.
+- Leave every hook other than the effective `post-commit` byte- and mode-identical.
+  A non-OKF `post-commit` is copied byte- and mode-identically to
+  `post-commit.pre-okf`, then the canonical OKF wrapper invokes it on every exit.
+  An exact canonical reinstall retains its predecessor. Any symlink, special
+  file, orphan predecessor, or simultaneous non-canonical hook/predecessor is an
+  ambiguous conflict and blocks installation.
+- Back up every replacement before the first write, apply only the staged
+  manifest, and record newly created paths. A failure or signal after mutation
+  restores replaced bytes and modes, removes only transaction-created files and
+  directories, and reports whether rollback proof completed. Reinstall skips
+  byte- and mode-identical artifacts and preserves project controls,
+  `AGENTS.md`, harness directories, and project concepts.
+- Install no scheduled adapter or profile, scheduler service, cron/launchd
+  entry, Factory task, queue, background process, network dependency, or
+  cross-project discovery path.
 
 Verify the install:
-- `knowledge/index.md` exists with the standard concept type table
-- `knowledge/log.md` exists
-- `knowledge/okf-query.sh` exists and is executable
+
+```bash
+HOOK_ROOT="$(git -C "$PROJECT_ROOT" rev-parse --path-format=absolute --git-path hooks)"
+printf 'effective core.hooksPath: %s\n' "$(git -C "$PROJECT_ROOT" config --show-origin --get core.hooksPath || printf '<unset: default>')"
+test -x "$HOOK_ROOT/post-commit"
+cmp <path-to-designs>/templates/okf/post-commit.sh "$HOOK_ROOT/post-commit"
+test ! -e "$HOOK_ROOT/post-commit.pre-okf" || test -f "$HOOK_ROOT/post-commit.pre-okf"
+```
+
+Also verify:
+
+- `knowledge/index.md`, `knowledge/log.md`, and executable
+  `knowledge/okf-query.sh` exist.
 - `.okf/agents/okf-curator.md`, `.okf/review/AGENTS-OKF-SECTION.md`, and
-  `.okf/templates/curation-prompt.md` exist and match their canonical hashes
-- the installer did not create or modify `.factory/`, `.claude/`, or `AGENTS.md`;
-  harness integration remains a separate governed, operator-approved action
-- `.githooks/post-commit` exists and is executable
-- `git config core.hooksPath` returns `.githooks`
-- the resolved active hook is inside this repository, matches the canonical OKF
-  hook, preserves any chained predecessor, and contains no parent-workspace call
+  `.okf/templates/curation-prompt.md` exist and match their canonical hashes.
+- The installer did not create or modify `.factory/`, `.claude/`, or `AGENTS.md`;
+  harness integration remains a separate governed, operator-approved action.
+- The effective `core.hooksPath` value and origin match the preflight, the
+  canonical active hook is executable, any predecessor matches its pre-install
+  bytes and mode, and every other hook is unchanged.
 - `.okf/schema/okf-core-1.0.schema.json`, its generated validator, the pinned
   parser runtime, accepted libraries, and every installed `.okf/bin/` command
-  match their canonical hashes
-- `.okf/profile.json`, `.okf/cadence.json`, and the kill-switch state are
-  parseable, project-local, and preserve pre-existing values on reinstall
-- portable basic search works without loading the semantic runtime
-- no installer step executed Node/npm, a hook, curator, archive, network fetch,
-  scheduled action, or command against another project
+  match their canonical hashes and modes.
+- `.okf/profile.json`, `.okf/cadence.json`, the kill-switch state, instructions,
+  harness files, and concepts preserve pre-existing values on reinstall.
+- Portable basic search works without loading the semantic runtime.
+- No installer step executed Node/npm, a hook, curator, archive, network fetch,
+  scheduled action, or command against another project.
+- `node <path-to-designs>/templates/okf/tests/install-okf_test.mjs` and
+  `node <path-to-designs>/templates/okf/tests/runtime-vendor_test.mjs` pass in
+  isolated temporary repositories. The installer fixture prints its exact OS,
+  Git, Bash, architecture, and filesystem capability manifest and treats a
+  missing linked-worktree or symlink prerequisite as a failed claim.
 
 ## Phase 2: Seed From Existing Docs
 
@@ -328,11 +383,16 @@ Verify:
    grep "OKF Knowledge Bundle" AGENTS.md
    ```
 
-5. Verify post-commit hook is installed and repository-scoped:
+5. Verify the post-commit hook is installed at the unchanged effective hook
+   root for the exact physical worktree:
    ```bash
-   git config core.hooksPath
-   ls -la .githooks/post-commit
-   git rev-parse --show-toplevel
+   PROJECT_ROOT="$(pwd -P)"
+   git -C "$PROJECT_ROOT" config --show-origin --get core.hooksPath || printf '<unset: default>\n'
+   HOOK_ROOT="$(git -C "$PROJECT_ROOT" rev-parse --path-format=absolute --git-path hooks)"
+   test -x "$HOOK_ROOT/post-commit"
+   ls -la "$HOOK_ROOT/post-commit"
+   test ! -e "$HOOK_ROOT/post-commit.pre-okf" || ls -la "$HOOK_ROOT/post-commit.pre-okf"
+   test "$(cd "$(git -C "$PROJECT_ROOT" rev-parse --show-toplevel)" && pwd -P)" = "$PROJECT_ROOT"
    ```
 
 6. Verify viz.html exists and is non-trivial:
@@ -340,11 +400,13 @@ Verify:
    ls -lh knowledge/viz.html
    ```
 
-7. Run the canonical combined template suite, including schema/parser/linter,
-   hook quality, viewer, semantic query/basic fallback, bounded runner,
-   validation failure/recovery, triage, archive/rollback, cadence observation,
-   runtime packaging, and installer fixtures. Do not claim compatibility if one
-   consumer uses different parser/profile semantics.
+7. Run the canonical combined template suite plus the direct transactional
+   installer fixture. Together they cover schema/parser/linter, hook quality,
+   viewer, semantic query/basic fallback, bounded runner, validation
+   failure/recovery, triage, archive/rollback, cadence observation, runtime
+   packaging, exact-root/worktree/hook-manager handling, rollback, and
+   reinstall. Do not claim compatibility if one consumer uses different
+   parser/profile semantics.
 
 8. Exercise capture override, unsafe root/path, lock contention/stale lock,
    kill switch, quota, cancellation, changed-source resume, staging/postflight
@@ -369,19 +431,20 @@ Verify:
 
 After deployment, the project is ready for ongoing OKF usage:
 - Agents read `knowledge/` concepts before starting work and check `decisions/` and `deprecation/` before investigating or proposing plans (OKF-first protocol)
-- Each ordinary commit creates one compact Tier 1 capture; `end-session` writes
-  one complementary Tier 2 synthesis after the implementation commits and
-  persists the capture-only slice with `okf-capture:`
+- Each ordinary commit creates one compact Tier 1 capture; `end-session`
+  authors one `okf-knowledge-change/1` sidecar after the implementation commits,
+  uses `okf-session-closeout.mjs` to generate the Tier 2 Markdown/sidecar pair
+  and index updates, and persists that capture-only slice with `okf-capture:`
 - Capture checks compact unsafe raw/oversized/duplicate low-signal content into
   an auditable Git reference unless an operator explicitly overrides content
   retention; they never remove the Tier 1 provenance record
 - At sprint/epic checkpoints, an operator may request read-only status/triage.
   It never starts curation. A bounded batch requires a separate explicit plan,
   proposal, limits, lock, validation, cancellation, recovery, and review
-- Curation operation is manual and requires a separate repository-scoped
-  operator request. The installer exposes no scheduled entry point, threshold
-  trigger, cron, launchd, queue, hook launch, Factory automation, polling,
-  self-retry, or automatic session.
+- Manual operation is the default. The installer contains no scheduled
+  curation adapter or profile and creates no schedule, threshold trigger, cron,
+  launchd, queue, hook launch, Factory automation, polling, self-retry, or
+  automatic session.
 - Archive/compaction is reversible and manifest-backed; permanent deletion and
   every `AGENTS.md` edit require separate explicit operator approval
 - `viz.html` can be regenerated after any knowledge changes

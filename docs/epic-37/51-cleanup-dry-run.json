@@ -1,0 +1,194 @@
+{
+  "version": "okf-designs-scheduled-cleanup-plan/1",
+  "run_id": "epic37-51-designs-cleanup",
+  "created_at": "2026-08-09T13:19:16Z",
+  "root": "/Users/tonyholovka/workspace/designs",
+  "repository": "Holovkat/designs",
+  "branch": "main",
+  "revision": "e12f5c0afa522662748c1da9374ede9042456153",
+  "authority": {
+    "general_commencement_ref": "https://github.com/Holovkat/designs/issues/37#issuecomment-5231571249",
+    "live_mutation_approval": null,
+    "required_status": "separate-owner-approval-pending"
+  },
+  "before_state": {
+    "remove_candidates": [
+      {
+        "path": ".okf/bin/okf-scheduled-curate.mjs",
+        "type": "file",
+        "mode": "0755",
+        "bytes": 1278,
+        "sha256": "2301ce917a05d5e4fb106c00745ea6417451e519b8381bc9c524b0dfbbed7a3d"
+      },
+      {
+        "path": ".okf/lib/scheduled-curation.mjs",
+        "type": "file",
+        "mode": "0644",
+        "bytes": 72421,
+        "sha256": "e137a97a029d9f076d86ee5a34d78f46ba0b7a045cda5a57e681e764899cb3ea"
+      },
+      {
+        "path": ".okf/scheduled-curation.json",
+        "type": "file",
+        "mode": "0600",
+        "bytes": 1785,
+        "sha256": "3630669ebb0d463d8825eaf907e35c8d6905e3ce2090288715cbe59f9b5639c4"
+      },
+      {
+        "path": ".okf/templates/scheduled-curation-prompt.md",
+        "type": "file",
+        "mode": "0644",
+        "bytes": 2885,
+        "sha256": "bd564b534681ba148ed19f97c86afed07a38618b49d72fcaa2667ec7740ccd95"
+      },
+      {
+        "path": ".okf/templates/scheduled-curation.example.json",
+        "type": "file",
+        "mode": "0644",
+        "bytes": 1455,
+        "sha256": "1f5cbbd4a73b46e91633d05315a1ba8e4ce1bbbdb391ee52c8e4fe6cdf2486dd"
+      },
+      {
+        "path": ".okf/scheduled-curation/outer.lock",
+        "type": "file",
+        "mode": "0600",
+        "bytes": 435,
+        "sha256": "7c33fc0f9b16a932957f22c19ba9b5cb120b0dfe41e99e9f9946931554a686d7"
+      }
+    ],
+    "preserve_evidence": [
+      {
+        "path": ".okf/scheduled-curation/attempts/325692258e754b3e8203769e4060d0dffff6fe56dba337af0ffb448572275be7.json",
+        "type": "file",
+        "mode": "0600",
+        "bytes": 910,
+        "sha256": "84cb7b5480c458d1ef33dce0cdd0ffc75b986f29dc015f9daa197b9ed590c2e8"
+      },
+      {
+        "path": ".okf/scheduled-curation/reports/325692258e754b3e8203769e4060d0dffff6fe56dba337af0ffb448572275be7.json",
+        "type": "file",
+        "mode": "0600",
+        "bytes": 1635,
+        "sha256": "d6fa12b8f553cfac777970be6cd2fd527078562675ddc0384fd081d648071145"
+      },
+      {
+        "path": ".okf/bin/okf-curate.mjs",
+        "type": "file",
+        "mode": "0755",
+        "bytes": 6895,
+        "sha256": "6be1102b858fb387e14c082b5912568da6832857b1ba818ff443ff63ee5d060f"
+      },
+      {
+        "path": ".okf/lib/curation-executor.mjs",
+        "type": "file",
+        "mode": "0644",
+        "bytes": 32880,
+        "sha256": "ab3119c782a06b125bd821a97269dcfcb04df4893a4a4cf0f1612de75ee97eab"
+      },
+      {
+        "path": ".okf/bin/okf-inbox-archive.mjs",
+        "type": "file",
+        "mode": "0755",
+        "bytes": 4319,
+        "sha256": "bc9c8862e3a200ce54ebfd9806358d1038199e794cea7220d0c319a6d1ef5489"
+      }
+    ],
+    "kill_switch": {
+      "path": ".okf/KILL_SWITCH",
+      "type": "file",
+      "mode": "0600",
+      "bytes": 140,
+      "sha256": "d2fb8de0de488e735824846cf7cee21f146ef353f37403d2d44f24bdc99dba07"
+    },
+    "cron": {
+      "matching_lines": [],
+      "full_crontab_sha256": "ef8807a0888f6f49824cd9636b044fe15817ce78093b822a329d5b874a401a8e",
+      "bytes": 31
+    },
+    "processes": {
+      "matching_active_processes": []
+    }
+  },
+  "actions": [
+    {
+      "sequence": 1,
+      "action": "backup-then-remove",
+      "path": ".okf/bin/okf-scheduled-curate.mjs",
+      "expected_sha256": "2301ce917a05d5e4fb106c00745ea6417451e519b8381bc9c524b0dfbbed7a3d"
+    },
+    {
+      "sequence": 2,
+      "action": "backup-then-remove",
+      "path": ".okf/lib/scheduled-curation.mjs",
+      "expected_sha256": "e137a97a029d9f076d86ee5a34d78f46ba0b7a045cda5a57e681e764899cb3ea"
+    },
+    {
+      "sequence": 3,
+      "action": "backup-then-remove",
+      "path": ".okf/scheduled-curation.json",
+      "expected_sha256": "3630669ebb0d463d8825eaf907e35c8d6905e3ce2090288715cbe59f9b5639c4"
+    },
+    {
+      "sequence": 4,
+      "action": "backup-then-remove",
+      "path": ".okf/templates/scheduled-curation-prompt.md",
+      "expected_sha256": "bd564b534681ba148ed19f97c86afed07a38618b49d72fcaa2667ec7740ccd95"
+    },
+    {
+      "sequence": 5,
+      "action": "backup-then-remove",
+      "path": ".okf/templates/scheduled-curation.example.json",
+      "expected_sha256": "1f5cbbd4a73b46e91633d05315a1ba8e4ce1bbbdb391ee52c8e4fe6cdf2486dd"
+    },
+    {
+      "sequence": 6,
+      "action": "backup-then-remove",
+      "path": ".okf/scheduled-curation/outer.lock",
+      "expected_sha256": "7c33fc0f9b16a932957f22c19ba9b5cb120b0dfe41e99e9f9946931554a686d7"
+    },
+    {
+      "sequence": 7,
+      "action": "negative-path-proof",
+      "checks": [
+        "tracked scheduled entrypoints absent",
+        "installed scheduled CLI/library/profile/prompt absent",
+        "no matching cron line",
+        "no matching active process",
+        "manual status/check-only commands parse"
+      ]
+    },
+    {
+      "sequence": 8,
+      "action": "reset-kill-switch-last",
+      "path": ".okf/KILL_SWITCH",
+      "expected_before_sha256": "d2fb8de0de488e735824846cf7cee21f146ef353f37403d2d44f24bdc99dba07",
+      "after_sha256": "595219792dd54a38a8ace80a6a7fc33b928ea74f0dd1bdfac6a2b708dbe0dd1e",
+      "content": {
+        "active": false
+      }
+    }
+  ],
+  "backup": {
+    "root": "~/.okf/cleanup/designs/epic37-51/<approved-manifest-sha256>/before",
+    "mode": "0700",
+    "file_mode": "0600",
+    "required_before_first_removal": true
+  },
+  "rollback": {
+    "order": "reverse-actions",
+    "restore_exact_bytes_and_modes_from_backup": true,
+    "restore_kill_switch_first_on_rollback": true,
+    "verify_unrelated_crontab_hash": "ef8807a0888f6f49824cd9636b044fe15817ce78093b822a329d5b874a401a8e"
+  },
+  "line_stops": [
+    "manifest hash drift",
+    "missing separate approval reference",
+    "path or hash mismatch",
+    "unexpected cron/process/repository",
+    "generic control mismatch",
+    "backup failure",
+    "negative-path proof failure",
+    "kill-switch reset attempted before proof"
+  ],
+  "manifest_sha256": "57165cd0100a68d7b821a7dbb38ed26aabe701994918c210b74824560e034a37"
+}

@@ -34,7 +34,7 @@ Do not move or duplicate existing docs into `knowledge/`. New knowledge that doe
 When you finish a meaningful work session:
 
 1. Tier 1: the post-commit hook writes one compact `capture_tier: commit` inbox item for each ordinary commit. Commit bodies must state why/how and `Impact:`; Git remains the source for changed files.
-2. Tier 2: at session close, `end-session` writes one `capture_tier: session` synthesis after work is committed. It references commit SHAs and contains only Decisions Made, What Was Deprecated, Lessons Learned, and Current State; it does not repeat Tier 1 captures or include a completion-summary section.
+2. Tier 2: at session close, `end-session` authors one `okf-knowledge-change/1` sidecar after work is committed. The installed `okf-session-closeout.mjs` command validates its exact root/revision/capture identities and generates one `capture_tier: session` Markdown projection plus the sidecar and inbox index updates. It references commit SHAs and contains only Decisions Made, What Was Deprecated, Lessons Learned, and Current State; it does not repeat Tier 1 captures or include a completion-summary section.
 3. Capture quality checks normalize tags and compact oversized, raw-dump, malformed, or repeated low-signal bodies to a Git reference. An explicit override may retain reviewed content but cannot bypass safe structure or provenance.
 4. Tier 1 and Tier 2 captures are complementary; neither replaces curation. Manual status/triage never authorizes execution; every bounded run requires a separate explicit repository-scoped request. The distributed package has no scheduled entry path. Never use a parent-workspace runner, queue, polling loop, hook launch, or unbounded Factory automation.
 

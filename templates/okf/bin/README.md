@@ -29,12 +29,27 @@ argument contract.
   `knowledge/okf-query.sh` wrapper dispatches semantic selectors here only when
   the packaged runtime is present; basic text and `--decisions` search remain
   available without Node/runtime.
+- `okf-retrieval.mjs` builds a disposable, byte-deterministic index over
+  permanent concepts and approved Knowledge Change Set dispositions/evidence,
+  then exposes bounded exact-ID, keyword, metadata, forward/reverse relationship,
+  lifecycle, assertion, and evidence selectors. Revision drift is explicit and
+  blocks current-result claims. The index has no write or lifecycle authority.
 - `okf-inbox-status.mjs` reports deterministic count, bytes, age, capture-tier,
   quality, lock, and kill-switch health without granting execution authority.
 - `okf-inbox-triage.mjs` classifies each direct pending item as malformed,
   duplicate, oversized, low-signal, provenance-warning, stale,
   needs-human-review, or actionable. It is read-only and emits hashes and
   bounded metadata, never raw inbox bodies.
+
+## Author-time session closeout
+
+- `okf-session-closeout.mjs` validates one explicit
+  `okf-knowledge-change/1` sidecar against the exact root, branch, revision,
+  clean index, capture-selection manifest, source hashes, and unrelated dirty
+  paths. The default command prints a deterministic no-write plan; `--write`
+  creates one Tier 2 Markdown item, its canonical `.change.json` sidecar, and
+  the two inbox index updates. It is idempotent, leaves `review-required`
+  coverage pending, and never applies concept operations or starts curation.
 
 ## Bounded curation
 

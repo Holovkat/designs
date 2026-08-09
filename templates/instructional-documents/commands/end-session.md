@@ -1,223 +1,191 @@
 ---
-description: Close session with compliance gate, builder handoff, merge-back, and cleanup. Closes epic and collapses branch when all tasks are done.
+description: Close a coding session with one tracker handoff, one OKF closeout source, and no repeated verification loop.
 ---
 
-You are closing out the current coding session. This includes quality checks,
-compliance review, builder handoff updates, branch push, merge-back to the
-recorded parent branch, and cleanup of the isolated worktree session.
+You are closing the current coding session. Preserve implementation evidence,
+write the author-time OKF closeout while context is hot, and return the branch to
+its recorded parent only when the governing tracker and user authority allow it.
 
-When all task issues linked to the epic are closed and UAT has passed,
-`/end-session` also closes the epic and collapses the branch entirely.
+## Critical rules
 
-**CRITICAL RULES:**
-1. **COMPLIANCE IS A GATE** - Cannot hand off cleanly until compliance passes or the issue is explicitly blocked
-2. **USE BUILDER HANDOFF** - The issue comment and labels are the durable execution record
-3. **CAPTURE PACKET/WARM-LOOP FACTS** - Record whether packet freeze held and whether warm `dev` continuity was preserved
-4. **CHECK EPIC COMPLETION** - If all task issues for the epic are closed and UAT has passed, close the epic and collapse the branch
-5. **COMPLETE ALL STEPS** - Do not skip the GitHub handoff, branch push, or merge-back cleanup
-6. **KEEP USER-FACING OUTPUT BRIEF** - Status updates only during execution. All detailed information goes into GitHub issues and comments. Do not repeat to the user what has been written to GitHub. Final summary: what was done, what was closed, current status.
+1. **FOLLOW THE ACTIVE EPIC** — The tracker owns verification placement. If the
+   epic assigns one final verification task, do not recreate test, review,
+   compliance, or UAT gates in every implementation session.
+2. **ONE HANDOFF** — Write one concise builder handoff for the current task.
+   Historical command output and file-by-file summaries do not belong in it.
+3. **ONE CLOSEOUT SOURCE** — When OKF is installed, author one
+   `okf-knowledge-change/1` JSON sidecar. The Tier 2 Markdown, capture coverage,
+   and exact concept proposals are generated from that source.
+4. **NO COLD RECONSTRUCTION** — Use the task packet, implementation receipts,
+   current session commits, and explicit capture selection. Do not reread broad
+   Git or source history unless a named risk requires escalation.
+5. **NO SILENT COVERAGE LOSS** — Every selected capture receives one
+   disposition. `review-required` remains pending and cannot be reported as
+   complete.
+6. **SEPARATE AUTHORITY** — A handoff or passing verification never grants
+   deployment, live curation, cleanup, merge, push, or schedule authority.
 
----
+## Fast path
 
-## WORKFLOW
+| Step | Action |
+|---|---|
+| 1 | Read the active task/epic and identify where verification is owned |
+| 2 | Confirm implementation files are stable and gather the handoff facts |
+| 3 | Commit implementation only when source-control authority is present |
+| 4 | Generate and validate one OKF Knowledge Change Set, then persist its projections |
+| 5 | Post one builder handoff and update only the tracker state proven |
+| 6 | Push, merge back, and clean up only when separately authorized |
+| 7 | If this is the epic verification task, run its one consolidated gate |
 
-| Step | Description |
-|------|-------------|
-| 1 | Run Quality Checks (lint, build) |
-| 2 | Compliance Review (GATE) |
-| 3 | Code Review |
-| 4 | Gather builder handoff facts |
-| 5 | Update GitHub issue handoff state |
-| 6 | Check epic completion |
-| 7 | Git Operations (commit, push) |
-| 8 | Merge back to parent + cleanup |
-| 9 | Summary |
+## Step 1: Resolve verification ownership
 
-## Step 1: Quality Checks
+Read the active task and parent epic before running commands.
+
+- For an ordinary implementation task, do not run a mandatory completion-test,
+  review, compliance, UAT, or full-regression loop when the epic assigns those
+  checks to a later integrated gate.
+- A narrow diagnostic is allowed only to implement the change or isolate a
+  concrete failure.
+- For the named epic verification task, run exactly the consolidated gate and
+  stop policy defined by that tracker item.
+
+Record the highest gate actually proven. Do not label an implementation-only
+handoff as application readiness.
+
+## Step 2: Gather the handoff facts
+
+Capture only:
+
+- task and epic issue numbers;
+- branch and worktree path;
+- implementation revision(s), when committed;
+- changed paths and behavior;
+- decisions and deprecations;
+- known risks, pending review, or separate approval gates;
+- setup/data/fixture changes;
+- whether scope remained within the task packet; and
+- any narrow diagnostic used to resolve a concrete implementation failure.
+
+## Step 3: Stabilize implementation history
+
+The Knowledge Change Set binds full commit SHAs, so implementation changes must
+be committed before its final `head_revision` and `inbox.commit_shas` are
+written. Commit or push only when the current user and repository workflow have
+granted that authority.
+
+Use a commit body that records why/how and `Impact:` so the Tier 1 hook can
+create useful compact captures.
+
+## Step 4: Author and persist the OKF closeout
+
+Skip this step only when the repository has no installed OKF bundle.
+
+### 4.1 Author one sidecar
+
+Create one repository-contained input such as:
+
+```text
+.okf/closeout/<session-id>.change.json
+```
+
+It must conform to `okf-knowledge-change/1` and include:
+
+- exact repository, branch, base/head revisions, and session timestamps;
+- one explicit capture-selection manifest and SHA-256;
+- exactly one disposition for every required capture;
+- ordered exact-content concept proposals with target IDs, paths, expected
+  hashes, dependencies, and idempotency keys;
+- claim-specific evidence receipts and assertion state;
+- the concise four-section human synthesis; and
+- the Tier 2 title, tags, commit SHAs, issue references, and epic references.
+
+Use existing implementation-time evidence. Unsupported, malformed, oversized,
+binary, secret-bearing, or ambiguous input remains identifiable and
+`review-required`; never copy unsafe content into the synthesis.
+
+### 4.2 Review the deterministic plan
 
 ```bash
-bun run lint 2>/dev/null || pnpm lint 2>/dev/null || npm run lint 2>/dev/null || true
-bun run build 2>/dev/null || pnpm build 2>/dev/null || npm run build 2>/dev/null || true
+node .okf/bin/okf-session-closeout.mjs \
+  --root "$PWD" \
+  --change-set ".okf/closeout/<session-id>.change.json"
 ```
 
-## Step 2: Compliance Review (GATE)
+The command validates the exact physical Git root, clean index, branch/head,
+commit references, capture-selection hash, every capture identity, unrelated
+dirty paths, schema, semantic coverage, operation ordering, evidence, and
+idempotency. It performs no broad repository scan and applies no concept
+operation.
 
-Read acceptance criteria from the GitHub task issue and verify the current work.
-If compliance fails and you cannot fix it in-session, hand off as blocked.
-
-## Step 4: Gather Builder Handoff Facts
-
-- task issue number
-- branch
-- worktree path
-- commit SHA
-- verification results
-- lessons learned
-- new prerequisites or setup changes
-- data baseline, fixture, or dataset changes
-- whether the task packet remained frozen
-- whether warm `dev` continuity was preserved
-- whether line-stop / replanning conditions were triggered or avoided
-
-## Step 5: Update GitHub Issue Handoff State
-
-Run `/builder-handoff` and let it:
-- post the canonical handoff comment
-- apply `ready-for-integration`, `integration-pending`, `builder-blocked`, and `needs-replan`
-- update setup/data docs when needed
-
-Do **not** close the task issue here unless all epic tasks are complete (see
-Step 6).
-
-## Step 6: Check Epic Completion
-
-After the builder handoff, check whether all task issues linked to the active
-epic are closed and UAT has passed:
+### 4.3 Persist the projections
 
 ```bash
-# Identify the active epic from the current branch
-gh issue list --label "epic" --state open --json number,title
-
-# Query linked issues for the epic
-gh api graphql -f query='query {
-  repository(owner: "[OWNER]", name: "[REPO]") {
-    issue(number: [EPIC]) {
-      trackedIssues(first: 100) {
-        nodes {
-          number
-          state
-          labels(first: 20) { nodes { name } }
-        }
-      }
-    }
-  }
-}'
+node .okf/bin/okf-session-closeout.mjs \
+  --root "$PWD" \
+  --change-set ".okf/closeout/<session-id>.change.json" \
+  --write
 ```
 
-### If ALL task issues are closed and UAT has passed:
+This writes exactly one generated Tier 2 Markdown item, its canonical
+`.change.json` sidecar, and the two inbox index updates. An identical replay is
+idempotent. A conflict or unrelated dirty path fails closed.
 
-1. Close the task issue (if not already closed):
+Stage only:
 
-```bash
-gh issue close [TASK_NUMBER] --comment "Task complete. UAT passed. Closed by /end-session on [DATE]."
+- pending Tier 1 capture Markdown files for the session;
+- the generated Tier 2 `.md` and `.change.json` pair;
+- `knowledge/inbox/index.md`; and
+- `knowledge/index.md`.
+
+Commit that exact slice as:
+
+```text
+okf-capture: persist session captures
 ```
 
-2. Post a Closing Report comment on the epic:
+The post-commit hook skips `okf-capture:` and `okf-curation:` subjects, so this
+terminal persistence commit does not create another capture.
 
-```bash
-gh issue comment [EPIC_NUMBER] --body "## Closing Report
+`review-required` inputs remain pending. This closeout does not apply concept
+operations, run a curator, mutate `AGENTS.md`, schedule work, or touch another
+repository.
 
-**Epic**: #[EPIC_NUMBER] - [Epic Title]
-**Branch**: [branch-name]
-**Closed**: [DATE]
-**Status**: Complete
+## Step 5: Update the tracker once
 
-### Tasks Completed
-| Issue | Title | UAT | Closed |
-|-------|-------|-----|--------|
-| #[T1] | [Task 1] | Passed | [DATE] |
-| #[T2] | [Task 2] | Passed | [DATE] |
+Use `/builder-handoff` or the repository-native equivalent to post one concise
+comment containing the implementation outcome, changed paths, current evidence,
+risks, setup changes, and next gate.
 
-### Summary
-[2-3 sentences: what was built, key decisions, anything notable]
+Do not close the task or epic above the level proven. If implementation is
+stable but the integrated epic gate has not run, record it as implementation
+complete and waiting for integration—not UAT or QA-ready.
 
-### UAT Status
-- Scenarios run: [N]
-- Passed: [N]
-- Failed: [N]
-- Result: [All passed / Passed with caveats / Forced close]
+## Step 6: Source control and cleanup
 
-### Branch
-- Merged back to: [parent-branch]
-- Worktree: [removed]
-- Session branch: [removed]
+Push, merge, close issues, or invoke `./commands/end-session.sh` only when those
+actions are authorized and the recorded parent/worktree metadata is valid. If
+backend cleanup fails, preserve the branch/worktree and report the exact
+blocker; do not delete state manually.
 
-### Lessons Learned
-- [Any notable lessons from the session]
+## Step 7: Epic closeout
 
-_Closed by /end-session on [DATE]_
-"
+If this session owns the epic's single verification task:
+
+1. run the one combined review, deterministic suite, concise operational UAT,
+   and final evidence report defined by the epic;
+2. if it fails, return exact evidence to the owning implementation task and run
+   only failed/affected checks during repair;
+3. run one final complete gate after the repair set is stable; and
+4. stop for replan after a second complete-gate failure—never start a third
+   test/review loop.
+
+Close the epic only when its required tasks and explicit approval decisions are
+terminal and the consolidated gate passes.
+
+## Summary format
+
+Keep the user-facing response brief:
+
+```text
+Session closed. Implementation: <state>. OKF closeout: <complete|review-required|not-installed>. Next gate: <issue or approval>.
 ```
-
-3. Close the epic:
-
-```bash
-gh issue close [EPIC_NUMBER]
-```
-
-4. Proceed to Step 7 and Step 8 — the merge-back and cleanup will collapse
-   the branch entirely since the epic is complete.
-
-### If tasks remain open or UAT has not passed:
-
-1. Do **not** close the task issue or the epic.
-2. Apply labels only (`ready-for-integration`, etc.) via the builder handoff.
-3. Post a brief session-end comment on the task issue:
-
-```bash
-gh issue comment [TASK_NUMBER] --body "## Session End
-
-**Branch**: [branch-name]
-**Status**: [ready-for-integration / builder-blocked / needs-replan]
-**Committed**: [SHA]
-**Next**: [remaining tasks in epic / blocked on / needs replan]
-
-_Session ended by /end-session on [DATE]_
-"
-```
-
-4. Proceed to Step 7 and Step 8 — the merge-back and cleanup handle the
-   current task's worktree only. The branch remains for future tasks.
-
-## Step 7: Git Operations
-
-```bash
-git add -A
-git commit -m "[type]: [short description]"
-git push -u origin $(git branch --show-current) 2>/dev/null || git push origin $(git branch --show-current)
-```
-
-## Step 8: Merge Back to Parent + Cleanup
-
-After the branch is committed, pushed, approved, and UAT has passed, run:
-
-```bash
-./commands/end-session.sh
-```
-
-That backend script should:
-- rebase the session branch onto its recorded parent branch
-- fast-forward merge the parent branch locally
-- stop project-specific worktree runtime artifacts if required
-- remove the session branch, worktree folder, and tmux pane
-
-If the epic is complete (Step 6 closed it), the branch is fully collapsed —
-no remaining worktree or branch artifacts for this epic.
-
-If the backend cleanup fails, stop and report the blocker instead of deleting state manually.
-
-## Step 9: Summary
-
-Present a brief summary to the user. Do not repeat what was written to GitHub.
-
-### If epic was closed:
-
-```
-Done. Epic #[NN] closed. All [N] tasks complete. Branch collapsed.
-```
-
-### If tasks remain:
-
-```
-Done. Task #[NN] labeled [ready-for-integration]. [N] tasks remaining in epic #[NN].
-```
-
-### If blocked:
-
-```
-Blocked. Task #[NN] labeled [builder-blocked]. Reason: [one line]. Next: [one line].
-```
-
----
-
-**BEGIN NOW:** Run quality checks, run the compliance gate, gather the builder handoff facts, invoke `/builder-handoff`, check epic completion, commit and push the task branch, then run `./commands/end-session.sh`. Keep user-facing output brief — detail goes to GitHub.

@@ -114,6 +114,11 @@ Run the contract fixtures with:
 npm --prefix templates/okf run test:knowledge-change
 ```
 
+`lib/session-closeout.mjs` and `bin/okf-session-closeout.mjs` bind one valid
+sidecar to an exact Git worktree, verify its explicit capture identities, and
+generate the Markdown/sidecar pair plus inbox index updates without applying
+concept operations.
+
 The valid fixtures include complete and non-terminal review cases with
 many-to-many mappings. Invalid fixtures are compact deterministic JSON patches over the valid bases;
 they cover incomplete reasons, broken coverage, duplicate IDs, stale

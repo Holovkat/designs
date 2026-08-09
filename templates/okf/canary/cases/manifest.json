@@ -1,0 +1,14 @@
+{
+  "version": "okf-gold-case-manifest/1",
+  "files": [
+    {
+      "path": "gold-cases.json",
+      "sha256": "6716d9daee6101f98d047d2a8107506424f9c95f4d4d8ccbef104dd38c21269d",
+      "case_count": 15
+    }
+  ],
+  "single_pass": true,
+  "passing_case_repetitions": 1,
+  "max_targeted_reruns_after_concrete_correction": 1,
+  "second_failure_outcome": "revise-or-stop"
+}

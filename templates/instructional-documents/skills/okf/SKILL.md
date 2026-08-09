@@ -148,11 +148,15 @@ but cannot bypass structural safety or one-record-per-commit provenance. A
 subject-only commit is captured with explicit gaps so authors can correct future
 commit bodies.
 
-### Tier 2: Session Synthesis
+### Tier 2: Author-Time Knowledge Change Set
 
-At session close, `end-session` writes exactly one `capture_tier: session` item
-after work is committed. It references the session commit SHAs instead of
-repeating Tier 1 detail:
+At session close, `end-session` authors exactly one
+`okf-knowledge-change/1` JSON sidecar after implementation work is committed.
+That one source contains complete capture coverage, exact ordered concept
+proposals, claim-specific evidence, and the concise session synthesis. The
+runtime generates the `capture_tier: session` Markdown instead of asking for a
+second independently authored summary. It references the session commit SHAs
+instead of repeating Tier 1 detail:
 
 ```yaml
 ---
@@ -180,7 +184,26 @@ capture_tier: session
 # Current State
 ```
 
-Filename format: `<ISO-timestamp-with-dashes>-<slugified-title>.md`.
+The generated pair uses the same stem:
+`<ISO-timestamp-with-dashes>-<slugified-title>.md` and
+`<ISO-timestamp-with-dashes>-<slugified-title>.change.json`.
+
+Review and persist it with:
+
+```bash
+node .okf/bin/okf-session-closeout.mjs --root "$PWD" --change-set ".okf/closeout/<session-id>.change.json"
+node .okf/bin/okf-session-closeout.mjs --root "$PWD" --change-set ".okf/closeout/<session-id>.change.json" --write
+```
+
+The command validates exact root/revision/branch, clean index, explicit capture
+selection and source hashes, unrelated dirty paths, complete dispositions,
+operation idempotency, and evidence. It writes only the generated pair and the
+two inbox index updates. It does not apply concept operations or run curation.
+An identical replay is idempotent; `review-required` remains pending.
+
+When the active epic owns verification in one final task, do not recreate a
+test/review/UAT loop in every `end-session` call. Record implementation state
+and defer the consolidated gate to its named owner.
 
 ## Curation
 

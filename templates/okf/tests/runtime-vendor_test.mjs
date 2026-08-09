@@ -34,7 +34,9 @@ const installedBins = Object.freeze([
   "okf-inbox-triage.mjs",
   "okf-lint.mjs",
   "okf-query.mjs",
+  "okf-retrieval.mjs",
   "okf-run-plan.mjs",
+  "okf-session-closeout.mjs",
 ]);
 const installedLibs = Object.freeze([
   "cadence.mjs",
@@ -48,12 +50,14 @@ const installedLibs = Object.freeze([
   "knowledge-change-set.mjs",
   "lint.mjs",
   "query.mjs",
+  "retrieval-index.mjs",
   "run-checkpoint.mjs",
   "run-control.mjs",
   "run-guard.mjs",
   "run-lock.mjs",
   "run-plan.mjs",
   "run-report.mjs",
+  "session-closeout.mjs",
   "yaml-runtime.mjs",
 ]);
 const installedSchema = Object.freeze([
@@ -136,7 +140,13 @@ function installGuards(parent) {
     chmodSync(path, 0o755);
   }
   return Object.freeze({
-    env: { ...process.env, OKF_INSTALL_GUARD_LOG: log, PATH: `${bin}:${process.env.PATH}` },
+    env: {
+      ...process.env,
+      GIT_CONFIG_GLOBAL: "/dev/null",
+      GIT_CONFIG_NOSYSTEM: "1",
+      OKF_INSTALL_GUARD_LOG: log,
+      PATH: `${bin}:${process.env.PATH}`,
+    },
     log,
   });
 }
@@ -178,6 +188,7 @@ test("installer distributes the complete offline surface and preserves local con
     command(target, "git", ["init", "-q"]);
     command(target, "git", ["config", "user.email", "okf@example.test"]);
     command(target, "git", ["config", "user.name", "OKF test"]);
+    command(target, "git", ["config", "core.hooksPath", ".githooks"]);
     command(target, "git", ["commit", "--allow-empty", "-qm", "fixture"]);
     mkdirSync(join(target, ".claude"));
     writeFileSync(join(target, ".claude", "sentinel.txt"), "harness-owned\n");

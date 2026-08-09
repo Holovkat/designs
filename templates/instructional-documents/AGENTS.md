@@ -86,7 +86,7 @@ git checkout docs/update-related-templates && git rebase main && git push --forc
 - Planning/builder agent contracts: `codex-global-planning-agents.md`, `codex-global-builder-agents.md`
 - TFD template: `Frontend-Technical-Functional-Requirements-Document-TFD.md`
 - Session installer: `install-session-workflows.sh`
-- Session commands: `commands/`
+- Session commands: `commands/` (`commands/end-session.md` owns the single author-time OKF change-set handoff and must honor the active epic's verification owner instead of recreating per-task test loops)
 - Session backend scripts: `scripts/`
 - Session lifecycle skills: `skills/`
 - Worktree guidance templates: `worktrees/`
