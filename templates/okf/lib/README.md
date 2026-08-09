@@ -58,10 +58,6 @@ decision/deprecation searches.
 - `curation-executor.mjs` coordinates one explicitly requested, staged,
   checkpointed, reportable transaction; it rolls back every concept and
   maintenance output and restores any moved source if finalization stops.
-- `scheduled-curation.mjs` is the fail-closed orchestration layer for a named
-  scheduled pilot. It binds one actionable source and pinned read-only proposal
-  session to a write-once attempt, serial check/execute evidence, an exact-path
-  commit, and kill-switch stop behavior. Importing it never starts a process.
 
 There are no numeric defaults. A missing/ambiguous kill switch, incompatible
 revision, live/stale lock, quota breach, cancellation, unreportable terminal
@@ -72,5 +68,5 @@ state, or validation failure stops mutation and leaves recovery evidence.
 `cadence.mjs` reads only `.okf/cadence.json`, requires an explicit checkpoint
 request, and validates bounded observation manifests. Its contract fixes those
 observation records to `manual-explicit` and declares
-`automatic_execution: false`; it is not a scheduler or queue. A separately
-approved scheduled pilot uses its own explicit profile and adapter.
+`automatic_execution: false`; it is not a scheduler or queue and grants no
+curation execution authority.

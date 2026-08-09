@@ -3,10 +3,10 @@
 `install-okf.sh` copies every command in this directory to `.okf/bin/`, makes
 it executable, and installs its complete local library/schema/runtime graph.
 Runtime/tool distribution is copy-only: installation does not run these
-commands, install a package, fetch from the network, start a curator, create an
-enabled scheduled profile, or create a schedule. The broader installer still creates the knowledge structure,
-installs the hook, and sets the repository-local Git hook path as documented by
-the deployment runbook. It stages onboarding/curator artifacts under `.okf/`
+commands, install a package, fetch from the network, start a curator, or create
+a scheduled entry point. The broader installer still creates the knowledge
+structure, installs the hook, and sets the repository-local Git hook path as
+documented by the deployment runbook. It stages onboarding/curator artifacts under `.okf/`
 for review; it never changes `AGENTS.md` or creates harness/Factory state.
 
 Commands operate only on the named repository/bundle and never discover sibling
@@ -53,41 +53,6 @@ Proposal authors and curator agents must read
 operator identity/request, run ID, root-relative proposal, and every positive
 numeric ceiling; no defaults are supplied.
 
-## Named bounded scheduling
-
-- `okf-scheduled-curate.mjs --run` is an inert-until-configured adapter for a
-  separately approved repository and branch. It accepts one explicit physical
-  root and one root-relative `okf-scheduled-curation/1` profile.
-- It selects at most one actionable direct inbox item, invokes one pinned model
-  turn without filesystem, network, or execution tools to author a proposal
-  draft, then serially runs the
-  canonical check-only and executor paths against the same hash-bound envelope.
-- Its model input is one inline relevant-only pack: the selected direct inbox
-  item, root/type/inbox indexes, the knowledge log, local core schema, curation
-  focus, an identity-only path/title/optional-ID catalog, and at most twelve
-  deterministically relevant concept bodies under a separate 96 KiB ceiling.
-  Full metadata stays local to scoring; explicit references must fit and
-  optional equal-score groups are never split. The recommended
-  profile caps the full prompt at 192 KiB, 26 manifest entries, and 8 KiB of
-  instructions/envelope. The model receives
-  no filesystem, network, or execution tool. Unselected/processed inbox
-  records, unmatched concept bodies, generated viewer/query assets,
-  configuration, filesystem metadata, and other non-Markdown knowledge files
-  are absent. Reports retain the exact path/role/byte/hash manifest, prompt byte
-  count, and selection hashes—not raw context.
-- One selected item permits exactly one new concept or one update/replacement
-  whose prior full body was included, plus only root/inbox/log and affected type
-  maintenance outputs.
-- A write-once attempt record prevents automatic retry. It never probes a
-  model, creates a child session, scans sibling repositories, stages broad
-  paths, pushes a commit, or silently clears a lock. A timeout, invalid output,
-  failed validation, unexpected diff, or commit failure activates the
-  repository kill switch.
-
-The installer distributes only the adapter, prompt, and disabled example. It
-does not create `.okf/scheduled-curation.json`, a cron/launchd entry, a Factory
-task, or scheduler execution authority.
-
 ## Backlog retention
 
 - `okf-inbox-archive.mjs plan` emits a read-only, hash-bound dry-run manifest
@@ -112,8 +77,8 @@ bounded curation.
   failure recovery, and operator interventions. It records no raw inbox text.
 
 Both observation commands enforce `manual-explicit`; neither installs cron,
-launchd, Factory tasks, polling, queues, retries, or background sessions. They
-do not activate or observe a separately approved scheduled-curation profile.
+launchd, Factory tasks, polling, queues, retries, or background sessions, and
+neither grants curation execution authority.
 
 ## Repository-local controls
 

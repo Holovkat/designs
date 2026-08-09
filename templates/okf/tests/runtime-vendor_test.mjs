@@ -35,7 +35,6 @@ const installedBins = Object.freeze([
   "okf-lint.mjs",
   "okf-query.mjs",
   "okf-run-plan.mjs",
-  "okf-scheduled-curate.mjs",
 ]);
 const installedLibs = Object.freeze([
   "cadence.mjs",
@@ -55,7 +54,6 @@ const installedLibs = Object.freeze([
   "run-lock.mjs",
   "run-plan.mjs",
   "run-report.mjs",
-  "scheduled-curation.mjs",
   "yaml-runtime.mjs",
 ]);
 const installedSchema = Object.freeze([
@@ -63,6 +61,15 @@ const installedSchema = Object.freeze([
   "okf-core-1.0.validator.mjs",
   "okf-knowledge-change-1.schema.json",
   "okf-knowledge-change-1.validator.mjs",
+]);
+const removedScheduledSourcePaths = Object.freeze([
+  "bin/okf-scheduled-curate.mjs",
+  "lib/scheduled-curation.mjs",
+  "templates/scheduled-curation-prompt.md",
+  "config/scheduled-curation.example.json",
+  "scheduled-curate.sh",
+  "tests/scheduled-curation_test.mjs",
+  "tests/scheduled-dispatch_test.sh",
 ]);
 let failures = 0;
 
@@ -151,6 +158,17 @@ test("the shared parser imports the repository-local runtime", () => {
   assert.equal(result.stderr, "");
 });
 
+test("canonical package has no scheduled adapter entry point or aggregate invocation", () => {
+  for (const path of removedScheduledSourcePaths) {
+    assert.equal(existsSync(join(template, path)), false, `removed scheduled source remains: ${path}`);
+  }
+  const packageJson = JSON.parse(readFileSync(join(template, "package.json"), "utf8"));
+  assert.equal(Object.keys(packageJson.scripts).some((name) => name.includes("scheduled")), false);
+  assert.doesNotMatch(packageJson.scripts.test, /scheduled/);
+  const installerSource = readFileSync(installer, "utf8");
+  assert.doesNotMatch(installerSource, /okf-scheduled-curate|scheduled-curation\.(?:mjs|example)|scheduled-curation-prompt/);
+});
+
 test("installer distributes the complete offline surface and preserves local controls", () => {
   const parent = mkdtempSync(join(tmpdir(), "okf-runtime-install-"));
   const targetPath = join(parent, "target");
@@ -175,7 +193,7 @@ test("installer distributes the complete offline surface and preserves local con
     const installedKnowledgeChange = pathToFileURL(join(target, ".okf", "lib", "knowledge-change-set.mjs")).href;
     const importCheck = command(target, process.execPath, ["--input-type=module", "-e", `import { DEFAULT_MAX_CHANGE_SET_BYTES } from ${JSON.stringify(installedKnowledgeChange)}; if (DEFAULT_MAX_CHANGE_SET_BYTES !== 16 * 1024 * 1024) process.exit(1);`], { env: { ...process.env, NODE_PATH: "", HOME: join(parent, "empty-home") } });
     assert.equal(importCheck.stderr, "", "installed knowledge-change runtime must import without package dependencies");
-    assert.deepEqual(names(join(target, ".okf", "templates")), ["curation-prompt.md", "scheduled-curation-prompt.md", "scheduled-curation.example.json"]);
+    assert.deepEqual(names(join(target, ".okf", "templates")), ["curation-prompt.md"]);
     assert.deepEqual(names(join(target, ".okf", "agents")), ["okf-curator.md"]);
     assert.deepEqual(names(join(target, ".okf", "review")), ["AGENTS-OKF-SECTION.md"]);
     assert.deepEqual(names(join(target, ".okf", "docs")), ["DEPLOYMENT-RUNBOOK.md", "OKF-STANDARD.md", "epic-26"]);
@@ -200,8 +218,6 @@ test("installer distributes the complete offline surface and preserves local con
       assert.deepEqual(readFileSync(join(target, ".okf", "schema", file)), readFileSync(join(template, "schema", file)));
     }
     assert.deepEqual(readFileSync(join(target, ".okf", "templates", "curation-prompt.md")), readFileSync(join(template, "templates", "curation-prompt.md")));
-    assert.deepEqual(readFileSync(join(target, ".okf", "templates", "scheduled-curation-prompt.md")), readFileSync(join(template, "templates", "scheduled-curation-prompt.md")));
-    assert.deepEqual(readFileSync(join(target, ".okf", "templates", "scheduled-curation.example.json")), readFileSync(join(template, "config", "scheduled-curation.example.json")));
     assert.deepEqual(readFileSync(join(target, ".okf", "agents", "okf-curator.md")), readFileSync(join(template, "agents", "okf-curator.md")));
     assert.deepEqual(readFileSync(join(target, ".okf", "review", "AGENTS-OKF-SECTION.md")), readFileSync(join(template, "AGENTS-OKF-SECTION.md")));
     assertDocumentation(target);
@@ -218,8 +234,6 @@ test("installer distributes the complete offline surface and preserves local con
       join(target, ".okf", "agents", "okf-curator.md"),
       join(target, ".okf", "review", "AGENTS-OKF-SECTION.md"),
       join(target, ".okf", "templates", "curation-prompt.md"),
-      join(target, ".okf", "templates", "scheduled-curation-prompt.md"),
-      join(target, ".okf", "templates", "scheduled-curation.example.json"),
     ]) assert.equal(lstatSync(path).mode & 0o111, 0, `${path} must remain a non-executable review artifact`);
     assert.deepEqual(JSON.parse(readFileSync(join(target, ".okf", "profile.json"), "utf8")), JSON.parse(readFileSync(join(template, "config", "profile.json"), "utf8")));
     assert.deepEqual(JSON.parse(readFileSync(join(target, ".okf", "cadence.json"), "utf8")), JSON.parse(readFileSync(join(template, "config", "cadence.json"), "utf8")));
@@ -232,6 +246,39 @@ test("installer distributes the complete offline surface and preserves local con
     assert.equal(readFileSync(join(target, ".okf", "runtime", "package-lock.json"), "utf8"), readFileSync(join(runtime, "package-lock.json"), "utf8"));
     const status = command(target, process.execPath, [join(target, ".okf", "bin", "okf-inbox-status.mjs"), "--root", target, "--format", "json"]);
     assert.equal(JSON.parse(status.stdout).read_only, true);
+
+    const manualRunId = "manual-control-regression";
+    const revision = command(target, "git", ["rev-parse", "HEAD"]).stdout.trim();
+    const proposalPath = `.okf/proposals/${manualRunId}.json`;
+    mkdirSync(join(target, ".okf", "proposals"));
+    const manualOutputs = ["knowledge/inbox/index.md", "knowledge/index.md", "knowledge/log.md"].map((path) => ({
+      path,
+      expected_sha256: sha256File(join(target, path)),
+      source_items: [],
+      content: readFileSync(join(target, path), "utf8"),
+    }));
+    writeFileSync(join(target, proposalPath), `${JSON.stringify({
+      version: "okf-curation-proposal/1",
+      run_id: manualRunId,
+      revision,
+      expected_outcome: "Verify the retained manual check-only path without selecting or mutating inbox items.",
+      recovery_plan: "No mutation is permitted; retain Git state and repository-local controls for review.",
+      items: [],
+      outputs: manualOutputs,
+    }, null, 2)}\n`);
+    const manualCheck = command(target, process.execPath, [
+      join(target, ".okf", "bin", "okf-curate.mjs"), "--check-only",
+      "--root", target, "--revision", revision,
+      "--operator-identity", "fixture-operator", "--operator-request", "fixture manual audit",
+      "--run-id", manualRunId, "--proposal", proposalPath, "--select-none",
+      "--max-items", "1", "--max-input-bytes", "1", "--max-generated-bytes", "2000000",
+      "--max-runtime-seconds", "60", "--max-sessions", "1", "--format", "json",
+    ]);
+    const parsedManualCheck = JSON.parse(manualCheck.stdout);
+    assert.equal(parsedManualCheck.check_only, true);
+    assert.equal(parsedManualCheck.mutation, false);
+    assert.equal(existsSync(join(target, ".okf", "run.lock")), false);
+    assert.equal(existsSync(join(target, ".okf", "reports", `${manualRunId}.json`)), false);
 
     writeFileSync(join(target, "knowledge", "decisions", "distribution-fixture.md"), [
       "---",
@@ -283,8 +330,15 @@ test("installer distributes the complete offline surface and preserves local con
     for (const name of ["cron", "crontab", "factory", "launchd", "launch-agent", "queue-consumer"]) {
       assert.equal(filesBelow(target).some((path) => path.toLowerCase().includes(name)), false, `installer emitted autonomous artifact: ${name}`);
     }
-    assert.equal(existsSync(join(target, ".okf", "scheduled-curation.json")), false, "installer activated a scheduled-curation profile");
-    assert.equal(existsSync(join(target, ".okf", "scheduled.lock")), false, "installer created a scheduler lease");
+    for (const path of [
+      ".okf/bin/okf-scheduled-curate.mjs",
+      ".okf/lib/scheduled-curation.mjs",
+      ".okf/templates/scheduled-curation-prompt.md",
+      ".okf/templates/scheduled-curation.example.json",
+      ".okf/scheduled-curation.json",
+      ".okf/scheduled-curation",
+      ".okf/scheduled.lock",
+    ]) assert.equal(existsSync(join(target, path)), false, `installer emitted removed scheduled entry path: ${path}`);
     assert.equal(existsSync(join(target, ".okf", "node_modules")), false);
   } finally {
     rmSync(parent, { recursive: true, force: true });

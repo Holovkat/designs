@@ -442,13 +442,11 @@ separately identifiable attempt evidence.
 The installed cadence command reports the selected manual policy and control
 state. It never invokes the runner. The observation command evaluates an
 explicit bounded evidence manifest; it does not poll, sleep, schedule, read raw
-knowledge content, or mutate the bundle. Manual execution is the default. A
-later operator decision may authorize the separate scheduled-curation adapter
-for one exact repository and branch, with one actionable item, one pinned read-
-only proposal session, explicit limits, a write-once attempt, no retry, and
-kill-switch stop behavior. The installer distributes only an inert adapter and
-example; it creates no cron, launchd, queue consumer, timer, polling loop, hook
-trigger, Factory action, or self-reinvocation.
+knowledge content, or mutate the bundle. Curation execution is manual,
+repository-scoped, and separately operator-requested. The installer distributes
+no scheduler adapter, dispatcher, scheduled prompt/profile, cron, launchd,
+queue consumer, timer, polling loop, hook trigger, Factory action, or
+self-reinvocation.
 
 ### Recovery and rollback
 
@@ -725,29 +723,12 @@ When an agent starts work on a project with an OKF bundle:
 5. Before investigating or proposing a plan, check `decisions/` and `deprecation/` for paths already taken or rejected (use `knowledge/okf-query.sh` when installed). Cite concepts instead of re-deriving answers.
 6. Tier 1 is automatic: the post-commit hook writes one compact `capture_tier: commit` item for each ordinary commit. Commit bodies must state why/how and `Impact:`.
 7. Tier 2 is written once at session close by `end-session`, after work is committed. It references the session commit SHAs and records only decisions, deprecations, lessons, and current state.
-8. Curation is an explicit, repository-scoped, bounded operator action. Manual
-   status/triage plus a separately requested run is the default. A scheduled
-   run requires a later named repository/branch decision and an enabled,
-   reviewed `okf-scheduled-curation/1` profile; the installer does not create a
-   schedule, cron, launchd, queue, polling loop, hook launch, Factory
-   automation, or automatic retry.
-   The proposal model receives one inline `okf-selected-relevant-context/1`
-   pack: the selected inbox item, required indexes and log, local schema,
-   curation focus, an identity-only concept catalog containing paths, titles,
-   and optional stable IDs, and no more than twelve deterministically relevant
-   concept bodies. Full concept metadata remains local to relevance scoring;
-   explicit references must fit, while optional equal-score groups are never
-   split. The recommended profile is
-   192 KiB total input, at most 26 manifest entries, 96 KiB of relevant concept
-   bodies, and 8 KiB of instructions/envelope. It receives no filesystem,
-   network, or execution tool. Unselected/processed inbox records, unmatched
-   concept bodies, generated viewer/query assets, configuration, filesystem
-   metadata, and other non-Markdown files are absent. A larger project may use
-   only a separately inspected, explicit project ceiling. The terminal report binds
-   the exact path/role/byte/hash manifest without retaining raw context.
-   One selected item permits exactly one new concept or one update/replacement
-   already present as full relevant context, plus only its exact maintenance
-   outputs.
+8. Curation is an explicit, repository-scoped, bounded manual operator action.
+   Status/triage never starts curation; a run requires a separate request with
+   exact selection, positive limits, lock, kill-switch, cancellation, proposal,
+   validation, reporting, and recovery controls. The distributed OKF package
+   has no scheduled adapter, dispatcher, prompt/profile, cron, launchd, queue,
+   polling loop, hook launch, Factory automation, or automatic retry.
 
 ## Versioning
 

@@ -45,5 +45,5 @@
 - Explicit positive item, input-byte, generated-byte, and wall-runtime ceilings; no defaults or automatic quota increase.
 - Repository-local kill switch, cancellation path, deterministic selection, checkpoint, terminal report, and recovery instruction.
 - Preflight validation before an upsert and postflight validation before source processing is finalized.
-- Manual execution is the default. A scheduled proposal is allowed only through an explicitly approved repository-local `okf-scheduled-curation/1` profile and the canonical one-session adapter. Never use a parent-workspace runner, self-reinvocation, auto-retry, network dependency acquisition, home traversal, or cross-project selection.
+- Execution is manual and requires an explicit repository-scoped operator request. Never use a scheduler/dispatcher, parent-workspace runner, self-reinvocation, auto-retry, network dependency acquisition, home traversal, or cross-project selection.
 - No archive, deletion, `AGENTS.md` change, deployment, or scope widening unless the operator request explicitly names that action.
