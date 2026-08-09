@@ -674,13 +674,17 @@ When an agent starts work on a project with an OKF bundle:
    automation, or automatic retry.
    The proposal model receives one inline `okf-selected-relevant-context/1`
    pack: the selected inbox item, required indexes and log, local schema,
-   curation focus, a metadata-only concept catalog, and no more than twelve
-   deterministically relevant concept bodies. The recommended profile is
+   curation focus, an identity-only concept catalog containing paths, titles,
+   and optional stable IDs, and no more than twelve deterministically relevant
+   concept bodies. Full concept metadata remains local to relevance scoring;
+   explicit references must fit, while optional equal-score groups are never
+   split. The recommended profile is
    192 KiB total input, at most 26 manifest entries, 96 KiB of relevant concept
    bodies, and 8 KiB of instructions/envelope. It receives no filesystem,
    network, or execution tool. Unselected/processed inbox records, unmatched
    concept bodies, generated viewer/query assets, configuration, filesystem
-   metadata, and other non-Markdown files are absent. The terminal report binds
+   metadata, and other non-Markdown files are absent. A larger project may use
+   only a separately inspected, explicit project ceiling. The terminal report binds
    the exact path/role/byte/hash manifest without retaining raw context.
    One selected item permits exactly one new concept or one update/replacement
    already present as full relevant context, plus only its exact maintenance

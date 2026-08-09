@@ -31,4 +31,5 @@ Session syntheses awaiting curation. Items here are written by agents before com
 | [accept UUIDv7 session captures #26](./2026-08-08T11-48-12Z-accept-uuidv7-session-captures-26.md) | 2026-08-08T11:48:12Z | okf | #26 |
 | [add bounded scheduled curation pilot](./2026-08-08T13-54-38Z-add-bounded-scheduled-curation-pilot.md) | 2026-08-08T13:54:38Z | okf | — |
 | [compact scheduled curation context](./2026-08-09T00-40-58Z-compact-scheduled-curation-context.md) | 2026-08-09T00:40:58Z | okf | — |
+| [scale compact context for Mercury](./2026-08-09T01-20-56Z-scale-compact-context-for-mercury.md) | 2026-08-09T01:20:56Z | okf | — |
 <!-- Rows added by agents, removed by curation agent -->

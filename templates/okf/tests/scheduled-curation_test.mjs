@@ -608,9 +608,132 @@ UNMATCHED-BODY-SENTINEL
   } finally { fixture.cleanup(); }
 });
 
-await test("ambiguous relevant-concept cutoff fails before Droid instead of widening context", async () => {
+await test("compact catalog represents more than 120 concepts without serializing verbose metadata", async () => {
   const fixture = makeRepo();
   let modelCalls = 0;
+  try {
+    for (let index = 0; index < 122; index += 1) {
+      const suffix = String(index).padStart(3, "0");
+      writeFileSync(join(fixture.root, "knowledge", "decisions", `mercury-catalog-${suffix}.md`), `---
+type: Decision
+id: okf-${suffix}00000-0000-4000-8000-000000000000
+title: Mercury Catalog Entry ${suffix}
+description: ${`verbose-metadata-${suffix} `.repeat(48)}
+resource: docs/${`resource-${suffix}-`.repeat(32)}reference.md
+tags: [mercury-catalog-${suffix}, metadata-envelope-${suffix}, verbose-record-${suffix}]
+status: active
+assertion_state: proposed
+issue_refs: [${1000 + index}]
+epic_refs: [26]
+---
+
+Catalog body ${suffix}.
+`);
+    }
+    git(fixture.root, ["add", "knowledge/decisions"]);
+    git(fixture.root, ["commit", "-qm", "add Mercury-scale catalog fixtures"]);
+    const preview = inspectScheduledContext(fixture.root, fixture.sourcePath);
+    assert.equal(preview.relevance.catalog_concepts, 122);
+    assert.ok(preview.relevance.catalog_bytes < 64 * 1024);
+    assert.ok(preview.maximum_total_bytes <= fixture.config.limits.max_context_bytes);
+    const result = await runScheduledCuration({ root: fixture.root, configPath: fixture.configPath }, {
+      ...fixedClock(),
+      model: async (request) => {
+        modelCalls += 1;
+        const contextPack = contextPackFromRequest(request);
+        const catalogDocument = contextPack.documents.find(({ path }) => path === ".okf/context/concept-catalog.json");
+        const catalog = JSON.parse(catalogDocument.content);
+        assert.equal(catalog.concepts.length, 122);
+        assert.deepEqual(Object.keys(catalog.concepts[0]).sort(), ["id", "path", "title"]);
+        assert.ok(catalog.concepts.some(({ path }) => path === "knowledge/decisions/mercury-catalog-121.md"));
+        assert.doesNotMatch(request.args.at(-1), /verbose-metadata-121|metadata-envelope-121/);
+        return { status: 1, timed_out: true, code: "command-timeout", wall_ms: 10_001, stdout: "", stderr: "" };
+      },
+    });
+    assert.equal(result.reason, "model-timeout");
+    assert.equal(modelCalls, 1);
+  } finally { fixture.cleanup(); }
+});
+
+await test("relevance packing keeps explicit bodies and skips oversized optional candidates deterministically", async () => {
+  const fixture = makeRepo();
+  try {
+    writeFileSync(join(fixture.root, fixture.sourcePath), `${readFileSync(join(fixture.root, fixture.sourcePath), "utf8")}
+
+[Explicit context](../decisions/explicit-context.md)
+`);
+    writeFileSync(join(fixture.root, "knowledge", "decisions", "explicit-context.md"), `---
+type: Decision
+title: Explicit Context
+description: Directly referenced context
+tags: [direct-reference]
+---
+
+${"e".repeat(44 * 1024)}
+`);
+    writeFileSync(join(fixture.root, "knowledge", "decisions", "oversized-optional.md"), `---
+type: Decision
+title: Scheduled Fixture Knowledge Bounded
+description: Scheduled fixture bounded knowledge decision
+tags: [scheduled, fixture, bounded]
+---
+
+${"o".repeat(60 * 1024)}
+`);
+    writeFileSync(join(fixture.root, "knowledge", "decisions", "smaller-optional.md"), `---
+type: Decision
+title: Bounded Fixture
+description: Bounded fixture selection
+tags: [bounded, fixture]
+---
+
+${"s".repeat(20 * 1024)}
+`);
+    git(fixture.root, ["add", "knowledge"]);
+    git(fixture.root, ["commit", "-qm", "add relevance budget fixtures"]);
+    const first = inspectScheduledContext(fixture.root, fixture.sourcePath);
+    const second = inspectScheduledContext(fixture.root, fixture.sourcePath);
+    assert.deepEqual(first, second);
+    const relevant = first.manifest.filter(({ role }) => role === "relevant-concept").map(({ path }) => path);
+    assert.deepEqual(relevant, [
+      "knowledge/decisions/explicit-context.md",
+      "knowledge/decisions/smaller-optional.md",
+    ]);
+    assert.ok(first.relevance.included_concept_bytes <= 96 * 1024);
+  } finally { fixture.cleanup(); }
+});
+
+await test("an explicitly referenced body over the relevance budget fails before Droid", async () => {
+  const fixture = makeRepo();
+  let modelCalls = 0;
+  try {
+    writeFileSync(join(fixture.root, fixture.sourcePath), `${readFileSync(join(fixture.root, fixture.sourcePath), "utf8")}
+
+[Required oversized context](../decisions/required-oversized.md)
+`);
+    writeFileSync(join(fixture.root, "knowledge", "decisions", "required-oversized.md"), `---
+type: Decision
+title: Required Oversized Context
+description: Directly referenced oversized context
+tags: [direct-reference]
+---
+
+${"x".repeat(97 * 1024)}
+`);
+    git(fixture.root, ["add", "knowledge"]);
+    git(fixture.root, ["commit", "-qm", "add oversized explicit fixture"]);
+    const result = await runScheduledCuration({ root: fixture.root, configPath: fixture.configPath }, {
+      ...fixedClock(),
+      model: async () => { modelCalls += 1; throw new Error("unexpected"); },
+    });
+    assert.equal(result.outcome, "failed");
+    assert.equal(result.reason, "context-relevance-budget-exceeded");
+    assert.equal(modelCalls, 0);
+  } finally { fixture.cleanup(); }
+});
+
+await test("an optional tie beyond the full-body file ceiling is omitted deterministically", async () => {
+  const fixture = makeRepo();
   try {
     for (let index = 0; index < 13; index += 1) {
       writeFileSync(join(fixture.root, "knowledge", "decisions", `tied-${String(index).padStart(2, "0")}.md`), `---
@@ -625,14 +748,11 @@ Same relevance score.
     }
     git(fixture.root, ["add", "knowledge/decisions"]);
     git(fixture.root, ["commit", "-qm", "add ambiguous relevance fixtures"]);
-    const result = await runScheduledCuration({ root: fixture.root, configPath: fixture.configPath }, {
-      ...fixedClock(),
-      model: async () => { modelCalls += 1; throw new Error("unexpected"); },
-    });
-    assert.equal(result.outcome, "failed");
-    assert.equal(result.reason, "context-relevance-ambiguous");
-    assert.equal(modelCalls, 0);
-    assert.equal(JSON.parse(readFileSync(join(fixture.root, ".okf", "KILL_SWITCH"), "utf8")).active, true);
+    const first = inspectScheduledContext(fixture.root, fixture.sourcePath);
+    const second = inspectScheduledContext(fixture.root, fixture.sourcePath);
+    assert.deepEqual(first, second);
+    assert.equal(first.manifest.filter(({ path }) => /\/tied-\d{2}\.md$/.test(path)).length, 0);
+    assert.ok(first.relevance.included_concepts <= 12);
   } finally { fixture.cleanup(); }
 });
 
