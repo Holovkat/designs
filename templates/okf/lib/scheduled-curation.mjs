@@ -550,31 +550,43 @@ function frontmatterReferences(frontmatter) {
   return new Set(values.flatMap((value) => stringValues(value)).map(normalizedReference).filter(Boolean));
 }
 
-function selectedReferences(frontmatter, body) {
-  const result = frontmatterReferences(frontmatter);
-  for (const match of body.matchAll(/\]\(([^)]+)\)/g)) result.add(normalizedReference(match[1]));
+function addSelectedReference(result, value, selectedPath) {
+  const raw = String(value).trim().replace(/#.*$/, "");
+  const normalized = normalizedReference(raw);
+  if (normalized) result.add(normalized);
+  if (/^\.\.?\//.test(raw)) {
+    const relative = join(dirname(selectedPath), raw).replaceAll("\\", "/");
+    if (CONCEPT_PATH.test(relative)) result.add(relative);
+  } else if (/^(?:architecture|components|domain|decisions|deprecation|process|state)\//.test(normalized)) {
+    result.add(`knowledge/${normalized}`);
+  }
+}
+
+function selectedReferences(frontmatter, body, selectedPath) {
+  const result = new Set();
+  const frontmatterValues = [frontmatter.id, frontmatter.resource, frontmatter.evidence_refs];
+  for (const field of ["blocked_by", "contradicts", "depends_on", "derived_from", "implements", "supersedes"]) {
+    frontmatterValues.push(frontmatter[field]);
+  }
+  for (const reference of frontmatterValues.flatMap((value) => stringValues(value))) {
+    addSelectedReference(result, reference, selectedPath);
+  }
+  for (const match of body.matchAll(/\]\(([^)]+)\)/g)) addSelectedReference(result, match[1], selectedPath);
   for (const match of body.matchAll(/\bknowledge\/(?:architecture|components|domain|decisions|deprecation|process|state)\/[a-z0-9._-]+\.md\b/gi)) {
-    result.add(normalizedReference(match[0]));
+    addSelectedReference(result, match[0], selectedPath);
   }
   return result;
 }
 
 function conceptCatalogEntry(path, parsed) {
   const frontmatter = parsed.frontmatter;
-  return Object.freeze({
+  const entry = {
     path,
-    parseable: parsed.diagnostics.length === 0 && parsed.hasFrontmatter,
-    type: metadataString(frontmatter.type),
-    id: metadataString(frontmatter.id),
     title: metadataString(frontmatter.title),
-    description: metadataString(frontmatter.description),
-    tags: metadataArray(frontmatter.tags),
-    resource: metadataString(frontmatter.resource),
-    status: metadataString(frontmatter.status),
-    assertion_state: metadataString(frontmatter.assertion_state),
-    issue_refs: metadataArray(frontmatter.issue_refs),
-    epic_refs: metadataArray(frontmatter.epic_refs),
-  });
+  };
+  const id = metadataString(frontmatter.id);
+  if (id) entry.id = id;
+  return Object.freeze(entry);
 }
 
 function permanentConceptRecords(root) {
@@ -597,6 +609,7 @@ function permanentConceptRecords(root) {
         stat,
         content,
         parsed,
+        parseable: parsed.diagnostics.length === 0 && parsed.hasFrontmatter,
         catalog: conceptCatalogEntry(path, parsed),
       }));
     }
@@ -604,8 +617,8 @@ function permanentConceptRecords(root) {
   return records.sort((left, right) => compare(left.path, right.path));
 }
 
-function scoreRelevantConcept(selected, record) {
-  if (!record.catalog.parseable) return null;
+function scoreRelevantConcept(selected, selectedPath, record) {
+  if (!record.parseable) return null;
   const candidate = record.parsed.frontmatter;
   const selectedTokens = relevanceTokens(
     selected.frontmatter.title,
@@ -626,9 +639,9 @@ function scoreRelevantConcept(selected, record) {
 
   const selectedIssueRefs = new Set(metadataArray(selected.frontmatter.issue_refs));
   const selectedEpicRefs = new Set(metadataArray(selected.frontmatter.epic_refs));
-  const referenceMatches = intersectCount(selectedIssueRefs, new Set(record.catalog.issue_refs))
-    + intersectCount(selectedEpicRefs, new Set(record.catalog.epic_refs));
-  const explicitReferences = selectedReferences(selected.frontmatter, selected.body);
+  const referenceMatches = intersectCount(selectedIssueRefs, new Set(metadataArray(candidate.issue_refs)))
+    + intersectCount(selectedEpicRefs, new Set(metadataArray(candidate.epic_refs)));
+  const explicitReferences = selectedReferences(selected.frontmatter, selected.body, selectedPath);
   const candidateReferences = frontmatterReferences(candidate);
   candidateReferences.add(record.path);
   const explicit = intersectCount(explicitReferences, candidateReferences) > 0;
@@ -646,6 +659,46 @@ function scoreRelevantConcept(selected, record) {
   if (referenceMatches > 0) reasons.push("issue-or-epic-reference");
   if (totalOverlap > 0) reasons.push("meaningful-token-overlap");
   return Object.freeze({ record, score, explicit, reasons: Object.freeze(reasons) });
+}
+
+function selectRelevantConcepts(candidates) {
+  const included = [];
+  let includedBytes = 0;
+  const explicit = candidates.filter((candidate) => candidate.explicit);
+  if (explicit.length > MAX_RELEVANT_CONCEPTS) {
+    fail("context-relevance-budget-exceeded", "all explicitly referenced concepts must fit the fixed full-body file ceiling");
+  }
+  const explicitBytes = explicit.reduce((total, candidate) => total + candidate.record.stat.size, 0);
+  if (explicitBytes > MAX_RELEVANT_CONCEPT_BYTES) {
+    fail("context-relevance-budget-exceeded", "all explicitly referenced concepts must fit the fixed full-body byte ceiling");
+  }
+  included.push(...explicit);
+  includedBytes = explicitBytes;
+
+  const optional = candidates.filter((candidate) => !candidate.explicit);
+  for (let offset = 0; offset < optional.length;) {
+    const score = optional[offset].score;
+    let end = offset + 1;
+    while (end < optional.length && optional[end].score === score) end += 1;
+    const group = optional.slice(offset, end);
+    const remainingFiles = MAX_RELEVANT_CONCEPTS - included.length;
+    if (remainingFiles === 0) break;
+    if (group.length > remainingFiles) {
+      offset = end;
+      continue;
+    }
+    const groupBytes = group.reduce((total, candidate) => total + candidate.record.stat.size, 0);
+    if (includedBytes + groupBytes <= MAX_RELEVANT_CONCEPT_BYTES) {
+      included.push(...group);
+      includedBytes += groupBytes;
+    }
+    offset = end;
+  }
+
+  if (explicit.some((candidate) => !included.includes(candidate))) {
+    fail("context-relevance-budget-exceeded", "an explicitly referenced concept did not fit the fixed full-body ceiling");
+  }
+  return Object.freeze({ included: Object.freeze(included), includedBytes });
 }
 
 function roleForRequired(path) {
@@ -677,26 +730,10 @@ function buildContextPlan(root, selectedPath) {
   if (catalogBytes > MAX_CATALOG_BYTES) fail("context-catalog-exceeded", "compact concept catalog exceeds its fixed byte ceiling");
 
   const candidates = records
-    .map((record) => scoreRelevantConcept(selected, record))
+    .map((record) => scoreRelevantConcept(selected, selectedPath, record))
     .filter(Boolean)
     .sort((left, right) => right.score - left.score || compare(left.record.path, right.record.path));
-  if (candidates.length > MAX_RELEVANT_CONCEPTS
-    && candidates[MAX_RELEVANT_CONCEPTS - 1].score === candidates[MAX_RELEVANT_CONCEPTS].score) {
-    fail("context-relevance-ambiguous", "relevant concept tie exceeds the fixed full-body file ceiling");
-  }
-
-  const included = [];
-  let includedBytes = 0;
-  for (const candidate of candidates.slice(0, MAX_RELEVANT_CONCEPTS)) {
-    if (includedBytes + candidate.record.stat.size > MAX_RELEVANT_CONCEPT_BYTES) {
-      fail("context-relevance-budget-exceeded", "relevant concept bodies exceed their fixed byte ceiling");
-    }
-    included.push(candidate);
-    includedBytes += candidate.record.stat.size;
-  }
-  if (candidates.some((candidate) => candidate.explicit && !included.includes(candidate))) {
-    fail("context-relevance-budget-exceeded", "an explicitly referenced concept did not fit the fixed full-body ceiling");
-  }
+  const { included, includedBytes } = selectRelevantConcepts(candidates);
 
   const required = buildPathAllowlist(root, [...REQUIRED_CONTEXT_FILES, selectedPath]);
   const contextFiles = required.length + included.length + 1;

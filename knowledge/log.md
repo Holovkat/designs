@@ -3,6 +3,21 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-09T01:18:24Z - Mercury-Scale Context Catalog Bounded
+
+- **Compacted:** the model-visible concept catalog now contains only path,
+  title, and optional stable ID; full metadata stays inside deterministic local
+  relevance scoring.
+- **Bounded:** every explicit concept reference must fit the 12-file/96-KiB
+  full-body envelope, while optional equal-score groups are included or omitted
+  whole and oversized optional bodies cannot crowd out smaller candidates.
+- **Measured:** the 122-concept Mercury bundle now previews at 235,646 bytes
+  across 23 entries for the reviewed pilot source, supporting a 256-KiB project
+  ceiling instead of the obsolete 4-MiB allowance.
+- **Verified:** the expanded scheduled-curation regression suite passes 17/17,
+  including verbose-catalog, deterministic packing, and explicit-overflow
+  failures before Droid.
+
 ## 2026-08-09T00:31:44Z - Scheduled Context Overexposure Remediated
 
 - **Corrected:** the proposal adapter no longer exposes the complete

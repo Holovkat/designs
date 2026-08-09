@@ -59,12 +59,15 @@ numeric ceiling; no defaults are supplied.
   separately approved repository and branch. It accepts one explicit physical
   root and one root-relative `okf-scheduled-curation/1` profile.
 - It selects at most one actionable direct inbox item, invokes one pinned model
-  turn with read-only tools to author a proposal draft, then serially runs the
+  turn without filesystem, network, or execution tools to author a proposal
+  draft, then serially runs the
   canonical check-only and executor paths against the same hash-bound envelope.
 - Its model input is one inline relevant-only pack: the selected direct inbox
   item, root/type/inbox indexes, the knowledge log, local core schema, curation
-  focus, a metadata-only concept catalog, and at most twelve deterministically
-  relevant concept bodies under a separate 96 KiB ceiling. The recommended
+  focus, an identity-only path/title/optional-ID catalog, and at most twelve
+  deterministically relevant concept bodies under a separate 96 KiB ceiling.
+  Full metadata stays local to scoring; explicit references must fit and
+  optional equal-score groups are never split. The recommended
   profile caps the full prompt at 192 KiB, 26 manifest entries, and 8 KiB of
   instructions/envelope. The model receives
   no filesystem, network, or execution tool. Unselected/processed inbox
