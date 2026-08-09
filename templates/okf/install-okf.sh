@@ -49,6 +49,7 @@ OKF_LIB_FILES=(
 	"inbox-archive.mjs"
 	"inbox-status.mjs"
 	"inbox-triage.mjs"
+	"knowledge-change-set.mjs"
 	"lint.mjs"
 	"query.mjs"
 	"run-checkpoint.mjs"
@@ -75,6 +76,8 @@ OKF_BIN_FILES=(
 OKF_SCHEMA_FILES=(
 	"okf-core-1.0.schema.json"
 	"okf-core-1.0.validator.mjs"
+	"okf-knowledge-change-1.schema.json"
+	"okf-knowledge-change-1.validator.mjs"
 )
 
 require_source_file() {

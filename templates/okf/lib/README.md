@@ -23,6 +23,9 @@ documentation only and are not imported by these modules.
   semantic checks in strict or warning-only legacy mode.
 - `query.mjs` provides typed relationship, assertion/evidence, lifecycle, and
   validation-status selectors for one explicit repository.
+- `knowledge-change-set.mjs` parses and validates the strict
+  `okf-knowledge-change/1` Tier 2 source, projects exactly four human synthesis
+  sections, and exposes bounded capture coverage without reading a live path.
 
 The viewer generator consumes the same parser when available. The portable
 shell query path remains intentionally parser-independent for basic text and

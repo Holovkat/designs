@@ -295,6 +295,65 @@ Insights about the product, business logic, or workflow.
 What works now, what is in progress, what is blocked.
 ```
 
+#### Knowledge Change Set
+
+`okf-knowledge-change/1` is the single logical source for Tier 2 closeout. Its
+versioned JSON sidecar replaces the generated Tier 2 Markdown item's `.md`
+suffix with `.change.json` (for example, `session.md` → `session.change.json`). The JSON is authored once; the four-section
+Markdown body above, capture-coverage projection, and proposed knowledge
+operations are deterministic projections of it, not independently authored
+summaries.
+
+An explicit capture-selection envelope binds the repository-relative selection
+manifest and its SHA-256, and lists every required capture ID. Validation requires
+that list and the coverage records to be identical sets.
+
+The contract separates:
+
+- **capture coverage** — every selected capture has exactly one disposition:
+  `create`, `update`, `merge`, `supersede`, `no-durable-change`, `duplicate`, or
+  non-terminal `review-required`; and
+- **knowledge operations** — ordered, idempotent, many-to-many create/update/
+  merge/supersede proposals with an exact target ID/path/expected hash and exact
+  concept content. Version 1 deliberately excludes patches; a later schema may
+  add them only with a strict target-bound applicator and replay fixtures.
+
+Every captured input remains identifiable by repository-relative path, SHA-256,
+byte size, classification, and content-access state. Binary, oversized,
+malformed, secret-bearing, unknown, or unsupported input is retained by bounded
+identity and becomes `review-required`; it is never silently discarded or
+normalized. `no-durable-change` requires a precise reason. `duplicate` identifies
+the capture, concept ID, or operation that already covers it.
+
+Operations bind reciprocal capture IDs, ordered dependencies, exact change
+hashes, application-identity idempotency keys, claim assertion states, and
+explicit evidence IDs. Application identity is the kind, target stable ID/path,
+expected target state, exact-content mode/hash, and applicable merge/supersede
+stable IDs; capture ordering, operation labels, and evidence presentation do not
+change it. Duplicate application identities are invalid. Repeated writes to one
+stable target form an explicit chain: each later operation depends on the prior
+write and expects its exact output hash; stable IDs and paths cannot conflict.
+A `verified` claim requires a receipt whose named producer differs
+from the change-set author. Duplicate capture chains must terminate at a
+non-pending capture, existing operation, or canonical stable concept ID.
+Straightforward supersession records the replacement ID, old stable IDs, and a
+precise reason; extended lessons are optional and should exist only when they
+add durable value. The prospective relationship direction remains replacement
+→ old through `supersedes`.
+
+The source also contains the title, description, normalized tags, complete
+session commit list, issue references, and epic references needed to generate
+strict Tier 2 frontmatter. The runtime projects both that frontmatter and the
+four body sections; no second author supplies missing metadata.
+
+The normative schema is `schema/okf-knowledge-change-1.schema.json`; the
+runtime parser/validator is `lib/knowledge-change-set.mjs`. The version-one
+input ceiling is 16 MiB, with bounded capture, operation, evidence, claim, and
+exact-content arrays. Unknown schema
+versions and legacy session syntheses remain recoverable review inputs rather
+than being coerced. A change set is complete only when structurally and
+semantically valid and no capture remains `review-required`.
+
 There is deliberately no completion-summary section. The commit captures already
 hold that context.
 

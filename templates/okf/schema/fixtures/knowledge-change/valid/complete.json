@@ -1,0 +1,409 @@
+{
+  "schema_version": "okf-knowledge-change/1",
+  "change_set_id": "ks-018f0000-0000-7000-8000-000000000003",
+  "session": {
+    "session_id": "018f0000-0000-7000-8000-000000000002",
+    "repository": "Holovkat/designs",
+    "branch": "codex/epic-37-okf-author-time",
+    "base_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "head_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "started_at": "2026-08-09T10:00:00Z",
+    "closed_at": "2026-08-09T10:30:00Z"
+  },
+  "generated": {
+    "at": "2026-08-09T10:30:00Z",
+    "by": "implementation-agent",
+    "mechanism": "author-time-agent"
+  },
+  "summary": {
+    "decisions_made": [
+      "Use one versioned change set for Tier 2 closeout."
+    ],
+    "what_was_deprecated": [
+      "A prose-only disposition path was rejected."
+    ],
+    "lessons_learned": [
+      "Coverage and operations must remain separate."
+    ],
+    "current_state": [
+      "All selected captures have terminal coverage."
+    ]
+  },
+  "captures": [
+    {
+      "capture_id": "cap-create-a",
+      "source": {
+        "path": "knowledge/inbox/create-a.md",
+        "sha256": "6df51f62f800ba252dfa48b4d6c0e5a2b03fe32ec35fe03f0813694131ed48e7",
+        "size_bytes": 108,
+        "classification": "markdown",
+        "content_access": "reviewed",
+        "media_type": "text/markdown"
+      },
+      "disposition": {
+        "type": "create",
+        "operation_ids": [
+          "op-create-core"
+        ]
+      }
+    },
+    {
+      "capture_id": "cap-create-b",
+      "source": {
+        "path": "knowledge/inbox/create-b.md",
+        "sha256": "b52a2798e13f9dc1659b5dd9d5446eca84fea6b3af740c952271bc8bdd16c114",
+        "size_bytes": 108,
+        "classification": "markdown",
+        "content_access": "reviewed",
+        "media_type": "text/markdown"
+      },
+      "disposition": {
+        "type": "create",
+        "operation_ids": [
+          "op-create-core"
+        ]
+      }
+    },
+    {
+      "capture_id": "cap-update-a",
+      "source": {
+        "path": "knowledge/inbox/update-a.md",
+        "sha256": "8f5a658700483e626367b3396a90dba713c0cf4e47cc7a9731e55b8c4a888099",
+        "size_bytes": 108,
+        "classification": "markdown",
+        "content_access": "reviewed",
+        "media_type": "text/markdown"
+      },
+      "disposition": {
+        "type": "update",
+        "operation_ids": [
+          "op-create-process",
+          "op-update-state"
+        ]
+      }
+    },
+    {
+      "capture_id": "cap-create-c",
+      "source": {
+        "path": "knowledge/inbox/create-c.md",
+        "sha256": "fe6f76469e28e9d7237382627f208cb70b5ffe71754d0ae9c7f1aa5a74b35032",
+        "size_bytes": 108,
+        "classification": "markdown",
+        "content_access": "reviewed",
+        "media_type": "text/markdown"
+      },
+      "disposition": {
+        "type": "create",
+        "operation_ids": [
+          "op-create-process"
+        ]
+      }
+    },
+    {
+      "capture_id": "cap-merge",
+      "source": {
+        "path": "knowledge/inbox/merge.md",
+        "sha256": "283128acef14943c127f7327ca8f57e7cd7c31ec6c5546de5d62ab16a2f9758a",
+        "size_bytes": 105,
+        "classification": "markdown",
+        "content_access": "reviewed",
+        "media_type": "text/markdown"
+      },
+      "disposition": {
+        "type": "merge",
+        "operation_ids": [
+          "op-merge-decisions"
+        ]
+      }
+    },
+    {
+      "capture_id": "cap-supersede",
+      "source": {
+        "path": "knowledge/inbox/supersede.md",
+        "sha256": "ba11bd90a30b7ae377154b1fcd3e6c31174a3a2f4e5f7bc02dbd4a4ee231af12",
+        "size_bytes": 109,
+        "classification": "markdown",
+        "content_access": "reviewed",
+        "media_type": "text/markdown"
+      },
+      "disposition": {
+        "type": "supersede",
+        "operation_ids": [
+          "op-supersede-old"
+        ]
+      }
+    },
+    {
+      "capture_id": "cap-no-change",
+      "source": {
+        "path": "knowledge/inbox/no-change.md",
+        "sha256": "024c72914fe090919e27964ed0ad0aa2d469371d417a1bfba8515ad4301f1de6",
+        "size_bytes": 109,
+        "classification": "markdown",
+        "content_access": "reviewed",
+        "media_type": "text/markdown"
+      },
+      "disposition": {
+        "type": "no-durable-change",
+        "operation_ids": [],
+        "reason": "The capture only repeats the current documented state."
+      }
+    },
+    {
+      "capture_id": "cap-duplicate",
+      "source": {
+        "path": "knowledge/inbox/duplicate.md",
+        "sha256": "e24a5a32c9b8c8637ee33cd72bff6a05a140a48891a1c1a3b06447e1900b6446",
+        "size_bytes": 109,
+        "classification": "markdown",
+        "content_access": "reviewed",
+        "media_type": "text/markdown"
+      },
+      "disposition": {
+        "type": "duplicate",
+        "operation_ids": [],
+        "covered_by": {
+          "kind": "capture",
+          "ref": "cap-create-a"
+        }
+      }
+    }
+  ],
+  "operations": [
+    {
+      "operation_id": "op-create-core",
+      "sequence": 1,
+      "kind": "create",
+      "capture_ids": [
+        "cap-create-a",
+        "cap-create-b"
+      ],
+      "depends_on": [],
+      "idempotency_key": "9a3052b2c8c7af19e46aa3d4baa34cc3141783adf36aadba426379b46cfb65fa",
+      "target": {
+        "concept_id": "okf-00000000-0000-4000-8000-000000000001",
+        "path": "knowledge/decisions/created-core.md",
+        "expected": {
+          "absent": true
+        }
+      },
+      "change": {
+        "mode": "exact-content",
+        "value": "---\nid: okf-00000000-0000-4000-8000-000000000001\n---\n# Created Core\n",
+        "sha256": "38b9733bd9a3356901ad09b5cc7cb2652139aa18a814678399b66915d035d25c"
+      },
+      "claims": [
+        {
+          "claim_id": "claim-create-core",
+          "statement": "create operation is proposed precisely.",
+          "assertion_state": "verified",
+          "evidence_ids": [
+            "ev-test-contract"
+          ]
+        }
+      ]
+    },
+    {
+      "operation_id": "op-update-state",
+      "sequence": 2,
+      "kind": "update",
+      "capture_ids": [
+        "cap-update-a"
+      ],
+      "depends_on": [
+        "op-create-core"
+      ],
+      "idempotency_key": "9c80c31f940a410689b167a2efdfc78fe1d49180f5186dbf1de337482210d3a1",
+      "target": {
+        "concept_id": "okf-00000000-0000-4000-8000-000000000002",
+        "path": "knowledge/state/current-state.md",
+        "expected": {
+          "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+        }
+      },
+      "change": {
+        "mode": "exact-content",
+        "value": "---\nid: okf-00000000-0000-4000-8000-000000000002\n---\n# Updated State\n",
+        "sha256": "71b800a28093464cdc00d6b68be537b3ed71638d0b431b6dce5c976b3a77a1bc"
+      },
+      "claims": [
+        {
+          "claim_id": "claim-update-state",
+          "statement": "update operation is proposed precisely.",
+          "assertion_state": "inferred",
+          "evidence_ids": [
+            "ev-author-note"
+          ]
+        }
+      ]
+    },
+    {
+      "operation_id": "op-create-process",
+      "sequence": 3,
+      "kind": "create",
+      "capture_ids": [
+        "cap-create-c",
+        "cap-update-a"
+      ],
+      "depends_on": [
+        "op-update-state"
+      ],
+      "idempotency_key": "ffbaabb0bb479724082e9ea05442c9a08a4e17bb2715034c4d9e5da4ea7f9b1d",
+      "target": {
+        "concept_id": "okf-00000000-0000-4000-8000-000000000003",
+        "path": "knowledge/process/new-process.md",
+        "expected": {
+          "absent": true
+        }
+      },
+      "change": {
+        "mode": "exact-content",
+        "value": "---\nid: okf-00000000-0000-4000-8000-000000000003\n---\n# New Process\n",
+        "sha256": "90f8228715f9d4840b79cb4ca6bdab37466f0cb63431c58d11e7b3eaba2c9673"
+      },
+      "claims": [
+        {
+          "claim_id": "claim-create-process",
+          "statement": "create operation is proposed precisely.",
+          "assertion_state": "proposed",
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "operation_id": "op-merge-decisions",
+      "sequence": 4,
+      "kind": "merge",
+      "capture_ids": [
+        "cap-merge"
+      ],
+      "depends_on": [
+        "op-create-process"
+      ],
+      "idempotency_key": "0a4b1e547b96c1a5cb1a38391d2833358a2e5f5e9fb52fb03c331915fc6d09bb",
+      "target": {
+        "concept_id": "okf-00000000-0000-4000-8000-000000000004",
+        "path": "knowledge/decisions/merged.md",
+        "expected": {
+          "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      },
+      "change": {
+        "mode": "exact-content",
+        "value": "---\nid: okf-00000000-0000-4000-8000-000000000004\n---\n# Merged\n",
+        "sha256": "7a0367e0717426b04d2bf765239355c08b086c994d05a7a7ed878bb61721ba31"
+      },
+      "claims": [
+        {
+          "claim_id": "claim-merge-decisions",
+          "statement": "merge operation is proposed precisely.",
+          "assertion_state": "proposed",
+          "evidence_ids": []
+        }
+      ],
+      "source_concept_ids": [
+        "okf-00000000-0000-4000-8000-000000000005",
+        "okf-00000000-0000-4000-8000-000000000006"
+      ]
+    },
+    {
+      "operation_id": "op-supersede-old",
+      "sequence": 5,
+      "kind": "supersede",
+      "capture_ids": [
+        "cap-supersede"
+      ],
+      "depends_on": [
+        "op-merge-decisions"
+      ],
+      "idempotency_key": "d512c01942bb42c480e5bd9e6f6a2896bafbf76bb8862532fbbdf5ce79189888",
+      "target": {
+        "concept_id": "okf-00000000-0000-4000-8000-000000000007",
+        "path": "knowledge/decisions/replacement.md",
+        "expected": {
+          "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      },
+      "change": {
+        "mode": "exact-content",
+        "value": "---\nid: okf-00000000-0000-4000-8000-000000000007\nsupersedes:\n  - okf-00000000-0000-4000-8000-000000000008\n---\n# Replacement\n",
+        "sha256": "c0f1bb7d976448c35c0177524b472e0fdc4670bff04e3b83217d67c21d0baab1"
+      },
+      "claims": [
+        {
+          "claim_id": "claim-supersede-old",
+          "statement": "supersede operation is proposed precisely.",
+          "assertion_state": "proposed",
+          "evidence_ids": []
+        }
+      ],
+      "deprecation": {
+        "replacement_concept_id": "okf-00000000-0000-4000-8000-000000000007",
+        "superseded_concept_ids": [
+          "okf-00000000-0000-4000-8000-000000000008"
+        ],
+        "reason": "The replacement makes the old decision obsolete."
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ev-test-contract",
+      "kind": "test",
+      "locator": "npm run test:knowledge-change",
+      "sha256": "065e8d26e516783e6847e8442191de39980e355797081c5786df9a71b72adcdd",
+      "independence": "independent",
+      "redacted": false,
+      "produced_by": "test-harness",
+      "produced_at": "2026-08-09T10:29:00Z",
+      "authority_ref": "receipt:test-knowledge-change"
+    },
+    {
+      "evidence_id": "ev-author-note",
+      "kind": "source",
+      "locator": "knowledge/inbox/source.md",
+      "sha256": "cdc3f50941949ed4668e5bc5c0da4c1ade435647658b45cc3b3edb396513eff9",
+      "independence": "author",
+      "redacted": false,
+      "produced_by": "implementation-agent",
+      "produced_at": "2026-08-09T10:20:00Z",
+      "authority_ref": "knowledge/inbox/source.md#sha256"
+    }
+  ],
+  "capture_selection": {
+    "selector": "explicit",
+    "manifest_path": "knowledge/inbox/index.md",
+    "manifest_sha256": "b6a8fd485821cdc9132700b137ad9f47d93cb3321e0e8a4ece917dfb39da2525",
+    "required_capture_ids": [
+      "cap-create-a",
+      "cap-create-b",
+      "cap-create-c",
+      "cap-duplicate",
+      "cap-merge",
+      "cap-no-change",
+      "cap-supersede",
+      "cap-update-a"
+    ]
+  },
+  "inbox": {
+    "title": "Author-time OKF knowledge changes",
+    "description": "One Tier 2 synthesis generated from the versioned knowledge change set",
+    "tags": [
+      "okf",
+      "closeout"
+    ],
+    "commit_shas": [
+      "cccccccccccccccccccccccccccccccccccccccc",
+      "dddddddddddddddddddddddddddddddddddddddd"
+    ],
+    "issue_refs": [
+      38
+    ],
+    "epic_refs": [
+      37
+    ]
+  },
+  "limits": {
+    "max_input_bytes": 16777216
+  }
+}

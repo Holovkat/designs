@@ -46,6 +46,7 @@ const installedLibs = Object.freeze([
   "inbox-archive.mjs",
   "inbox-status.mjs",
   "inbox-triage.mjs",
+  "knowledge-change-set.mjs",
   "lint.mjs",
   "query.mjs",
   "run-checkpoint.mjs",
@@ -60,6 +61,8 @@ const installedLibs = Object.freeze([
 const installedSchema = Object.freeze([
   "okf-core-1.0.schema.json",
   "okf-core-1.0.validator.mjs",
+  "okf-knowledge-change-1.schema.json",
+  "okf-knowledge-change-1.validator.mjs",
 ]);
 let failures = 0;
 
@@ -169,6 +172,9 @@ test("installer distributes the complete offline surface and preserves local con
     assert.deepEqual(names(join(target, ".okf", "bin")), installedBins);
     assert.deepEqual(names(join(target, ".okf", "lib")), installedLibs);
     assert.deepEqual(names(join(target, ".okf", "schema")), installedSchema);
+    const installedKnowledgeChange = pathToFileURL(join(target, ".okf", "lib", "knowledge-change-set.mjs")).href;
+    const importCheck = command(target, process.execPath, ["--input-type=module", "-e", `import { DEFAULT_MAX_CHANGE_SET_BYTES } from ${JSON.stringify(installedKnowledgeChange)}; if (DEFAULT_MAX_CHANGE_SET_BYTES !== 16 * 1024 * 1024) process.exit(1);`], { env: { ...process.env, NODE_PATH: "", HOME: join(parent, "empty-home") } });
+    assert.equal(importCheck.stderr, "", "installed knowledge-change runtime must import without package dependencies");
     assert.deepEqual(names(join(target, ".okf", "templates")), ["curation-prompt.md", "scheduled-curation-prompt.md", "scheduled-curation.example.json"]);
     assert.deepEqual(names(join(target, ".okf", "agents")), ["okf-curator.md"]);
     assert.deepEqual(names(join(target, ".okf", "review")), ["AGENTS-OKF-SECTION.md"]);

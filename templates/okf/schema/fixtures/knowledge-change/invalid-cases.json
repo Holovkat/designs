@@ -1,0 +1,770 @@
+{
+  "capture-path-empty-segment.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/0/source/path",
+        "value": "knowledge//inbox/a.md"
+      }
+    ]
+  },
+  "capture-path-trailing-slash.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/0/source/path",
+        "value": "knowledge/inbox/"
+      }
+    ]
+  },
+  "capture-selection-mismatch.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/6",
+        "value": "cap-supersede"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/7",
+        "value": "cap-update-a"
+      },
+      {
+        "op": "remove",
+        "path": "/capture_selection/required_capture_ids/8"
+      }
+    ]
+  },
+  "concept-path-conflict.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/4",
+        "value": "cap-id-path-conflict"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/5",
+        "value": "cap-merge"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/6",
+        "value": "cap-no-change"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/7",
+        "value": "cap-supersede"
+      },
+      {
+        "op": "add",
+        "path": "/capture_selection/required_capture_ids/-",
+        "value": "cap-update-a"
+      },
+      {
+        "op": "add",
+        "path": "/captures/-",
+        "value": {
+          "capture_id": "cap-id-path-conflict",
+          "source": {
+            "path": "knowledge/inbox/cap-id-path-conflict.md",
+            "sha256": "db6dfbc0d6a402f287fd072f0016db5581a4b7a2913a619735794a2f4d375fee",
+            "size_bytes": 123,
+            "classification": "markdown",
+            "content_access": "reviewed",
+            "media_type": "text/markdown"
+          },
+          "disposition": {
+            "type": "update",
+            "operation_ids": [
+              "op-id-path-conflict"
+            ]
+          }
+        }
+      },
+      {
+        "op": "add",
+        "path": "/operations/-",
+        "value": {
+          "operation_id": "op-id-path-conflict",
+          "sequence": 6,
+          "kind": "update",
+          "capture_ids": [
+            "cap-id-path-conflict"
+          ],
+          "depends_on": [],
+          "idempotency_key": "9f2292a8291b47a640572a34c212331bc5481e63287751cd43858a05dcbdc918",
+          "target": {
+            "concept_id": "okf-00000000-0000-4000-8000-000000000002",
+            "path": "knowledge/state/other-state.md",
+            "expected": {
+              "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+            }
+          },
+          "change": {
+            "mode": "exact-content",
+            "value": "---\nid: okf-00000000-0000-4000-8000-000000000002\n---\n# Other path\n",
+            "sha256": "fde303fcc0762e9dded989bd13fcb1eec40c4598dcda5d305a1ec6e4c1f149be"
+          },
+          "claims": [
+            {
+              "claim_id": "claim-id-path-conflict",
+              "statement": "A deterministic follow-up write is proposed.",
+              "assertion_state": "proposed",
+              "evidence_ids": []
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "conflicting-create-operation.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/3",
+        "value": "cap-create-conflict"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/4",
+        "value": "cap-duplicate"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/5",
+        "value": "cap-merge"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/6",
+        "value": "cap-no-change"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/7",
+        "value": "cap-supersede"
+      },
+      {
+        "op": "add",
+        "path": "/capture_selection/required_capture_ids/-",
+        "value": "cap-update-a"
+      },
+      {
+        "op": "add",
+        "path": "/captures/-",
+        "value": {
+          "capture_id": "cap-create-conflict",
+          "source": {
+            "path": "knowledge/inbox/cap-create-conflict.md",
+            "sha256": "64e38468930251913aa48f8d982288551fe6ea1f9b656586bcbc431f3df362af",
+            "size_bytes": 123,
+            "classification": "markdown",
+            "content_access": "reviewed",
+            "media_type": "text/markdown"
+          },
+          "disposition": {
+            "type": "create",
+            "operation_ids": [
+              "op-create-conflict"
+            ]
+          }
+        }
+      },
+      {
+        "op": "add",
+        "path": "/operations/-",
+        "value": {
+          "operation_id": "op-create-conflict",
+          "sequence": 6,
+          "kind": "create",
+          "capture_ids": [
+            "cap-create-conflict"
+          ],
+          "depends_on": [],
+          "idempotency_key": "a86ef90d996c087881b1ddb1e910662bb124cc1534c6bf3e9c09795fad0ea426",
+          "target": {
+            "concept_id": "okf-00000000-0000-4000-8000-000000000001",
+            "path": "knowledge/decisions/created-core.md",
+            "expected": {
+              "absent": true
+            }
+          },
+          "change": {
+            "mode": "exact-content",
+            "value": "---\nid: okf-00000000-0000-4000-8000-000000000001\n---\n# Conflicting Core\n",
+            "sha256": "33818c10043d637aa931369498a593d615ccf3aa557d5e9453cf802356fb594d"
+          },
+          "claims": [
+            {
+              "claim_id": "claim-create-conflict",
+              "statement": "A deterministic follow-up write is proposed.",
+              "assertion_state": "proposed",
+              "evidence_ids": []
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "content-target-id-mismatch.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/operations/0/change/sha256",
+        "value": "a92a3722a2729b4af37202ffdf448357cf43d4d7204aac8fc3a320a68e72f432"
+      },
+      {
+        "op": "replace",
+        "path": "/operations/0/change/value",
+        "value": "---\nid: okf-00000000-0000-4000-8000-000000000008\n---\n# Created Core\n"
+      },
+      {
+        "op": "replace",
+        "path": "/operations/0/idempotency_key",
+        "value": "200d32a75132f5d6c3e21a25bc0cf298b141eb0b0aad02801a563df9d1e4864d"
+      }
+    ]
+  },
+  "create-with-deprecation.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "add",
+        "path": "/operations/0/deprecation",
+        "value": {
+          "replacement_concept_id": "okf-00000000-0000-4000-8000-000000000001",
+          "superseded_concept_ids": [
+            "okf-00000000-0000-4000-8000-000000000008"
+          ],
+          "reason": "invalid cross-kind field"
+        }
+      },
+      {
+        "op": "replace",
+        "path": "/operations/0/idempotency_key",
+        "value": "9d0b3b4c279bdac23570ae455bf129383bbc6023fbd34eb4cb34bb1be39a04a8"
+      }
+    ]
+  },
+  "deprecation-whitespace-reason.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/operations/4/deprecation/reason",
+        "value": "   "
+      }
+    ]
+  },
+  "duplicate-capture-id.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/1/capture_id",
+        "value": "cap-create-a"
+      }
+    ]
+  },
+  "duplicate-create-operation.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/3",
+        "value": "cap-create-duplicate"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/4",
+        "value": "cap-duplicate"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/5",
+        "value": "cap-merge"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/6",
+        "value": "cap-no-change"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/7",
+        "value": "cap-supersede"
+      },
+      {
+        "op": "add",
+        "path": "/capture_selection/required_capture_ids/-",
+        "value": "cap-update-a"
+      },
+      {
+        "op": "add",
+        "path": "/captures/-",
+        "value": {
+          "capture_id": "cap-create-duplicate",
+          "source": {
+            "path": "knowledge/inbox/cap-create-duplicate.md",
+            "sha256": "69f1f504fe3f00afb5a58e5f97c222260fe1c258b1cb2209537ed9bbfccb534c",
+            "size_bytes": 123,
+            "classification": "markdown",
+            "content_access": "reviewed",
+            "media_type": "text/markdown"
+          },
+          "disposition": {
+            "type": "create",
+            "operation_ids": [
+              "op-create-duplicate"
+            ]
+          }
+        }
+      },
+      {
+        "op": "add",
+        "path": "/operations/-",
+        "value": {
+          "operation_id": "op-create-duplicate",
+          "sequence": 6,
+          "kind": "create",
+          "capture_ids": [
+            "cap-create-duplicate"
+          ],
+          "depends_on": [],
+          "idempotency_key": "9a3052b2c8c7af19e46aa3d4baa34cc3141783adf36aadba426379b46cfb65fa",
+          "target": {
+            "concept_id": "okf-00000000-0000-4000-8000-000000000001",
+            "path": "knowledge/decisions/created-core.md",
+            "expected": {
+              "absent": true
+            }
+          },
+          "change": {
+            "mode": "exact-content",
+            "value": "---\nid: okf-00000000-0000-4000-8000-000000000001\n---\n# Created Core\n",
+            "sha256": "38b9733bd9a3356901ad09b5cc7cb2652139aa18a814678399b66915d035d25c"
+          },
+          "claims": [
+            {
+              "claim_id": "claim-create-duplicate",
+              "statement": "create operation is proposed precisely.",
+              "assertion_state": "verified",
+              "evidence_ids": [
+                "ev-test-contract"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "duplicate-cycle.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "remove",
+        "path": "/captures/6/disposition/reason"
+      },
+      {
+        "op": "add",
+        "path": "/captures/6/disposition/covered_by",
+        "value": {
+          "kind": "capture",
+          "ref": "cap-duplicate"
+        }
+      },
+      {
+        "op": "replace",
+        "path": "/captures/6/disposition/type",
+        "value": "duplicate"
+      },
+      {
+        "op": "replace",
+        "path": "/captures/7/disposition/covered_by/ref",
+        "value": "cap-no-change"
+      }
+    ]
+  },
+  "duplicate-malformed-concept.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/7/disposition/covered_by/kind",
+        "value": "concept"
+      },
+      {
+        "op": "replace",
+        "path": "/captures/7/disposition/covered_by/ref",
+        "value": "okf-not-a-uuid"
+      }
+    ]
+  },
+  "duplicate-review-required-cover.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/7/disposition/covered_by/ref",
+        "value": "cap-review"
+      }
+    ]
+  },
+  "duplicate-self.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/7/disposition/covered_by/ref",
+        "value": "cap-duplicate"
+      }
+    ]
+  },
+  "idempotency-mismatch.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/operations/0/idempotency_key",
+        "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      }
+    ]
+  },
+  "identity-only-terminal.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/0/source/content_access",
+        "value": "identity-only"
+      }
+    ]
+  },
+  "missing-operation-coverage.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/operations/0/capture_ids/0",
+        "value": "cap-create-b"
+      },
+      {
+        "op": "remove",
+        "path": "/operations/0/capture_ids/1"
+      }
+    ]
+  },
+  "no-change-whitespace-reason.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/6/disposition/reason",
+        "value": "   "
+      }
+    ]
+  },
+  "no-durable-change-without-reason.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "remove",
+        "path": "/captures/6/disposition/reason"
+      }
+    ]
+  },
+  "orphan-evidence.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "add",
+        "path": "/evidence/-",
+        "value": {
+          "evidence_id": "ev-orphan",
+          "kind": "receipt",
+          "locator": "unassociated receipt",
+          "sha256": "88f6811ab5d8fc6d3177f9b7609ae0fcebfda187e5046b62d38bb539e88b74d7",
+          "independence": "independent",
+          "redacted": true,
+          "produced_by": "independent-reviewer",
+          "produced_at": "2026-08-09T10:29:00Z",
+          "authority_ref": "receipt:external"
+        }
+      }
+    ]
+  },
+  "path-concept-conflict.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/6",
+        "value": "cap-path-id-conflict"
+      },
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/7",
+        "value": "cap-supersede"
+      },
+      {
+        "op": "add",
+        "path": "/capture_selection/required_capture_ids/-",
+        "value": "cap-update-a"
+      },
+      {
+        "op": "add",
+        "path": "/captures/-",
+        "value": {
+          "capture_id": "cap-path-id-conflict",
+          "source": {
+            "path": "knowledge/inbox/cap-path-id-conflict.md",
+            "sha256": "1635de10f00ac53826304a458607aeda4d3da78d47ba8d05c371213f47cbe889",
+            "size_bytes": 123,
+            "classification": "markdown",
+            "content_access": "reviewed",
+            "media_type": "text/markdown"
+          },
+          "disposition": {
+            "type": "update",
+            "operation_ids": [
+              "op-path-id-conflict"
+            ]
+          }
+        }
+      },
+      {
+        "op": "add",
+        "path": "/operations/-",
+        "value": {
+          "operation_id": "op-path-id-conflict",
+          "sequence": 6,
+          "kind": "update",
+          "capture_ids": [
+            "cap-path-id-conflict"
+          ],
+          "depends_on": [],
+          "idempotency_key": "8b5d90c740a2b381719a25f37b57f53bae42d20f9564167269666bb7aa8d3e5d",
+          "target": {
+            "concept_id": "okf-00000000-0000-4000-8000-000000000008",
+            "path": "knowledge/state/current-state.md",
+            "expected": {
+              "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+            }
+          },
+          "change": {
+            "mode": "exact-content",
+            "value": "---\nid: okf-00000000-0000-4000-8000-000000000008\n---\n# Different id same path\n",
+            "sha256": "4c1a43850c891b28c73355cd327c76dd8dae47b486315d63f4e44889c9f3c5ba"
+          },
+          "claims": [
+            {
+              "claim_id": "claim-path-id-conflict",
+              "statement": "A deterministic follow-up write is proposed.",
+              "assertion_state": "proposed",
+              "evidence_ids": []
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "review-whitespace-reason.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/8/disposition/review/reasons/0",
+        "value": "   "
+      }
+    ]
+  },
+  "source-path-control.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/manifest_path",
+        "value": "knowledge/inbox/a\nb.md"
+      }
+    ]
+  },
+  "source-path-drive.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/manifest_path",
+        "value": "C:/outside.md"
+      }
+    ]
+  },
+  "source-path-escape.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/0/source/path",
+        "value": "../outside.md"
+      }
+    ]
+  },
+  "source-path-url.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/manifest_path",
+        "value": "file:/outside.md"
+      }
+    ]
+  },
+  "unchained-update.json": {
+    "base": "chained-update.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/capture_selection/required_capture_ids/8",
+        "value": "cap-update-unchained"
+      },
+      {
+        "op": "replace",
+        "path": "/captures/8/capture_id",
+        "value": "cap-update-unchained"
+      },
+      {
+        "op": "replace",
+        "path": "/captures/8/disposition/operation_ids/0",
+        "value": "op-update-unchained"
+      },
+      {
+        "op": "replace",
+        "path": "/captures/8/source/path",
+        "value": "knowledge/inbox/cap-update-unchained.md"
+      },
+      {
+        "op": "replace",
+        "path": "/captures/8/source/sha256",
+        "value": "a41a570b52d42fe9f799d2f880f47fe9270cad95d9631424b8b3f8271716a82e"
+      },
+      {
+        "op": "replace",
+        "path": "/operations/5/capture_ids/0",
+        "value": "cap-update-unchained"
+      },
+      {
+        "op": "replace",
+        "path": "/operations/5/change/sha256",
+        "value": "009556c6d23666e50a4e3587bdf609d5b8f43249baf6e4843093d49ff0b64052"
+      },
+      {
+        "op": "replace",
+        "path": "/operations/5/change/value",
+        "value": "---\nid: okf-00000000-0000-4000-8000-000000000002\n---\n# Unchained Update\n"
+      },
+      {
+        "op": "replace",
+        "path": "/operations/5/claims/0/claim_id",
+        "value": "claim-update-unchained"
+      },
+      {
+        "op": "remove",
+        "path": "/operations/5/depends_on/0"
+      },
+      {
+        "op": "replace",
+        "path": "/operations/5/idempotency_key",
+        "value": "4cfdca618b2f6e765017eeb85a9151bd7ee2d881e0b500e8c943a7e7d811e45c"
+      },
+      {
+        "op": "replace",
+        "path": "/operations/5/operation_id",
+        "value": "op-update-unchained"
+      }
+    ]
+  },
+  "unknown-root-field.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "add",
+        "path": "/unexpected",
+        "value": "nope"
+      }
+    ]
+  },
+  "unsafe-input-reviewed.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/captures/8/source/content_access",
+        "value": "reviewed"
+      }
+    ]
+  },
+  "unsafe-input-terminal.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "remove",
+        "path": "/captures/8/disposition/review"
+      },
+      {
+        "op": "add",
+        "path": "/captures/8/disposition/reason",
+        "value": "Unsafe input cannot close."
+      },
+      {
+        "op": "replace",
+        "path": "/captures/8/disposition/type",
+        "value": "no-durable-change"
+      }
+    ]
+  },
+  "update-with-merge-sources.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "add",
+        "path": "/operations/1/source_concept_ids",
+        "value": [
+          "okf-00000000-0000-4000-8000-000000000005",
+          "okf-00000000-0000-4000-8000-000000000006"
+        ]
+      },
+      {
+        "op": "replace",
+        "path": "/operations/1/idempotency_key",
+        "value": "0f47a25b7f24eb433dbf73d293cb7ecb4a36666e89ea0667305e9b4c0bd6cfc6"
+      }
+    ]
+  },
+  "verified-self-labelled-independent.json": {
+    "base": "complete.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/evidence/0/produced_by",
+        "value": "implementation-agent"
+      }
+    ]
+  },
+  "verified-without-independent-evidence.json": {
+    "base": "many-to-many-review-required.json",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/evidence/0/independence",
+        "value": "author"
+      }
+    ]
+  }
+}

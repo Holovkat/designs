@@ -1,0 +1,45 @@
+{
+  "valid": [
+    "chained-update.json",
+    "complete.json",
+    "many-to-many-review-required.json"
+  ],
+  "invalid": [
+    "capture-path-empty-segment.json",
+    "capture-path-trailing-slash.json",
+    "capture-selection-mismatch.json",
+    "concept-path-conflict.json",
+    "conflicting-create-operation.json",
+    "content-target-id-mismatch.json",
+    "create-with-deprecation.json",
+    "deprecation-whitespace-reason.json",
+    "duplicate-capture-id.json",
+    "duplicate-create-operation.json",
+    "duplicate-cycle.json",
+    "duplicate-malformed-concept.json",
+    "duplicate-review-required-cover.json",
+    "duplicate-self.json",
+    "idempotency-mismatch.json",
+    "identity-only-terminal.json",
+    "missing-operation-coverage.json",
+    "no-change-whitespace-reason.json",
+    "no-durable-change-without-reason.json",
+    "orphan-evidence.json",
+    "path-concept-conflict.json",
+    "review-whitespace-reason.json",
+    "source-path-control.json",
+    "source-path-drive.json",
+    "source-path-escape.json",
+    "source-path-url.json",
+    "unchained-update.json",
+    "unknown-root-field.json",
+    "unsafe-input-reviewed.json",
+    "unsafe-input-terminal.json",
+    "update-with-merge-sources.json",
+    "verified-self-labelled-independent.json",
+    "verified-without-independent-evidence.json"
+  ],
+  "legacy": [
+    "tier2-summary.json"
+  ]
+}
