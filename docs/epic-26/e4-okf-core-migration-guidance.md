@@ -73,20 +73,39 @@ discard a capture or make an existing record disappear.
 
 The installed `.okf/profile.json` is authoritative for the linter default.
 Use `okf-lint.mjs --root <physical-root>` for its configured mode, or an
-explicit `--mode` for a read-only comparison. `strict-new` additionally
-requires one or more repeated `--strict-path knowledge/<type>/<record>.md`
-arguments; it never infers changed files or silently promotes the whole bundle.
+explicit `--mode` for a read-only comparison. `strict-new` requires either one
+or more repeated `--strict-path knowledge/<type>/<record>.md` arguments or one
+explicit `--baseline <git-commit>`. The baseline form derives only direct
+permanent concept adds, body/frontmatter edits, renames, moves, and deletions;
+it does not promote untouched records or treat index/log maintenance as concept
+authoring.
 
 ## Phase 4 — Opt in new records
 
-Promote only `new or materially updated` records to strict validation. The
-promotion record names the root/revision, profile version, warning baseline,
-owner, rollback commit, and accepted extension registry. New profile failures
-remain recoverable and must not advance curation processed state.
+Promote only `new or materially updated` records to strict validation. For
+this profile, material means an add, body/frontmatter edit, rename, or move of
+one direct permanent concept Markdown file. A touched legacy record receives a
+new stable UUIDv4 ID only when it lacks a valid ID; an existing valid ID cannot
+change. Untouched legacy stays readable and warning-only.
 
-Before promotion, prove the schema, parser, linter, viewer, query helper,
-capture path, and curator pre/postflight use compatible semantics. Any contract
-drift stops enforcement and returns the repository to warning mode.
+Each touched permanent concept records lifecycle `status` separately from
+`assertion_state`, plus generated time, named producer, generation mechanism,
+claim-scoped source authority, and evidence references. Keep ordinary authored
+knowledge `proposed` or `inferred`. `verified` requires a distinct named verifier
+and independent claim-appropriate evidence; a contextual `resource` alone is
+not evidence.
+
+The promotion record names the root/revision, profile version, warning baseline,
+owner, rollback commit, and accepted extension registry. New profile failures
+remain recoverable and must not advance curation processed state. A rename or
+deprecation preserves the ID and navigation history; a superseded concept moves
+to `knowledge/deprecation/`, while its active replacement declares
+`supersedes: [<old-id>]`. Update affected indexes and `knowledge/log.md` in the
+same reviewed change. Never delete or bulk-rewrite retained concepts.
+
+Before promotion, prove the schema, generated validator, parser, linter, viewer,
+query helper, capture path, and curator pre/postflight use compatible semantics.
+Any contract drift stops enforcement and returns the repository to warning mode.
 
 ## Phase 5 — Optional bounded migration
 

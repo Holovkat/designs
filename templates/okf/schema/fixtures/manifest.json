@@ -66,6 +66,12 @@
       ]
     },
     {
+      "file": "strict-invalid/permanent-missing-id.json",
+      "expectedKeywords": [
+        "required"
+      ]
+    },
+    {
       "file": "strict-invalid/relationship-without-id.json",
       "expectedKeywords": [
         "required"

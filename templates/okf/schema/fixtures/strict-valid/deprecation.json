@@ -1,9 +1,17 @@
 {
+  "assertion_state": "proposed",
   "deprecated_date": "2026-08-06",
   "deprecated_reason": "A fixture models prospective strict deprecation metadata",
   "description": "A strict fixture for the OKF application profile",
+  "evidence_refs": [
+    "templates/okf/OKF-STANDARD.md"
+  ],
+  "generated_at": "2026-08-06T04:10:00Z",
+  "generated_by": "okf-schema-fixture",
+  "generation_method": "human-authored",
   "id": "okf-63a160c2-9a5b-4df9-87b4-40ac8f59ac89",
   "resource": "templates/okf/OKF-STANDARD.md",
+  "source_authority": "repository-contract",
   "status": "deprecated",
   "tags": [
     "okf",

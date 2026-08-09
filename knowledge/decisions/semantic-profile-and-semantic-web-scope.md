@@ -1,13 +1,20 @@
 ---
 type: Decision
+id: okf-99a481dd-eeaf-41fc-938f-85ec4cbeef9d
 title: OKF Semantic Profile and Semantic-Web Scope
-description: Operator-approved portable native semantic profile with JSON-LD/RDF/SHACL deferred from the Phase C core
+description: Operator-approved native semantic profile with strict fix-on-touch integrity and JSON-LD/RDF/SHACL deferred
 resource: ./docs/epic-26/b5-semantic-web-scope-decision.md
-tags: [okf, semantic-profile, relationships, provenance, json-ld, rdf, shacl]
-timestamp: 2026-08-06T04:06:20Z
+tags: [okf, semantic-profile, relationships, provenance, fix-on-touch, json-ld, rdf, shacl]
+timestamp: 2026-08-09T11:22:20Z
 status: active
-issue_refs: [26]
-epic_refs: [26]
+assertion_state: historical
+generated_at: 2026-08-09T11:22:20Z
+generated_by: codex-epic-37-concept-42
+generation_method: author-time-agent
+source_authority: operator-approval
+evidence_refs: [https://github.com/Holovkat/designs/issues/26, https://github.com/Holovkat/designs/issues/42]
+issue_refs: [26, 42]
+epic_refs: [26, 37]
 decision_status: operator-approved-phase-c-core-2026-08-06
 ---
 
@@ -32,10 +39,11 @@ records remain retained with diagnostics rather than rewrite or removal.
 
 # Semantic Contract
 
-- Strict semantic relationship mode uses an opaque project-local
-  `okf-<lowercase-uuidv4>` `id` for permanent concepts that declare typed
-  relationships. IDs persist through rename, move, and deprecation; Markdown
-  links retain path-relative navigation.
+- Strict-new mode requires an opaque project-local
+  `okf-<lowercase-uuidv4>` `id` for every new or materially updated permanent
+  concept. A valid ID persists through edits, rename, move, and deprecation;
+  Markdown links retain path-relative navigation and untouched legacy remains
+  warning-only.
 - Stored top-level flow-array predicates are `depends_on`, `implements`,
   `supersedes`, `derived_from`, `contradicts`, and `blocked_by`. Targets are
   project-local IDs; unresolved or invalid targets are visible warnings.
@@ -45,9 +53,11 @@ records remain retained with diagnostics rather than rewrite or removal.
 - `assertion_state` is separate from lifecycle `status` and governance
   `decision_status`. The controlled values are `verified`, `inferred`,
   `proposed`, `historical`, and `stale`; legacy absence is a compatibility
-  classification. Initial provenance fields remain flat and record-level.
+  classification. Generation time, named producer, mechanism, authority, and
+  evidence remain flat and apply to the concept's record-level claim.
 - Local `resource` is repository-root-relative contextual metadata, not proof
-  or a JSON-LD identifier. Source authority is claim-scoped; external evidence
+  or a JSON-LD identifier. `verified` requires a named verifier distinct from
+  the generator plus claim-appropriate independent evidence; external evidence
   needs explicit repository identity and immutable locator.
 
 # JSON-LD/RDF/SHACL Scope

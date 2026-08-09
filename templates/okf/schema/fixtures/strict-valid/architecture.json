@@ -1,6 +1,15 @@
 {
+  "assertion_state": "verified",
   "description": "A strict fixture for the OKF application profile",
+  "evidence_refs": [
+    "fixture:independent-schema-review"
+  ],
+  "generated_at": "2026-08-06T04:10:00Z",
+  "generated_by": "okf-schema-fixture",
+  "generation_method": "human-authored",
+  "id": "okf-10000000-0000-4000-8000-000000000001",
   "resource": "templates/okf/OKF-STANDARD.md",
+  "source_authority": "repository-contract",
   "status": "active",
   "tags": [
     "okf",
@@ -9,5 +18,9 @@
   "timestamp": "2026-08-06T04:10:00Z",
   "title": "Fixture Architecture",
   "type": "Architecture",
+  "validity_basis": "schema-fixture-contract",
+  "verification_method": "fixture-review",
+  "verified_at": "2026-08-06T04:10:00Z",
+  "verified_by": "okf-fixture-reviewer",
   "x_demo_note": "unknown extensions are preserved"
 }

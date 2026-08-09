@@ -126,7 +126,18 @@ function buildConcept(item) {
     title: typeof frontmatter.title === 'string' && frontmatter.title ? frontmatter.title : pathId.replace(/-/g, ' '),
     description: typeof frontmatter.description === 'string' ? frontmatter.description : '',
     tags: Array.isArray(frontmatter.tags) ? frontmatter.tags.filter(tag => typeof tag === 'string') : [],
-    status: typeof frontmatter.status === 'string' && frontmatter.status ? frontmatter.status : 'active',
+    status: typeof frontmatter.status === 'string' && frontmatter.status ? frontmatter.status : 'legacy-unspecified',
+    assertionState: typeof frontmatter.assertion_state === 'string' && frontmatter.assertion_state ? frontmatter.assertion_state : 'legacy-unspecified',
+    evidenceRefs: Array.isArray(frontmatter.evidence_refs) ? frontmatter.evidence_refs.filter(reference => typeof reference === 'string') : [],
+    generatedAt: typeof frontmatter.generated_at === 'string' ? frontmatter.generated_at : '',
+    generatedBy: typeof frontmatter.generated_by === 'string' ? frontmatter.generated_by : '',
+    generationMethod: typeof frontmatter.generation_method === 'string' ? frontmatter.generation_method : '',
+    sourceAuthority: typeof frontmatter.source_authority === 'string' ? frontmatter.source_authority : '',
+    sourceRepository: typeof frontmatter.source_repository === 'string' ? frontmatter.source_repository : '',
+    verifiedAt: typeof frontmatter.verified_at === 'string' ? frontmatter.verified_at : '',
+    verifiedBy: typeof frontmatter.verified_by === 'string' ? frontmatter.verified_by : '',
+    verificationMethod: typeof frontmatter.verification_method === 'string' ? frontmatter.verification_method : '',
+    validityBasis: typeof frontmatter.validity_basis === 'string' ? frontmatter.validity_basis : '',
     resource: typeof frontmatter.resource === 'string' ? frontmatter.resource : '',
     issueRefs: Array.isArray(frontmatter.issue_refs) ? frontmatter.issue_refs : [],
     parser, parserDiagnostics: diagnostics,
@@ -582,11 +593,15 @@ function showDetail(concept, targetId) {
     fmLines.push(`<div>resource: ${resourceHtml}</div>`);
   }
   if (fm.timestamp) fmLines.push(`<div>timestamp: ${escapeHtml(literalValue(fm.timestamp))}</div>`);
+  if (concept.generatedAt) fmLines.push(`<div>generated: ${escapeHtml(concept.generatedAt)} by ${escapeHtml(concept.generatedBy || 'unspecified')} via ${escapeHtml(concept.generationMethod || 'legacy-unspecified')}</div>`);
+  if (concept.sourceAuthority) fmLines.push(`<div>source_authority: ${escapeHtml(concept.sourceAuthority)}${concept.sourceRepository ? ` (${escapeHtml(concept.sourceRepository)})` : ''}</div>`);
+  if (concept.verifiedBy) fmLines.push(`<div>verified: ${escapeHtml(concept.verifiedAt || 'unspecified')} by ${escapeHtml(concept.verifiedBy)} via ${escapeHtml(concept.verificationMethod || 'unspecified')}${concept.validityBasis ? ` (${escapeHtml(concept.validityBasis)})` : ''}</div>`);
+  if (concept.evidenceRefs.length) fmLines.push(`<div>evidence_refs: [${concept.evidenceRefs.map(escapeHtml).join(', ')}]</div>`);
   if (concept.issueRefs.length) fmLines.push(`<div>issue_refs: [${concept.issueRefs.map(escapeHtml).join(', ')}]</div>`);
 
   const badges = [`<span class="badge type" data-type="${escapeHtml(concept.type)}">${escapeHtml(concept.type)}</span>`];
-  if (concept.status && concept.status !== 'active')
-    badges.push(`<span class="badge status ${concept.status === 'deprecated' ? 'deprecated' : ''}">${escapeHtml(concept.status)}</span>`);
+  badges.push(`<span class="badge status ${concept.status === 'deprecated' ? 'deprecated' : ''}">lifecycle: ${escapeHtml(concept.status)}</span>`);
+  badges.push(`<span class="badge status">assertion: ${escapeHtml(concept.assertionState)}</span>`);
   if (concept.identityState !== 'valid') badges.push(`<span class="badge status ${concept.identityState === 'invalid' || concept.identityState === 'duplicate' ? 'deprecated' : ''}">${escapeHtml(concept.identityState)} identity</span>`);
   if (concept.parser === 'legacy') badges.push('<span class="badge status">legacy parser fallback</span>');
   if (concept.tags.length) badges.push(...concept.tags.map(tag => `<span class="badge">${escapeHtml(tag)}</span>`));

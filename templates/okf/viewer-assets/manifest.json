@@ -34,7 +34,7 @@
       "file": "okf-viewer.js",
       "version": "repository-local",
       "license": "repository-local",
-      "sha256": "d796d6c911819f0b72b31c029e3ff275163600e4408ecce34edde73c984794b7",
+      "sha256": "73c1e92bb082a9f2c5255e529f5e85b387d42b965f83bde42520d254b08a549a",
       "source": "templates/okf/viewer-assets/okf-viewer.js"
     }
   ],

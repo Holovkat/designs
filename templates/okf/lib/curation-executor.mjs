@@ -527,7 +527,12 @@ export function executeCuration(input, overrides = {}) {
     const maintenance = state.proposal.outputs.filter(({ kind }) => kind === "maintenance");
     const conceptPaths = concepts.map(({ path }) => path);
     const maintenancePaths = maintenance.map(({ path }) => path);
-    const validationContext = { itemPaths: plan.items.map(({ path }) => path), revision: plan.revision };
+    const validationContext = {
+      itemPaths: plan.items.map(({ path }) => path),
+      revision: plan.revision,
+      sourceRoot: plan.root,
+      conceptOutputs: concepts,
+    };
     state.staging = options.validateStaging(shadowRoot, conceptPaths, maintenancePaths, validationContext);
     if (!state.staging.ok) {
       state.failedOutputs = state.proposal.outputs.map(({ path }) => shadowPath(plan.run_id, path));

@@ -259,13 +259,23 @@ function outputRecord(record, matched, validation) {
     assertion_state: stateValue(frontmatter, "assertion_state"),
     description: scalar(frontmatter.description),
     evidence_refs: Object.freeze(Array.isArray(frontmatter.evidence_refs) ? frontmatter.evidence_refs.map((item) => String(item)) : []),
+    generated_at: scalar(frontmatter.generated_at),
+    generated_by: scalar(frontmatter.generated_by),
+    generation_method: scalar(frontmatter.generation_method),
+    id: scalar(frontmatter.id),
     matched,
     path: record.path,
     relationships: Object.freeze(relationshipMap(frontmatter)),
+    source_authority: scalar(frontmatter.source_authority),
+    source_repository: scalar(frontmatter.source_repository),
     status: stateValue(frontmatter, "status"),
     tags: scalar(frontmatter.tags),
     title: scalar(frontmatter.title),
     type: scalar(frontmatter.type),
+    validity_basis: scalar(frontmatter.validity_basis),
+    verification_method: scalar(frontmatter.verification_method),
+    verified_at: scalar(frontmatter.verified_at),
+    verified_by: scalar(frontmatter.verified_by),
     validation_codes: Object.freeze(validation?.codes ?? []),
     validation_status: validation?.status ?? null,
   });
@@ -334,7 +344,11 @@ export function formatQueryText(result) {
     lines.push(`type:   ${item.type}   status: ${item.status}`);
     lines.push(`desc:   ${item.description}`);
     lines.push(`tags:   ${item.tags}`);
+    lines.push(`identity: ${item.id || "legacy filepath"}`);
     lines.push(`assertion: ${item.assertion_state}${item.validation_status ? `   validation: ${item.validation_status}` : ""}`);
+    if (item.generated_at) lines.push(`generated: ${item.generated_at} by ${item.generated_by || "unspecified"} via ${item.generation_method || "legacy-unspecified"}`);
+    if (item.source_authority) lines.push(`authority: ${item.source_authority}${item.source_repository ? ` (${item.source_repository})` : ""}`);
+    if (item.verified_by) lines.push(`verified: ${item.verified_at || "unspecified"} by ${item.verified_by} via ${item.verification_method || "unspecified"}${item.validity_basis ? ` (${item.validity_basis})` : ""}`);
     if (item.evidence_refs.length > 0) lines.push(`evidence: [${item.evidence_refs.join(", ")}]`);
     const relationships = Object.entries(item.relationships)
       .map(([predicate, targets]) => `${predicate}=[${targets.join(", ")}]`)

@@ -14,9 +14,11 @@ and never runs AJV, `npm install`, a generator, or a network fetch at use time.
 ## Modes
 
 - **Strict:** validates the portable flat core: required common fields,
-  controlled types/statuses, lowercase unique tags, UTC timestamps, Inbox
-  commit/session provenance, stable IDs and typed relationships, and
-  conditional provenance fields. Empty relationship arrays are valid.
+  controlled lifecycle/assertion values, lowercase unique tags, UTC timestamps,
+  Inbox commit/session provenance, stable IDs for every permanent concept,
+  generation producer/mechanism, claim-scoped evidence/authority, typed
+  relationships, and independent verification metadata. Empty relationship
+  arrays are valid.
 - **Legacy-compatible:** uses strict failures as deterministic warning evidence
   for retained historical records. It never rewrites or rejects a capture.
   The fixture runner demonstrates missing capture tiers, duplicate tags, short
@@ -42,13 +44,38 @@ Replacement direction follows the prospective contract: a new concept carries
 does not itself need to supersede anything. Legacy path-valued `supersedes`
 remains warning-only and is never auto-converted.
 
+## Fix-on-touch migration
+
+A material update is an add, body/frontmatter edit, rename, or move of one
+direct permanent concept file. Validate an explicit authoring set with repeated
+`--strict-path`, or derive the exact add/edit/move/delete set from Git with:
+
+```bash
+node .okf/bin/okf-lint.mjs --root "$PWD" --mode strict-new --baseline <full-or-resolvable-commit>
+```
+
+The baseline form keeps untouched legacy warning-only, requires all current
+material paths to be strict, rejects permanent concept deletion, preserves a
+valid prior ID through rename/deprecation, and checks replacement → old
+`supersedes` direction. Fix-on-touch assigns a new UUIDv4 ID only when legacy
+content has no valid identity; it never changes paths, indexes, citations, or
+history automatically. Run index/log edits in the same reviewed change, but do
+not select them as concept identities.
+
+For each touched permanent concept, choose lifecycle `status` separately from
+`assertion_state`; record `generated_at`, the named `generated_by` producer,
+`generation_method`, `source_authority`, and `evidence_refs`. Those evidence
+references support the concept's record-level claim and do not duplicate its
+body. Use `proposed` or `inferred` unless an independent `verified_by` producer,
+receipt/reference, method, time, and validity basis exist.
+
 ## Fixtures
 
 - `fixtures/strict-valid/` covers all seven durable concept types and both
   Inbox tiers, including both SHA-1 and SHA-256 commit identities.
 - `fixtures/strict-invalid/` covers missing core fields, invalid SHA/session
-  provenance, non-Deprecation `deprecated` status, invalid relationship
-  identity, and incomplete verification metadata.
+  provenance, missing permanent identity, non-Deprecation `deprecated` status,
+  invalid relationship identity, and incomplete verification metadata.
 - `fixtures/legacy-compatible/` defines retained warning cases. A strict
   diagnostic is expected, but the compatibility result remains non-mutating.
 

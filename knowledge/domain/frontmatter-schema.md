@@ -1,20 +1,18 @@
 ---
 type: Domain
 title: OKF Frontmatter Schema
-description: OKF Core 1.0 fields, conditional requirements, semantic relationships, provenance, and compatibility modes
+description: Strict fix-on-touch identity, lifecycle/assertion, generation, evidence, relationship, and compatibility fields
 resource: ./templates/okf/schema/okf-core-1.0.schema.json
-tags: [compatibility, frontmatter, metadata, okf, schema, yaml]
-timestamp: 2026-08-08T00:00:00Z
+tags: [compatibility, fix-on-touch, frontmatter, integrity, metadata, okf, schema, yaml]
+timestamp: 2026-08-09T11:22:20Z
 status: active
 id: okf-26000000-0000-4000-8000-000000000002
-assertion_state: verified
-generated_at: 2026-08-08T00:00:00Z
-generated_by: codex-epic-26
-source_authority: repository-git
-evidence_refs: [templates/okf/schema/okf-core-1.0.schema.json, templates/okf/OKF-STANDARD.md]
-verified_at: 2026-08-08T00:00:00Z
-verification_method: schema-and-specification-review
-validity_basis: Current OKF Core 1.0 application profile
+assertion_state: inferred
+generated_at: 2026-08-09T11:22:20Z
+generated_by: codex-epic-37-concept-42
+generation_method: author-time-agent
+source_authority: repository-contract
+evidence_refs: [templates/okf/schema/okf-core-1.0.schema.json, templates/okf/schema/okf-core-1.0.validator.mjs, templates/okf/tests/linter_test.mjs, templates/okf/OKF-STANDARD.md]
 ---
 
 # OKF Frontmatter Schema
@@ -26,17 +24,23 @@ does not require a network service or package download.
 
 ## Core Record
 
-Strict durable concepts require:
+New or materially updated durable concepts require:
 
 - one controlled `type` matching the containing concept directory;
-- non-empty `title` and `description`;
-- unique lowercase `tags`;
-- an RFC 3339 UTC `timestamp` and controlled lifecycle `status`; and
-- a stable project-local `id` in the `okf-<uuid-v4>` form.
+- a stable project-local `id` in the `okf-<uuid-v4>` form;
+- non-empty `title` and `description`, unique lowercase `tags`, and an RFC 3339
+  UTC `timestamp`;
+- separate controlled lifecycle `status` and claim `assertion_state`;
+- `generated_at`, named `generated_by`, and controlled `generation_method`; and
+- claim-scoped `source_authority` plus non-empty `evidence_refs`.
 
-Concepts created by the curator additionally require non-empty `generated_at`
-and `generated_by`. Inbox records have tier-specific capture/provenance fields
-instead of a durable concept ID.
+Material means a direct permanent concept add, body/frontmatter edit, rename, or
+move. Strict-new can bind those paths to one explicit Git baseline. Untouched
+legacy remains warning-only. A valid prior ID cannot change, while touched
+legacy without an ID receives one without automatic path, index, citation, or
+history rewrites. Curator output additionally requires
+`generation_method: curator`. Inbox records keep their tier-specific
+capture/provenance fields instead of a durable concept ID.
 
 ## Typed Relationships
 
@@ -52,11 +56,16 @@ typed assertions.
 ## Assertion and Evidence Fields
 
 `assertion_state` distinguishes `verified`, `inferred`, `proposed`,
-`historical`, and `stale` knowledge. Evidence-bearing records can state
-`source_authority`, immutable `evidence_refs`, `verified_at`,
-`verification_method`, and `validity_basis`. `generated_at` and `generated_by`
-identify generated provenance; they do not by themselves make an assertion
-verified.
+`historical`, and `stale` knowledge. The top-level authority and evidence
+references support the concept's single record-level claim, so frontmatter does
+not repeat its prose. `generated_at`, `generated_by`, and `generation_method`
+record creation/update provenance; they do not make an assertion verified.
+
+`verified` additionally requires `verified_at`, an independent `verified_by`
+producer distinct from `generated_by`, `verification_method`, and
+`validity_basis`. A contextual `resource` cannot be the only verification
+evidence. Unsupported self-attestation fails strict validation; routine authored
+knowledge remains proposed or inferred.
 
 ## Type-Specific Rules
 
@@ -78,5 +87,7 @@ outcomes: strict, legacy-compatible warning, and retained nonconformant. Warning
 mode audits existing bundles before opt-in enforcement; it does not rewrite or
 discard historical records.
 
-The canonical details live in [OKF Standard](../../templates/okf/OKF-STANDARD.md)
+The baseline-aware linter also rejects permanent deletion, valid-ID changes,
+and a deprecation transition without an active replacement → old `supersedes`
+edge. The canonical details live in [OKF Standard](../../templates/okf/OKF-STANDARD.md)
 and the [OKF Core 1.0 schema](../../templates/okf/schema/okf-core-1.0.schema.json).

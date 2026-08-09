@@ -1,6 +1,15 @@
 {
+  "assertion_state": "proposed",
   "description": "A strict fixture for the OKF application profile",
+  "evidence_refs": [
+    "templates/okf/OKF-STANDARD.md"
+  ],
+  "generated_at": "2026-08-06T04:10:00Z",
+  "generated_by": "okf-schema-fixture",
+  "generation_method": "human-authored",
+  "id": "okf-10000000-0000-4000-8000-000000000005",
   "resource": "templates/okf/OKF-STANDARD.md",
+  "source_authority": "repository-contract",
   "status": "active",
   "tags": [
     "okf",

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, mkdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { execFileSync, spawnSync } from "node:child_process";
+import { cpSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -36,11 +36,60 @@ resource: ${resource}
 tags: [fixture, okf]
 timestamp: 2026-08-08T00:00:00Z
 status: active
+assertion_state: proposed
+generated_at: 2026-08-08T00:00:00Z
+generated_by: okf-linter-fixture
+generation_method: human-authored
+source_authority: repository-contract
+evidence_refs: [fixture:linter]
 ---
 # Decision
 
 Exercise resource confinement.
 `;
+}
+
+function strictConcept({
+  id = "okf-55555555-5555-4555-8555-555555555555",
+  type = "Decision",
+  title = "Strict Concept",
+  status = "active",
+  supersedes = null,
+  verifiedBy = null,
+  resource = null,
+  evidenceRef = "fixture:independent-review",
+} = {}) {
+  const deprecation = type === "Deprecation"
+    ? "deprecated_reason: Superseded by the strict fixture\ndeprecated_date: 2026-08-08\n"
+    : "";
+  const relationship = supersedes ? `supersedes: [${supersedes}]\n` : "";
+  const resourceField = resource ? `resource: ${resource}\n` : "";
+  const verification = verifiedBy
+    ? `verified_at: 2026-08-08T00:00:00Z\nverified_by: ${verifiedBy}\nverification_method: fixture-review\nvalidity_basis: strict-new fixture\n`
+    : "";
+  const body = type === "Deprecation"
+    ? "# What Was the Issue\nOld contract.\n\n# Why It Was Deprecated\nReplaced.\n\n# Lessons Learned\nKeep identity.\n\n# When This Might Be Relevant Again\nHistorical review.\n\n# What to Watch Out For\nDo not reverse supersedes.\n"
+    : "# Contract\n\nFixture body.\n";
+  return `---
+type: ${type}
+id: ${id}
+title: ${title}
+description: Strict fix-on-touch fixture
+tags: [fixture, okf]
+timestamp: 2026-08-08T00:00:00Z
+status: ${status}
+assertion_state: ${verifiedBy ? "verified" : "proposed"}
+generated_at: 2026-08-08T00:00:00Z
+generated_by: fixture-author
+generation_method: human-authored
+source_authority: repository-contract
+evidence_refs: [${evidenceRef}]
+${resourceField}${verification}${deprecation}${relationship}---
+${body}`;
+}
+
+function git(root, args) {
+  return execFileSync("git", ["-C", root, ...args], { encoding: "utf8" });
 }
 
 test("strict mode reports deterministic errors and warning-only retained facts", () => {
@@ -79,6 +128,97 @@ test("warning and strict-new modes apply the installed compatibility contract", 
   assert.ok(selective.diagnostics.filter((item) => item.path !== strictPath).every((item) => item.severity === "warning"));
   assert.throws(() => lintBundle(bundle, { mode: "strict-new" }), /requires at least one explicit strict path/);
   assert.throws(() => lintBundle(bundle, { mode: "strict-new", strictPaths: ["knowledge/decisions/absent.md"] }), /were not scanned/);
+});
+
+test("strict-new baseline enforces fix-on-touch identity, deprecation direction, and legacy compatibility", () => {
+  const parent = mkdtempSync(join(tmpdir(), "okf-lint-fix-on-touch-"));
+  const root = join(parent, "repo");
+  const decisions = join(root, "knowledge", "decisions");
+  const deprecations = join(root, "knowledge", "deprecation");
+  const stablePath = join(decisions, "stable.md");
+  const legacyPath = join(decisions, "legacy.md");
+  try {
+    mkdirSync(decisions, { recursive: true });
+    mkdirSync(deprecations, { recursive: true });
+    writeFileSync(stablePath, strictConcept());
+    writeFileSync(legacyPath, "---\ntype: Decision\ntitle: Untouched Legacy\ndescription: Retained warning-only concept\ntags: [fixture, legacy]\ntimestamp: 2026-08-08T00:00:00Z\nstatus: active\n---\n# Legacy\n");
+    git(root, ["init", "-q"]);
+    git(root, ["config", "user.name", "OKF Test"]);
+    git(root, ["config", "user.email", "okf@example.invalid"]);
+    git(root, ["add", "."]);
+    git(root, ["commit", "-qm", "fixture baseline"]);
+    const baseline = git(root, ["rev-parse", "HEAD"]).trim();
+    assert.throws(() => lintBundle(root, { mode: "strict-new", baseline: "--all" }), /baseline must be/);
+    assert.throws(() => lintBundle(root, { mode: "strict-new", baseline: "not-a-commit" }), /baseline check failed/);
+    const reset = () => {
+      git(root, ["reset", "--hard", "-q", baseline]);
+      git(root, ["clean", "-fdq"]);
+      mkdirSync(deprecations, { recursive: true });
+    };
+
+    writeFileSync(join(decisions, "new.md"), strictConcept({ id: "okf-66666666-6666-4666-8666-666666666666", title: "New Strict Concept" }));
+    let result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(result.materialChanges.some(({ kind, path }) => kind === "A" && path === "knowledge/decisions/new.md"));
+    assert.ok(result.diagnostics.filter(({ path }) => path === "knowledge/decisions/legacy.md").every(({ severity }) => severity === "warning"));
+    assert.ok(result.diagnostics.filter(({ path }) => path === "knowledge/decisions/new.md").every(({ severity }) => severity !== "error"));
+
+    reset();
+    writeFileSync(legacyPath, readFileSync(legacyPath, "utf8") + "\nMaterial body update.\n");
+    result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(result.diagnostics.some(({ path, code, severity }) => path === "knowledge/decisions/legacy.md" && code === "schema-required" && severity === "error"));
+
+    reset();
+    git(root, ["mv", "knowledge/decisions/stable.md", "knowledge/decisions/renamed.md"]);
+    result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(!codes(result, "knowledge/decisions/renamed.md").includes("identifier-changed"));
+    writeFileSync(join(decisions, "renamed.md"), readFileSync(join(decisions, "renamed.md"), "utf8").replace(
+      "okf-55555555-5555-4555-8555-555555555555",
+      "okf-77777777-7777-4777-8777-777777777777",
+    ));
+    result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(codes(result, "knowledge/decisions/renamed.md").includes("identifier-changed"));
+
+    reset();
+    git(root, ["mv", "knowledge/decisions/stable.md", "knowledge/deprecation/stable.md"]);
+    writeFileSync(join(deprecations, "stable.md"), strictConcept({ type: "Deprecation", status: "deprecated", title: "Retained Old Concept" }));
+    writeFileSync(join(decisions, "replacement.md"), strictConcept({
+      id: "okf-88888888-8888-4888-8888-888888888888",
+      title: "Active Replacement",
+      supersedes: "okf-55555555-5555-4555-8555-555555555555",
+    }));
+    result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(!result.diagnostics.some(({ code }) => ["concept-deleted", "deprecation-replacement-missing", "identifier-changed"].includes(code)));
+    writeFileSync(join(decisions, "replacement.md"), strictConcept({ id: "okf-88888888-8888-4888-8888-888888888888", title: "Active Replacement" }));
+    result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(codes(result, "knowledge/deprecation/stable.md").includes("deprecation-replacement-missing"));
+
+    reset();
+    rmSync(stablePath);
+    result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(codes(result, "knowledge/decisions/stable.md").includes("concept-deleted"));
+
+    reset();
+    writeFileSync(join(decisions, "self-verified.md"), strictConcept({
+      id: "okf-99999999-9999-4999-8999-999999999999",
+      title: "Self Verified",
+      verifiedBy: "fixture-author",
+    }));
+    result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(codes(result, "knowledge/decisions/self-verified.md").includes("verified-self-attested"));
+
+    reset();
+    writeFileSync(join(decisions, "context-only.md"), strictConcept({
+      id: "okf-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      title: "Context Only Verification",
+      verifiedBy: "fixture-reviewer",
+      resource: "docs/context.md",
+      evidenceRef: "docs/context.md",
+    }));
+    result = lintBundle(root, { mode: "strict-new", baseline });
+    assert.ok(codes(result, "knowledge/decisions/context-only.md").includes("verified-context-only-evidence"));
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
 });
 
 test("CLI emits JSON and fails only when error severity is selected", () => {

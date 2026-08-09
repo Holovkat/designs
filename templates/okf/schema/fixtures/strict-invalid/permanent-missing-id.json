@@ -1,22 +1,19 @@
 {
   "assertion_state": "proposed",
-  "description": "Empty and absent typed predicates both declare no semantic edge",
+  "description": "Strict permanent records require stable identity without needing a relationship",
   "evidence_refs": [
     "templates/okf/OKF-STANDARD.md"
   ],
   "generated_at": "2026-08-08T00:00:00Z",
   "generated_by": "okf-schema-fixture",
   "generation_method": "human-authored",
-  "id": "okf-83a160c2-9a5b-4df9-87b4-40ac8f59ac89",
-  "resource": "templates/okf/OKF-STANDARD.md",
   "source_authority": "repository-contract",
   "status": "active",
-  "supersedes": [],
   "tags": [
     "fixture",
     "okf"
   ],
   "timestamp": "2026-08-08T00:00:00Z",
-  "title": "Empty relationship fixture",
-  "type": "Decision"
+  "title": "Missing stable identity",
+  "type": "Domain"
 }

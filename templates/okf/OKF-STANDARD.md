@@ -127,16 +127,29 @@ successful canary in one project never promotes another project.
 
 ### Strict portable record shape
 
-The strict profile requires `type`, `title`, `description`, `tags`, `timestamp`,
-and `status`, with conditional fields for Inbox, Deprecation, and verified
-records. Tags are unique lowercase strings and timestamps are UTC ISO-8601.
-Core scalars are one-line values and core collections are flow arrays. New
-portable extension names use `x_<owner>_<name>`; established project-local
-fields remain available as retained extensions until deliberately registered.
+Every new or materially updated permanent concept requires `type`, `id`,
+`title`, `description`, `tags`, `timestamp`, lifecycle `status`,
+`assertion_state`, `generated_at`, `generated_by`, `generation_method`,
+`source_authority`, and `evidence_refs`, with additional conditional fields for
+Deprecation and verified records. Tags are unique lowercase strings and
+timestamps are UTC ISO-8601. Core scalars are one-line values and core
+collections are flow arrays. New portable extension names use
+`x_<owner>_<name>`; established project-local fields remain available as
+retained extensions until deliberately registered.
 
-Permanent concepts that declare semantic relationships use an opaque stable ID
-of the form `okf-<lowercase-uuidv4>`. The ID survives a file rename, move, or
-deprecation. Paths continue to serve navigation and are not semantic identity.
+A material update is an add, body or frontmatter edit, rename, or move of one
+direct permanent concept Markdown file. Index/log maintenance and citation
+changes in other records do not make an otherwise untouched concept material.
+`strict-new --baseline <commit>` derives that exact Git change set; repeated
+`--strict-path` remains available when an author already has an explicit set.
+Untouched retained files stay warning-only. The linter never fills fields or
+rewrites a bundle.
+
+Every strict permanent concept uses an opaque stable ID of the form
+`okf-<lowercase-uuidv4>`. Fix-on-touch assigns an ID to previously unidentified
+legacy content, but an existing valid ID survives body edits, file renames,
+moves, and deprecation. Paths continue to serve navigation and are not semantic
+identity. Deletion without a stable-ID-preserving move is invalid.
 
 The controlled relationship predicates are:
 
@@ -163,17 +176,29 @@ claim state and is one of `verified`, `inferred`, `proposed`, `historical`, or
 stored value. Governance fields such as `decision_status` remain separate.
 
 The portable provenance surface is flat and record-level: `generated_at`,
-`generated_by`, `source_authority`, `source_repository`, `evidence_refs`,
-`verified_at`, `verification_method`, `validity_basis`, `valid_from`,
-`valid_until`, and `stale_reason`. Source authority is claim-scoped. A local
+`generated_by`, `generation_method`, `source_authority`, `source_repository`,
+`evidence_refs`, `verified_at`, `verified_by`, `verification_method`,
+`validity_basis`, `valid_from`, `valid_until`, and `stale_reason`.
+`generation_method` is one of `author-time-agent`, `human-authored`, `curator`,
+or `imported-legacy`; it records mechanism while `generated_by` names the
+producer. The top-level assertion and evidence fields apply to the concept's
+single durable record-level claim, so metadata does not repeat the body prose.
+Materially different claims with different evidence or assertion states belong
+in separate concepts.
+
+Source authority and `evidence_refs` are therefore claim-scoped. A local
 `resource` supplies context but is not proof, a stable ID, or an external
 authority. Unresolved external evidence is retained and classified rather than
-promoted or erased.
+promoted or erased. A `verified` record additionally requires `verified_at`, a
+`verified_by` producer distinct from `generated_by`, `verification_method`, and
+`validity_basis`; a contextual `resource` cannot be its only evidence.
+Unsupported self-attestation fails strict validation instead of being promoted.
 
 Validation must distinguish parser/profile errors from lifecycle and knowledge
 states. `proposed`, `inferred`, `historical`, `stale`, or an unresolved
-relationship is not by itself malformed. A `verified` assertion must carry the
-profile's required verification evidence.
+relationship is not by itself malformed. Routine author-time knowledge should
+remain `proposed` or `inferred` until claim-appropriate independent evidence is
+available.
 
 ### External vocabulary mapping boundary
 
@@ -188,8 +213,11 @@ namespace/identity policy, and remain a projection from canonical Markdown/YAML.
 ### Validation contract
 
 - `okf-lint` accepts one explicit repository root and operates read-only.
-- Warning/legacy mode preserves retained records; strict mode is for opted-in
-  new or migrated records.
+- Warning/legacy mode preserves retained records; strict-new applies only to
+  explicit paths or the permanent concept change set derived from one explicit
+  Git baseline, while strict-bundle requires separate promotion.
+- A valid prior stable ID cannot change on edit, rename, move, or deprecation;
+  concept deletion and replacement-to-old direction violations fail closed.
 - Capture checks prevent unsafe new accumulation while retaining one auditable
   Tier 1 record per ordinary commit and providing an explicit non-destructive
   operator override.

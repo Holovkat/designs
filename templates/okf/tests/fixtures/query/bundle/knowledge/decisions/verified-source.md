@@ -10,9 +10,12 @@ depends_on: [okf-11111111-1111-4111-8111-111111111111]
 assertion_state: verified
 generated_at: 2026-08-08T00:01:00Z
 generated_by: query-fixture
+generation_method: human-authored
 source_authority: repository-git
+source_repository: self
 evidence_refs: [git:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, path:templates/okf/OKF-STANDARD.md]
 verified_at: 2026-08-08T00:02:00Z
+verified_by: query-fixture-reviewer
 verification_method: fixture-review
 validity_basis: immutable-fixture
 ---

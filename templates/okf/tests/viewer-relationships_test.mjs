@@ -83,6 +83,12 @@ test("consumes C7 block arrays while keeping stable IDs separate from file paths
 test("retains Markdown citation edges and Cited by backlinks", () => {
   const contract = analysis.concepts.find(concept => concept.filepath === "decisions/viewer-contract.md");
   assert.deepEqual([...contract.backlinks], ["architecture/viewer-implementation"]);
+  assert.equal(contract.status, "active");
+  assert.equal(contract.assertionState, "proposed");
+  assert.equal(contract.generationMethod, "human-authored");
+  assert.equal(contract.sourceAuthority, "repository-contract");
+  assert.equal(contract.sourceRepository, "self");
+  assert.deepEqual([...contract.evidenceRefs], ["fixture:viewer-contract"]);
   assert.ok(analysis.links.some(link => link.kind === "citation" && link.sourceConcept.filepath === "architecture/viewer-implementation.md" && link.targetConcept.filepath === "decisions/viewer-contract.md"));
   assert.equal(viewer.resolveMarkdownPath("../decisions/viewer-contract.md", "architecture/viewer-implementation.md"), "decisions/viewer-contract");
 });

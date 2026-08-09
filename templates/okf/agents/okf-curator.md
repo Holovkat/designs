@@ -192,10 +192,14 @@ Run this phase on every curation pass, even when the inbox is empty.
 - Strict-validate generated concepts in repository-local staging and validate
   affected index/log navigation and audit invariants, then repeat both checks
   against the real bundle before any inbox item is finalized.
-- Every curator-generated concept must carry non-empty `generated_at` and
-  `generated_by` frontmatter. The former records the bounded generation time;
-  the latter identifies the operator-authorized curator mechanism. Missing
-  generation provenance is a strict staging and postflight error.
+- Every curator-generated permanent concept must carry a stable `id`, separate
+  lifecycle `status` and `assertion_state`, `generated_at`, named `generated_by`,
+  `generation_method: curator`, claim-scoped `source_authority`, and
+  `evidence_refs`. Missing integrity metadata is a strict staging and postflight
+  error. An existing valid ID must survive updates, renames, and deprecation.
+- Keep routine synthesis `proposed` or `inferred`. `verified` additionally needs
+  claim-appropriate independent evidence and a `verified_by` producer distinct
+  from `generated_by`; a `resource` alone is contextual, not proof.
 - If generated, maintenance, or postflight validation fails, retain the invalid
   proposal/output beneath the bounded `.okf/staging/<run-id>/` manifest,
   restore every prior target and any moved inbox source, do not advance
@@ -229,10 +233,17 @@ Risks or pitfalls if we try this approach again. What to check before re-adoptin
 
 The frontmatter for deprecation entries should include:
 ```yaml
+id: <the old concept's unchanged stable ID>
 status: deprecated
-supersedes: [new-concept.md]
 deprecated_reason: <short reason>
 deprecated_date: <ISO date>
+```
+
+The active replacement, not the old deprecation record, declares the typed
+replacement → old edge:
+
+```yaml
+supersedes: [<old stable ID>]
 ```
 
 Never write a deprecation entry without these lesson sections. A deprecation that just says "superseded by X" is useless to future agents and developers.
@@ -242,15 +253,20 @@ Never write a deprecation entry without these lesson sections. A deprecation tha
 ```yaml
 ---
 type: Architecture
+id: <okf-lowercase-uuidv4>
 title: <human-readable title>
 description: <one-line summary>
 resource: <path to relevant code, doc, or GitHub issue>
 tags: [lowercase, searchable, tags]
 timestamp: <ISO 8601>
 status: active
+assertion_state: proposed
 issue_refs: [<issue numbers>]
 generated_at: <ISO 8601 generation time>
-generated_by: operator-authorized-curator
+generated_by: <named operator-authorized curator>
+generation_method: curator
+source_authority: tracker-record
+evidence_refs: [<claim-appropriate issue, commit, test, review, or receipt>]
 ---
 ```
 
@@ -262,7 +278,7 @@ generated_by: operator-authorized-curator
 - Use lowercase, consistent tags across concepts.
 - The `resource` field should point to the most relevant code file, doc, or GitHub issue.
 - Always include `issue_refs` in frontmatter when the concept was derived from or relates to GitHub issues.
-- Always include `generated_at` and `generated_by` on curator-generated concept outputs.
+- Always include the complete strict permanent integrity fields on curator-generated concept outputs.
 - Always update `index.md` files when adding or updating concepts.
 - Always log curation actions in `log.md` in reverse chronological order.
 - Synthesize across multiple inbox items when they relate to the same concept.

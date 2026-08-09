@@ -19,10 +19,13 @@ argument contract.
 ## Read-only diagnostics and search
 
 - `okf-lint.mjs` reports strict or legacy-compatible parser, profile,
-  directory/type, resource, relationship, provenance, and body diagnostics.
-  Legacy mode changes errors into retained warnings; neither mode writes.
+  directory/type, resource, relationship, provenance, identity-transition, and
+  body diagnostics. `strict-new --baseline <commit>` derives only direct
+  permanent concept adds/edits/moves/deletions; explicit `--strict-path` remains
+  available. Untouched legacy stays warning-only and every mode is read-only.
 - `okf-query.mjs` provides typed relationship, assertion-state, evidence,
-  lifecycle, validation-status, and text selectors. The portable
+  lifecycle, validation-status, and text selectors, and projects stable ID plus
+  generation/source/verification metadata. The portable
   `knowledge/okf-query.sh` wrapper dispatches semantic selectors here only when
   the packaged runtime is present; basic text and `--decisions` search remain
   available without Node/runtime.

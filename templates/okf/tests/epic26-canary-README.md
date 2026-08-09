@@ -59,7 +59,7 @@ explicit diagnostic option and leaves the reported temporary root in place.
   },
   "curated_concept": {
     "path": "knowledge/decisions/epic26-d3-canary.md",
-    "content": "---\ntype: Decision\ntitle: Reviewed output\ndescription: Reviewed output description.\ntags: [okf, canary]\ntimestamp: 2026-08-08T00:00:00Z\nstatus: active\nid: okf-00000000-0000-4000-8000-000000000000\nassertion_state: verified\ngenerated_at: 2026-08-08T00:00:00Z\ngenerated_by: operator-authorized-curator\nsource_authority: repository-git\nevidence_refs: [git:0000000000000000000000000000000000000000:knowledge/inbox/example.md]\nverified_at: 2026-08-08T00:00:00Z\nverification_method: frozen-git-snapshot\nvalidity_basis: exact-revision-and-source-hash\n---\n\n# Decision\n\nUniquePortableCanaryToken\n"
+    "content": "---\ntype: Decision\ntitle: Reviewed output\ndescription: Reviewed output description.\ntags: [okf, canary]\ntimestamp: 2026-08-08T00:00:00Z\nstatus: active\nid: okf-00000000-0000-4000-8000-000000000000\nassertion_state: verified\ngenerated_at: 2026-08-08T00:00:00Z\ngenerated_by: operator-authorized-curator\ngeneration_method: curator\nsource_authority: repository-git\nevidence_refs: [git:0000000000000000000000000000000000000000:knowledge/inbox/example.md]\nverified_at: 2026-08-08T00:00:00Z\nverified_by: frozen-canary-reviewer\nverification_method: frozen-git-snapshot\nvalidity_basis: exact-revision-and-source-hash\n---\n\n# Decision\n\nUniquePortableCanaryToken\n"
   },
   "retrieval": {
     "semantic": {

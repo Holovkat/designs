@@ -3,6 +3,13 @@
 <!-- Entries are added in reverse chronological order by the curation agent -->
 <!-- Format: ## <ISO timestamp> - <action> -->
 
+## 2026-08-09T11:22:20Z - Strict Fix-on-Touch Concept Integrity
+
+- **Enforced:** every new or materially updated permanent concept now carries a stable ID, separate lifecycle/assertion state, generation producer/mechanism, and claim-scoped authority/evidence; unsupported self-verified claims fail strict validation.
+- **Preserved:** one explicit Git baseline selects only direct permanent concept adds, edits, renames, moves, and deletions; untouched legacy stays warning-only and valid IDs survive path/deprecation changes.
+- **Directed:** supersession remains replacement → old stable ID, permanent deletion is rejected, and curator staging binds identity plus deprecation direction before mutation.
+- **Projected:** query and offline viewer expose identity, lifecycle/assertion, generation, authority, verifier, evidence, and typed relationships without changing Markdown paths or citations.
+
 ## 2026-08-09T01:18:24Z - Mercury-Scale Context Catalog Bounded
 
 - **Compacted:** the model-visible concept catalog now contains only path,

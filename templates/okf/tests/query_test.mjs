@@ -90,12 +90,22 @@ test("typed relationship query supports predicate, target, and reverse target se
 });
 
 test("assertion, evidence, and lifecycle selectors use separate controlled fields", () => {
-  assert.deepEqual(paths(jsonQuery("--assertion-state", "verified").value), ["knowledge/decisions/verified-source.md"]);
+  const verified = jsonQuery("--assertion-state", "verified").value;
+  assert.deepEqual(paths(verified), ["knowledge/decisions/verified-source.md"]);
+  assert.equal(verified.results[0].id, "okf-22222222-2222-4222-8222-222222222222");
+  assert.equal(verified.results[0].generation_method, "human-authored");
+  assert.equal(verified.results[0].source_authority, "repository-git");
+  assert.equal(verified.results[0].source_repository, "self");
+  assert.equal(verified.results[0].verified_at, "2026-08-08T00:02:00Z");
+  assert.equal(verified.results[0].verified_by, "query-fixture-reviewer");
+  assert.equal(verified.results[0].verification_method, "fixture-review");
+  assert.equal(verified.results[0].validity_basis, "immutable-fixture");
   assert.deepEqual(paths(jsonQuery("--evidence", "^git:").value), ["knowledge/decisions/verified-source.md"]);
   assert.deepEqual(paths(jsonQuery("--has-evidence", "--assertion-state", "inferred").value), ["knowledge/decisions/legacy-warning.md"]);
   assert.deepEqual(paths(jsonQuery("--lifecycle", "blocked").value), ["knowledge/state/blocked-state.md"]);
   const unspecified = paths(jsonQuery("--assertion-state", "legacy-unspecified").value);
-  assert.ok(unspecified.includes("knowledge/architecture/alpha-target.md"));
+  assert.ok(unspecified.includes("knowledge/process/body-search.md"));
+  assert.ok(!unspecified.includes("knowledge/architecture/alpha-target.md"));
   assert.ok(!unspecified.includes("knowledge/decisions/verified-source.md"));
 });
 

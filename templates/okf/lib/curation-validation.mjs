@@ -21,6 +21,7 @@ const PREFLIGHT_BLOCKING_CODES = Object.freeze(new Set([
 const LEGACY_BRANCH_NOISE = Object.freeze(new Set([
   "schema-type:/commit_sha",
 ]));
+const STABLE_ID_PATTERN = /^okf-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 function sorted(diagnostics) {
   return [...diagnostics].sort((left, right) =>
@@ -51,6 +52,13 @@ function generatedMetadataDiagnostics(root, paths) {
         path, code: "curator-generated-by-missing", field: "generated_by", severity: "error",
         message: "Curator-generated concepts require generated_by provenance.",
         remediation: "Identify the operator-authorized curator mechanism in the proposal output.",
+      });
+    }
+    if (parsed.frontmatter.generation_method !== "curator") {
+      diagnostics.push({
+        path, code: "curator-generation-method-invalid", field: "generation_method", severity: "error",
+        message: "Curator-generated concepts must identify curator as the generation mechanism.",
+        remediation: "Set generation_method: curator while keeping generated_by as the named producer.",
       });
     }
   }
@@ -201,7 +209,7 @@ function preflightBlocking(diagnostic, frontmatter) {
   if (PREFLIGHT_BLOCKING_CODES.has(diagnostic.code)) return true;
   if (diagnostic.code === "schema-required") {
     const compatibleMissing = legacyInbox
-      ? new Set(["capture_tier", "description", "generated_at", "generated_by", "status", "timestamp"])
+      ? new Set(["assertion_state", "capture_tier", "description", "evidence_refs", "generated_at", "generated_by", "generation_method", "id", "source_authority", "status", "timestamp"])
       : new Set(["capture_tier", "generated_at", "generated_by"]);
     return !compatibleMissing.has(diagnostic.field);
   }
@@ -232,10 +240,59 @@ export function validateCurationPreflight(root, itemPaths) {
   });
 }
 
+/** Preserve semantic identity and replacement direction across curator moves and updates. */
+export function validateCurationIdentity(root, conceptOutputs) {
+  const diagnostics = [];
+  const proposed = conceptOutputs.map((output) => ({
+    output,
+    parsed: parseFrontmatter(output.content, output.path),
+  }));
+  for (const item of proposed) {
+    if (item.parsed.diagnostics.length > 0) continue;
+    const sourcePath = item.output.replaces_path ?? (item.output.expected_sha256 ? item.output.path : null);
+    if (!sourcePath) continue;
+    const source = resolveContainedPath(root, sourcePath);
+    const prior = parseFrontmatter(readFileSync(source.full, "utf8"), sourcePath);
+    if (prior.diagnostics.length > 0) continue;
+    const previousId = prior.frontmatter.id;
+    if (STABLE_ID_PATTERN.test(previousId ?? "") && item.parsed.frontmatter.id !== previousId) {
+      diagnostics.push({
+        path: item.output.path, code: "curator-identifier-changed", field: "id", severity: "error",
+        message: `Curator output changed stable identity ${previousId} during an update or move.`,
+        remediation: "Keep the original ID while changing paths, lifecycle state, or body content.",
+      });
+    }
+    if (prior.frontmatter.type !== "Deprecation" && item.parsed.frontmatter.type === "Deprecation") {
+      const oldId = item.parsed.frontmatter.id;
+      const replacement = proposed.some((candidate) => candidate !== item
+        && candidate.parsed.diagnostics.length === 0
+        && candidate.parsed.frontmatter.type !== "Deprecation"
+        && Array.isArray(candidate.parsed.frontmatter.supersedes)
+        && candidate.parsed.frontmatter.supersedes.includes(oldId));
+      if (!replacement) {
+        diagnostics.push({
+          path: item.output.path, code: "curator-deprecation-replacement-missing", field: "supersedes", severity: "error",
+          message: `Deprecated concept ${oldId ?? "<missing-id>"} has no replacement-to-old supersedes relationship in the bounded output set.`,
+          remediation: "Include the active replacement with supersedes: [<old-id>] in the same proposal.",
+        });
+      }
+    }
+  }
+  return Object.freeze({
+    mode: "strict",
+    files_checked: conceptOutputs.length,
+    diagnostics: Object.freeze(sorted(diagnostics)),
+    ok: diagnostics.length === 0,
+  });
+}
+
 /** Validate generated concept files in an isolated repository-local shadow. */
 export function validateCurationStaging(shadowRoot, conceptPaths, maintenancePaths = [], context = {}) {
   const result = lintBundle(shadowRoot, { mode: "strict" });
-  const diagnostics = sorted([...project(result, conceptPaths), ...generatedMetadataDiagnostics(shadowRoot, conceptPaths)]);
+  const identity = context.sourceRoot && Array.isArray(context.conceptOutputs)
+    ? validateCurationIdentity(context.sourceRoot, context.conceptOutputs)
+    : { diagnostics: [] };
+  const diagnostics = sorted([...project(result, conceptPaths), ...generatedMetadataDiagnostics(shadowRoot, conceptPaths), ...identity.diagnostics]);
   const concepts = Object.freeze({
     mode: "strict",
     files_checked: conceptPaths.length,

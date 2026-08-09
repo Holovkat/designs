@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { executeCuration } from "../lib/curation-executor.mjs";
-import { validateCurationPreflight } from "../lib/curation-validation.mjs";
+import { validateCurationIdentity, validateCurationPreflight } from "../lib/curation-validation.mjs";
 import { readLock } from "../lib/run-lock.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -33,6 +33,36 @@ function sha(value) {
 
 function fixtureText(name) {
   return readFileSync(join(fixtures, name), "utf8");
+}
+
+function curatedConcept({
+  id,
+  type = "Decision",
+  title = "Curated Concept",
+  status = "active",
+  supersedes = null,
+} = {}) {
+  const deprecation = type === "Deprecation" ? "deprecated_reason: Replaced in fixture\ndeprecated_date: 2026-08-08\n" : "";
+  const relationship = supersedes ? `supersedes: [${supersedes}]\n` : "";
+  const body = type === "Deprecation"
+    ? "# What Was the Issue\nOld.\n\n# Why It Was Deprecated\nReplaced.\n\n# Lessons Learned\nPreserve ID.\n\n# When This Might Be Relevant Again\nHistory.\n\n# What to Watch Out For\nDirection.\n"
+    : "# Decision\n\nCurrent.\n";
+  return `---
+type: ${type}
+id: ${id}
+title: ${title}
+description: Curator identity transition fixture
+tags: [curation, fixture]
+timestamp: 2026-08-08T00:00:00Z
+status: ${status}
+assertion_state: proposed
+generated_at: 2026-08-08T00:00:00Z
+generated_by: fixture-curator
+generation_method: curator
+source_authority: repository-contract
+evidence_refs: [fixture:curation-identity]
+${deprecation}${relationship}---
+${body}`;
 }
 
 function makeRepo({ concept = fixtureText("valid-concept.md"), runId = "fixture-curation" } = {}) {
@@ -194,13 +224,43 @@ test("retains invalid generated output and never advances the inbox source", () 
   } finally { fixture.cleanup(); }
 });
 
-test("requires generated_at and generated_by on curator concept outputs", () => {
+test("requires generated time, producer, and curator mechanism on curator outputs", () => {
   const fixture = makeRepo({ concept: fixtureText("missing-generation-provenance.md"), runId: "fixture-provenance" });
   try {
     const result = executeCuration(fixture.input);
     assert.equal(result.reason, "staging-validation-failed");
     assert.ok(existsSync(join(fixture.root, fixture.sourcePath)));
     assert.equal(result.report.validation.staging_ok, false);
+  } finally { fixture.cleanup(); }
+});
+
+test("curator validation preserves identity and replacement-to-old direction", () => {
+  const fixture = makeRepo({ runId: "fixture-curation-identity" });
+  const oldId = "okf-cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+  const replacementId = "okf-dddddddd-dddd-4ddd-8ddd-dddddddddddd";
+  const sourcePath = "knowledge/decisions/old-contract.md";
+  try {
+    writeFileSync(join(fixture.root, sourcePath), curatedConcept({ id: oldId, title: "Old Contract" }));
+    const deprecated = {
+      path: "knowledge/deprecation/old-contract.md",
+      replaces_path: sourcePath,
+      expected_sha256: sha(readFileSync(join(fixture.root, sourcePath))),
+      content: curatedConcept({ id: oldId, type: "Deprecation", title: "Old Contract", status: "deprecated" }),
+    };
+    const replacement = {
+      path: "knowledge/decisions/replacement.md",
+      expected_sha256: null,
+      content: curatedConcept({ id: replacementId, title: "Replacement", supersedes: oldId }),
+    };
+    assert.equal(validateCurationIdentity(fixture.root, [deprecated, replacement]).ok, true);
+    const changedIdentity = {
+      ...deprecated,
+      content: curatedConcept({ id: replacementId, type: "Deprecation", title: "Old Contract", status: "deprecated" }),
+    };
+    let result = validateCurationIdentity(fixture.root, [changedIdentity, replacement]);
+    assert.ok(result.diagnostics.some(({ code }) => code === "curator-identifier-changed"));
+    result = validateCurationIdentity(fixture.root, [deprecated]);
+    assert.ok(result.diagnostics.some(({ code }) => code === "curator-deprecation-replacement-missing"));
   } finally { fixture.cleanup(); }
 });
 

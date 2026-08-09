@@ -1,20 +1,18 @@
 ---
 type: Domain
 title: Link and Relationship Resolution in OKF
-description: Separation of stable semantic identifiers, typed relationships, Markdown citations, and resource navigation
+description: Stable identity across fix-on-touch moves, directed typed relationships, citations, resources, and integrity projection
 resource: ./templates/okf/viewer.html
-tags: [citations, identifiers, links, navigation, okf, relationships, viewer]
-timestamp: 2026-08-08T00:00:00Z
+tags: [citations, fix-on-touch, identifiers, integrity, links, navigation, okf, relationships, viewer]
+timestamp: 2026-08-09T11:22:20Z
 status: active
 id: okf-26000000-0000-4000-8000-000000000004
-assertion_state: verified
-generated_at: 2026-08-08T00:00:00Z
-generated_by: codex-epic-26
-source_authority: repository-git
-evidence_refs: [templates/okf/viewer.html, templates/okf/generate-viz.js]
-verified_at: 2026-08-08T00:00:00Z
-verification_method: viewer-and-generator-review
-validity_basis: Current OKF viewer navigation and relationship model
+assertion_state: inferred
+generated_at: 2026-08-09T11:22:20Z
+generated_by: codex-epic-37-concept-42
+generation_method: author-time-agent
+source_authority: repository-source
+evidence_refs: [templates/okf/viewer.html, templates/okf/viewer-assets/okf-viewer.js, templates/okf/generate-viz.js, templates/okf/tests/viewer-relationships_test.mjs]
 ---
 
 # Link and Relationship Resolution in OKF
@@ -25,7 +23,9 @@ OKF deliberately keeps three mechanisms separate:
 2. typed frontmatter predicates assert semantic relationships by stable ID; and
 3. ordinary Markdown links provide citations and human navigation by path.
 
-File paths remain repository locations, not semantic identities.
+File paths remain repository locations, not semantic identities. New and
+materially updated permanent concepts require stable identity; untouched legacy
+path fallback remains compatibility-only.
 
 ## Typed Relationship Resolution
 
@@ -55,10 +55,13 @@ from the concept directory. Resource links do not become graph relationships.
 
 ## Compatibility
 
-Legacy concepts without stable IDs remain browsable through an explicit
-fallback identity derived from their file location. The viewer marks that mode;
-new strict concepts use stable IDs. This preserves gradual adoption without
-making legacy path identity the semantic contract.
+Untouched legacy concepts without stable IDs remain browsable through an
+explicit fallback identity derived from their file location. The viewer marks
+that mode; a fix-on-touch edit, rename, or deprecation must assign a stable ID,
+and any valid prior ID must remain unchanged. Lifecycle, assertion state,
+generation mechanism, authority, verifier, and evidence are projected as
+separate metadata rather than inferred from the path or body. This preserves
+gradual adoption without making legacy path identity the semantic contract.
 
 See [Viewer Architecture](../architecture/viewer-architecture.md) and
 [OKF Semantic Query Helper](../architecture/okf-query-helper.md).
